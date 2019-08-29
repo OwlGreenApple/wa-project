@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class reminder_list extends Model
+class BroadCast extends Model
 {
     //
 }

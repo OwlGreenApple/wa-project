@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class list extends Model
+class BroadCastList extends Model
 {
     //
 }

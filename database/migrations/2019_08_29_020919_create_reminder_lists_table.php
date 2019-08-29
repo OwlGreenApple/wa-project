@@ -15,7 +15,7 @@ class CreateReminderListsTable extends Migration
     {
         Schema::create('reminder_lists', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('from_id_user');
+            $table->bigInteger('id_user');
             $table->text('message')->nullable();
             $table->timestamps();
         });

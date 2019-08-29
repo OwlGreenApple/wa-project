@@ -66,7 +66,7 @@
 
                             <div class="col-md-6">
                                 <input id="wa-number" type="text" class="form-control @error('wa-number') is-invalid @enderror" name="wa-number" required />
-                                 @error('wa_number')
+                                 @error('wa-number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
