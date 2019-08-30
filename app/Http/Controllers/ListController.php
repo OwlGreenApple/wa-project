@@ -24,6 +24,7 @@ class ListController extends Controller
     	}
     }
 
+    /* User product list */
     public function userList()
     {
     	$id_user = Auth::id();

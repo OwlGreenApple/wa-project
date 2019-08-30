@@ -9,8 +9,9 @@
 
     <title>{{ config('app.name', 'Waku') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('/assets/js/app.js') }}" defer></script>
+   <!-- Scripts -->
+    <script src="{{ asset('/assets/js/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('/assets/js/app.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -18,8 +19,16 @@
 
     <!-- Styles -->
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet">
+
+     <!-- Emoji -->
+    <link href="{{ asset('/assets/emoji/css/emojionearea.min.css') }}" rel="stylesheet"> 
+    <script type="text/javascript" src="{{ asset('/assets/emoji/js/prettify.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/assets/emoji/js/emojionearea.js') }}"></script>
+
 </head>
 <body>
+
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -76,5 +85,6 @@
             @yield('content')
         </main>
     </div>
+
 </body>
 </html>

@@ -21,7 +21,8 @@ class CreateUsersTable extends Migration
             $table->string('password')->nullable();
             $table->string('wa_number');
             $table->string('api_key')->nullable();
-            $table->boolean('is_user')->default(0);
+            $table->integer('counter')->default(0);
+            $table->boolean('is_admin')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

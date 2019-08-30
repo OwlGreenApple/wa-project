@@ -1,9 +1,28 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- navbar -->
+<div class="container mb-2">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a href="{{route('home')}}" class="nav-link">Back Home</a>
+                </li>
+                <li class="nav-item">
+                     <a class="nav-link" href="{{route('home')}}">Back To Add List</a>
+                </li>
+              </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- end navbar -->
+
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-9">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-header"><b>User's List</b></div>
 
@@ -38,7 +57,6 @@
                             @endif
                         </tbody>
                     </table>
-                    <a class="btn btn-default btn-sm" href="{{route('home')}}">Back To Add List</a>
                 </div>
                 <!-- end card-body -->  
             </div>

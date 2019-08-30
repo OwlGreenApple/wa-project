@@ -15,8 +15,8 @@ class CreateBroadCastsTable extends Migration
     {
         Schema::create('broad_casts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('list_id');
             $table->bigInteger('user_id');
+            $table->bigInteger('list_id');
             $table->text('message');
             $table->timestamps();
         });
