@@ -37,7 +37,7 @@ class CustomerController extends Controller
     		$data['message'] = 'Thank You For Join Us';
     	} else {
     		$data['success'] = false;
-    		$data['message'] = 'Ups! Sorry there is something wrong with our system';
+    		$data['message'] = 'Error! Sorry there is something wrong with our system';
     	}
     	return response()->json($data);
     }
