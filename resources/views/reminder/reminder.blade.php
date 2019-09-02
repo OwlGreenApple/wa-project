@@ -11,6 +11,9 @@
                 <li class="nav-item">
                   <a href="{{route('home')}}" class="nav-link">Back Home</a>
                 </li>
+                <li class="nav-item">
+                  <a href="{{route('reminder_customer')}}" class="nav-link">See Reminder Customers</a>
+                </li>
               </ul>
             </nav>
         </div>
@@ -24,7 +27,7 @@
             <div class="card">
                 <div class="card-header"><b>Reminder</b></div>
 
-                <div><a class="btn btn-warning btn-sm" href="{{route('remindercreate')}}">Create Reminder</a></div>
+                <div><a class="btn btn-warning btn-sm" href="{{route('reminderform')}}">Create Reminder</a></div>
 
                 <div class="card-body">
                     <table class="table table-striped table-responsive" id="user-list">

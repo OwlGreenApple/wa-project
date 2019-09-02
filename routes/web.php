@@ -33,16 +33,23 @@ Route::get('userlist','ListController@userList')->name('userlist');
 Route::get('usercustomer/{id_list}','ListController@userCustomer');
 
 /* BroadCast */
-Route::get('broadcast','BroadCastController@index')->name('broadcast'); //broadcast.broadcast
-Route::get('broadcastform','BroadCastController@FormBroadCast')->name('broadcastform'); //broadcast.broadcastlist
-Route::post('createbroadcast','BroadCastController@createBroadCast')->name('createbroadcast'); //broadcast.broadcast
-Route::get('broadcastlistcustomer/{id_broadcast}','BroadCastController@displayBroadCastList')->name('broadcastlistcustomer'); //broadcast.broadcastlistcustomer
-Route::post('sendbroadcast','BroadCastController@sendBroadCast')->name('sendbroadcast'); 
+Route::get('broadcast','BroadCastController@index')->name('broadcast');
+// form to create broadcast
+Route::get('broadcastform','BroadCastController@FormBroadCast')->name('broadcastform');
+//insert broadcast and broadcast-customer data
+Route::post('createbroadcast','BroadCastController@createBroadCast')->name('createbroadcast');
+//see broadcast customer
+Route::get('broadcast_customer','BroadCastController@displayBroadCastCustomer')->name('broadcast_customer');
+
+
+Route::get('testbroadcast','BroadCastController@testBroadCast'); 
+
 
 /* Reminder */
-Route::get('reminder','ReminderController@index')->name('reminder'); //reminder.reminder
-Route::get('remindercreate','ReminderController@createReminder')->name('remindercreate'); //reminder.reminder
+Route::get('reminder','ReminderController@index')->name('reminder'); 
+// form to create reminder
+Route::get('reminderform','ReminderController@reminderForm')->name('reminderform'); 
+// set reminder into database
 Route::post('reminderadd','ReminderController@addReminder')->name('reminderadd');
-
-
-
+// retrieve data from reminder customer
+Route::get('reminder_customer','ReminderController@displayReminderCustomers')->name('reminder_customer');

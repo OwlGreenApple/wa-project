@@ -15,10 +15,11 @@ class CreateReminderCustomersTable extends Migration
     {
         Schema::create('reminder_customers', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('user_id');
             $table->bigInteger('list_id');
+            $table->bigInteger('reminder_id');
             $table->bigInteger('customer_id');
             $table->text('message');
-            $table->dateTime('schedule');
             $table->timestamps();
             $table->boolean('status')->default(0);
         });

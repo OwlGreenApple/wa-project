@@ -12,7 +12,7 @@
                   <a href="{{route('home')}}" class="nav-link">Back Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('broadcast')}}" class="nav-link">Back To Broadcast</a>
+                    <a href="{{route('broadcast_customer')}}" class="nav-link">See Broadcast Customer</a>
                 </li>
               </ul>
             </nav>
