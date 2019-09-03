@@ -106,7 +106,10 @@ class BroadCastController extends Controller
 		foreach($user as $userow){
 			$id_user = $userow->id;
 			$count = $userow->counter;
-			$broadcast_customers = BroadCastCustomers::where('status','=',0)->orderBy('id','asc');
+			$broadcast_customers = BroadCastCustomers::where([
+				['status','=',0],
+				['user_id','=',$id_user],
+			])->orderBy('id','asc');
 
 			/* Broadcast */
 			if($broadcast_customers->count() > 0){
@@ -133,8 +136,10 @@ class BroadCastController extends Controller
                /* get days from reminder */
                 $reminder = Reminder::where('reminders.user_id','=',$id_user)
                 				->rightJoin('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
+                				->where('reminder_customers.status','=',0)
                 				->rightJoin('customers','customers.id','=','reminder_customers.customer_id')
-                				->select('reminder_customers.*','reminders.days','reminders.created_at as datecr','customers.created_at AS cstreg')
+                				->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.days','reminders.created_at as datecr','customers.created_at AS cstreg')
+                				->take($count)
                 				->get();
 
                 /* check date reminder customer and update if succesful sending */
@@ -143,15 +148,27 @@ class BroadCastController extends Controller
                     $day_reminder = $col->days; // how many days
                     $customer_signup = Carbon::parse($col->cstreg);
                     $adding = $customer_signup->addDays($day_reminder);
+                    //$reminder_customer_status = $col->rc_st;
+                    $reminder_customers_id = $col->rcs_id;
 
-                    if($date_reminder <= $adding){
+                    if($adding >= $date_reminder){
                     	//some code to call wassenger here....
-                    	ReminderCustomers::where('id',$col->id)->update(['status'=>1]);
-                    } 
+                    	ReminderCustomers::where([
+                    		['id',$reminder_customers_id],
+                    		['status','=',0],
+                    	])->update(['status'=>1]);
+                    	 // cut user's wa bandwith
+                        $count = $count - 1;
+                        User::where('id',$id_user)->update(['counter'=>$count]);
+                    }
 	        	}
 
 		}
 		}
+    }
+
+    public function justcarbon(){
+    	echo Carbon::parse('2019-08-28 03:49:44')->addDays(3);
     }
 
 /* end class broadcast controller */    	

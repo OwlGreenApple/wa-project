@@ -10,5 +10,6 @@ class ReminderCustomers extends Model
 		status : 
 		0 = user does not send by WA yet
 		1 = user already sent by WA
+		2 = disabled
     */
 }

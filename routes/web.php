@@ -43,6 +43,7 @@ Route::get('broadcast_customer','BroadCastController@displayBroadCastCustomer')-
 
 
 Route::get('testbroadcast','BroadCastController@testBroadCast'); 
+Route::get('justcarbon','BroadCastController@justcarbon'); 
 
 
 /* Reminder */
@@ -53,3 +54,6 @@ Route::get('reminderform','ReminderController@reminderForm')->name('reminderform
 Route::post('reminderadd','ReminderController@addReminder')->name('reminderadd');
 // retrieve data from reminder customer
 Route::get('reminder_customer','ReminderController@displayReminderCustomers')->name('reminder_customer');
+// change reminder's status
+Route::get('reminder-status/{id_reminder}/{status}','ReminderController@setReminderStatus');
+Route::post('remindermessage','ReminderController@updateReminderMessage')->name('remindermessage');

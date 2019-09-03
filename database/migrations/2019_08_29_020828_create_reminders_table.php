@@ -20,6 +20,7 @@ class CreateRemindersTable extends Migration
             $table->integer('days');
             $table->text('message')->nullable();
             $table->timestamps();
+            $table->boolean('status')->default(1);
         });
     }
 

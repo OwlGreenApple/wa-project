@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Customer;
 use App\UserList;
 use Carbon\Carbon;
+use App\Reminder;
+use App\ReminderCustomers;
 
 class CustomerController extends Controller
 {
@@ -25,20 +27,50 @@ class CustomerController extends Controller
     	$userlist =  $request->session()->get('userlist'); //retrieve session from userlist
     	$get_id_list = UserList::where('name','=',$userlist)->first();
 
-    	$wa_number = $request->code_country.$request->wa_number;
-    	$customer = new Customer;
-    	$customer->list_id = $get_id_list->id;
-    	$customer->name = $request->name;
-    	$customer->wa_number = $wa_number;
-    	$customer->save();
+        /* Filter to avoid unavailable link */
+        if(is_null($get_id_list)){
+            return redirect('/');
+        } else {
+            $wa_number = $request->code_country.$request->wa_number;
+            $customer = new Customer;
+            $customer->list_id = $get_id_list->id;
+            $customer->name = $request->name;
+            $customer->wa_number = $wa_number;
+            $customer->save();
+        }
 
+        /* if customer successful sign up */
     	if($customer->save() == true){
-    		$data['success'] = true;
-    		$data['message'] = 'Thank You For Join Us';
+    		$reminder_id = Reminder::where('list_id','=',$get_id_list->id)->max('id');
+            $reminder = Reminder::where('id','=',$reminder_id)->first();
     	} else {
     		$data['success'] = false;
-    		$data['message'] = 'Error! Sorry there is something wrong with our system';
+    		$data['message'] = 'Error-001! Sorry there is something wrong with our system';
     	}
+
+        /* if reminder empty  */
+        if(is_null($reminder)){
+            $data['success'] = true;
+            $data['message'] = 'Thank You For Join Us';
+            return response()->json($data);
+        } else {
+            $reminder_customer = new ReminderCustomers;
+            $reminder_customer->user_id = $reminder->user_id;
+            $reminder_customer->list_id = $reminder->list_id;
+            $reminder_customer->reminder_id = $reminder_id;
+            $reminder_customer->customer_id = $customer->id;
+            $reminder_customer->message = $reminder->message;
+            $reminder_customer->save();
+        }
+
+        /* if reminder has been set up into reminder-customer */
+        if($reminder_customer->save() == true){
+            $data['success'] = true;
+            $data['message'] = 'Thank You For Join Us';
+        } else {
+            $data['success'] = false;
+            $data['message'] = 'Error-002! Sorry there is something wrong with our system';
+        }
     	return response()->json($data);
     }
 }

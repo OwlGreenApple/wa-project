@@ -53,42 +53,53 @@ class ReminderController extends Controller
     			$customer = Customer::where([
     				['list_id','=',$list_id],
     				['status','=',1],
-    			])->get();
-    			/* retrieve reminder id according on created at */
-    			$created_date = $reminder->created_at;
-    			$reminder_get_id = Reminder::where([
-    				['list_id','=',$list_id],
-    				['created_at','=',$created_date],
-    			])->select('id')->get();
-    			/* insert into reminder customer */
-    			foreach($customer as $col){
-                    $customer_signup = Carbon::parse($col->created_at);
-                    $adding_day = $customer_signup->addDays($reminder->days);
-
-                    /* if user signup's date after adding >= with reminder date's created */
+    			]);
+    			
+                /* Input eligible customer id */
+                $created_date = $reminder->created_at;
+                foreach($customer->get() as $rows){
+                    $customer_signup = Carbon::parse($rows->created_at);
+                    $adding_day = $customer_signup->addDays($days);
                     if($adding_day >= $created_date){
-                        foreach($reminder_get_id as $id_reminder){
-                            $remindercustomer = new ReminderCustomers;
-                            $remindercustomer->user_id = $user_id;
-                            $remindercustomer->list_id = $list_id;
-                            $remindercustomer->reminder_id = $id_reminder->id;
-                            $remindercustomer->customer_id = $col->id;
-                            $remindercustomer->message = $message;
-                            $remindercustomer->save();
-                        }
+                        $datacustomer[] = $rows;
                     }
-    			}
+                }
 	    	}
     	} else {
     		return redirect('reminderform')->with('status_error','Error!! failed to set reminder');
     	}
 
-    	/* If successful insert data into reminder customer */
-    	if($remindercustomer->save() == true){
-    		return redirect('reminderform')->with('status','Your reminder customer has been set!');
-    	} else {
-    		return redirect('reminderform')->with('status_error','Error!! failed to set reminder for customer');
-    	}
+        /* */
+        if(empty($datacustomer)){
+            return redirect('reminderform')->with('status','Your reminder customer has been set!');
+        } else {
+            /* display data customer */
+            foreach($datacustomer as $col){
+                /* retrieve reminder id according on created at */
+                $reminder_get_id = Reminder::where([
+                    ['list_id','=',$list_id],
+                    ['created_at','=',$created_date],
+                ])->select('id')->get();
+
+                $remindercustomer = new ReminderCustomers;
+                foreach($reminder_get_id as $id_reminder){
+                    $remindercustomer->user_id = $user_id;
+                    $remindercustomer->list_id = $list_id;
+                    $remindercustomer->reminder_id = $id_reminder->id;
+                    $remindercustomer->customer_id = $col->id;
+                    $remindercustomer->message = $message;
+                    $remindercustomer->save();
+                }
+
+            } /* end loop */
+             /* If successful insert data into reminder customer */
+            if($remindercustomer->save() == true){
+                return redirect('reminderform')->with('status','Your reminder customer has been set!');
+            } else {
+                return redirect('reminderform')->with('status_error','Error!! failed to set reminder for customer');
+            }
+        }
+       
     }
 
     /* Display reminder customer */
@@ -101,6 +112,53 @@ class ReminderController extends Controller
     						->select('reminder_customers.*','lists.name','customers.wa_number','customers.created_at AS csrg')
     						->get();
     	return view('reminder.reminder-customer',['data'=>$remindercustomer]);
+    }
+
+    /* Change reminder and reminder-customer status */
+    public function setReminderStatus($id_reminder,$status){
+
+        /* From on to off */
+        if($status == 1){
+            $turn = 0;
+            $turn_customer = 2;
+        } else {
+            $turn = 1;
+            $turn_customer = 0;
+        }
+
+        $reminder = Reminder::where('id','=',$id_reminder)->update([
+            'status'=>$turn
+        ]);
+
+        /* if correct then reminder's status updated */
+        if($reminder == true){
+            $remindercustomer =  ReminderCustomers::where('reminder_id','=',$id_reminder)->update(['status'=> $turn_customer]);
+        } else {
+            return redirect('reminder')->with('error','Error-001! Unable to change reminder status');
+        }
+
+        /* if correct then reminder-customer's status updated */
+        if($remindercustomer == true){
+            return redirect('reminder')->with('message','Reminder status has been changed');
+        } else {
+            return redirect('reminder')->with('error','Error-002! Unable to change reminder status');
+        }
+    }
+
+    /* Update reminder message */
+    public function updateReminderMessage(Request $request){
+        $id = $request->id_reminder;
+        $message = $request->message;
+
+        $reminder = Reminder::where('id','=',$id)->update(['message'=>$message]);
+
+        if($reminder == true){
+            $data['msg'] = 'Reminder message has been updated';
+        } else {
+            $data['msg'] = 'Error!! Unable to update reminder message';
+        }
+
+        return response()->json($data);
     }
 
 /* end class reminder controller */    

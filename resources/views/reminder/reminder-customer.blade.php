@@ -45,7 +45,9 @@
                                     <td>{{$row->name}}</td>
                                     <td>{{$row->reminder_id}}</td>
                                     <td>{{$row->wa_number}}</td>
-                                    <td>{{$row->message}}</td>
+                                    <td class="wraptext">
+                                        <span class="get-text-{{$row->id}}">{{$row->message}}</span>
+                                    </td>
                                     <td>{{$row->csrg}}</td>
                                     <td>{{$row->created_at}}</td>
                                     <td>{{$row->updated_at}}</td>
