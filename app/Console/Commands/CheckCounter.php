@@ -12,7 +12,7 @@ class CheckCounter extends Command
      *
      * @var string
      */
-    protected $signature = 'check:wa';
+    protected $signature = 'check:counter';
 
     /**
      * The console command description.

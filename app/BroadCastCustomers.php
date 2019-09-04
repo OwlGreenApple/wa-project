@@ -8,7 +8,8 @@ class BroadCastCustomers extends Model
 {
     /*
 		status : 
-		0 = user does not send by WA yet
-		1 = user already sent by WA
+		0 = pending
+		1 = on queue
+		2 = sent
     */
 }

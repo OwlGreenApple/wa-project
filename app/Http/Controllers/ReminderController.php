@@ -69,22 +69,22 @@ class ReminderController extends Controller
     		return redirect('reminderform')->with('status_error','Error!! failed to set reminder');
     	}
 
-        /* */
+        /* check whether user have customer */
         if(empty($datacustomer)){
-            return redirect('reminderform')->with('status','Your reminder customer has been set!');
+            return redirect('reminderform')->with('status','Your reminder has been set!');
         } else {
             /* display data customer */
             foreach($datacustomer as $col){
                 /* retrieve reminder id according on created at */
                 $reminder_get_id = Reminder::where([
-                    ['list_id','=',$list_id],
+                    ['list_id','=',$col->list_id],
                     ['created_at','=',$created_date],
                 ])->select('id')->get();
 
                 $remindercustomer = new ReminderCustomers;
                 foreach($reminder_get_id as $id_reminder){
                     $remindercustomer->user_id = $user_id;
-                    $remindercustomer->list_id = $list_id;
+                    $remindercustomer->list_id = $col->list_id;
                     $remindercustomer->reminder_id = $id_reminder->id;
                     $remindercustomer->customer_id = $col->id;
                     $remindercustomer->message = $message;
@@ -94,7 +94,7 @@ class ReminderController extends Controller
             } /* end loop */
              /* If successful insert data into reminder customer */
             if($remindercustomer->save() == true){
-                return redirect('reminderform')->with('status','Your reminder customer has been set!');
+                return redirect('reminderform')->with('status','Your reminder has been set!!');
             } else {
                 return redirect('reminderform')->with('status_error','Error!! failed to set reminder for customer');
             }
@@ -120,7 +120,7 @@ class ReminderController extends Controller
         /* From on to off */
         if($status == 1){
             $turn = 0;
-            $turn_customer = 2;
+            $turn_customer = 3;
         } else {
             $turn = 1;
             $turn_customer = 0;
@@ -132,7 +132,9 @@ class ReminderController extends Controller
 
         /* if correct then reminder's status updated */
         if($reminder == true){
-            $remindercustomer =  ReminderCustomers::where('reminder_id','=',$id_reminder)->update(['status'=> $turn_customer]);
+            $remindercustomer =  ReminderCustomers::where([
+                ['reminder_id','=',$id_reminder],
+            ])->whereIn('status', [0,3])->update(['status'=> $turn_customer]);
         } else {
             return redirect('reminder')->with('error','Error-001! Unable to change reminder status');
         }
@@ -141,7 +143,8 @@ class ReminderController extends Controller
         if($remindercustomer == true){
             return redirect('reminder')->with('message','Reminder status has been changed');
         } else {
-            return redirect('reminder')->with('error','Error-002! Unable to change reminder status');
+            /* if there is no status = 0 */
+            return redirect('reminder')->with('error','Warning!! Unable to change reminder status due there is no new data');
         }
     }
 

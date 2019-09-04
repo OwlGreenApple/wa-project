@@ -26,7 +26,7 @@ Route::get('/home', 'HomeController@index')->name('home');//home.blade
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
 /* Lists */
-Route::post('addlist','ListController@addList')->name('addlist'); //<--home.blade
+Route::post('addlist','ListController@addList')->middleware('userlist')->name('addlist'); //<--home.blade
 Route::get('userlist','ListController@userList')->name('userlist');
 
 /* User Customer */

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\UserList;
 use App\BroadCast;
 use App\BroadCastCustomers;
@@ -39,13 +40,24 @@ class BroadCastController extends Controller
     	$user_id = Auth::id();
     	$req = $request->all();
     	$message = $req['message'];
+    	$msg = array('message'=>$message);
 
-    	foreach($req['id'] as $row=>$list_id){
-    		$broadcast = new BroadCast;
-    		$broadcast->user_id = $user_id;
-    		$broadcast->list_id = $list_id;
-    		$broadcast->message = $message;
-    		$broadcast->save();
+    	/* Validator to limit max message character */
+    	$validator = Validator::make($msg,[
+    		'message'=> ['required','max:3000']
+    	]);
+
+    	if($validator->fails()){
+    		$error = $validator->errors();
+    		return redirect('broadcastform')->with('status_error',$error->first('message'));
+    	} else {
+    		foreach($req['id'] as $row=>$list_id){
+	    		$broadcast = new BroadCast;
+	    		$broadcast->user_id = $user_id;
+	    		$broadcast->list_id = $list_id;
+	    		$broadcast->message = $message;
+	    		$broadcast->save();
+	    	}
     	}
 
     	/* if successful inserted data broadcast into database then this run */
@@ -168,7 +180,8 @@ class BroadCastController extends Controller
     }
 
     public function justcarbon(){
-    	echo Carbon::parse('2019-08-28 03:49:44')->addDays(3);
+    	//echo Carbon::parse('2019-08-28 03:49:44')->addDays(3);
+    	echo Carbon::now();
     }
 
 /* end class broadcast controller */    	

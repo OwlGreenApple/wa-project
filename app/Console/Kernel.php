@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\SendWA::class,
+        Commands\CheckWA::class,
         Commands\CheckCounter::class,
     ];
 
@@ -26,7 +27,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
          $schedule->command('send:wa')->everyMinute()->withoutOverlapping();
-         $schedule->command('check:wa')->everyMinute()->withoutOverlapping();
+         $schedule->command('check:counter')->everyMinute()->withoutOverlapping();
+         $schedule->command('check:wa')->hourly()->withoutOverlapping();
     }
 
     /**

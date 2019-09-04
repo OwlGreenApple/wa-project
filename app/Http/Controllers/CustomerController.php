@@ -33,6 +33,7 @@ class CustomerController extends Controller
         } else {
             $wa_number = $request->code_country.$request->wa_number;
             $customer = new Customer;
+            $customer->user_id = $get_id_list->user_id;
             $customer->list_id = $get_id_list->id;
             $customer->name = $request->name;
             $customer->wa_number = $wa_number;

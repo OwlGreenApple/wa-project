@@ -8,8 +8,9 @@ class ReminderCustomers extends Model
 {
      /*
 		status : 
-		0 = user does not send by WA yet
-		1 = user already sent by WA
-		2 = disabled
+		0 = pending
+		1 = on queue
+		2 = sent
+		3 = disabled
     */
 }

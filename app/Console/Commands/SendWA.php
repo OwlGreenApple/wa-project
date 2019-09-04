@@ -68,12 +68,24 @@ class SendWA extends Command
                       /*... Wasennger function ...*/
                       $wa_number = $id->wa_number;
                       $message = $id->message;
-
+                      /* Send WA */
                       $wasengger = $this->sendWA($wa_number,$api_key,$message);
                      
+                      /* Determine status on BroadCast-customer */
+                      $delivery_status = $wasengger->deliveryStatus;
+                      if($delivery_status == 'queued'){
+                        $status = 1;
+                      } elseif($delivery_status == 'sent') {
+                        $status = 2;
+                      } else {
+                        $status = 0;
+                      }
+
                       /* Update when has sent message */
-                      if($wasengger == true){
-                        $update_broadcast = BroadCastCustomers::where('id',$id->id)->update(['status'=>1]);
+                      if(!empty($wasengger)){
+                        $update_broadcast = BroadCastCustomers::where('id',$id->id)->update(['id_wa'=>$wasengger->id,
+                            'status'=>$status,
+                        ]);
                       } else {
                             echo 'Error!! Unable to send WA to customer';
                       }
@@ -88,6 +100,8 @@ class SendWA extends Command
                 }
             } else {
             /* Reminder */
+
+                $current_time = Carbon::now();
                 $reminder_customers = ReminderCustomers::where([
                     ['user_id','=',$id_user],
                     ['status','=',0],
@@ -112,22 +126,42 @@ class SendWA extends Command
                     $reminder_customers_id = $col->rcs_id;
                     $wa_number = $col->wa_number;
                     $message = $col->message;
-
+                    $wasengger = null;
                     /* if customer register after adding days >= date when reminder was created */
-                    if($adding >= $date_reminder){
-                        /* wasengger */
-                        $wasengger = $this->sendWA($wa_number,$api_key,$message);
+
+                    if(($adding >= $date_reminder)){
+                       $sending = true;
                     } else {
-                        $wasengger = false;
+                       $sending = false;
                     }
 
-                    if($wasengger == true){
+                    $wasengger = $this->sendWA($wa_number,$api_key,$message);
+                    /* if the time has reach or pass added time */
+                    if(($sending == true) && ($current_time >= $adding)){
+                         /* wasengger */
+                         $wasengger;
+                    }
+
+                    /* Determine status on BroadCast-customer */
+                      $delivery_status = $wasengger->deliveryStatus;
+                      if($delivery_status == 'queued'){
+                        $status = 1;
+                      } elseif($delivery_status == 'sent') {
+                        $status = 2;
+                      } else {
+                        $status = 0;
+                      } 
+
+                    if(!empty($wasengger)){
                          $update_reminder_customer = ReminderCustomers::where([
                             ['id',$reminder_customers_id],
                             ['status','=',0],
-                        ])->update(['status'=>1]);
+                        ])->update([
+                            'id_wa'=>$wasengger->id,
+                            'status'=>$status,
+                        ]);
                     } else {
-                        echo 'Error!! On data unable to send WA message';
+                        continue;
                     }
 
                     if($update_reminder_customer == true){
@@ -153,6 +187,11 @@ class SendWA extends Command
     public function sendWA($wa_number,$api_key,$message){
         $curl = curl_init();
 
+        $data = array(
+            'phone'=>'+'.$wa_number,
+            'message'=>$message
+        );
+
         curl_setopt_array($curl, array(
           CURLOPT_URL => "https://api.wassenger.com/v1/messages",
           CURLOPT_RETURNTRANSFER => true,
@@ -161,10 +200,7 @@ class SendWA extends Command
           CURLOPT_TIMEOUT => 30,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => "POST",
-          CURLOPT_POSTFIELDS => "{
-                \"phone\":\"+".$wa_number."\",
-                \"message\":\"".$message."\"
-          }",
+          CURLOPT_POSTFIELDS => json_encode($data,true),
           CURLOPT_HTTPHEADER => array(
             "content-type: application/json",
             "token: ".$api_key.""
@@ -179,8 +215,8 @@ class SendWA extends Command
         if ($err) {
           echo "cURL Error #:" . $err;
         } else {
-          //echo $response;
-          return true;
+          //echo $response."\n";
+            return json_decode($response);
         }
     }
 

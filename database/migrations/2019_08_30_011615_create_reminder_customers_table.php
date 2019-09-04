@@ -21,6 +21,7 @@ class CreateReminderCustomersTable extends Migration
             $table->bigInteger('customer_id');
             $table->text('message');
             $table->timestamps();
+            $table->string('id_wa')->nullable();
             $table->boolean('status')->default(0);
         });
     }
