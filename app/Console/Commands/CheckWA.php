@@ -68,6 +68,8 @@ class CheckWA extends Command
                         $status = 1;
                     } elseif($delivery_status == 'sent') {
                         $status = 2;
+                    } elseif($delivery_status == 'failed') {
+                        $status = 5;
                     } else {
                         $status = 0;
                     }
@@ -92,6 +94,8 @@ class CheckWA extends Command
                         $status = 1;
                      } elseif($delivery_status == 'sent') {
                         $status = 2;
+                     } elseif($delivery_status == 'failed') {
+                        $status = 5;
                      } else {
                         $status = 0;
                      }

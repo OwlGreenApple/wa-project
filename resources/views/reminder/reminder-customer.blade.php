@@ -4,7 +4,7 @@
 <!-- navbar -->
 <div class="container mb-2">
     <div class="row justify-content-center">
-        <div class="col-md-9">
+        <div class="col-md-10">
             <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
               <ul class="navbar-nav">
                 <li class="nav-item">
@@ -22,12 +22,12 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-9">
+        <div class="col-md-10">
             <div class="card">
                 <div class="card-header"><b>Reminder Customer's List</b></div>
 
                 <div class="card-body table-responsive">
-                    <table class="table table-striped" id="user-list">
+                    <table class="table table-striped" id="reminder-customer">
                         <thead>
                             <th>Product Name</th>
                             <th>Reminder ID</th>
@@ -53,9 +53,15 @@
                                     <td>{{$row->updated_at}}</td>
                                     <td>
                                         @if($row->status == 0)
-                                            Message not deliver
-                                        @else
-                                            Message has delivered already    
+                                            Pending
+                                        @elseif($row->status == 1)
+                                            Queue   
+                                        @elseif($row->status == 2)
+                                            Sent
+                                        @elseif($row->status == 3)
+                                            Disabled
+                                        @elseif($row->status == 5)
+                                            Failed
                                         @endif
                                     </td>
                                 </tr>
@@ -72,4 +78,18 @@
     </div>
 <!-- end container -->   
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        table();
+    });
+
+    function table(){
+        $("#reminder-customer").dataTable({
+            'pageLength':5,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        });
+    }
+</script>
+
 @endsection

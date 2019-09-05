@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\User;
 
 class HomeController extends Controller
@@ -35,7 +36,8 @@ class HomeController extends Controller
             [
                 'name'=> $request->name,
                 'wa_number'=>$request->wa_number,
-                'api_key'=>$request->api_key
+                'api_key'=>$request->api_key,
+                'password'=>Hash::make($request->password)
             ]
         );
 

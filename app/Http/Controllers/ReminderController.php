@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\UserList;
 use App\Reminder;
 use App\ReminderCustomers;
+use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
 
@@ -27,7 +29,8 @@ class ReminderController extends Controller
     public function reminderForm(){
     	$id = Auth::id();
     	$list = UserList::where('user_id',$id)->get();
-    	return view('reminder.reminder-form',['data'=>$list]);
+        $templates = Templates::where('user_id',$id)->get();
+    	return view('reminder.reminder-form',['data'=>$list, 'templates'=>$templates]);
     }
 
     /* Create and insert data reminder and reminder customer into database */
@@ -37,14 +40,27 @@ class ReminderController extends Controller
     	$message = $req['message'];
     	$days = $req['day'];
 
-    	foreach($req['id'] as $row=>$list_id){
-    		$reminder = new Reminder;
-    		$reminder->user_id = $user_id;
-    		$reminder->list_id = $list_id;
-    		$reminder->days = $days;
-    		$reminder->message = $message;
-    		$reminder->save();
-    	}
+        $rules = array(
+            'id'=>['required'],
+            'message'=>['required','max:3000'],
+            'day'=>['required','numeric'],
+        );
+
+        $validator = Validator::make($request->all(),$rules);
+        $err = $validator->errors();
+
+        if($validator->fails()){
+            return redirect('reminderform')->with('error',$err);
+        } else {
+            foreach($req['id'] as $row=>$list_id){
+                $reminder = new Reminder;
+                $reminder->user_id = $user_id;
+                $reminder->list_id = $list_id;
+                $reminder->days = $days;
+                $reminder->message = $message;
+                $reminder->save();
+            }
+        }
 
     	/* If data successfully inserted into reminder */
     	if($reminder->save() == true){

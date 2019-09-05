@@ -15,22 +15,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['middleware' => ['web']],function(){
-/* Customers */
-Route::get('customer/{list_name}','CustomerController@index')->name('customer'); //register-customer.blade
-Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
-});
+/* User Customer */
+Route::get('usercustomer/{id_list}','ListController@userCustomer');
 
 Auth::routes();
+
 Route::get('/home', 'HomeController@index')->name('home');//home.blade
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
 /* Lists */
 Route::post('addlist','ListController@addList')->middleware('userlist')->name('addlist'); //<--home.blade
 Route::get('userlist','ListController@userList')->name('userlist');
-
-/* User Customer */
-Route::get('usercustomer/{id_list}','ListController@userCustomer');
 
 /* BroadCast */
 Route::get('broadcast','BroadCastController@index')->name('broadcast');
@@ -40,11 +35,6 @@ Route::get('broadcastform','BroadCastController@FormBroadCast')->name('broadcast
 Route::post('createbroadcast','BroadCastController@createBroadCast')->name('createbroadcast');
 //see broadcast customer
 Route::get('broadcast_customer','BroadCastController@displayBroadCastCustomer')->name('broadcast_customer');
-
-
-Route::get('testbroadcast','BroadCastController@testBroadCast'); 
-Route::get('justcarbon','BroadCastController@justcarbon'); 
-
 
 /* Reminder */
 Route::get('reminder','ReminderController@index')->name('reminder'); 
@@ -57,3 +47,28 @@ Route::get('reminder_customer','ReminderController@displayReminderCustomers')->n
 // change reminder's status
 Route::get('reminder-status/{id_reminder}/{status}','ReminderController@setReminderStatus');
 Route::post('remindermessage','ReminderController@updateReminderMessage')->name('remindermessage');
+
+
+/* Templates */
+Route::get('templates','TemplatesController@templateForm')->name('templates');
+//insert into database broadcast template
+Route::post('addtemplate','TemplatesController@createTemplate')->middleware('template')->name('addtemplate');
+//get broadcast template list name
+Route::get('templatelist','TemplatesController@displayTemplateList')->name('templatelist');
+// get message from broadcast template
+Route::get('displaytemplate','TemplatesController@displayTemplate')->name('displaytemplate');
+// update template
+Route::post('updatetemplate','TemplatesController@updateTemplate')->middleware('template')->name('updatetemplate');
+// delete template
+Route::get('deletetemplate','TemplatesController@delTemplate')->name('deletetemplate');
+
+Route::get('testbroadcast','BroadCastController@testBroadCast'); 
+Route::get('justcarbon','BroadCastController@justcarbon');  
+
+Route::group(['middleware' => 'guest'], function()
+{
+	/* Customers */
+	Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
+	/* Customer registration */
+	Route::get('{list_name}','CustomerController@index')->name('customer'); //register-customer.blade
+});

@@ -61,10 +61,6 @@
                                     Add List
                                 </button>
                             </div>
-                              <!-- User List table -->
-                            <div class="col-md-6 offset-md-4">
-                               <a class="btn btn-warning" href="{{route('userlist')}}">See List</a>
-                            </div>
                         </div>
                      </form>
                      <!-- end form -->
@@ -113,6 +109,14 @@
 
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control" name="api_key"  value="{{$user->api_key}}" />
+                            </div>
+                        </div> 
+                        <!-- Password -->
+                        <div class="form-group row">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Change Password </label>
+
+                            <div class="col-md-6">
+                                <input id="name" type="password" class="form-control" name="password" />
                             </div>
                         </div> 
                         <!-- submit button -->

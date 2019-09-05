@@ -35,6 +35,25 @@
                         </div>
                     @endif
 
+                    <form id="get_template">
+                        <div class="form-group row">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Choose Template</label>
+                            <div class="col-md-6">
+                                <select class="form-control" name="template_list" id="display-template">
+                                  <option>Choose</option>
+                                  @if($templates->count() > 0)
+                                    @foreach($templates as $row)
+                                      <option value="{{$row->id}}">{{$row->name}}</option>
+                                    @endforeach
+                                  @endif
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-warning btn-sm">Add</button>
+                            </div>
+                        </div> 
+                    </form>
+
                      <form method="POST" action="{{ route('reminderadd') }}">
                         @csrf
 
@@ -50,6 +69,9 @@
                                 </div>
                                  @endforeach
                                 <!-- end check box -->
+                                 @if (session('error'))
+                                    <div class="error">{{ session('error')->first('id') }}</div>
+                                 @endif
                             </div>
                         </div> 
 
@@ -57,7 +79,10 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">Message</label>
                             <div class="col-md-6">
                                 <textarea id="divInput-description-post" class="form-control" name="message"></textarea>
-                            </div>
+                                 @if (session('error'))
+                                    <div class="error">{{ session('error')->first('message') }}</div>
+                                 @endif
+                             </div>
                         </div> 
 
                         <div class="form-group row">
@@ -72,6 +97,9 @@
                                   }
                                   @endphp
                                 </select>
+                                 @if (session('error'))
+                                    <div class="error">{{ session('error')->first('days') }}</div>
+                                 @endif
                             </div>
                         </div>
 
@@ -93,11 +121,35 @@
 <!-- end container -->   
 </div>
 
+
 <!-- give emoji -->
  <script type="text/javascript">
     $("#divInput-description-post").emojioneArea({
-        pickerPosition: "top",
+        pickerPosition: "right",
         mainPathFolder : "{{url('')}}",
     });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        displayTemplate();
+    });
+
+    /* Attach broadcast template into textarea message */
+    function displayTemplate(){
+        $("body").on('submit','#get_template',function(e){
+            e.preventDefault();
+            var id = document.getElementsByName("template_list")[0].value;
+            $.ajax({
+                type : 'GET',
+                url : '{{route("displaytemplate")}}',
+                data : {'id':id},
+                dataType : "text",
+                success : function(txt){
+                    $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(txt);
+                }
+            });
+        });
+    }
 </script>
 @endsection

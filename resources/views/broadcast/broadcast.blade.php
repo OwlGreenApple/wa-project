@@ -27,10 +27,12 @@
             <div class="card">
                 <div class="card-header"><b>Broadcast</b></div>
 
-                <div><a class="btn btn-warning btn-sm" href="{{route('broadcastform')}}">Create Broadcast</a></div>
-
                 <div class="card-body">
-                    <table class="table table-striped table-responsive" id="user-list">
+                <div class="mb-2">
+                    <a class="btn btn-success btn-sm" href="{{route('broadcastform')}}">Create Broadcast</a>
+                </div>
+
+                    <table class="table table-striped table-responsive" id="broadcast-list">
                         <thead>
                             <th>User</th>
                             <th>lists</th>
@@ -88,7 +90,15 @@
 <script type="text/javascript">
     $(document).ready(function(){
         getText();
+        table();
     });
+
+    function table(){
+        $("#broadcast-list").dataTable({
+            'pageLength':5,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        });
+    }
 
     function getText(){
         $(".display_popup").click(function(){

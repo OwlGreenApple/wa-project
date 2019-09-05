@@ -26,6 +26,10 @@
     <script type="text/javascript" src="{{ asset('/assets/emoji/js/prettify.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/assets/emoji/js/emojionearea.js') }}"></script>
 
+    <!-- Data Table -->
+    <link href="{{ asset('/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="{{ asset('/assets/DataTables/datatables.min.js') }}"></script>
+
 </head>
 <body>
 
@@ -58,6 +62,21 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('home')) ? 'active' : '' }}" href="{{ route('home') }}">Home</a>
+                            </li> 
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('userlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('broadcast')||request()->is('broadcast_customer')||request()->is('broadcastform')) ? 'active' : '' }}" href="{{ route('broadcast') }}">Broadcast</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('templates')) ? 'active' : '' }}" href="{{ route('templates') }}">Template</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>

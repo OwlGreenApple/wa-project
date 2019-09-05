@@ -64,4 +64,17 @@
     </div>
 <!-- end container -->   
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        table();
+    });
+
+     function table(){
+        $("#user-list").dataTable({
+            'pageLength':5,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        });
+    }
+</script>
 @endsection

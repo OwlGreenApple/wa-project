@@ -77,6 +77,8 @@ class SendWA extends Command
                         $status = 1;
                       } elseif($delivery_status == 'sent') {
                         $status = 2;
+                      } elseif($delivery_status == 'failed') {
+                        $status = 5;
                       } else {
                         $status = 0;
                       }
@@ -122,7 +124,7 @@ class SendWA extends Command
                     $day_reminder = $col->days; // how many days
                     $customer_signup = Carbon::parse($col->cstreg);
                     $adding = $customer_signup->addDays($day_reminder);
-                    //$reminder_customer_status = $col->rc_st;
+                    $reminder_customer_status = $col->rc_st;
                     $reminder_customers_id = $col->rcs_id;
                     $wa_number = $col->wa_number;
                     $message = $col->message;
@@ -137,7 +139,7 @@ class SendWA extends Command
 
                     $wasengger = $this->sendWA($wa_number,$api_key,$message);
                     /* if the time has reach or pass added time */
-                    if(($sending == true) && ($current_time >= $adding)){
+                    if(($sending == true) && ($current_time >= $adding) && $reminder_customer_status == 0){
                          /* wasengger */
                          $wasengger;
                     }
@@ -148,6 +150,8 @@ class SendWA extends Command
                         $status = 1;
                       } elseif($delivery_status == 'sent') {
                         $status = 2;
+                      } elseif($delivery_status == 'failed') {
+                        $status = 5;
                       } else {
                         $status = 0;
                       } 

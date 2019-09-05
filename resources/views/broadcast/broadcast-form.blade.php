@@ -25,6 +25,7 @@
     <!-- add list-->
     <div class="row justify-content-center">
         <div class="col-md-8">
+
             <div class="card">
                 <div class="card-header"><b>Create BroadCast</b></div>
 
@@ -41,9 +42,28 @@
                          </div>   
                     @endif
 
+                    <form id="get_template">
+                        <div class="form-group row">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Choose Template</label>
+                            <div class="col-md-6">
+                                <select class="form-control" name="template_list" id="display-template">
+                                    <option>Choose</option>
+                                    @if($templates->count() > 0)
+                                        @foreach($templates as $row)
+                                            <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary btn-sm">Add</button>
+                            </div>
+                        </div> 
+                    </form>
+
+                    <!-- Registration Form -->
                      <form method="POST" action="{{ route('createbroadcast') }}">
                         @csrf
-
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Lists Option</label>
                             <div class="col-md-6">
@@ -56,6 +76,11 @@
                                 </div>
                                  @endforeach
                                 <!-- end check box -->
+                                @if (session('error'))
+                                    <div class="error" role="alert">
+                                        {{ session('error')->first('id') }}
+                                     </div>   
+                                @endif 
                             </div>
                         </div> 
 
@@ -63,6 +88,11 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">Message</label>
                             <div class="col-md-6">
                                 <textarea id="divInput-description-post" class="form-control" name="message"></textarea>
+                                 @if (session('error'))
+                                    <div class="error" role="alert">
+                                        {{ session('error')->first('message') }}
+                                     </div>   
+                                 @endif 
                             </div>
                         </div> 
 
@@ -87,9 +117,32 @@
 <!-- give emoji -->
  <script type="text/javascript">
     $("#divInput-description-post").emojioneArea({
-        pickerPosition: "top",
+        pickerPosition: "right",
         mainPathFolder : "{{url('')}}",
     });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        displayTemplate();
+    });
+
+    /* Attach broadcast template into textarea message */
+    function displayTemplate(){
+        $("body").on('submit','#get_template',function(e){
+            e.preventDefault();
+            var id = document.getElementsByName("template_list")[0].value;
+            $.ajax({
+                type : 'GET',
+                url : '{{route("displaytemplate")}}',
+                data : {'id':id},
+                dataType : "text",
+                success : function(txt){
+                    $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(txt);
+                }
+            });
+        });
+    }
 </script>
 
 @endsection

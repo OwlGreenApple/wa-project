@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\UserList;
 use App\BroadCast;
 use App\BroadCastCustomers;
+use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
 use App\User;
@@ -32,7 +33,8 @@ class BroadCastController extends Controller
     public function FormBroadCast(){
     	$id_user = Auth::id();
     	$userlist = UserList::where('user_id','=',$id_user)->get();
-    	return view('broadcast.broadcast-form',['data'=>$userlist]);
+    	$templates = Templates::where('user_id','=',$id_user)->get();
+    	return view('broadcast.broadcast-form',['data'=>$userlist,'templates'=>$templates]);
     }
 
     /* Create broadcast list */
@@ -43,13 +45,16 @@ class BroadCastController extends Controller
     	$msg = array('message'=>$message);
 
     	/* Validator to limit max message character */
-    	$validator = Validator::make($msg,[
-    		'message'=> ['required','max:3000']
-    	]);
+    	  $rules = array(
+            'id'=>['required'],
+            'message'=>['required','max:3000'],
+        );
+
+        $validator = Validator::make($request->all(),$rules);
 
     	if($validator->fails()){
     		$error = $validator->errors();
-    		return redirect('broadcastform')->with('status_error',$error->first('message'));
+    		return redirect('broadcastform')->with('error',$error);
     	} else {
     		foreach($req['id'] as $row=>$list_id){
 	    		$broadcast = new BroadCast;

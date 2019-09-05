@@ -8,7 +8,7 @@
                 <div class="card-header"><b>User's Customer</b></div>
 
                 <div class="card-body">
-                    <table class="table table-striped table-responsive" id="user-list">
+                    <table class="table table-striped table-responsive" id="user-customer">
                         <thead>
                             <th>Customer's Name</th>
                             <th>Customer's WA</th>
@@ -48,4 +48,17 @@
     </div>
 <!-- end container -->   
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        table();
+    });
+
+     function table(){
+        $("#user-customer").dataTable({
+            'pageLength':5,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        });
+    }
+</script>
 @endsection

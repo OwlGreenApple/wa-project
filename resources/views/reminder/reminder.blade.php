@@ -5,7 +5,7 @@
 <!-- navbar -->
 <div class="container mb-2">
     <div class="row justify-content-center">
-        <div class="col-md-9">
+        <div class="col-md-10">
             <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
               <ul class="navbar-nav">
                 <li class="nav-item">
@@ -23,7 +23,7 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-9">
+        <div class="col-md-10">
             <div class="card">
                 <div class="card-header"><b>Reminder</b></div>
 
@@ -39,9 +39,12 @@
                     </div>
                  @endif
 
-                <div><a class="btn btn-warning btn-sm" href="{{route('reminderform')}}">Create Reminder</a></div>
-
                 <div class="card-body">
+                     <div class="mb-2">
+                         <a class="btn btn-warning btn-sm" href="{{route('reminderform')}}">Create Reminder</a>
+                     </div>
+
+                    <div class="table-responsive">
                     <table class="table table-striped table-responsive" id="user-list">
                         <thead>
                             <th>User</th>
@@ -83,6 +86,7 @@
                             @endif
                         </tbody>
                     </table>
+                    </div>
                 </div>
                 <!-- end card-body -->  
             </div>
@@ -106,12 +110,11 @@
                 <form id="update_message">
                     <textarea id="divInput-description-post" rows="5" class="form-control message"></textarea><!-- display message -->
                     <input type="hidden" class="id_reminder" />
-                    <button type="submit" class="btn btn-warning">Edit</button>
+                    <div class="mt-2">
+                        <button type="submit" class="btn btn-warning">Edit</button>
+                    </div>
                 </form>
             </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
       
@@ -123,7 +126,15 @@
         getText();
         updateMessage();
         emojiOne();
+        table();
     });
+
+    function table(){
+        $("#user-list").dataTable({
+            'pageLength':5,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        });
+    }
 
     function getText(){
         $("body").on("click",".display_popup",function(){
