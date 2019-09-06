@@ -12,7 +12,11 @@ use App\ReminderCustomers;
 class CustomerController extends Controller
 {
     public function index(Request $request, $product_list){
-    	$check_link = UserList::where('name','=',$product_list)->first();
+    	$check_link = UserList::where([
+            ['name','=',$product_list],
+            ['status','=',1],
+        ])->first();
+
     	if(empty($product_list)){
     		return redirect('/');
     	} elseif(is_null($check_link)) {
@@ -25,6 +29,7 @@ class CustomerController extends Controller
 
     public function addCustomer(Request $request){
     	$userlist =  $request->session()->get('userlist'); //retrieve session from userlist
+        $request->session()->reflash();
     	$get_id_list = UserList::where('name','=',$userlist)->first();
 
         /* Filter to avoid unavailable link */
@@ -43,7 +48,7 @@ class CustomerController extends Controller
         /* if customer successful sign up */
     	if($customer->save() == true){
     		$reminder_id = Reminder::where('list_id','=',$get_id_list->id)->max('id');
-            $reminder = Reminder::where('id','=',$reminder_id)->first();
+            $reminder = Reminder::where([['id','=',$reminder_id],['status',1]])->first();
     	} else {
     		$data['success'] = false;
     		$data['message'] = 'Error-001! Sorry there is something wrong with our system';

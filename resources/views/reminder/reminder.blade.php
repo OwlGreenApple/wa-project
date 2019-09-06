@@ -33,9 +33,9 @@
                     </div>
                 @endif
 
-                 @if (session('error'))
-                    <div class="alert alert-danger" role="alert">
-                        {{ session('error') }}
+                 @if (session('warning'))
+                    <div class="alert alert-warning" role="alert">
+                        {{ session('warning') }}
                     </div>
                  @endif
 
@@ -53,7 +53,6 @@
                             <th>Message</th>
                             <th>Created At</th>
                             <th>Updated At</th>
-                            <th>Status</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
@@ -70,14 +69,11 @@
                                     <td>{{$row->created_at}}</td>
                                     <td>{{$row->updated_at}}</td>
                                     <td>
-                                        @if($row->status == 0)
-                                            Disabled
+                                        <a href="{{url('reminder-status/'.$row->id.'/'.$row->status.'')}}" class="btn btn-primary btn-sm"> @if($row->status == 0)
+                                            Activate
                                         @else
-                                            Active
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{url('reminder-status/'.$row->id.'/'.$row->status.'')}}" class="btn btn-primary btn-sm">Set Status</a>
+                                            Deactivate
+                                        @endif</a>
                                     </td>
                                 </tr>
                             @endforeach

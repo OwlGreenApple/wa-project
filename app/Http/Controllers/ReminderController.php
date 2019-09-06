@@ -28,7 +28,7 @@ class ReminderController extends Controller
     /* Display form to create reminder */
     public function reminderForm(){
     	$id = Auth::id();
-    	$list = UserList::where('user_id',$id)->get();
+    	$list = UserList::where([['user_id',$id],['status',1]])->get();
         $templates = Templates::where('user_id',$id)->get();
     	return view('reminder.reminder-form',['data'=>$list, 'templates'=>$templates]);
     }
@@ -95,6 +95,7 @@ class ReminderController extends Controller
                 $reminder_get_id = Reminder::where([
                     ['list_id','=',$col->list_id],
                     ['created_at','=',$created_date],
+                    ['status','=',1],
                 ])->select('id')->get();
 
                 $remindercustomer = new ReminderCustomers;
@@ -152,15 +153,15 @@ class ReminderController extends Controller
                 ['reminder_id','=',$id_reminder],
             ])->whereIn('status', [0,3])->update(['status'=> $turn_customer]);
         } else {
-            return redirect('reminder')->with('error','Error-001! Unable to change reminder status');
+            return redirect('reminder')->with('error','Error-001! Unable to changed reminder status');
         }
 
         /* if correct then reminder-customer's status updated */
         if($remindercustomer == true){
-            return redirect('reminder')->with('message','Reminder status has been changed');
+            return redirect('reminder')->with('message','Your reminder status just changed');
         } else {
             /* if there is no status = 0 */
-            return redirect('reminder')->with('error','Warning!! Unable to change reminder status due there is no new data');
+            return redirect('reminder')->with('warning','Warning! Your reminder status just changed, but nothing reminder for customer');
         }
     }
 
@@ -172,7 +173,7 @@ class ReminderController extends Controller
         $reminder = Reminder::where('id','=',$id)->update(['message'=>$message]);
 
         if($reminder == true){
-            $data['msg'] = 'Reminder message has been updated';
+            $data['msg'] = 'Reminder message just updated';
         } else {
             $data['msg'] = 'Error!! Unable to update reminder message';
         }

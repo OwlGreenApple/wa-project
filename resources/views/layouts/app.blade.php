@@ -105,5 +105,11 @@
         </main>
     </div>
 
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".alert").delay(2000).fadeOut(3000);
+        });
+    </script>
+
 </body>
 </html>
