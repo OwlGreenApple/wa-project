@@ -38,11 +38,19 @@ class ReminderController extends Controller
     	$user_id = Auth::id();
     	$req = $request->all();
     	$message = $req['message'];
-    	$days = $req['day'];
+        $event = $req['is_event'];
+        $eventdate = $req['eventdate'];
+
+        if($event == 0){
+            $days = $req['day'];
+        } else {
+            $days = $req['eventday'];
+        }
 
         $rules = array(
             'id'=>['required'],
             'message'=>['required','max:3000'],
+            'is_event'=>['required','numeric'],
             'day'=>['required','numeric'],
         );
 
@@ -56,6 +64,8 @@ class ReminderController extends Controller
                 $reminder = new Reminder;
                 $reminder->user_id = $user_id;
                 $reminder->list_id = $list_id;
+                $reminder->is_event = $event;
+                $reminder->event = $eventdate;
                 $reminder->days = $days;
                 $reminder->message = $message;
                 $reminder->save();

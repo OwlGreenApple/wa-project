@@ -85,7 +85,39 @@
                              </div>
                         </div> 
 
-                        <div class="form-group row">
+                         <div class="form-group row">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Set Event</label>
+                            <div class="col-md-6">
+                                <select class="form-control" name="is_event">
+                                  <option value="0">Reminder</option>
+                                  <option value="1">Event</option>
+                                </select>
+                            </div>
+                        </div> 
+
+                        <div class="form-group row event-counter">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Calendar</label>
+                            <div class="col-md-6">
+                              <input name="eventdate" class="form-control datepicker" />
+                            </div>
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Set days before event</label>
+                            <div class="col-md-6">
+                                <select class="form-control" name="eventday">
+                                  @php
+                                  for($x=1;$x<=100;$x++){
+                                   @endphp
+                                    <option value="{{$x}}">-{{$x}}</option>
+                                  @php  
+                                  }
+                                  @endphp
+                                </select>
+                                 @if (session('error'))
+                                    <div class="error">{{ session('error')->first('eventday') }}</div>
+                                 @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row reminder-counter">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Add Day</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="day">
@@ -133,7 +165,29 @@
 <script type="text/javascript">
     $(document).ready(function(){
         displayTemplate();
+        setEvent();
+        datepicker();
     });
+
+    function datepicker(){
+      $(".datepicker").datetimepicker();
+    }
+
+    /* Set option for event and reminder */
+
+    function setEvent(){
+      $(".event-counter").hide();
+      $("select[name='is_event']").change(function(){
+          var vals = $(this).val();
+          if(vals == 0){
+            $(".event-counter").hide();
+            $(".reminder-counter").show();
+          } else {
+            $(".event-counter").show();
+            $(".reminder-counter").hide();
+          }
+      });
+    }
 
     /* Attach broadcast template into textarea message */
     function displayTemplate(){

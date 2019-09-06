@@ -16,6 +16,8 @@ class ListController extends Controller
     	$list = new UserList;
     	$list->user_id = Auth::id();
     	$list->name = $request->name;
+        //$list->wa_number = $request->wa_number;
+        //$list->api_key = $request->api_key;
         $list->content = $request->editor1;
     	$list->save();
 

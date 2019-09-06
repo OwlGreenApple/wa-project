@@ -155,4 +155,19 @@
     </div>
 <!-- end container -->   
 </div>
+
+<script type="text/javascript">
+     /* CKEditor */
+        var editor = CKEDITOR.replace( 'editor1',{
+            extraPlugins: 'filebrowser',
+            extraPlugins: 'colorbutton',
+        });
+        CKFinder.setupCKEditor( editor );
+
+        CKEDITOR.editorConfig = function( config ) {
+            config.extraPlugins = 'filebrowser';
+            config.extraPlugins = 'colorbutton';
+        };
+</script>
+
 @endsection

@@ -12,6 +12,7 @@
    <!-- Scripts -->
     <script src="{{ asset('/assets/js/jquery-3.2.1.min.js') }}"></script>
     <script src="{{ asset('/assets/js/app.js') }}"></script>
+    <script src="{{ asset('/assets/datetimepicker/jquery.datetimepicker.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -20,6 +21,7 @@
     <!-- Styles -->
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet">
+    <link href="{{ asset('/assets/datetimepicker/jquery.datetimepicker.css') }}" rel="stylesheet">
 
      <!-- Emoji -->
     <link href="{{ asset('/assets/emoji/css/emojionearea.min.css') }}" rel="stylesheet"> 
@@ -113,18 +115,6 @@
     </div>
 
     <script type="text/javascript">
-         /* CKEditor */
-        var editor = CKEDITOR.replace( 'editor1',{
-            extraPlugins: 'filebrowser',
-            extraPlugins: 'colorbutton',
-        });
-        CKFinder.setupCKEditor( editor );
-
-        CKEDITOR.editorConfig = function( config ) {
-            config.extraPlugins = 'filebrowser';
-            config.extraPlugins = 'colorbutton';
-        };
-
         $(document).ready(function(){
             $(".alert").delay(2000).fadeOut(3000);
         });

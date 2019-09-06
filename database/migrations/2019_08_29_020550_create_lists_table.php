@@ -17,8 +17,6 @@ class CreateListsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->string('name');
-            $table->string('wa_number');
-            $table->string('api_key');
             $table->text('content')->nullable();
             $table->timestamps();
             $table->boolean('status')->default(1);
