@@ -54,6 +54,20 @@
                                 @enderror
                             </div>
                         </div>  
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-md-right">No WA</label>
+
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="wa_number" />
+                            </div>
+                        </div>  
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-md-right">API Key</label>
+
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="api_key" />
+                            </div>
+                        </div>  
                         <div class="form-group">
                             <div class="col-md-12">
                                  <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
