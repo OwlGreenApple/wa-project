@@ -43,15 +43,34 @@
                      <form method="POST" action="{{ route('addlist') }}">
                         @csrf
                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Name List</label>
+                            <label for="name" class="col-md-3 col-form-label text-md-right">Name List</label>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <input id="name" type="text" class="form-control" name="name" />
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                            </div>
+                        </div>  
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-md-right">No WA</label>
+
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="wa_number" />
+                            </div>
+                        </div>  
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-md-right">API Key</label>
+
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="api_key" />
+                            </div>
+                        </div>  
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                 <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
                             </div>
                         </div> 
                         <!-- submit button -->
@@ -92,7 +111,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="name" value="{{$user->name}}" />
+                                <input type="text" class="form-control" name="name" value="{{$user->name}}" />
                             </div>
                         </div>  
                         <!-- wa number -->
@@ -100,7 +119,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">WA Number</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="wa_number"  value="{{$user->wa_number}}" />
+                                <input type="text" class="form-control" name="wa_number"  value="{{$user->wa_number}}" />
                             </div>
                         </div>  
                         <!-- API key -->
@@ -108,7 +127,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">API Key</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="api_key"  value="{{$user->api_key}}" />
+                                <input type="text" class="form-control" name="api_key"  value="{{$user->api_key}}" />
                             </div>
                         </div> 
                         <!-- Password -->
@@ -116,7 +135,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">Change Password </label>
 
                             <div class="col-md-6">
-                                <input id="name" type="password" class="form-control" name="password" />
+                                <input type="password" class="form-control" name="password" />
                             </div>
                         </div> 
                         <!-- submit button -->

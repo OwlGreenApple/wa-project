@@ -23,7 +23,8 @@ class CustomerController extends Controller
     		return redirect('/');
     	} else {
     		$request->session()->flash('userlist',$product_list);
-    		return view('register-customer');
+            $list = UserList::where('name',$product_list)->first();
+    		return view('register-customer',['content'=>$list->content]);
     	}
     }
 
