@@ -26,6 +26,10 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
 	Route::post('addlist','ListController@addList')->middleware('userlist')->name('addlist'); //<--home.blade
 	Route::get('userlist','ListController@userList')->name('userlist');
+	Route::post('listupload','ListController@uploadListImage')->name('listupload');
+	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
+	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');
+	Route::post('updatelistcontent','ListController@updateListContent')->name('updatelistcontent');
 
 	/* BroadCast */
 	Route::get('broadcast','BroadCastController@index')->name('broadcast');

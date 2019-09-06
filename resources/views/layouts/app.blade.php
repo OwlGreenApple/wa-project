@@ -30,6 +30,13 @@
     <link href="{{ asset('/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
     <script type="text/javascript" src="{{ asset('/assets/DataTables/datatables.min.js') }}"></script>
 
+    <!-- CKEditor -->
+    <link href="{{ asset('/assets/ckeditor/contents.css') }}" rel="stylesheet" />
+    <script type="text/javascript" src="{{ asset('/assets/ckeditor/ckeditor.js') }}"></script>
+
+    <!-- CKFinder -->
+    <script type="text/javascript" src="{{ asset('/assets/ckfinder/ckfinder.js') }}"></script>
+
 </head>
 <body>
 
@@ -106,6 +113,18 @@
     </div>
 
     <script type="text/javascript">
+         /* CKEditor */
+        var editor = CKEDITOR.replace( 'editor1',{
+            extraPlugins: 'filebrowser',
+            extraPlugins: 'colorbutton',
+        });
+        CKFinder.setupCKEditor( editor );
+
+        CKEDITOR.editorConfig = function( config ) {
+            config.extraPlugins = 'filebrowser';
+            config.extraPlugins = 'colorbutton';
+        };
+
         $(document).ready(function(){
             $(".alert").delay(2000).fadeOut(3000);
         });
