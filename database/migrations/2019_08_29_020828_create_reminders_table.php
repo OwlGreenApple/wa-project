@@ -17,6 +17,8 @@ class CreateRemindersTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->bigInteger('list_id');
+            $table->boolean('is_event')->default(0);
+            $table->dateTime('event_date')->nullable();
             $table->integer('days');
             $table->text('message')->nullable();
             $table->timestamps();

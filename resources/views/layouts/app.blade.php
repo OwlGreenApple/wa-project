@@ -19,7 +19,10 @@
 
     <!-- Styles -->
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet">
+    <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet"> 
+
+    <!-- Font Awesome 4.7 -->
+    <link href="{{ asset('/assets/Font-Awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet">
 
      <!-- Emoji -->
     <link href="{{ asset('/assets/emoji/css/emojionearea.min.css') }}" rel="stylesheet"> 
@@ -36,6 +39,11 @@
 
     <!-- CKFinder -->
     <script type="text/javascript" src="{{ asset('/assets/ckfinder/ckfinder.js') }}"></script>
+
+    <!-- Datetimepicker -->
+    <link href="{{ asset('/assets/datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="{{ asset('/assets/datetimepicker/js/moment.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/assets/datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
 
 </head>
 <body>
@@ -113,18 +121,6 @@
     </div>
 
     <script type="text/javascript">
-         /* CKEditor */
-        var editor = CKEDITOR.replace( 'editor1',{
-            extraPlugins: 'filebrowser',
-            extraPlugins: 'colorbutton',
-        });
-        CKFinder.setupCKEditor( editor );
-
-        CKEDITOR.editorConfig = function( config ) {
-            config.extraPlugins = 'filebrowser';
-            config.extraPlugins = 'colorbutton';
-        };
-
         $(document).ready(function(){
             $(".alert").delay(2000).fadeOut(3000);
         });

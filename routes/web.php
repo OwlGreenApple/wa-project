@@ -15,6 +15,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('ck','ListController@test');
+
 Auth::routes();
 /* User Customer */
 
@@ -51,6 +53,11 @@ Route::group(['middleware'=>['auth','web']],function(){
 	// change reminder's status
 	Route::get('reminder-status/{id_reminder}/{status}','ReminderController@setReminderStatus');
 	Route::post('remindermessage','ReminderController@updateReminderMessage')->name('remindermessage');
+
+	/* Event */
+	Route::get('event','EventController@index');
+	Route::get('eventform','EventController@eventForm')->name('eventform');
+	Route::post('addevent','EventController@addEvent')->name('addevent');
 
 
 	/* Templates */

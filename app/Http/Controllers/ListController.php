@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers;
 
+//require $_SERVER['DOCUMENT_ROOT'].'/waku/assets/ckfinder/core/connector/php/vendor/CKSource/CKFinder/CKFinder.php';
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+//use CKSource\CKFinder\CKFinder;
 use App\UserList;
 use App\Customer;
 
 class ListController extends Controller
 {
+
+    public function test(){
+        //$ckfinder = new CKFinder();
+        //$ckfinder->test;
+    }
+
     public function addList(Request $request)
     {
     	$list = new UserList;
