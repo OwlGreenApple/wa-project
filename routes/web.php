@@ -16,6 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('ck','ListController@test');
+Route::get('justcarbon','EventController@JUSTCARBON');
 
 Auth::routes();
 /* User Customer */
@@ -55,7 +56,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::post('remindermessage','ReminderController@updateReminderMessage')->name('remindermessage');
 
 	/* Event */
-	Route::get('event','EventController@index');
+	Route::get('event','EventController@index')->name('event');
 	Route::get('eventform','EventController@eventForm')->name('eventform');
 	Route::post('addevent','EventController@addEvent')->name('addevent');
 

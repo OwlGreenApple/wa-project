@@ -2,6 +2,7 @@
 
 @section('content')
 <!-- navbar -->
+
 <div class="container mb-2">
     <div class="row justify-content-center">
         <div class="col-md-8">

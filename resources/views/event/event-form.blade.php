@@ -151,12 +151,15 @@
         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
         var yyyy = today.getFullYear();
         var hh = today.getHours();
+        hh = ("0" + hh).slice(-2);
         var min = today.getMinutes();
+        min = ("0" + min).slice(-2);
 
         today = yyyy+'-'+mm+'-'+dd+' '+hh+':'+min;
 
+        console.log(today);
+
         var ed = document.forms["event_form"];
-        //var ed = $("input[name='event_date']").val();
 
         if(ed["event_date"].value == ""){
             alert("Date event must be filled out");
@@ -164,7 +167,7 @@
         }
 
         if(ed["event_date"].value < today){
-            alert("Date cannot be less than today");
+            alert("Date or time cannot be less than today");
             return false;
         }
 

@@ -6,6 +6,7 @@
  * For the official documentation visit https://ckeditor.com/docs/ckfinder/ckfinder3-php/
  */
 
+session_start();
 /*============================ PHP Error Reporting ====================================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/debugging.html
 
@@ -77,7 +78,7 @@ $config['resourceTypes'][] = array(
 $config['resourceTypes'][] = array(
     'name'              => 'Images',
     'directory'         => 'images',
-    'maxSize'           => '0.1K',
+    'maxSize'           => '1M',
     'allowedExtensions' => 'gif,jpeg,jpg,png',
     'deniedExtensions'  => '',
     'backend'           => 'default'
@@ -90,7 +91,8 @@ $config['resourceTypes'][] = array(
 $config['backends'][] = array(
     'name'         => 'default',
     'adapter'      => 'local',
-    'baseUrl'      => '/ckfinder/userfiles/',
+    'baseUrl'      =>  $_SESSION['test'],
+    //'baseUrl'      => '/ckfinder/userfiles/',
 //  'root'         => '', // Can be used to explicitly set the CKFinder user files directory.
     'chmodFiles'   => 0777,
     'chmodFolders' => 0755,

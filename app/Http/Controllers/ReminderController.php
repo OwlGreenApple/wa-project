@@ -18,7 +18,7 @@ class ReminderController extends Controller
 	/* Display created reminder */
     public function index(){
     	$id = Auth::id();
-    	$list = Reminder::where('reminders.user_id',$id)
+    	$list = Reminder::where([['reminders.user_id',$id],['reminders.is_event',0]])
     			->join('lists','reminders.list_id','=','lists.id')
     			->select('lists.name','reminders.*')
     			->get();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Rules\CheckDateEvent;
 use App\UserList;
 use App\Reminder;
 use App\ReminderCustomers;
@@ -14,6 +15,12 @@ use Carbon\Carbon;
 
 class EventController extends Controller
 {
+
+	PUBLIC FUNCTION JUSTCARBON() {
+		//echo carbon::parse('2019-09-10 16:58:00')->subDays(5);
+		echo carbon::parse('2019-09-10 16:58:00')->addDays(15);
+	}
+
     public function index(){
     	$id = Auth::id();
     	$list = Reminder::where([['reminders.user_id',$id],['reminders.is_event',1]])
@@ -39,13 +46,9 @@ class EventController extends Controller
         $rules = array(
             'id'=>['required'],
             'message'=>['required','max:3000'],
+            'event_date'=>['required',new CheckDateEvent],
             'day'=>['required'],
         );
-
-      	if($this->has_dupes($req['day']) == false){
-      		//die('');
-      		return redirect('eventform')->with('error_day','Do not use same value for day');
-      	}
 
         $validator = Validator::make($request->all(),$rules);
         $err = $validator->errors();
@@ -54,6 +57,11 @@ class EventController extends Controller
         if($validator->fails()){
             return redirect('eventform')->with('error',$err);
         } else {
+        	/* prevent duplicate days */
+        	if($this->has_dupes($req['day']) == false){
+	      		return redirect('eventform')->with('error_day','Do not use same value for day');
+	      	} 
+
         	$days = $req['day'];
         	//$req['id'] == checkbox list
             foreach($days as $day){

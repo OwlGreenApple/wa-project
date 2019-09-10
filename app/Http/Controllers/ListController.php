@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-//require $_SERVER['DOCUMENT_ROOT'].'/waku/assets/ckfinder/core/connector/php/vendor/CKSource/CKFinder/CKFinder.php';
+//require $_SERVER['DOCUMENT_ROOT'].'/waku/assets/ckfinder/core/connector/php/vendor/autoload.php';
+//require $_SERVER['DOCUMENT_ROOT'].'/waku/app/ckfinder/core/connector/php/vendor/CKSource/CKFinder/CKFinder.php';
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-//use CKSource\CKFinder\CKFinder;
 use App\UserList;
 use App\Customer;
 
@@ -16,9 +16,12 @@ class ListController extends Controller
 {
 
     public function test(){
-        //$ckfinder = new CKFinder();
-        //$ckfinder->test;
-    }
+        //session_start();
+       //session(['test'=>'/ckfinder/test']);
+        //$_SESSION['test'] = '/ckfinder/test';
+        //unset($_SESSION['test']);
+        mkdir($_SERVER['DOCUMENT_ROOT'].'/ckfinder/mdir', 0741);
+    }   
 
     public function addList(Request $request)
     {
@@ -29,6 +32,7 @@ class ListController extends Controller
     	$list->save();
 
     	if($list->save() == true){
+            mkdir($_SERVER['DOCUMENT_ROOT'].'/ckfinder/'.$request->name.'-'.$list->id.'', 0741);
     		return redirect('home')->with('status','List has been created');
     	} else {
     		return redirect('home')->with('status','Error!, failed to create list');

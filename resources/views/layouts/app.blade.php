@@ -90,6 +90,9 @@
                                 <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('event')||request()->is('eventform')||request()->is('event_customer')) ? 'active' : '' }}" href="{{ route('event') }}">Event</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('templates')) ? 'active' : '' }}" href="{{ route('templates') }}">Template</a>
                             </li>
                             <li class="nav-item dropdown">
