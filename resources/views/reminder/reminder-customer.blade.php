@@ -55,13 +55,13 @@
                                         @if($row->status == 0)
                                             Pending
                                         @elseif($row->status == 1)
-                                            Queue   
+                                            <span class="text-warning">Queue</span>
                                         @elseif($row->status == 2)
-                                            Sent
+                                            <span class="text-success">Sent</span>
                                         @elseif($row->status == 3)
-                                            Disabled
+                                            <span class="text-muted">Disabled</span>
                                         @elseif($row->status == 5)
-                                            Failed
+                                            <span class="text-danger">Failed</span>
                                         @endif
                                     </td>
                                 </tr>

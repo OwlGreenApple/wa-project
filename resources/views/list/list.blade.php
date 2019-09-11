@@ -11,9 +11,6 @@
                 <li class="nav-item">
                   <a href="{{route('home')}}" class="nav-link">Back Home</a>
                 </li>
-                <li class="nav-item">
-                     <a class="nav-link" href="{{route('home')}}">Back To Add List</a>
-                </li>
               </ul>
             </nav>
         </div>
@@ -28,6 +25,8 @@
                 <div class="card-header"><b>User's List</b></div>
 
                 <div class="card-body">
+                     <a class="btn btn-primary btn-sm mb-3" href="{{route('createlist')}}">Create Lists</a>
+
                     <table class="table table-striped table-responsive" id="user-list">
                         <thead>
                             <th>Product Name</th>

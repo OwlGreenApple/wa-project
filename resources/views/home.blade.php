@@ -21,12 +21,13 @@
 </div>
 <!-- end navbar -->
 
+
 <div class="container mb-2">
     <!-- add list-->
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header"><b>Create List</b></div>
+                <div class="card-header"><b>Create Sender</b></div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -40,44 +41,29 @@
                         </div>
                     @endif
 
-                     <form method="POST" action="{{ route('addlist') }}">
+                     <form method="POST" action="{{ route('addsender') }}">
                         @csrf
-                        <div class="form-group row">
-                            <label for="name" class="col-md-3 col-form-label text-md-right">Name List</label>
-
-                            <div class="col-md-8">
-                                <input id="name" type="text" class="form-control" name="name" />
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>  
-                        <div class="form-group row">
-                            <label class="col-md-3 col-form-label text-md-right">No WA</label>
-
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" name="wa_number" />
-                            </div>
-                        </div>  
-                        <div class="form-group row">
+                          <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right">API Key</label>
 
                             <div class="col-md-8">
                                 <input type="text" class="form-control" name="api_key" />
                             </div>
                         </div>  
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                 <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-md-right">WA Number</label>
+
+                            <div class="col-md-8">
+                                <a class="btn btn-info btn-sm mb-3 addfield">Add WA Number</a>
+                                <div class="item"><!-- field appear here --></div>
                             </div>
-                        </div> 
+                        </div>  
+                        
                         <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Add List
+                                    Create Sender
                                 </button>
                             </div>
                         </div>
@@ -114,22 +100,7 @@
                                 <input type="text" class="form-control" name="name" value="{{$user->name}}" />
                             </div>
                         </div>  
-                        <!-- wa number -->
-                        <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">WA Number</label>
-
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" name="wa_number"  value="{{$user->wa_number}}" />
-                            </div>
-                        </div>  
-                        <!-- API key -->
-                        <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">API Key</label>
-
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" name="api_key"  value="{{$user->api_key}}" />
-                            </div>
-                        </div> 
+                       
                         <!-- Password -->
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Change Password </label>
@@ -157,17 +128,26 @@
 </div>
 
 <script type="text/javascript">
-    /* CKEditor */
-    var editor = CKEDITOR.replace( 'editor1',{
-        extraPlugins: ['filebrowser','colorbutton','justify','image2','font'],
-        removePlugins : 'image',
+    $(document).ready(function(){
+        addWACol();
+        delWACol();
     });
-    CKFinder.setupCKEditor( editor );
 
-    CKEDITOR.editorConfig = function( config ) {
-        config.extraPlugins = 'filebrowser,colorbutton,justify,image2,font';
-        config.removePlugins = 'image';
-    };
+    function addWACol(){
+        $("body").on("click",".addfield",function(){
+            var pos = $(".wa_number_box").length;
+            var box_field = '<input type="text" class="pos-'+pos+' form-control float-left col-sm-10 mb-2 wa_number_box" name="wa_number[]" /><a class="btn btn-warning float-left del" id="pos-'+pos+'">Delete</a><div class="clearfix"></div>';
+            $(".item").append(box_field);
+        });
+    }
+
+     function delWACol(){
+        $("body").on("click",".del",function(){
+           var id = $(this).attr('id');
+           $("."+id).remove();
+           $("#"+id).remove();
+        });
+    }
 </script>
 
 @endsection

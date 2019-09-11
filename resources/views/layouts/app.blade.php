@@ -81,7 +81,7 @@
                                 <a class="nav-link {{ (request()->is('home')) ? 'active' : '' }}" href="{{ route('home') }}">Home</a>
                             </li> 
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('userlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists</a>
+                                <a class="nav-link {{ (request()->is('userlist')) || (request()->is('createlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('broadcast')||request()->is('broadcast_customer')||request()->is('broadcastform')) ? 'active' : '' }}" href="{{ route('broadcast') }}">Broadcast</a>
@@ -90,7 +90,7 @@
                                 <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('event')||request()->is('eventform')||request()->is('event_customer')) ? 'active' : '' }}" href="{{ route('event') }}">Event</a>
+                                <a class="nav-link {{ (request()->is('event')||request()->is('eventform')||request()->is('eventcustomer')) ? 'active' : '' }}" href="{{ route('event') }}">Event</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('templates')) ? 'active' : '' }}" href="{{ route('templates') }}">Template</a>

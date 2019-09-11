@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\User;
+use App\Sender;
 
 class CheckCounter extends Command
 {
@@ -38,13 +38,17 @@ class CheckCounter extends Command
      */
     public function handle()
     {
-        $user = User::select('counter','id')->get();
-        foreach($user as $row){
-            $counter = $row->counter;
-            if($counter < 6){
-                $update = User::where('id',$row->id)->update(['counter'=>6]);
+        $sender = Sender::select('counter','user_id')->get();
+
+        if($sender->count() > 0){
+            foreach($sender as $row){
+                $counter = $row->counter;
+                if($counter < 6){
+                    $update = Sender::where('user_id',$row->user_id)->update(['counter'=>6]);
+                }
             }
         }
+        
     }
 
 /* End check counter */

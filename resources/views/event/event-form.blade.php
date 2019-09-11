@@ -143,6 +143,7 @@
     $(document).ready(function(){
         displayTemplate();
         addDays();
+        delDays();
     });
 
      function validateForm(){
@@ -156,8 +157,6 @@
         min = ("0" + min).slice(-2);
 
         today = yyyy+'-'+mm+'-'+dd+' '+hh+':'+min;
-
-        console.log(today);
 
         var ed = document.forms["event_form"];
 
@@ -175,12 +174,21 @@
 
     function addDays(){
       $(".add-day").click(function(){
+        var pos = $(".days").length;
 
-        var box_html = '<select name="day[]" class="form-control days"><?php for($x=-30;$x<=100;$x++) {
-                echo "<option value=".$x.">$x</option>"  ;
-          }?>';
+        var box_html = '<select name="day[]" class="form-control col-sm-9 float-left days pos-'+pos+'"><?php for($x=-30;$x<=100;$x++) {
+                echo "<option value=".$x.">$x</option>";
+          }?></select><span><a id="pos-'+pos+'" class="btn btn-warning float-left del">Delete</a></span><div class="clearfix"></div>';
 
         $("#append").append(box_html);
+      });
+    }
+
+    function delDays(){
+      $("body").on("click",".del",function(){
+        var pos = $(this).attr('id');
+        $("."+pos).remove();
+        $("#"+pos).remove();
       });
     }
 

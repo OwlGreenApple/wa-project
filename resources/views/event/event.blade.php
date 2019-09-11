@@ -12,7 +12,7 @@
                   <a href="{{route('home')}}" class="nav-link">Back Home</a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{route('reminder_customer')}}" class="nav-link">See Event Customers</a>
+                  <a href="{{route('eventcustomer')}}" class="nav-link">See Event Customers</a>
                 </li>
               </ul>
             </nav>

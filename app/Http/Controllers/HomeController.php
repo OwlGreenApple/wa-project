@@ -26,7 +26,23 @@ class HomeController extends Controller
      */
     public function index()
     {
+        session_start();
         $id = Auth::id();
+        $user_name = Auth::user()->name;
+        $directory = $_SERVER['DOCUMENT_ROOT'].'/ckfinder/'.$user_name.'-'.$id;
+
+        /* Create folder for ckfinder and ckeditor image / files */
+       
+        if(!isset($_SESSION['editor_path'])){
+            $_SESSION['editor_path'] = '/ckfinder/'.$user_name.'-'.$id;
+        }
+        
+
+        if(!file_exists($directory))
+        {
+            mkdir($directory, 0741);
+        }
+
         $user = User::where('id','=',$id)->first();
         return view('home',['user'=>$user]);
     }

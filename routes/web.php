@@ -27,7 +27,8 @@ Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//hom
 Route::group(['middleware'=>['auth','web']],function(){
 	/* Lists */
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
-	Route::post('addlist','ListController@addList')->middleware('userlist')->name('addlist'); //<--home.blade
+	Route::get('createlist','ListController@listForm')->name('createlist');
+	Route::post('addlist','ListController@addList')->middleware('userlist')->name('addlist'); 
 	Route::get('userlist','ListController@userList')->name('userlist');
 	Route::post('listupload','ListController@uploadListImage')->name('listupload');
 	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
@@ -59,6 +60,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('event','EventController@index')->name('event');
 	Route::get('eventform','EventController@eventForm')->name('eventform');
 	Route::post('addevent','EventController@addEvent')->name('addevent');
+	Route::get('eventcustomer','EventController@displayEventCustomers')->name('eventcustomer');
 
 
 	/* Templates */
@@ -73,6 +75,9 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::post('updatetemplate','TemplatesController@updateTemplate')->middleware('template')->name('updatetemplate');
 	// delete template
 	Route::get('deletetemplate','TemplatesController@delTemplate')->name('deletetemplate');
+
+	/* Senders */
+	Route::post('addsender','SenderController@addSender')->name('addsender');
 });
 
 /* Customers */

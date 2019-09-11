@@ -123,10 +123,14 @@ class ReminderController extends Controller
     public function displayReminderCustomers()
     {
     	$id_user = Auth::id();
-    	$remindercustomer = ReminderCustomers::where('reminder_customers.user_id','=',$id_user)
+    	$remindercustomer = ReminderCustomers::where([['reminder_customers.user_id','='                ,$id_user],
+                            ['reminders.is_event','=',0]])
     						->join('lists','lists.id','=','reminder_customers.list_id')
     						->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-    						->select('reminder_customers.*','lists.name','customers.wa_number','customers.created_at AS csrg')
+                            ->rightJoin('reminders','reminders.id','=','reminder_customers.reminder_id')
+    						->select('reminder_customers.*','lists.name','customers.wa_number','customers.created_at AS csrg',
+                                'reminders.is_event'
+                            )->orderBy('reminder_customers.id','desc')
     						->get();
     	return view('reminder.reminder-customer',['data'=>$remindercustomer]);
     }

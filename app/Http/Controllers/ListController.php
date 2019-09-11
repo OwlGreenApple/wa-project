@@ -9,30 +9,39 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\UserList;
 use App\Customer;
+use App\Sender;
 
 class ListController extends Controller
 {
 
     public function test(){
-        //session_start();
-       //session(['test'=>'/ckfinder/test']);
-        //$_SESSION['test'] = '/ckfinder/test';
-        //unset($_SESSION['test']);
-        mkdir($_SERVER['DOCUMENT_ROOT'].'/ckfinder/mdir', 0741);
+        session_start();
+        //$id = Auth::id();
+          //  $user_name = Auth::user()->name;
+        //$_SESSION['editor_path'] =  '/ckfinder/'.$user_name.'-'.$id;
+        echo $_SESSION['editor_path'];
+        //unset($_SESSION['editor_path']);
+        //mkdir($_SERVER['DOCUMENT_ROOT'].'/ckfinder/mdir', 0741);
     }   
+
+    public function listForm(){
+        $id_user = Auth::id();
+        $sender = Sender::where('user_id',$id_user)->get();
+        return view('list.list-form',['data'=>$sender]);
+    }
 
     public function addList(Request $request)
     {
     	$list = new UserList;
     	$list->user_id = Auth::id();
-    	$list->name = $request->name;
+    	$list->name = $this->createRandomListName();
         $list->content = $request->editor1;
     	$list->save();
 
     	if($list->save() == true){
-            mkdir($_SERVER['DOCUMENT_ROOT'].'/ckfinder/'.$request->name.'-'.$list->id.'', 0741);
     		return redirect('home')->with('status','List has been created');
     	} else {
     		return redirect('home')->with('status','Error!, failed to create list');
@@ -44,13 +53,13 @@ class ListController extends Controller
     {
     	$id_user = Auth::id();
     	$userlist = UserList::where('user_id','=',$id_user)->get();
-    	return view('list.user-list',['data'=>$userlist]);
+    	return view('list.list',['data'=>$userlist]);
     }
 
     public function userCustomer($id_list)
     {
         $customer = Customer::where('list_id','=',$id_list)->get();
-        return view('list.user-customer',['data'=>$customer]);
+        return view('list.list-customer',['data'=>$customer]);
     }
 
     public function displayListContent(Request $request){
@@ -99,6 +108,24 @@ class ListController extends Controller
             $url = url('public/assets/images/'.$name.'');
          }
          return response()->json([ 'fileName' => $name, 'uploaded' => true, 'url'=> $url]);
+    }
+
+    /* check random list name */
+    public function createRandomListName(){
+
+        $generate = $this->generateRandomListName();
+        $list = Userlist::where('name','=',$generate)->first();
+
+        if(is_null($list)){
+            return $generate;
+        } else {
+            return $this->generateRandomListName();
+        }
+    }
+
+    /* create random list name */
+    public function generateRandomListName(){
+        return strtolower(Str::random(8));
     }
 
 }

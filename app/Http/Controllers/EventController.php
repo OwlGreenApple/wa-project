@@ -149,5 +149,21 @@ class EventController extends Controller
     	}
 	}
 
+	/* Display reminder customer */
+    public function displayEventCustomers()
+    {
+    	$id_user = Auth::id();
+    	$remindercustomer = ReminderCustomers::where([['reminder_customers.user_id','='                ,$id_user],
+                            ['reminders.is_event','=',1]])
+    						->join('lists','lists.id','=','reminder_customers.list_id')
+    						->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
+                            ->rightJoin('reminders','reminders.id','=','reminder_customers.reminder_id')
+    						->select('reminder_customers.*','lists.name','customers.wa_number','reminders.event_date',
+                                'reminders.is_event','reminders.days'
+                            )->orderBy('reminder_customers.id','desc')
+    						->get();
+    	return view('event.event-customer',['data'=>$remindercustomer]);
+    }
+
 /* End event controller */
 }
