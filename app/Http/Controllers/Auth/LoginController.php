@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,11 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
+    //use AuthenticatesUsers;
+
+    use AuthenticatesUsers {
+        logout as performLogout;
+    }
 
     /**
      * Where to redirect users after login.
@@ -36,10 +41,20 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function logout(Request $request)
+    {
+        session_start();
+        $this->performLogout($request);
+       
         if(isset($_SESSION['editor_path']))
         {
-             unset($_SESSION['editor_path']);
+            unset($_SESSION['editor_path']);
         }
-       
+         
+        return redirect()->route('visitor');
     }
+
+/* end class LoginController */    
 }

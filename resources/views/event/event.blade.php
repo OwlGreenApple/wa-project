@@ -12,7 +12,7 @@
                   <a href="{{route('home')}}" class="nav-link">Back Home</a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{route('eventcustomer')}}" class="nav-link">See Event Customers</a>
+                  <a href="{{route('eventcustomer')}}" class="nav-link">See Event Subscribers</a>
                 </li>
               </ul>
             </nav>
@@ -40,16 +40,81 @@
                  @endif
 
                 <div class="card-body">
-                     <div class="mb-2">
-                         <a class="btn btn-warning btn-sm" href="{{route('eventform')}}">Create Event</a>
+                     <div class="mb-2 row">
+                        <div class="col-md-2">
+                            <a class="btn btn-warning btn-sm" href="{{route('eventautoreply')}}">Create Auto Reply</a>
+                        </div> 
+
+                        <div class="col-md-2">
+                            <a class="btn btn-warning btn-sm" href="{{route('eventform')}}">Create Schedule Message</a>
+                        </div>
                      </div>
 
+                      <hr/>
+
+                     <!-- event auto reply -->
                     <div class="table-responsive">
+                    <h4>Event Auto Reply</h4>
+                    <hr/>
                     <table class="table table-striped table-responsive" id="user-list">
                         <thead>
                             <th>User</th>
                             <th>lists</th>
                             <th>Days</th>
+                            <th>Message</th>
+                            <th>Created At</th>
+                            <th>Updated At</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            @if(!is_null($data))
+                            @foreach($data as $row)
+                                <tr>
+                                    <td>{{$row->user_id}}</td>
+                                    <td>{{$row->name}}</td>
+                                    <td>{{$row->days}}</td>
+                                    <td class="wraptext">
+                                        <span class="get-text-{{$row->id}}">{{$row->message}}</span>
+                                        <div><small><a id="{{$row->id}}" class="display_popup">Read More | Edit</a></small></div>
+                                    </td>
+                                    <td>{{$row->created_at}}</td>
+                                    <td>{{$row->updated_at}}</td>
+                                    <td>
+                                        @php
+                                            if($row->status == 1){
+                                                $turn = 0;
+                                            } else {
+                                                $turn = 1;
+                                            }
+                                        @endphp
+                                        <a href="{{url('eventautoreplyturn/'.$row->id.'/'.$turn.'')}}" class="btn btn-primary btn-sm"> @if($row->status == 0)
+                                            Activate
+                                        @else
+                                            Deactivate
+                                        @endif</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @else
+                                'No Data'
+                            @endif
+                        </tbody>
+                    </table>
+                    </div>
+                    <!-- end event autoreply -->
+
+                    <hr/>
+
+                    <!-- event schedule -->
+                    <div class="table-responsive">
+                    <h4>Event Schedule</h4>
+                    <table class="table table-striped table-responsive" id="user-list">
+                        <thead>
+                            <th>User</th>
+                            <th>lists</th>
+                            <th>event_date</th>
+                            <th>Days</th>
+                            <th>hour_time</th>
                             <th>Message</th>
                             <th>Created At</th>
                             <th>Updated At</th>
@@ -83,6 +148,8 @@
                         </tbody>
                     </table>
                     </div>
+                    <!-- end event schedule -->
+
                 </div>
                 <!-- end card-body -->  
             </div>
@@ -90,6 +157,8 @@
     </div>
 <!-- end container -->   
 </div>
+
+
 
  <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">

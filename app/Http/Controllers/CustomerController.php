@@ -8,12 +8,15 @@ use App\UserList;
 use Carbon\Carbon;
 use App\Reminder;
 use App\ReminderCustomers;
+use App\Sender;
+use App\Console\Commands\SendWA as SendMessage;
 
 class CustomerController extends Controller
 {
     public function index(Request $request, $product_list){
     	$check_link = UserList::where([
             ['name','=',$product_list],
+            ['is_event','=',0],
             ['status','=',1],
         ])->first();
 
@@ -28,16 +31,35 @@ class CustomerController extends Controller
     	}
     }
 
+    public function event(Request $request, $product_list){
+        $check_link = UserList::where([
+            ['name','=',$product_list],
+            ['is_event','=',1],
+            ['status','=',1],
+        ])->first();
+
+        if(empty($product_list)){
+            return redirect('/');
+        } elseif(is_null($check_link)) {
+            return redirect('/');
+        } else {
+            $request->session()->flash('userlist',$product_list);
+            $list = UserList::where('name',$product_list)->first();
+            return view('register-customer',['content'=>$list->content]);
+        }
+    }
+
     public function addCustomer(Request $request){
     	$userlist =  $request->session()->get('userlist'); //retrieve session from userlist
         $request->session()->reflash();
     	$get_id_list = UserList::where('name','=',$userlist)->first();
+        $wa_number = $request->code_country.$request->wa_number;
+        $wassenger = null;
 
-        /* Filter to avoid unavailable link */
+        # Filter to avoid unavailable link 
         if(is_null($get_id_list)){
             return redirect('/');
         } else {
-            $wa_number = $request->code_country.$request->wa_number;
             $customer = new Customer;
             $customer->user_id = $get_id_list->user_id;
             $customer->list_id = $get_id_list->id;
@@ -46,8 +68,10 @@ class CustomerController extends Controller
             $customer->save();
         }
 
-        /* if customer successful sign up */
+        # if customer successful sign up 
     	if($customer->save() == true){
+            // Auto Reply Event
+            $eventautoreply = Reminder::where('list_id','=',$get_id_list->id)->first();
     		$reminder_id = Reminder::where('list_id','=',$get_id_list->id)->max('id');
             $reminder = Reminder::where([['id','=',$reminder_id],['status',1]])->first();
     	} else {
@@ -55,7 +79,43 @@ class CustomerController extends Controller
     		$data['message'] = 'Error-001! Sorry there is something wrong with our system';
     	}
 
-        /* if reminder empty  */
+        # Sending event auto reply for customer 
+        if(is_null($eventautoreply)){
+            $data['success'] = true;
+            $data['message'] = 'Thank You For Join Us';
+            return response()->json($data);
+        } else {
+             # wassenger
+            $user_id = $eventautoreply->user_id;
+            $getsender = Sender::where('user_id',$user_id)->first();
+
+            $api_key = $getsender->api_key;
+            $message = $eventautoreply->message;
+            $status = $eventautoreply->status;
+        }
+
+        if($status == 1){
+            $sendmessage = new SendMessage;
+            $wasengger = $sendmessage->sendWA($wa_number,$api_key,$message);
+        } else {
+            $wasengger = null;
+        }
+
+        # if status from event has set to 0 or disabled
+        if($wasengger == null){
+            $data['success'] = true;
+            $data['message'] = 'Thank You For Join Us';
+            return response()->json($data);
+        }
+
+        # if wassenger has no response then it will say error 
+        if(empty($wasengger)){
+            $data['success'] = false;
+            $data['message'] = 'Error-WAS! Sorry there is something wrong with our system';
+            return response()->json($data);
+        }
+
+        # if reminder empty  
         if(is_null($reminder)){
             $data['success'] = true;
             $data['message'] = 'Thank You For Join Us';
@@ -70,7 +130,7 @@ class CustomerController extends Controller
             $reminder_customer->save();
         }
 
-        /* if reminder has been set up into reminder-customer */
+        # if reminder has been set up into reminder-customer 
         if($reminder_customer->save() == true){
             $data['success'] = true;
             $data['message'] = 'Thank You For Join Us';

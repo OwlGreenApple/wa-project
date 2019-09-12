@@ -26,7 +26,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header"><b>Create Event Schedule Reminder</b></div>
+                <div class="card-header"><b>Create Event Auto Reply</b></div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -54,23 +54,26 @@
                         </div> 
                     </form>
 
-                     <form name="event_form" onsubmit="return validateForm()" method="POST" action="{{ route('addevent') }}">
+                     <form method="POST" action="{{ route('addeventautoreply') }}">
                         @csrf
 
                          <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Lists Option</label>
+
                             <div class="col-md-6">
-                                @foreach($data as $row)
-                                <div class="form-check">
-                                  <input class="form-check-input" name="id[]" type="checkbox" value="{{$row->id}}">
-                                  <label class="form-check-label" for="{{$row->id}}">
-                                    {{$row->name}}
-                                  </label>
-                                </div>
-                                 @endforeach
-                                <!-- end check box -->
+                                <select class="form-control" name="listid">
+                                  @if($templates->count() > 0)
+                                    @foreach($data as $row)
+                                      <option value="{{$row->id}}">{{$row->name}}</option>
+                                    @endforeach
+                                  @endif
+                                </select>
+                                 <!-- end dropdown -->
                                  @if (session('error'))
-                                    <div class="error">{{ session('error')->first('id') }}</div>
+                                    <div class="error">{{ session('error')->first('listid') }}</div>
+                                 @endif 
+                                 @if (session('error_autoreply'))
+                                    <div class="error">{{ session('error_autoreply') }}</div>
                                  @endif
                             </div>
                         </div> 
@@ -85,41 +88,11 @@
                              </div>
                         </div> 
 
-                         <div class="form-group row schedule">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Schedule Event</label>
-                            <div class="col-md-6">
-                                <input type="text" id="datetimepicker" class="form-control" name="event_date" />
-                                 @if (session('error'))
-                                    <div class="error">{{ session('error')->first('event_date') }}</div>
-                                 @endif
-                            </div>
-                        </div>
-
-                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Choose Schedule</label>
-                            <div class="col-md-6">
-                                <select class="form-control" id="schedule">
-                                  <option value="0">Hari H</option>
-                                  <option value="1">H-</option>
-                                  <option value="2">H+</option>
-                                </select>
-                            </div>
-                        </div> 
-
-                        <div class="form-group row">
-                             <div class="col-md-4 text-md-right"><a class="btn btn-success btn-sm add-day">Add Day</a></div>
-                            <div id="append" class="col-md-6">
-                                 @if (session('error_day'))
-                                  <div class="error">{{ session('error_day') }}</div>
-                               @endif
-                            </div>
-                        </div>
-
                         <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Set Event
+                                    Set Event Auto Reply
                                 </button>
                             </div>
                         </div>
@@ -144,36 +117,11 @@
 
 <script type="text/javascript">
 
-    /* Datetimepicker */
-     $(function () {
-          $('#datetimepicker').datetimepicker({
-            format : 'YYYY-MM-DD HH:mm',
-          });
-      });
-
     $(document).ready(function(){
         displayTemplate();
-        displayAddDaysBtn();
-        MDTimepicker();
-        neutralizeClock();
-        addDays();
-        delDays();
+        //addDays();
+        //delDays();
     });
-
-      function MDTimepicker(){
-        $("body").on('focus','.timepicker',function(){
-            $(this).mdtimepicker({
-              format: 'hh:mm',
-            });
-        });
-      }
-
-      /* prevent empty col if user click cancel on clock */
-      function neutralizeClock(){
-         $("body").on("click",".mdtp__button.cancel",function(){
-            $(".timepicker").val('00:00');
-        });
-      }
 
      function validateForm(){
         var today = new Date();
@@ -201,41 +149,13 @@
 
      }
 
-     function displayAddDaysBtn()
-     {
-        $(".add-day").hide();
-        $("#schedule").change(function(){
-          var val = $(this).val();
-
-          if(val == 0){
-            $(".add-day").hide();
-          } else {
-            $(".add-day").show();
-          }
-
-        });
-     }
-
     function addDays(){
       $(".add-day").click(function(){
-        var day = $("#schedule").val();
         var pos = $(".days").length;
-        
-        if(day == 1){
-             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+'"><?php for($x=-90;$x<=-1;$x++) {
+
+        var box_html = '<select name="day[]" class="form-control col-sm-9 float-left days pos-'+pos+'"><?php for($x=-30;$x<=100;$x++) {
                 echo "<option value=".$x.">$x</option>";
-          }?></select>'+
-          '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+'" value="00:00" readonly />'+
-          '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del">Delete</a></span>'+
-          '<div class="clearfix"></div>';
-        } else {
-             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+'"><?php for($x=1;$x<=100;$x++) {
-                echo "<option value=".$x.">$x</option>";
-          }?></select>'+
-            '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+'" value="00:00" readonly />'+
-            '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del">Delete</a></span>'+
-            '<div class="clearfix"></div>';
-        }
+          }?></select><span><a id="pos-'+pos+'" class="btn btn-warning float-left del">Delete</a></span><div class="clearfix"></div>';
 
         $("#append").append(box_html);
       });

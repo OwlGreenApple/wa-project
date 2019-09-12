@@ -40,8 +40,8 @@ class CheckCustomer
 
          $rules = [
             'name'=> ['required','min:4','max:190'],
-            'code_country'=>['required','numeric'],
-            'wa_number'=> ['required',new CheckWANumbers,'digits_between:5,15'],
+            'code_country'=>['required'],
+            'wa_number'=> ['required',new CheckWANumbers,'between:5,16'],
         ];
 
         $validator = Validator::make($data,$rules);
@@ -58,4 +58,6 @@ class CheckCustomer
             return $next($request);
         }
     }
+
+/* end middleware */    
 }

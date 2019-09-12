@@ -7,6 +7,10 @@
  */
 
 session_start();
+
+if(isset($_SESSION['editor_path'])){
+    $path = $_SESSION['editor_path'];
+}
 /*============================ PHP Error Reporting ====================================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/debugging.html
 
@@ -91,7 +95,7 @@ $config['resourceTypes'][] = array(
 $config['backends'][] = array(
     'name'         => 'default',
     'adapter'      => 'local',
-    'baseUrl'      =>  $_SESSION['editor_path'],
+    'baseUrl'      =>  $path,
     //'baseUrl'      => '/ckfinder/userfiles/',
 //  'root'         => '', // Can be used to explicitly set the CKFinder user files directory.
     'chmodFiles'   => 0777,

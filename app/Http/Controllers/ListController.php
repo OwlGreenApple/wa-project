@@ -18,11 +18,11 @@ class ListController extends Controller
 {
 
     public function test(){
-        session_start();
+        //session_start();
         //$id = Auth::id();
           //  $user_name = Auth::user()->name;
         //$_SESSION['editor_path'] =  '/ckfinder/'.$user_name.'-'.$id;
-        echo $_SESSION['editor_path'];
+        //echo $_SESSION['editor_path'];
         //unset($_SESSION['editor_path']);
         //mkdir($_SERVER['DOCUMENT_ROOT'].'/ckfinder/mdir', 0741);
     }   
@@ -38,13 +38,15 @@ class ListController extends Controller
     	$list = new UserList;
     	$list->user_id = Auth::id();
     	$list->name = $this->createRandomListName();
+        $list->wa_number = $request->wa_number;
+        $list->is_event = $request->category;
         $list->content = $request->editor1;
     	$list->save();
 
     	if($list->save() == true){
-    		return redirect('home')->with('status','List has been created');
+    		return redirect('createlist')->with('status','List has been created');
     	} else {
-    		return redirect('home')->with('status','Error!, failed to create list');
+    		return redirect('createlist')->with('status','Error!, failed to create list');
     	}
     }
 

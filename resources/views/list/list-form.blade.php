@@ -31,16 +31,11 @@
                             {{ session('status') }}
                         </div>
                     @endif 
-                    @if (session('error'))
-                        <div class="alert alert-warning" role="alert">
-                            {{ session('error') }}
-                        </div>
-                    @endif
 
                      <form method="POST" action="{{ route('addlist') }}">
                         @csrf
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label text-md-right">No WA</label>
+                            <label class="col-md-3 col-form-label text-md-right">WA Number</label>
 
                             <div class="col-md-8">
                                @if($data->count() > 0)
@@ -53,6 +48,29 @@
                                @else
                                 No Numbers
                                @endif
+
+                            </div>
+                        </div>   
+
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-md-right">Category</label>
+
+                            <div class="col-md-8">
+                                <select name="category" class="form-control">
+                                    <option value="0">Message</option>
+                                    <option value="1">Event</option>
+                                </select>
+
+                                @if (session('error'))
+                                    <div class="error">
+                                        {{ session('error')->category }}
+                                    </div> 
+                                @endif
+                                @if (session('error'))
+                                    <div class="error">
+                                        {{ session('error')->isevent }}
+                                    </div>
+                                @endif
                             </div>
                         </div>  
                         

@@ -12,6 +12,7 @@ use App\ReminderCustomers;
 use App\Customer;
 use Carbon\Carbon;
 use App\User;
+use App\Sender;
 
 class SendWA extends Command
 {
@@ -44,6 +45,21 @@ class SendWA extends Command
      *
      * @return mixed
      */
+    
+    /* To test send wassenger
+
+    public function handle()
+    {
+
+      $wa_number = '+628123238793';
+      $api_key = '5fe578b72c10a69fdcbd5d629a183af1799610cef975338a865480a7e7ad29c5361eb07beaf80f16';
+       for($x=1;$x<=10;$x++){
+          $message = $x.'--- Test message sending 1 - 10';
+          $this->sendWA($wa_number,$api_key,$message);
+       }
+     End function handle     
+    }*/
+
     public function handle()
     {
         /* Users counter */
@@ -109,7 +125,7 @@ class SendWA extends Command
 
                 $check_event = Reminder::where([
                   ['user_id',$id_user],
-                  ['is_event',1],
+                  ['days','<>',0],
                   ['status',1]
                 ]);
 
@@ -204,7 +220,7 @@ class SendWA extends Command
         $curl = curl_init();
 
         $data = array(
-            'phone'=>'+'.$wa_number,
+            'phone'=>$wa_number,
             'message'=>$message
         );
 
@@ -238,10 +254,10 @@ class SendWA extends Command
 
     /* Event date */
     public function dateEvent(){
-      $user = User::select('id','counter','api_key')->get();
+      $sender = Sender::select('id','counter','api_key','user_id')->get();
 
-      foreach($user as $rowuser){
-          $id_user = $rowuser->id;
+      foreach($sender as $rowuser){
+          $id_user = $rowuser->user_id;
           $count = $rowuser->counter;
           $api_key = $rowuser->api_key;
           $idr = null;
@@ -250,7 +266,7 @@ class SendWA extends Command
 
           $reminder = Reminder::where([
                   ['user_id',$id_user],
-                  ['is_event',1],
+                  ['days','<>',0],
                   ['status',1]
           ])->get();
 
@@ -259,9 +275,12 @@ class SendWA extends Command
           if($reminder->count() > 0){
                foreach($reminder as $rows){
                 $id_reminder = $rows->id;
-                $today = Carbon::now()->toDateString();
+                $today = Carbon::now();
                 $event_date = Carbon::parse($rows->event_date);
                 $days = (int)$rows->days;
+                //hour according user set it to send WA
+                $hour = $rows->hour_time.':00';
+                //$hour = date('H:m:s',strtotime($rows->hour_time));
 
                 /* if the day before / substract */
                 if($days < 0){
@@ -271,8 +290,9 @@ class SendWA extends Command
                   $event_date->addDays($days);
                 }
 
+                $time_sending = $event_date->toDateString().' '.$hour;
                 // get id reminder for reminder customer
-                if($today == $event_date->format('Y-m-d')){
+                if($today >= $time_sending){
                     $idr[] = $id_reminder;
                 }
                 

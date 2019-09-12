@@ -36,7 +36,6 @@ class HomeController extends Controller
         if(!isset($_SESSION['editor_path'])){
             $_SESSION['editor_path'] = '/ckfinder/'.$user_name.'-'.$id;
         }
-        
 
         if(!file_exists($directory))
         {

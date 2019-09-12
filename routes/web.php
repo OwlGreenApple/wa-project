@@ -13,9 +13,9 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('visitor');
 
-Route::get('ck','ListController@test');
+Route::get('ck','ListController@generateRandomListName');
 Route::get('justcarbon','EventController@JUSTCARBON');
 
 Auth::routes();
@@ -58,6 +58,12 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 	/* Event */
 	Route::get('event','EventController@index')->name('event');
+	# auto reply event
+	Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
+	Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');
+	Route::get('eventautoreplyturn/{id}/{status}','EventController@turnEventAutoReply');
+
+	# scheduled event
 	Route::get('eventform','EventController@eventForm')->name('eventform');
 	Route::post('addevent','EventController@addEvent')->name('addevent');
 	Route::get('eventcustomer','EventController@displayEventCustomers')->name('eventcustomer');
@@ -83,4 +89,5 @@ Route::group(['middleware'=>['auth','web']],function(){
 /* Customers */
 Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
 /* Customer registration */
+Route::get('/ev/{list_name}','CustomerController@event'); //register-customer.blade
 Route::get('/{list_name}','CustomerController@index'); //register-customer.blade
