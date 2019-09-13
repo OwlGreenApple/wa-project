@@ -16,7 +16,11 @@ Route::get('/', function () {
 })->name('visitor');
 
 Route::get('ck','ListController@generateRandomListName');
+Route::get('send','SenderController@getDeviceId');
+
+
 Route::get('justcarbon','EventController@JUSTCARBON');
+
 
 Auth::routes();
 /* User Customer */
@@ -37,8 +41,10 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 	/* BroadCast */
 	Route::get('broadcast','BroadCastController@index')->name('broadcast');
-	// form to create broadcast
+	// form to create broadcast reminder
 	Route::get('broadcastform','BroadCastController@FormBroadCast')->name('broadcastform');
+	// form to create broadcast event
+	Route::get('broadcasteventform','BroadCastController@eventFormBroadCast')->name('broadcasteventform');
 	//insert broadcast and broadcast-customer data
 	Route::post('createbroadcast','BroadCastController@createBroadCast')->name('createbroadcast');
 	//see broadcast customer
@@ -55,6 +61,9 @@ Route::group(['middleware'=>['auth','web']],function(){
 	// change reminder's status
 	Route::get('reminder-status/{id_reminder}/{status}','ReminderController@setReminderStatus');
 	Route::post('remindermessage','ReminderController@updateReminderMessage')->name('remindermessage');
+	// reminder auto reply
+	Route::get('reminderautoreply','ReminderController@reminderAutoReply')->name('reminderautoreply');
+	Route::post('addreminderautoreply','ReminderController@addReminderAutoReply')->name('addreminderautoreply');
 
 	/* Event */
 	Route::get('event','EventController@index')->name('event');
@@ -67,6 +76,8 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('eventform','EventController@eventForm')->name('eventform');
 	Route::post('addevent','EventController@addEvent')->name('addevent');
 	Route::get('eventcustomer','EventController@displayEventCustomers')->name('eventcustomer');
+	Route::get('displayeventschedule','EventController@displayEventSchedule')->name('displayeventschedule');
+	Route::post('updatevent','EventController@updateEvent')->name('updatevent');
 
 
 	/* Templates */

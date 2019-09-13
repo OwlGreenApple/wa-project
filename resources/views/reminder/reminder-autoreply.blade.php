@@ -26,7 +26,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header"><b>Create Reminder Schedule</b></div>
+                <div class="card-header"><b>Create Reminder Auto Reply</b></div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -54,23 +54,26 @@
                         </div> 
                     </form>
 
-                     <form method="POST" action="{{ route('reminderadd') }}">
+                     <form method="POST" action="{{ route('addreminderautoreply') }}">
                         @csrf
 
                          <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Lists Option</label>
+
                             <div class="col-md-6">
-                                @foreach($data as $row)
-                                <div class="form-check">
-                                  <input class="form-check-input" name="id[]" type="checkbox" value="{{$row->id}}">
-                                  <label class="form-check-label" for="{{$row->id}}">
-                                    {{$row->name}}
-                                  </label>
-                                </div>
-                                 @endforeach
-                                <!-- end check box -->
+                                <select class="form-control" name="listid">
+                                  @if($templates->count() > 0)
+                                    @foreach($data as $row)
+                                      <option value="{{$row->id}}">{{$row->name}}</option>
+                                    @endforeach
+                                  @endif
+                                </select>
+                                 <!-- end dropdown -->
                                  @if (session('error'))
-                                    <div class="error">{{ session('error')->first('id') }}</div>
+                                    <div class="error">{{ session('error')->first('listid') }}</div>
+                                 @endif 
+                                 @if (session('error_autoreply'))
+                                    <div class="error">{{ session('error_autoreply') }}</div>
                                  @endif
                             </div>
                         </div> 
@@ -85,29 +88,11 @@
                              </div>
                         </div> 
 
-                        <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Add Day</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="day">
-                                  @php
-                                  for($x=1;$x<=100;$x++){
-                                   @endphp
-                                    <option value="{{$x}}">+{{$x}}</option>
-                                  @php  
-                                  }
-                                  @endphp
-                                </select>
-                                 @if (session('error'))
-                                    <div class="error">{{ session('error')->first('days') }}</div>
-                                 @endif
-                            </div>
-                        </div>
-
                         <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Set Reminder
+                                    Set Reminder Auto Reply
                                 </button>
                             </div>
                         </div>
@@ -131,9 +116,33 @@
 </script>
 
 <script type="text/javascript">
+
     $(document).ready(function(){
         displayTemplate();
+        //addDays();
+        //delDays();
     });
+
+
+    function addDays(){
+      $(".add-day").click(function(){
+        var pos = $(".days").length;
+
+        var box_html = '<select name="day[]" class="form-control col-sm-9 float-left days pos-'+pos+'"><?php for($x=-30;$x<=100;$x++) {
+                echo "<option value=".$x.">$x</option>";
+          }?></select><span><a id="pos-'+pos+'" class="btn btn-warning float-left del">Delete</a></span><div class="clearfix"></div>';
+
+        $("#append").append(box_html);
+      });
+    }
+
+    function delDays(){
+      $("body").on("click",".del",function(){
+        var pos = $(this).attr('id');
+        $("."+pos).remove();
+        $("#"+pos).remove();
+      });
+    }
 
     /* Attach broadcast template into textarea message */
     function displayTemplate(){
@@ -151,5 +160,6 @@
             });
         });
     }
+
 </script>
 @endsection

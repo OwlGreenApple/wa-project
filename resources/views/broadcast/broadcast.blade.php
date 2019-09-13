@@ -28,9 +28,18 @@
                 <div class="card-header"><b>Broadcast</b></div>
 
                 <div class="card-body">
-                <div class="mb-2">
-                    <a class="btn btn-success btn-sm" href="{{route('broadcastform')}}">Create Broadcast</a>
-                </div>
+
+                 <div class="mb-2 row">
+                    <div class="col-md-3">
+                        <a class="btn btn-success btn-sm" href="{{route('broadcastform')}}">Create Broadcast Reminder</a>
+                    </div> 
+
+                    <div class="col-md-2">
+                        <a class="btn btn-success btn-sm" href="{{route('broadcasteventform')}}">Create Broadcast Event</a>
+                    </div>
+                 </div>
+
+                <hr/>
 
                     <table class="table table-striped table-responsive" id="broadcast-list">
                         <thead>

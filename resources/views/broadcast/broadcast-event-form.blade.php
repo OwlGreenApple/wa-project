@@ -12,7 +12,7 @@
                   <a href="{{route('home')}}" class="nav-link">Back Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('reminder')}}" class="nav-link">Back Reminder</a>
+                    <a href="{{route('broadcast')}}" class="nav-link">See Broadcast List</a>
                 </li>
               </ul>
             </nav>
@@ -25,14 +25,21 @@
     <!-- add list-->
     <div class="row justify-content-center">
         <div class="col-md-8">
+
             <div class="card">
-                <div class="card-header"><b>Create Reminder Schedule</b></div>
+                <div class="card-header"><b>Create BroadCast Event</b></div>
 
                 <div class="card-body">
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
-                        </div>
+                         </div>   
+                    @endif 
+
+                    @if (session('status_error'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('status_error') }}
+                         </div>   
                     @endif
 
                     <form id="get_template">
@@ -40,24 +47,24 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">Choose Template</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="template_list" id="display-template">
-                                  <option>Choose</option>
-                                  @if($templates->count() > 0)
-                                    @foreach($templates as $row)
-                                      <option value="{{$row->id}}">{{$row->name}}</option>
-                                    @endforeach
-                                  @endif
+                                    <option>Choose</option>
+                                    @if($templates->count() > 0)
+                                        @foreach($templates as $row)
+                                            <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-warning btn-sm">Add</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Add</button>
                             </div>
                         </div> 
                     </form>
 
-                     <form method="POST" action="{{ route('reminderadd') }}">
+                    <!-- Registration Form -->
+                     <form method="POST" action="{{ route('createbroadcast') }}">
                         @csrf
-
-                         <div class="form-group row">
+                        <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Lists Option</label>
                             <div class="col-md-6">
                                 @foreach($data as $row)
@@ -69,9 +76,11 @@
                                 </div>
                                  @endforeach
                                 <!-- end check box -->
-                                 @if (session('error'))
-                                    <div class="error">{{ session('error')->first('id') }}</div>
-                                 @endif
+                                @if (session('error'))
+                                    <div class="error" role="alert">
+                                        {{ session('error')->first('id') }}
+                                     </div>   
+                                @endif 
                             </div>
                         </div> 
 
@@ -80,47 +89,30 @@
                             <div class="col-md-6">
                                 <textarea id="divInput-description-post" class="form-control" name="message"></textarea>
                                  @if (session('error'))
-                                    <div class="error">{{ session('error')->first('message') }}</div>
-                                 @endif
-                             </div>
-                        </div> 
-
-                        <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Add Day</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="day">
-                                  @php
-                                  for($x=1;$x<=100;$x++){
-                                   @endphp
-                                    <option value="{{$x}}">+{{$x}}</option>
-                                  @php  
-                                  }
-                                  @endphp
-                                </select>
-                                 @if (session('error'))
-                                    <div class="error">{{ session('error')->first('days') }}</div>
-                                 @endif
+                                    <div class="error" role="alert">
+                                        {{ session('error')->first('message') }}
+                                     </div>   
+                                 @endif 
                             </div>
-                        </div>
+                        </div> 
 
                         <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Set Reminder
+                                   Create Broadcast Event
                                 </button>
                             </div>
                         </div>
                      </form>
                      <!-- end form -->
-                     
+
                 </div>
             </div>
         </div>
     </div>
 <!-- end container -->   
 </div>
-
 
 <!-- give emoji -->
  <script type="text/javascript">
@@ -152,4 +144,5 @@
         });
     }
 </script>
+
 @endsection

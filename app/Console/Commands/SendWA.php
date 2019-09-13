@@ -63,11 +63,12 @@ class SendWA extends Command
     public function handle()
     {
         /* Users counter */
-        $user = User::select('id','counter','api_key')->get();
-        foreach($user as $userow){
-            $id_user = $userow->id;
+        //$user = User::select('id','counter')->get();
+        $sender = Sender::select('id','counter','user_id')->get();
+        $wasengger = null;
+        foreach($sender as $userow){
+            $id_user = $userow->user_id;
             $count = $userow->counter;
-            $api_key = $userow->api_key;
             $broadcast_customers = BroadCastCustomers::where([
                 ['broad_cast_customers.user_id','=',$id_user],
                 ['broad_cast_customers.status','=',0],
@@ -84,7 +85,7 @@ class SendWA extends Command
                       $wa_number = $id->wa_number;
                       $message = $id->message;
                       /* Send WA */
-                      $wasengger = $this->sendWA($wa_number,$api_key,$message);
+                      $wasengger = $this->sendWA($wa_number,$message);
                      
                       /* Determine status on BroadCast-customer */
                       $delivery_status = $wasengger->deliveryStatus;
@@ -99,7 +100,7 @@ class SendWA extends Command
                       }
 
                       /* Update when has sent message */
-                      if(!empty($wasengger)){
+                      if($wasengger !== null){
                         $update_broadcast = BroadCastCustomers::where('id',$id->id)->update(['id_wa'=>$wasengger->id,
                             'status'=>$status,
                         ]);
@@ -110,13 +111,14 @@ class SendWA extends Command
                       if($update_broadcast == true){
                             // cut user's wa bandwith
                             $count = $count - 1;
-                            User::where('id',$id_user)->update(['counter'=>$count]);
+                            Sender::where('id',$id_user)->update(['counter'=>$count]);
                       } else {
                             echo 'Error!! Unable to update broadcast customer';
                       }
                 }
             } else {
             /* Reminder */
+
                 $current_time = Carbon::now();
                 $reminder_customers = ReminderCustomers::where([
                     ['user_id','=',$id_user],
@@ -125,9 +127,10 @@ class SendWA extends Command
 
                 $check_event = Reminder::where([
                   ['user_id',$id_user],
-                  ['days','<>',0],
+                  ['event_date','<>',null],
                   ['status',1]
-                ]);
+                ])->get();
+
 
                 /* if event available */
                 if($check_event->count() > 0){
@@ -135,7 +138,13 @@ class SendWA extends Command
                 } 
 
                /* get days from reminder */
-                $reminder = Reminder::where('reminders.user_id','=',$id_user)
+                $reminder = Reminder::where([
+                                  ['reminders.user_id','=',$id_user],
+                                  ['reminders.event_date','=',null],
+                                  ['reminders.days','>',0],
+                                  ['reminders.hour_time','=',0],
+                                  ['reminders.status','=',1],
+                                  ])
                                 ->rightJoin('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
                                 ->where('reminder_customers.status','=',0)
                                 ->rightJoin('customers','customers.id','=','reminder_customers.customer_id')
@@ -146,7 +155,7 @@ class SendWA extends Command
 
                 /* check date reminder customer and update if succesful sending */
                 foreach($reminder as $col) {
-                    $date_reminder = Carbon::parse($col->datecr); //date when reminder was created
+                    $date_customer = Carbon::parse($col->datecr); //date when reminder was created
                     $day_reminder = $col->days; // how many days
                     $customer_signup = Carbon::parse($col->cstreg);
                     $adding = $customer_signup->addDays($day_reminder);
@@ -154,38 +163,30 @@ class SendWA extends Command
                     $reminder_customers_id = $col->rcs_id;
                     $wa_number = $col->wa_number;
                     $message = $col->message;
-                    $is_event = $col->is_event;
                     $event_date = $col->event_date;
                     $wasengger = null;
 
-                    /* if customer register after adding days >= date when reminder was created */
-                    if(($adding >= $date_reminder)){
-                       $sending = true;
-                    } else {
-                       $sending = false;
-                    }
-
-                    $wasengger = $this->sendWA($wa_number,$api_key,$message);
                     /* if the time has reach or pass added time */
-                    if(($sending == true) && ($current_time >= $adding) && $reminder_customer_status == 0){
+                    if(($current_time >= $adding) && $reminder_customer_status == 0){
                          /* wasengger */
-                         $wasengger;
+                         $wasengger = $this->sendWA($wa_number,$message);
                     }
 
                     /* Determine status on reminder-customer */
-                      $delivery_status = $wasengger->deliveryStatus;
-                      if($delivery_status == 'queued'){
-                        $status = 1;
-                      } elseif($delivery_status == 'sent') {
-                        $status = 2;
-                      } elseif($delivery_status == 'failed') {
-                        $status = 5;
-                      } else {
-                        $status = 0;
-                      } 
 
-                    if(!empty($wasengger)){
-                         $update_reminder_customer = ReminderCustomers::where([
+                    if($wasengger !== null){
+                        $delivery_status = $wasengger->deliveryStatus;
+                        if($delivery_status == 'queued'){
+                          $status = 1;
+                        } elseif($delivery_status == 'sent') {
+                          $status = 2;
+                        } elseif($delivery_status == 'failed') {
+                          $status = 5;
+                        } else {
+                          $status = 0;
+                        } 
+
+                        $update_reminder_customer = ReminderCustomers::where([
                             ['id',$reminder_customers_id],
                             ['status','=',0],
                         ])->update([
@@ -195,17 +196,17 @@ class SendWA extends Command
                     } else {
                         continue;
                     }
-
+                      
                     if($update_reminder_customer == true){
                          // cut user's wa bandwith
                         $count = $count - 1;
-                        $user_update = User::where('id',$id_user)->update(['counter'=>$count]);
+                        $sender_update = Sender::where('user_id',$id_user)->update(['counter'=>$count]);
                     } else {
                         echo 'Error!! Unable to update reminder customer';
                     }
 
-                    if($user_update == false){
-                        echo 'Error!! Unable to update user counter';
+                    if($sender_update == false){
+                        echo 'Error!! Unable to update counter';
                     }
                 }
             }
@@ -216,7 +217,8 @@ class SendWA extends Command
     /* End function handle */    
     }
 
-    public function sendWA($wa_number,$api_key,$message){
+    public function sendWA($wa_number,$message){
+        $api_key = '717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080';
         $curl = curl_init();
 
         $data = array(
@@ -254,19 +256,18 @@ class SendWA extends Command
 
     /* Event date */
     public function dateEvent(){
-      $sender = Sender::select('id','counter','api_key','user_id')->get();
+      $sender = Sender::select('id','counter','user_id')->get();
 
       foreach($sender as $rowuser){
           $id_user = $rowuser->user_id;
           $count = $rowuser->counter;
-          $api_key = $rowuser->api_key;
           $idr = null;
           $wasengger = null;
           $event = null;
 
           $reminder = Reminder::where([
                   ['user_id',$id_user],
-                  ['days','<>',0],
+                  ['event_date','<>',null],
                   ['status',1]
           ])->get();
 
@@ -333,7 +334,7 @@ class SendWA extends Command
                 $message = $col->message;
                 $id_reminder = $col->id_reminder;
 
-                $wasengger = $this->sendWA($wa_number,$api_key,$message);
+                $wasengger = $this->sendWA($wa_number,$message);
 
                 if(!empty($wasengger)){
                     $delivery_status = $wasengger->deliveryStatus;
@@ -377,7 +378,7 @@ class SendWA extends Command
           } 
           
           
-      } /* end foreach user */
+      } /* end foreach sender */
 
     }
 

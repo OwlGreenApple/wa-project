@@ -12,6 +12,7 @@ use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
 use App\User;
+use App\Sender;
 use Session;
 
 class BroadCastController extends Controller
@@ -26,12 +27,20 @@ class BroadCastController extends Controller
     	return view('broadcast.broadcast',['data'=>$list]);
     }
 
-    /* Display broadcast data */
+    /* Broadcast form reminder */
     public function FormBroadCast(){
     	$id_user = Auth::id();
-    	$userlist = UserList::where('user_id','=',$id_user)->get();
+    	$userlist = UserList::where([['user_id','=',$id_user],['is_event','=',0]])->get();
     	$templates = Templates::where('user_id','=',$id_user)->get();
     	return view('broadcast.broadcast-form',['data'=>$userlist,'templates'=>$templates]);
+    }
+ 
+     /* Broadcast form event */
+    public function eventFormBroadCast(){
+        $id_user = Auth::id();
+        $userlist = UserList::where([['user_id','=',$id_user],['is_event','=',1]])->get();
+        $templates = Templates::where('user_id','=',$id_user)->get();
+        return view('broadcast.broadcast-event-form',['data'=>$userlist,'templates'=>$templates]);
     }
 
     /* Create broadcast list */
@@ -40,6 +49,7 @@ class BroadCastController extends Controller
     	$req = $request->all();
     	$message = $req['message'];
     	$msg = array('message'=>$message);
+        $sender = Sender::where('user_id',$user_id)->first();
 
     	/* Validator to limit max message character */
     	  $rules = array(
@@ -83,6 +93,7 @@ class BroadCastController extends Controller
     					$broadcastcustomer = new BroadCastCustomers;
 			    		$broadcastcustomer->user_id = $user_id;
 			    		$broadcastcustomer->list_id = $list_id;
+                        $broadcastcustomer->sender_id = $sender->id;
 			    		$broadcastcustomer->broadcast_id = $id_broadcast->id;
 			    		$broadcastcustomer->customer_id = $col->id;
 			    		$broadcastcustomer->message = $message;

@@ -58,16 +58,18 @@
                         @csrf
 
                          <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Lists Option</label>
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Event</label>
                             <div class="col-md-6">
-                                @foreach($data as $row)
-                                <div class="form-check">
-                                  <input class="form-check-input" name="id[]" type="checkbox" value="{{$row->id}}">
-                                  <label class="form-check-label" for="{{$row->id}}">
-                                    {{$row->name}}
-                                  </label>
-                                </div>
-                                 @endforeach
+
+                              <select class="form-control" name="list_id" id="display-template">
+                                  <option>Choose</option>
+                                  @if($data->count() > 0)
+                                    @foreach($data as $row)
+                                      <option value="{{$row->id}}">{{$row->name}}</option>
+                                    @endforeach
+                                  @endif
+                                </select>
+
                                 <!-- end check box -->
                                  @if (session('error'))
                                     <div class="error">{{ session('error')->first('id') }}</div>
@@ -96,18 +98,31 @@
                         </div>
 
                          <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Choose Schedule</label>
+                            <label class="col-md-4 col-form-label text-md-right">Choose Schedule</label>
                             <div class="col-md-6">
-                                <select class="form-control" id="schedule">
+                                <select class="form-control" name="schedule" id="schedule">
                                   <option value="0">Hari H</option>
                                   <option value="1">H-</option>
                                   <option value="2">H+</option>
                                 </select>
+
+                                 @if (session('errorday'))
+                                    <div class="error">{{ session('errorday') }}</div>
+                                 @endif
+                            </div>
+                        </div> 
+
+                        <div class="form-group row thedayh">
+                            <label class="col-md-4 col-form-label text-md-right">Days and time To send message</label>
+                            <div class="col-md-6">
+                                <span class="inputh">
+                                  <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />
+                                </span>
                             </div>
                         </div> 
 
                         <div class="form-group row">
-                             <div class="col-md-4 text-md-right"><a class="btn btn-success btn-sm add-day">Add Day</a></div>
+                             <div class="col-md-4 text-md-right"><a class="btn btn-success btn-sm add-day">Add Day and Time</a></div>
                             <div id="append" class="col-md-6">
                                  @if (session('error_day'))
                                   <div class="error">{{ session('error_day') }}</div>
@@ -119,7 +134,7 @@
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Set Event
+                                   Submit
                                 </button>
                             </div>
                         </div>
@@ -156,8 +171,8 @@
         displayAddDaysBtn();
         MDTimepicker();
         neutralizeClock();
-        addDays();
-        delDays();
+        //addDays();
+        //delDays();
     });
 
       function MDTimepicker(){
@@ -207,14 +222,38 @@
         $("#schedule").change(function(){
           var val = $(this).val();
 
+          var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
+
+          var hmin = '<select name="day" class="form-control col-sm-4 float-left days delcols"><?php for($x=-90;$x<=-1;$x++) {
+                echo "<option value=".$x.">$x</option>";
+          }?></select>'+
+          '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+          ;
+
+          var hplus = '<select name="day" class="form-control col-sm-4 float-left days delcols"><?php for($x=1;$x<=100;$x++) {
+                echo "<option value=".$x.">$x</option>";
+          }?></select>'+
+          '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+          ;
+
           if(val == 0){
-            $(".add-day").hide();
+           // $(".thedayh").show();
+            //$("#hour").prop('disabled',false);
+            //$(".add-day").hide();
+            //$(".delcols").remove();
+            $(".inputh").html(hday);
+          } else if(val == 1) {
+            //$(".thedayh").hide();
+           // $("#hour").prop('disabled',true);
+            //$(".add-day").show();
+             $(".inputh").html(hmin);
           } else {
-            $(".add-day").show();
+             $(".inputh").html(hplus);
           }
 
         });
      }
+
 
     function addDays(){
       $(".add-day").click(function(){
@@ -222,18 +261,18 @@
         var pos = $(".days").length;
         
         if(day == 1){
-             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+'"><?php for($x=-90;$x<=-1;$x++) {
+             var box_html = '<select name="day" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=-90;$x<=-1;$x++) {
                 echo "<option value=".$x.">$x</option>";
           }?></select>'+
-          '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+'" value="00:00" readonly />'+
-          '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del">Delete</a></span>'+
+          '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
+          '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
           '<div class="clearfix"></div>';
         } else {
-             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+'"><?php for($x=1;$x<=100;$x++) {
+             var box_html = '<select name="day" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=1;$x<=100;$x++) {
                 echo "<option value=".$x.">$x</option>";
           }?></select>'+
-            '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+'" value="00:00" readonly />'+
-            '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del">Delete</a></span>'+
+            '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
+            '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
             '<div class="clearfix"></div>';
         }
 

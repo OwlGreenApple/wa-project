@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Customer;
 use App\UserList;
 use Carbon\Carbon;
@@ -52,8 +53,10 @@ class CustomerController extends Controller
     public function addCustomer(Request $request){
     	$userlist =  $request->session()->get('userlist'); //retrieve session from userlist
         $request->session()->reflash();
+        //$request->code_country
     	$get_id_list = UserList::where('name','=',$userlist)->first();
-        $wa_number = $request->code_country.$request->wa_number;
+        $wa_number = '+62'.$request->wa_number;
+        $sender = Sender::where('user_id',Auth::id())->first();
         $wassenger = null;
 
         # Filter to avoid unavailable link 
@@ -71,8 +74,10 @@ class CustomerController extends Controller
         # if customer successful sign up 
     	if($customer->save() == true){
             // Auto Reply Event
-            $eventautoreply = Reminder::where('list_id','=',$get_id_list->id)->first();
-    		$reminder_id = Reminder::where('list_id','=',$get_id_list->id)->max('id');
+            $autoreply = Reminder::where([['list_id','=',$get_id_list->id],
+                ['event_date','=',null],['days','=',0],['hour_time','=','0']])->first();
+    		$reminder_id = Reminder::where([['list_id','=',$get_id_list->id],
+                ['event_date','<>',null],['days','>=',0],['hour_time','<>','0']])->max('id');
             $reminder = Reminder::where([['id','=',$reminder_id],['status',1]])->first();
     	} else {
     		$data['success'] = false;
@@ -80,23 +85,22 @@ class CustomerController extends Controller
     	}
 
         # Sending event auto reply for customer 
-        if(is_null($eventautoreply)){
+        if(is_null($autoreply)){
             $data['success'] = true;
             $data['message'] = 'Thank You For Join Us';
             return response()->json($data);
         } else {
              # wassenger
-            $user_id = $eventautoreply->user_id;
+            $user_id = $autoreply->user_id;
             $getsender = Sender::where('user_id',$user_id)->first();
 
-            $api_key = $getsender->api_key;
-            $message = $eventautoreply->message;
-            $status = $eventautoreply->status;
+            $message = $autoreply->message;
+            $status = $autoreply->status;
         }
 
         if($status == 1){
             $sendmessage = new SendMessage;
-            $wasengger = $sendmessage->sendWA($wa_number,$api_key,$message);
+            $wasengger = $sendmessage->sendWA($wa_number,$message);
         } else {
             $wasengger = null;
         }
@@ -124,6 +128,7 @@ class CustomerController extends Controller
             $reminder_customer = new ReminderCustomers;
             $reminder_customer->user_id = $reminder->user_id;
             $reminder_customer->list_id = $reminder->list_id;
+            $reminder_customer->sender_id = $sender->id;
             $reminder_customer->reminder_id = $reminder_id;
             $reminder_customer->customer_id = $customer->id;
             $reminder_customer->message = $reminder->message;

@@ -27,7 +27,7 @@
         <div class="col-md-8">
 
             <div class="card">
-                <div class="card-header"><b>Create BroadCast</b></div>
+                <div class="card-header"><b>Create BroadCast Reminder</b></div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -100,7 +100,7 @@
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                   Create Broadcast
+                                   Create Broadcast Reminder
                                 </button>
                             </div>
                         </div>

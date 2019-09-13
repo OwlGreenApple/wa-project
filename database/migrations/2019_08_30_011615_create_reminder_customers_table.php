@@ -17,6 +17,7 @@ class CreateReminderCustomersTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->bigInteger('list_id');
+            $table->bigInteger('sender_id');
             $table->bigInteger('reminder_id');
             $table->bigInteger('customer_id');
             $table->text('message');

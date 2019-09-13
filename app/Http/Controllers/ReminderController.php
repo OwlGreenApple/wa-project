@@ -11,6 +11,7 @@ use App\ReminderCustomers;
 use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
+use App\Sender;
 
 class ReminderController extends Controller
 {
@@ -25,10 +26,58 @@ class ReminderController extends Controller
     	return view('reminder.reminder',['data'=>$list]);
     }
 
-    /* Display form to create reminder */
+    /* Display form to create reminder auto reply */
+     public function reminderAutoReply(){
+        $id = Auth::id();
+        $list = UserList::where([['user_id',$id],['is_event',0],['status',1]])->get();
+        $templates = Templates::where('user_id',$id)->get();
+        return view('reminder.reminder-autoreply',['data'=>$list, 'templates'=>$templates]);
+    }
+
+    public function addReminderAutoReply(Request $request){
+        $user_id = Auth::id();
+        $req = $request->all();
+        $message = $req['message'];
+        $list_id = $req['listid'];
+
+        $checklist = Reminder::where([['list_id',$list_id],['event_date','=','null'],['days','=',0]])->first();
+
+        if(!is_null($checklist))
+        {
+            return redirect('reminderautoreply')->with('error_autoreply','Sorry, you only allowed to create 1 auto reply per list');
+        }
+
+        $rules = array(
+            'listid'=>['required'],
+            'message'=>['required','max:3000'],
+        );
+
+        $validator = Validator::make($request->all(),$rules);
+        $err = $validator->errors();
+
+        /* Validator */
+        if($validator->fails()){
+            return redirect('reminderautoreply')->with('error',$err);
+        } else {
+            $reminderautoreply = new Reminder;
+            $reminderautoreply->user_id = $user_id;
+            $reminderautoreply->list_id = $list_id;
+            $reminderautoreply->message = $message;
+            $reminderautoreply->save();
+        }
+
+        /* if reminder stored / save successfully */
+        if($reminderautoreply->save() == true){
+            return redirect('reminderautoreply')->with('status','Your reminder auto reply has been set!!');
+        } else {
+            return redirect('reminderautoreply')->with('status_error','Error!! failed to set reminder auto reply');
+        }
+    }
+
+    /* Display form to create reminder schedule */
     public function reminderForm(){
     	$id = Auth::id();
-    	$list = UserList::where([['user_id',$id],['status',1]])->get();
+    	$list = UserList::where([['user_id',$id],['is_event',0],['status',1]])->get();
         $templates = Templates::where('user_id',$id)->get();
     	return view('reminder.reminder-form',['data'=>$list, 'templates'=>$templates]);
     }
@@ -39,6 +88,8 @@ class ReminderController extends Controller
     	$req = $request->all();
     	$message = $req['message'];
     	$days = $req['day'];
+        
+        $sender = Sender::where('user_id',$user_id)->first();
 
         $rules = array(
             'id'=>['required'],
@@ -102,6 +153,7 @@ class ReminderController extends Controller
                 foreach($reminder_get_id as $id_reminder){
                     $remindercustomer->user_id = $user_id;
                     $remindercustomer->list_id = $col->list_id;
+                    $remindercustomer->sender_id = $sender->id;
                     $remindercustomer->reminder_id = $id_reminder->id;
                     $remindercustomer->customer_id = $col->id;
                     $remindercustomer->message = $message;

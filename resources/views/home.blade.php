@@ -54,8 +54,7 @@
                             <label class="col-md-3 col-form-label text-md-right">WA Number</label>
 
                             <div class="col-md-8">
-                                <a class="btn btn-info btn-sm mb-3 addfield">Add WA Number</a>
-                                <div class="item"><!-- field appear here --></div>
+                               <input type="text" class="form-control" name="wa_number" />
                             </div>
                         </div>  
                         

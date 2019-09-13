@@ -40,9 +40,18 @@
                  @endif
 
                 <div class="card-body">
-                     <div class="mb-2">
-                         <a class="btn btn-warning btn-sm" href="{{route('reminderform')}}">Create Reminder</a>
+
+                     <div class="mb-2 row">
+                        <div class="col-md-3">
+                            <a class="btn btn-info btn-sm" href="{{route('reminderautoreply')}}">Create Reminder Auto Reply</a>
+                        </div> 
+
+                        <div class="col-md-2">
+                            <a class="btn btn-info btn-sm" href="{{route('reminderform')}}">Create Reminder Schedule Message</a>
+                        </div>
                      </div>
+
+                    <hr/>
 
                     <div class="table-responsive">
                     <table class="table table-striped table-responsive" id="user-list">
