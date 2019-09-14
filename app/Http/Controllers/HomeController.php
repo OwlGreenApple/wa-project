@@ -29,7 +29,12 @@ class HomeController extends Controller
         session_start();
         $id = Auth::id();
         $user_name = Auth::user()->name;
-        $directory = $_SERVER['DOCUMENT_ROOT'].'/ckfinder/'.$user_name.'-'.$id;
+        if (env('local')){
+          $directory = $_SERVER['DOCUMENT_ROOT'].'/ckfinder/'.$user_name.'-'.$id;
+        }
+        else {
+          $directory = 'home2/activwa/public_html/ckfinder/'.$user_name.'-'.$id;
+        }
 
         /* Create folder for ckfinder and ckeditor image / files */
        
@@ -39,7 +44,7 @@ class HomeController extends Controller
 
         if(!file_exists($directory))
         {
-            mkdir($directory, 0741);
+            mkdir($directory, 0741,true);
         }
 
         $user = User::where('id','=',$id)->first();
