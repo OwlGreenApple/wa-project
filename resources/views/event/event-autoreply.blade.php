@@ -62,7 +62,7 @@
 
                             <div class="col-md-6">
                                 <select class="form-control" name="listid">
-                                  @if($templates->count() > 0)
+                                  @if($data->count() > 0)
                                     @foreach($data as $row)
                                       <option value="{{$row->id}}">{{$row->name}}</option>
                                     @endforeach
