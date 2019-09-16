@@ -102,7 +102,7 @@ class SendWA extends Command
                         }catch(Exception $e){
                             echo $e->getMessage();
                         }
-                      
+                      dd($wasengger);
                      
                      if($wasengger !== null)
                      {
@@ -110,8 +110,6 @@ class SendWA extends Command
 
                          /* Determine status on BroadCast-customer */
                           $delivery_status = $wasengger->deliveryStatus;
-
-                          dd($delivery_status);
                           if($delivery_status == 'queued'){
                             $status = 1;
                           } elseif($delivery_status == 'sent') {
