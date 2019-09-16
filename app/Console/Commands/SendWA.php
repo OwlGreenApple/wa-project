@@ -95,7 +95,14 @@ class SendWA extends Command
                       $wa_number = $id->wa_number;
                       $message = $id->message;
                       /* Send WA */
-                      $wasengger = $this->sendWA($wa_number,$message);
+
+                       try
+                        {
+                          $wasengger = $this->sendWA($wa_number,$message);
+                        }catch(Exception $e){
+                            echo $e->getMessage();
+                        }
+                      
                      
                      if($wasengger !== null)
                      {
