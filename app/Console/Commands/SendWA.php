@@ -97,27 +97,27 @@ class SendWA extends Command
                       /* Send WA */
                       $wasengger = $this->sendWA($wa_number,$message);
                      
-                      /* Determine status on BroadCast-customer */
-                      $delivery_status = $wasengger->deliveryStatus;
-                      if($delivery_status == 'queued'){
-                        $status = 1;
-                      } elseif($delivery_status == 'sent') {
-                        $status = 2;
-                      } elseif($delivery_status == 'failed') {
-                        $status = 5;
-                      } else {
-                        $status = 0;
-                      }
+                     if($wasengger !== null)
+                     {
+                         /* Determine status on BroadCast-customer */
+                          $delivery_status = $wasengger->deliveryStatus;
+                          if($delivery_status == 'queued'){
+                            $status = 1;
+                          } elseif($delivery_status == 'sent') {
+                            $status = 2;
+                          } elseif($delivery_status == 'failed') {
+                            $status = 5;
+                          } else {
+                            $status = 0;
+                          }
 
-                      /* Update when has sent message */
-                      if($wasengger !== null){
-                        $update_broadcast = BroadCastCustomers::where('id',$id->id)->update(['id_wa'=>$wasengger->id,
+                         $update_broadcast = BroadCastCustomers::where('id',$id->id)->update(['id_wa'=>$wasengger->id,
                             'status'=>$status,
                         ]);
-                      } else {
-                            echo 'Error!! Unable to send WA to customer';
-                      }
-
+                     } else {
+                           echo 'Error!! Unable to send WA to customer';
+                     }
+                    
                       if($update_broadcast == true){
                             // cut user's wa bandwith
                             $count = $count - 1;
