@@ -106,6 +106,8 @@ class SendWA extends Command
                      
                      if($wasengger !== null)
                      {
+
+                        dd($delivery_status);
                          /* Determine status on BroadCast-customer */
                           $delivery_status = $wasengger->deliveryStatus;
                           if($delivery_status == 'queued'){
