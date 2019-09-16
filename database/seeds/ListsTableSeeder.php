@@ -17,21 +17,24 @@ class ListsTableSeeder extends Seeder
         	'user_id' => 1,
             'name' => 'Activflash',
             'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            'updated_at' => Carbon::now(),
+            'wa_number' => "",
         ]); 
 
          DB::table('lists')->insert([
         	'user_id' => 1,
             'name' => 'Omnifluencer',
             'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            'updated_at' => Carbon::now(),
+            'wa_number' => "",
         ]);
 
          DB::table('lists')->insert([
         	'user_id' => 1,
             'name' => 'Omnilinks',
             'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            'updated_at' => Carbon::now(),
+            'wa_number' => "",
         ]);
     }
 
