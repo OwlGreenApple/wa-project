@@ -12,11 +12,9 @@ class SenderController extends Controller
     public function addSender(Request $request){
     	$req = $request->all();
     	$wa_number = $request->wa_number;
-    	$api_key = $request->api_key;
 
 		$sender = new Sender;
     	$sender->user_id = Auth::id();
-    	$sender->api_key = $api_key;
     	$sender->wa_number = $wa_number;
     	$sender->save();
 
@@ -27,6 +25,7 @@ class SenderController extends Controller
     	}
     }
 
+    /* For get user wa id device */
     public function getDeviceId($api_key){
        // $api_key = '5fe578b72c10a69fdcbd5d629a183af1799610cef975338a865480a7e7ad29c5361eb07beaf80f16';
         $curl = curl_init();

@@ -43,13 +43,6 @@
 
                      <form method="POST" action="{{ route('addsender') }}">
                         @csrf
-                          <div class="form-group row">
-                            <label class="col-md-3 col-form-label text-md-right">API Key</label>
-
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" name="api_key" />
-                            </div>
-                        </div>  
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right">WA Number</label>
 

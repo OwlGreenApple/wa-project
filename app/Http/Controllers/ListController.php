@@ -40,6 +40,7 @@ class ListController extends Controller
     	$list->name = $this->createRandomListName();
         $list->wa_number = $request->wa_number;
         $list->is_event = $request->category;
+        $list->event_date = $request->date_event;
         $list->content = $request->editor1;
     	$list->save();
 
@@ -72,8 +73,9 @@ class ListController extends Controller
             $data = null;
         } else {
             $data = array(
-                'name'=> $list->name,
                 'content'=> $list->content,
+                'is_event'=>$list->is_event,
+                'event_date'=>$list->event_date,
             );
         }
         return response()->json($data);
@@ -82,11 +84,11 @@ class ListController extends Controller
     /* Update List content */
     public function updateListContent(Request $request){
         $id = $request->id;
-        $list_name = $request->name;
+        $date_event = $request->date_event;
         $editor = $request->editor;
 
         $lists = UserList::where('id',$id)->update([
-            'name'=>$list_name,
+            'event_date'=>$date_event,
             'content'=> $editor,
         ]);
 

@@ -18,7 +18,6 @@ class CreateSendersTable extends Migration
             $table->bigInteger('user_id');
             $table->string('wa_number');
             $table->string('device_id')->nullable();
-            $table->string('api_key')->nullable();
             $table->integer('counter')->default(0);
             $table->timestamps();
         });

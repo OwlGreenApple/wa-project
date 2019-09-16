@@ -24,12 +24,12 @@ class EventController extends Controller
 
     public function index(){
     	$id = Auth::id();
-    	$eventautoreply = Reminder::where([['reminders.user_id',$id],['reminders.days',0],['event_date','=',null],['reminders.hour_time','=','0']])
+    	$eventautoreply = Reminder::where([['reminders.user_id',$id],['reminders.days',0],['reminders.hour_time','=',null],['lists.is_event','=',1]])
     			->join('lists','reminders.list_id','=','lists.id')
     			->select('lists.name','reminders.*')
     			->get();
 
-        $event = Reminder::where([['reminders.user_id',$id],['reminders.event_date','<>',null],['reminders.days','>=',0],['reminders.hour_time','<>','0']])
+        $event = Reminder::where([['reminders.user_id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])
                 ->join('lists','reminders.list_id','=','lists.id')
                 ->select('lists.name','reminders.*')
                 ->get();
@@ -51,7 +51,7 @@ class EventController extends Controller
     	$message = $req['message'];
         $list_id = $req['listid'];
 
-        $checklist = Reminder::where([['list_id',$list_id],['event_date','=','null'],['days','=',0]])->first();
+        $checklist = Reminder::where([['list_id',$list_id],['hour_time','=',null]])->first();
 
         if(!is_null($checklist))
         {
@@ -102,10 +102,15 @@ class EventController extends Controller
             $request->day = 0;
         }
 
+        if($request->schedule > 0 &&  $request->day == 0){
+           return redirect('eventform')->with('error_days','Please do not modify event days, if you want to use 0 days please use Hari H instead');
+        }
+
         $rules = array(
             'list_id'=>['required'],
             'message'=>['required','max:3000'],
-            'event_date'=>['required',new CheckDateEvent],
+            'schedule'=>['required','numeric'],
+            'day'=>['numeric'],
         );
 
         $validator = Validator::make($request->all(),$rules);
@@ -115,15 +120,10 @@ class EventController extends Controller
         if($validator->fails()){
             return redirect('eventform')->with('error',$err);
         } else {
-            /* prevent duplicate days 
-            if($this->has_dupes($req['day']) == false){
-                return redirect('eventform')->with('error_day','Do not use same value for day');
-            } */
             //$req['id'] == checkbox list
                 $reminder = new Reminder;
                 $reminder->user_id = $user_id;
                 $reminder->list_id = $request->list_id;
-                $reminder->event_date = $request->event_date;
                 $reminder->days = $request->day;
                 $reminder->hour_time = $request->hour;
                 $reminder->message = $request->message;
@@ -134,8 +134,7 @@ class EventController extends Controller
         if($reminder->save() == true){
             /* retrieve customer id */
                 $event = Reminder::where([
-                            ['reminders.event_date','=',$request->event_date],
-                            ['reminders.list_id','=',$request->list_id],
+                            ['reminders.id','=',$reminder->id],
                             ['reminders.status','=',1],
                             ['customers.status','=',1],
                             ['customers.list_id','=',$request->list_id],
@@ -155,7 +154,6 @@ class EventController extends Controller
                 $remindercustomer->sender_id = $sender->id;
                 $remindercustomer->reminder_id = $col->id;
                 $remindercustomer->customer_id = $col->csid;
-                $remindercustomer->message = $col->message;
                 $remindercustomer->save();
              }  
         }
@@ -316,7 +314,7 @@ class EventController extends Controller
     						->join('lists','lists.id','=','reminder_customers.list_id')
     						->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
                             ->rightJoin('reminders','reminders.id','=','reminder_customers.reminder_id')
-    						->select('reminder_customers.*','lists.name','customers.wa_number','reminders.event_date',
+    						->select('reminder_customers.*','lists.name','customers.wa_number','lists.event_date',
                                 'reminders.days'
                             )->orderBy('reminder_customers.id','desc')
     						->get();
@@ -326,7 +324,7 @@ class EventController extends Controller
     public function displayEventSchedule(Request $request)
     {
         $id = $request->id;
-        $event = Reminder::where([['id',$id],['event_date','<>',null],['days','>=',0],['hour_time','<>','0']])->first();
+        $event = Reminder::where([['id',$id],['days','>=',0],['hour_time','<>','0']])->first();
 
        $data = array(
             'date_event'=>$event->event_date,
@@ -336,6 +334,8 @@ class EventController extends Controller
 
         return response()->json($data);
     }
+
+    /* update event */
 
     public function updateEvent(Request $request)
     {

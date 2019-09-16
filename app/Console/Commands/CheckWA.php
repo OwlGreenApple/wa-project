@@ -12,6 +12,7 @@ use App\ReminderCustomers;
 use App\Customer;
 use Carbon\Carbon;
 use App\User;
+use App\Sender;
 
 class CheckWA extends Command
 {
@@ -47,10 +48,12 @@ class CheckWA extends Command
     public function handle()
     {
          /* Users counter */
-        $user = User::select('id','api_key')->get();
+        $user = Sender::select('id','user_id')->get();
+        $getWA = null;
+        $delivery_status = null;
+
         foreach($user as $userow){
             $id_user = $userow->id;
-            $api_key = $userow->api_key;
 
             $broadcastcustomer = BroadCastCustomers::where([
                     ['user_id',$id_user],
@@ -61,25 +64,29 @@ class CheckWA extends Command
                 /* Broadcast */
                 foreach($broadcastcustomer as $row){
                     $id_wa =  $row->id_wa;
-                    $getWA = $this->getWA($id_wa,$api_key);
-                    $delivery_status = $getWA->deliveryStatus;
-                    //check delivery status
-                    if($delivery_status == 'queued'){
-                        $status = 1;
-                    } elseif($delivery_status == 'sent') {
-                        $status = 2;
-                    } elseif($delivery_status == 'failed') {
-                        $status = 5;
-                    } else {
-                        $status = 0;
+                    $getWA = $this->getWA($id_wa);
+
+                    if($getWA !== null)
+                    {
+                        $delivery_status = $getWA->deliveryStatus;
+                        //check delivery status
+                        if($delivery_status == 'queued'){
+                            $status = 1;
+                        } elseif($delivery_status == 'sent') {
+                            $status = 2;
+                        } elseif($delivery_status == 'failed') {
+                            $status = 5;
+                        } else {
+                            $status = 0;
+                        }
+                        $updatebroadcastcustomer = BroadCastCustomers::where([
+                            ['id_wa',$id_wa],
+                        ])->update(['status'=>$status]);
                     }
-                    $updatebroadcastcustomer = BroadCastCustomers::where([
-                        ['id_wa',$id_wa],
-                    ])->update(['status'=>$status]);
-                   
                 }
             } else {
                 /* Reminder */
+                $getWAreminder = null;
                 $remindercustomer = ReminderCustomers::where([
                     ['user_id',$id_user],
                     ['status',1],
@@ -87,22 +94,26 @@ class CheckWA extends Command
 
                 foreach($remindercustomer as $cols){
                      $id_wa =  $cols->id_wa;
-                     $getWAreminder = $this->getWA($id_wa,$api_key);
-                     $delivery_status = $getWAreminder->deliveryStatus;
-                     //check delivery status
-                     if($delivery_status == 'queued'){
-                        $status = 1;
-                     } elseif($delivery_status == 'sent') {
-                        $status = 2;
-                     } elseif($delivery_status == 'failed') {
-                        $status = 5;
-                     } else {
-                        $status = 0;
-                     }
+                     $getWAreminder = $this->getWA($id_wa);
 
-                    $updateremindercustomer = ReminderCustomers::where([
-                        ['id_wa',$id_wa]
-                    ])->update(['status'=>$status]);
+                     if($getWAreminder !== null)
+                     {
+                         $delivery_status = $getWAreminder->deliveryStatus;
+                         //check delivery status
+                         if($delivery_status == 'queued'){
+                            $status = 1;
+                         } elseif($delivery_status == 'sent') {
+                            $status = 2;
+                         } elseif($delivery_status == 'failed') {
+                            $status = 5;
+                         } else {
+                            $status = 0;
+                         }
+
+                        $updateremindercustomer = ReminderCustomers::where([
+                            ['id_wa',$id_wa]
+                        ])->update(['status'=>$status]);
+                     }
                 }
             }
 
@@ -111,8 +122,9 @@ class CheckWA extends Command
     }
 
      /* get wa status */
-     public function getWA($id_wa,$api_key){
+     public function getWA($id_wa){
        $curl = curl_init();
+        $api_key = '717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080';
 
         curl_setopt_array($curl, array(
           CURLOPT_URL => "https://api.wassenger.com/v1/messages/".$id_wa."",

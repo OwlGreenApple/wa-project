@@ -54,7 +54,7 @@
                         </div> 
                     </form>
 
-                     <form name="event_form" onsubmit="return validateForm()" method="POST" action="{{ route('addevent') }}">
+                     <form name="event_form" method="POST" action="{{ route('addevent') }}">
                         @csrf
 
                          <div class="form-group row">
@@ -62,7 +62,6 @@
                             <div class="col-md-6">
 
                               <select class="form-control" name="list_id" id="display-template">
-                                  <option>Choose</option>
                                   @if($data->count() > 0)
                                     @foreach($data as $row)
                                       <option value="{{$row->id}}">{{$row->name}}</option>
@@ -87,16 +86,6 @@
                              </div>
                         </div> 
 
-                         <div class="form-group row schedule">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Schedule Event</label>
-                            <div class="col-md-6">
-                                <input type="text" id="datetimepicker" class="form-control" name="event_date" />
-                                 @if (session('error'))
-                                    <div class="error">{{ session('error')->first('event_date') }}</div>
-                                 @endif
-                            </div>
-                        </div>
-
                          <div class="form-group row">
                             <label class="col-md-4 col-form-label text-md-right">Choose Schedule</label>
                             <div class="col-md-6">
@@ -106,27 +95,27 @@
                                   <option value="2">H+</option>
                                 </select>
 
-                                 @if (session('errorday'))
-                                    <div class="error">{{ session('errorday') }}</div>
+                                 @if (session('error'))
+                                    <div class="error">{{ session('error')->first('schedule') }}</div>
                                  @endif
                             </div>
                         </div> 
 
                         <div class="form-group row thedayh">
-                            <label class="col-md-4 col-form-label text-md-right">Days and time To send message</label>
+                            <label class="col-md-4 col-form-label text-md-right">Time To send message</label>
                             <div class="col-md-6">
                                 <span class="inputh">
                                   <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />
                                 </span>
-                            </div>
-                        </div> 
-
-                        <div class="form-group row">
-                             <div class="col-md-4 text-md-right"><a class="btn btn-success btn-sm add-day">Add Day and Time</a></div>
-                            <div id="append" class="col-md-6">
-                                 @if (session('error_day'))
-                                  <div class="error">{{ session('error_day') }}</div>
-                               @endif
+                                @if (session('error'))
+                                    <div class="error">{{ session('error')->first('day') }}</div>
+                                 @endif 
+                                 @if (session('error'))
+                                    <div class="error">{{ session('error')->first('schedule') }}</div>
+                                 @endif 
+                                 @if (session('error_days'))
+                                    <div class="error">{{ session('error_days')}}</div>
+                                 @endif
                             </div>
                         </div>
 
@@ -224,14 +213,14 @@
 
           var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
 
-          var hmin = '<select name="day" class="form-control col-sm-4 float-left days delcols"><?php for($x=-90;$x<=-1;$x++) {
-                echo "<option value=".$x.">$x</option>";
+          var hmin = '<select name="day" class="form-control col-sm-8 float-left days delcols"><?php for($x=-90;$x<=-1;$x++) {
+                echo "<option value=".$x.">$x days before event</option>";
           }?></select>'+
           '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
           ;
 
-          var hplus = '<select name="day" class="form-control col-sm-4 float-left days delcols"><?php for($x=1;$x<=100;$x++) {
-                echo "<option value=".$x.">$x</option>";
+          var hplus = '<select name="day" class="form-control col-sm-8 float-left days delcols"><?php for($x=1;$x<=100;$x++) {
+                echo "<option value=".$x.">$x days after event</option>";
           }?></select>'+
           '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
           ;

@@ -31,7 +31,7 @@
 
     <!-- Data Table -->
     <link href="{{ asset('/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
-    <script type="text/javascript" src="{{ asset('/assets/DataTables/datatables.min.js') }}"></script>
+    <script defer type="text/javascript" src="{{ asset('/assets/DataTables/datatables.min.js') }}"></script>
 
     <!-- CKEditor -->
     <link href="{{ asset('/assets/ckeditor/contents.css') }}" rel="stylesheet" />
@@ -48,6 +48,9 @@
     <!-- MDtimepicker -->
     <link href="{{ asset('/assets/MDTimePicker/mdtimepicker.min.css') }}" rel="stylesheet">
     <script type="text/javascript" src="{{ asset('/assets/MDTimePicker/mdtimepicker.min.js') }}"></script>
+
+    <!-- Clipboard -->
+    <script type="text/javascript" src="{{ asset('/assets/clipboard.js-master/clipboard.min.js') }}"></script>
 
 </head>
 <body>
@@ -85,16 +88,16 @@
                                 <a class="nav-link {{ (request()->is('home')) ? 'active' : '' }}" href="{{ route('home') }}">Home</a>
                             </li> 
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('userlist')) || (request()->is('createlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists</a>
+                                <a class="nav-link {{ (request()->is('userlist')) || (request()->is('createlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists & Events</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('broadcast')||request()->is('broadcast_customer')||request()->is('broadcastform')) ? 'active' : '' }}" href="{{ route('broadcast') }}">Broadcast</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder</a>
+                                <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')||request()->is('reminderautoreply')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder List</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('event')||request()->is('eventform')||request()->is('eventcustomer')) ? 'active' : '' }}" href="{{ route('event') }}">Event</a>
+                                <a class="nav-link {{ (request()->is('event')||request()->is('eventform')||request()->is('eventcustomer')||request()->is('eventautoreply')) ? 'active' : '' }}" href="{{ route('event') }}">Reminder Event</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('templates')) ? 'active' : '' }}" href="{{ route('templates') }}">Template</a>

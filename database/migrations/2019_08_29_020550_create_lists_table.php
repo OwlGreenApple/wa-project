@@ -19,6 +19,7 @@ class CreateListsTable extends Migration
             $table->string('name');
             $table->string('wa_number');
             $table->boolean('is_event')->default(0);
+            $table->dateTime('event_date')->nullable();
             $table->text('content')->nullable();
             $table->timestamps();
             $table->boolean('status')->default(1);

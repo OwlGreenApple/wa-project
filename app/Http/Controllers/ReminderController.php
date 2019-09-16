@@ -40,7 +40,10 @@ class ReminderController extends Controller
         $message = $req['message'];
         $list_id = $req['listid'];
 
-        $checklist = Reminder::where([['list_id',$list_id],['event_date','=','null'],['days','=',0]])->first();
+        $checklist = Reminder::where([['reminders.list_id',$list_id],['reminders.hour_time',null],['lists.is_event','=',0]])
+        ->join('lists','reminders.list_id','=','lists.id')
+        ->select('reminders.*')
+        ->first();
 
         if(!is_null($checklist))
         {
@@ -156,7 +159,6 @@ class ReminderController extends Controller
                     $remindercustomer->sender_id = $sender->id;
                     $remindercustomer->reminder_id = $id_reminder->id;
                     $remindercustomer->customer_id = $col->id;
-                    $remindercustomer->message = $message;
                     $remindercustomer->save();
                 }
 

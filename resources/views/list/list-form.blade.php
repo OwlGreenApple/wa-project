@@ -11,6 +11,9 @@
                 <li class="nav-item">
                   <a href="{{route('home')}}" class="nav-link">Back Home</a>
                 </li>
+                <li class="nav-item">
+                  <a href="{{route('userlist')}}" class="nav-link">Back To List</a>
+                </li>
               </ul>
             </nav>
         </div>
@@ -32,7 +35,7 @@
                         </div>
                     @endif 
 
-                     <form method="POST" action="{{ route('addlist') }}">
+                     <form name="event_form" method="POST" action="{{ route('addlist') }}">
                         @csrf
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right">WA Number</label>
@@ -49,6 +52,12 @@
                                 No Numbers
                                @endif
 
+
+                                @if(session('error'))
+                                    <div class="error" role="alert">
+                                        {{ session('error')->wa_check_number }}
+                                    </div>
+                                @endif 
                             </div>
                         </div>   
 
@@ -72,13 +81,33 @@
                                     </div>
                                 @endif
                             </div>
-                        </div>  
-                        
+                        </div>
+
+                        <div class="form-group row dev">
+                            <label class="col-md-3 col-form-label text-md-right">Event Date</label>
+
+                            <div class="col-md-8">
+                               <span id="event_date"></span>
+                            </div>
+                        </div>
+
+                         @if (session('error'))
+                         <div class="form-group row">
+                             <label class="col-md-3 col-form-label text-md-right"></label>
+                            <div class="col-md-8">
+                               <div class="error">
+                                    {{ session('error')->date_event }}
+                                </div> 
+                            </div>
+                        </div>
+                        @endif          
+                                
                         <div class="form-group">
                             <div class="col-md-12">
                                  <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
                             </div>
                         </div> 
+
                         <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
@@ -109,5 +138,34 @@
         config.extraPlugins = 'filebrowser,colorbutton,justify,image2,font';
         config.removePlugins = 'image';
     };
+
+    $(document).ready(function(){
+        displayEventField();
+    });
+
+    /* Datetimepicker */
+     $("body").on('focus','.evd',function () {
+          $('#datetimepicker').datetimepicker({
+            format : 'YYYY-MM-DD HH:mm',
+          });
+      });
+
+     /* Display event date field */
+    function displayEventField(){
+        $(".dev").hide();
+        $("select[name='category']").change(function(){
+            var val = $(this).val();
+
+            if(val == 1){
+                $(".dev").show();
+                $("#event_date").append("<input id='datetimepicker' type='text' name='date_event' class='form-control evd' />");
+            } else {
+                $(".dev").hide();
+                $(".evd").remove();
+            }
+            
+        });
+    }
+
 </script>
 @endsection

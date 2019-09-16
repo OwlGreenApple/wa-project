@@ -112,8 +112,7 @@
                         <thead>
                             <th>User</th>
                             <th>event</th>
-                            <th>event_date</th>
-                            <th>Days</th>
+                            <th>Amount Days to Send</th>
                             <th>Sending Hour</th>
                             <th>Message</th>
                             <th>Created At</th>
@@ -126,7 +125,6 @@
                                 <tr>
                                     <td>{{$rows->user_id}}</td>
                                     <td>{{$rows->name}}</td>
-                                    <td>{{$rows->event_date}}</td>
                                     <td>{{$rows->days}}</td>
                                     <td>{{$rows->hour_time}}</td>
                                     <td class="wraptext">

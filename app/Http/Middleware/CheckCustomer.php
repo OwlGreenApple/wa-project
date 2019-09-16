@@ -28,6 +28,11 @@ class CheckCustomer
          if(!preg_match('/^[1-9][0-9]*$/',$req['wa_number'])){
             $error['wa_number'] = 'Please do not use 0 as first number';
             return response()->json($error);
+         } 
+
+         if(preg_match('/^[62][0-9]*$/',$req['wa_number'])){
+            $error['wa_number'] = 'Please do not use 62 as first number, just use number after 0 or +62';
+            return response()->json($error);
          }
 
          /* concat wa number so that get the correct number */

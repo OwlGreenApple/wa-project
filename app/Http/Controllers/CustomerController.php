@@ -56,8 +56,9 @@ class CustomerController extends Controller
         //$request->code_country
     	$get_id_list = UserList::where('name','=',$userlist)->first();
         $wa_number = '+62'.$request->wa_number;
-        $sender = Sender::where('user_id',Auth::id())->first();
+        $sender = Sender::where('user_id',$get_id_list->user_id)->first();
         $wassenger = null;
+        $evautoreply = false;
 
         # Filter to avoid unavailable link 
         if(is_null($get_id_list)){
@@ -74,17 +75,27 @@ class CustomerController extends Controller
         # if customer successful sign up 
     	if($customer->save() == true){
             // Auto Reply Event
-            $autoreply = Reminder::where([['list_id','=',$get_id_list->id],
-                ['event_date','=',null],['days','=',0],['hour_time','=','0']])->first();
-    		$reminder_id = Reminder::where([['list_id','=',$get_id_list->id],
-                ['event_date','<>',null],['days','>=',0],['hour_time','<>','0']])->max('id');
+            $autoreply = Reminder::where([
+                ['reminders.list_id','=',$get_id_list->id],
+                ['reminders.days','=',0],
+                ['reminders.hour_time','=',null],
+                ])->join('lists','reminders.list_id','=','lists.id')
+                ->select('reminders.*')->first();
+           
+            // Reminder
+    		$reminder_id = Reminder::where([
+                ['reminders.list_id','=',$get_id_list->id],
+                ['lists.is_event','=',0]])
+                ->join('lists','reminders.list_id','=','lists.id')
+                ->max('reminders.id');
+
             $reminder = Reminder::where([['id','=',$reminder_id],['status',1]])->first();
     	} else {
     		$data['success'] = false;
     		$data['message'] = 'Error-001! Sorry there is something wrong with our system';
     	}
 
-        # Sending event auto reply for customer 
+        # Sending event auto reply for customer, return true if user has not set auto reply yet
         if(is_null($autoreply)){
             $data['success'] = true;
             $data['message'] = 'Thank You For Join Us';
@@ -119,7 +130,7 @@ class CustomerController extends Controller
             return response()->json($data);
         }
 
-        # if reminder empty  
+        # sending message / reminder 
         if(is_null($reminder)){
             $data['success'] = true;
             $data['message'] = 'Thank You For Join Us';
@@ -131,7 +142,6 @@ class CustomerController extends Controller
             $reminder_customer->sender_id = $sender->id;
             $reminder_customer->reminder_id = $reminder_id;
             $reminder_customer->customer_id = $customer->id;
-            $reminder_customer->message = $reminder->message;
             $reminder_customer->save();
         }
 
