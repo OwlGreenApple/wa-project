@@ -2,7 +2,7 @@
 
 @section('content')
 
-<!-- navbar -->
+<!-- navbar 
 <div class="container mb-2">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -19,11 +19,11 @@
         </div>
     </div>
 </div>
-<!-- end navbar -->
+ end navbar -->
 
-
+<!--
 <div class="container mb-2">
-    <!-- add list-->
+    <!-- add lis
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -51,7 +51,7 @@
                             </div>
                         </div>  
                         
-                        <!-- submit button -->
+                        <!-- submit button 
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
@@ -60,17 +60,17 @@
                             </div>
                         </div>
                      </form>
-                     <!-- end form -->
+                     <!-- end form 
 
                 </div>
             </div>
         </div>
     </div>
-<!-- end container -->   
+<!-- end container 
 </div>
 
 <div class="container mb-2">
-    <!-- Profile List-->
+    <!-- Profile List
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -84,7 +84,7 @@
                 <div class="card-body">
                      <form method="POST" action="{{ route('updateuser') }}">
                         @csrf
-                        <!-- name -->
+                        <!-- name 
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
 
@@ -93,7 +93,7 @@
                             </div>
                         </div>  
                        
-                        <!-- Password -->
+                        <!-- Password 
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Change Password </label>
 
@@ -101,7 +101,7 @@
                                 <input type="password" class="form-control" name="password" />
                             </div>
                         </div> 
-                        <!-- submit button -->
+                        <!-- submit button 
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
@@ -110,19 +110,20 @@
                             </div>
                         </div>
                      </form>
-                     <!-- end form -->
+                     <!-- end form 
 
                 </div>
             </div>
         </div>
     </div>
-<!-- end container -->   
+<!-- end container 
 </div>
+-->   
 
 <script type="text/javascript">
     $(document).ready(function(){
-        addWACol();
-        delWACol();
+        //addWACol();
+        //delWACol();
     });
 
     function addWACol(){

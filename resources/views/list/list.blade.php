@@ -131,7 +131,7 @@
 
      function table(){
          $("#user-list").dataTable({
-            'pageLength':5,
+            'pageLength':1,
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
             "destroy":true,
         });
@@ -142,10 +142,10 @@
     {
          var clipboard = new ClipboardJS('.copy');
 
-        clipboard.on('success', function(e) {
+        /*clipboard.on('success', function(e) {
             //alert('You had copied the text');
             clipboard.destroy();
-        });
+        });*/
     }
 
     /* Tool Tip */

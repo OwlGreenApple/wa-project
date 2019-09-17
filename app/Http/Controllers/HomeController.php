@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use App\User;
 
 class HomeController extends Controller
@@ -26,25 +27,26 @@ class HomeController extends Controller
      */
     public function index()
     {
+
         session_start();
         $id = Auth::id();
         $user_name = Auth::user()->name;
-        if (env('local')){
-          $directory = $_SERVER['DOCUMENT_ROOT'].'/ckfinder/'.$user_name.'-'.$id;
+        if (env('APP_ENV') == 'local'){
+          $directory = public_path().'/ckfinder/'.$user_name.'-'.$id;
         }
         else {
           $directory = 'home2/activwa/public_html/ckfinder/'.$user_name.'-'.$id;
         }
-
-        /* Create folder for ckfinder and ckeditor image / files */
        
         if(!isset($_SESSION['editor_path'])){
-            $_SESSION['editor_path'] = '/ckfinder/'.$user_name.'-'.$id;
+            $_SESSION['editor_path'] = public_path().'/ckfinder/'.$user_name.'-'.$id;
         }
 
         if(!file_exists($directory))
         {
             mkdir($directory, 0741,true);
+            //$path = $directory;
+            //File::makeDirectory($path, $mode = 0741, true, true);
         }
 
         $user = User::where('id','=',$id)->first();

@@ -26,9 +26,8 @@ class CustomerController extends Controller
     	} elseif(is_null($check_link)) {
     		return redirect('/');
     	} else {
-    		$request->session()->flash('userlist',$product_list);
             $list = UserList::where('name',$product_list)->first();
-    		return view('register-customer',['content'=>$list->content]);
+    		return view('register-customer',['content'=>$list->content,'listname'=>$product_list]);
     	}
     }
 
@@ -44,17 +43,15 @@ class CustomerController extends Controller
         } elseif(is_null($check_link)) {
             return redirect('/');
         } else {
-            $request->session()->flash('userlist',$product_list);
+            //$request->session()->flash('userlist',$product_list);
             $list = UserList::where('name',$product_list)->first();
-            return view('register-customer',['content'=>$list->content]);
+            return view('register-customer',['content'=>$list->content, 'listname'=>$product_list]);
         }
     }
 
     public function addCustomer(Request $request){
-    	$userlist =  $request->session()->get('userlist'); //retrieve session from userlist
-        $request->session()->reflash();
-        //$request->code_country
-    	$get_id_list = UserList::where('name','=',$userlist)->first();
+        $listname = $request->listname;
+    	$get_id_list = UserList::where('name','=',$listname)->first();
         $wa_number = '+62'.$request->wa_number;
         $sender = Sender::where('user_id',$get_id_list->user_id)->first();
         $wassenger = null;
@@ -155,4 +152,5 @@ class CustomerController extends Controller
         }
     	return response()->json($data);
     }
+
 }

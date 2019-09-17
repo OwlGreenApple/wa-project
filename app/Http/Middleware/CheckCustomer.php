@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Facades\Validator;
 use App\Rules\CheckWANumbers;
 use App\Customer;
+use App\UserList;
 
 class CheckCustomer
 {
@@ -18,11 +19,10 @@ class CheckCustomer
      */
     public function handle($request, Closure $next)
     {
-        $product_list = $request->session()->get('userlist');
-        $request->session()->reflash();
-
+    
         /* Get all data from request and then fetch it in array */
          $req = $request->all();
+         $wa_number = '+62'.$request->wa_number;
 
          /* Avoid customer fill 0 as a leading number on wa number */
          if(!preg_match('/^[1-9][0-9]*$/',$req['wa_number'])){
@@ -35,8 +35,13 @@ class CheckCustomer
             return response()->json($error);
          }
 
+        if($this->checkwanumbers($wa_number,$req['listname']) == false){
+            $error['wa_number'] = 'Sorry, this number has already been taken..';
+            return response()->json($error);
+         }
+        
          /* concat wa number so that get the correct number */
-         $wa_number = $req['code_country'].$req['wa_number'];
+         //$wa_number = $req['code_country'].$req['wa_number'];
          $data = array(
             'name'=>$req['name'],
             'code_country'=>$req['code_country'],
@@ -46,7 +51,7 @@ class CheckCustomer
          $rules = [
             'name'=> ['required','min:4','max:190'],
             'code_country'=>['required'],
-            'wa_number'=> ['required',new CheckWANumbers,'between:5,16'],
+            'wa_number'=> ['required','between:5,16'],
         ];
 
         $validator = Validator::make($data,$rules);
@@ -61,6 +66,22 @@ class CheckCustomer
             return response()->json($data);
         } else {
             return $next($request);
+        }
+    }
+
+     public function checkwanumbers($wa_number,$listname){
+        $get_id_list = UserList::where('name','=',$listname)->first();
+        $id_user_list = $get_id_list->id;
+
+        $checkwa = Customer::where([
+                    ['wa_number','=',$wa_number],
+                    ['list_id','=',$id_user_list]
+                    ])->first();
+
+        if(is_null($checkwa)){
+            return true;
+        } else {
+            return false;
         }
     }
 
