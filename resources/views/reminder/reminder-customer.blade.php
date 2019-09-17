@@ -29,8 +29,9 @@
                 <div class="card-body table-responsive">
                     <table class="table table-striped" id="reminder-customer">
                         <thead>
+                            <th>No</th>
                             <th>Product Name</th>
-                            <th>Reminder ID</th>
+                            <th>Days To Sending</th>
                             <th>Customer WA Number</th>
                             <th>Message</th>
                             <th>Customer Registered</th>
@@ -39,14 +40,19 @@
                             <th>Send Status</th>
                         </thead>
                         <tbody>
-                            @if(!is_null($data))
+                            @if($data->count() > 0)
+                            @php
+                                $x=1;
+                            @endphp
                             @foreach($data as $row)
                                 <tr>
+                                    <td>{{$x}}</td>
                                     <td>{{$row->name}}</td>
-                                    <td>{{$row->reminder_id}}</td>
+                                    <td>{{$row->days}}</td>
                                     <td>{{$row->wa_number}}</td>
                                     <td class="wraptext">
-                                        <span class="get-text-{{$row->id}}">{{$row->message}}</span>
+                                        <span class="get-text-{{$x}}">{{$row->message}}</span>
+                                        <div><small><a pos="{{$x}}" id="{{$row->id}}" class="display_popup">Read More</a></small></div>
                                     </td>
                                     <td>{{$row->csrg}}</td>
                                     <td>{{$row->created_at}}</td>
@@ -65,6 +71,9 @@
                                         @endif
                                     </td>
                                 </tr>
+                                @php
+                                $x++;
+                                @endphp
                             @endforeach
                             @else
                                 'No Data'
@@ -79,9 +88,29 @@
 <!-- end container -->   
 </div>
 
+<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4>Reminder Customer Message</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+           <p><!-- text appear here --><p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+
 <script type="text/javascript">
     $(document).ready(function(){
         table();
+        getText();
     });
 
     function table(){
@@ -90,6 +119,19 @@
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
         });
     }
+
+     function getText(){
+        $("body").on("click",".display_popup",function(){
+            $("#myModal").modal();
+            var id = $(this).attr('id');
+            var pos = $(this).attr('pos');
+            console.log(pos);
+            var txt = $(".get-text-"+pos).text();
+            $(".modal-body > p").text(txt);
+            $(".id_reminder").val(id);
+        });
+    }
+
 </script>
 
 @endsection

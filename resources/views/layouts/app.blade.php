@@ -91,7 +91,7 @@
                                 <a class="nav-link {{ (request()->is('userlist')) || (request()->is('createlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists & Events</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('broadcast')||request()->is('broadcast_customer')||request()->is('broadcastform')) ? 'active' : '' }}" href="{{ route('broadcast') }}">Broadcast</a>
+                                <a class="nav-link {{ (request()->is('broadcast')||request()->is('broadcast_customer')||request()->is('broadcastform')||request()->is('broadcasteventform')) ? 'active' : '' }}" href="{{ route('broadcast') }}">Broadcast</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')||request()->is('reminderautoreply')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder List</a>

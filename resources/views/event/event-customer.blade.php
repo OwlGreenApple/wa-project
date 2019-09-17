@@ -30,7 +30,6 @@
                     <table class="table table-striped" id="reminder-customer">
                         <thead>
                             <th>Product Name</th>
-                            <th>Reminder ID</th>
                             <th>Customer WA Number</th>
                             <th>Message</th>
                             <th>Event Days Before / After</th>
@@ -40,11 +39,10 @@
                             <th>Send Status</th>
                         </thead>
                         <tbody>
-                            @if(!is_null($data))
+                            @if($data->count() >0)
                             @foreach($data as $row)
                                 <tr>
                                     <td>{{$row->name}}</td>
-                                    <td>{{$row->reminder_id}}</td>
                                     <td>{{$row->wa_number}}</td>
                                     <td class="wraptext">
                                         <span class="get-text-{{$row->id}}">{{$row->message}}</span>

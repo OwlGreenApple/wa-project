@@ -40,6 +40,9 @@
                  @endif
 
                 <div class="card-body">
+                    <h3>Reminder Auto Reply</h3>
+
+                    <hr/>
 
                      <div class="mb-2 row">
                         <div class="col-md-3">
@@ -65,12 +68,64 @@
                             <th>Action</th>
                         </thead>
                         <tbody>
-                            @if(!is_null($data))
-                            @foreach($data as $row)
+                            @if($autoreply->count() > 0)
+                            @foreach($autoreply as $row)
                                 <tr>
                                     <td>{{$row->user_id}}</td>
                                     <td>{{$row->name}}</td>
                                     <td>{{$row->days}}</td>
+                                    <td class="wraptext">
+                                        <span class="get-text-{{$row->id}}">{{$row->message}}</span>
+                                        <div><small><a id="{{$row->id}}" class="display_popup">Read More</a></small></div>
+                                    </td>
+                                    <td>{{$row->created_at}}</td>
+                                    <td>{{$row->updated_at}}</td>
+                                    <td>
+                                        <a href="{{url('reminder-status/'.$row->id.'/'.$row->status.'')}}" class="btn btn-primary btn-sm"> @if($row->status == 0)
+                                            Activate
+                                        @else
+                                            Deactivate
+                                        @endif</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @else
+                                'No Data'
+                            @endif
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <!-- end card-body -->  
+
+
+                 <div class="card-body">
+                    <h3>Reminder Message</h3>
+
+                    <hr/>
+
+                    <div class="table-responsive">
+                    <table class="table table-striped table-responsive" id="reminder-message">
+                        <thead>
+                            <th>User</th>
+                            <th>lists</th>
+                            <th>Days</th>
+                            <th>Message</th>
+                            <th>Created At</th>
+                            <th>Updated At</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            @if($data->count() > 0)
+                            @foreach($data as $row)
+                                <tr>
+                                    <td>{{$row->user_id}}</td>
+                                    <td>{{$row->name}}</td>
+                                    <td> 
+                                        <span class="get-day-{{$row->id}}">    {{$row->days}}
+                                        </span>
+                                        <div class="mt-1"><small><a class="display_days" id="{{$row->id}}">Edit</a></small></div>
+                                    </td>
                                     <td class="wraptext">
                                         <span class="get-text-{{$row->id}}">{{$row->message}}</span>
                                         <div><small><a id="{{$row->id}}" class="display_popup">Read More</a></small></div>
@@ -126,18 +181,101 @@
     </div>
   </div>
 
+  <!-- Modal Edit Days -->
+  <div class="modal fade" id="editDays" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            Reminder Message
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <form id="update_days">
+                    <select class="form-control" name="day">
+                      @php
+                      for($x=1;$x<=100;$x++){
+                       @endphp
+                        <option value="{{$x}}">+{{$x}}</option>
+                      @php  
+                      }
+                      @endphp
+                    </select>
+                     <input type="hidden" class="id_reminder" />
+                    <div class="mt-2">
+                        <button type="submit" class="btn btn-warning">Edit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
 <script type="text/javascript">
     $(document).ready(function(){
         getText();
         updateMessage();
         emojiOne();
         table();
+        getDays();
+        updateDays();
     });
 
     function table(){
         $("#user-list").dataTable({
             'pageLength':5,
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        });
+
+        $("#reminder-message").dataTable({
+            'pageLength':5,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        });
+    }
+
+    function getDays(){
+        $("body").on("click",".display_days",function(){
+            $("#editDays").modal();
+            var id = $(this).attr('id');
+            var day = $(".get-day-"+id).text();
+            day = parseInt(day);
+            $(".id_reminder").val(id);
+            $('select[name="day"] > option[value="' +day+ '"]').prop('selected',true);
+        });
+    }
+
+    /* Update message */
+    function updateDays(){
+        $("body").on('submit','#update_days',function(e){
+            e.preventDefault();
+            var id_reminder = $('.id_reminder').val(); 
+            var days = $('select[name="day"]').val();
+            var data = {
+                'days': days,
+                'id_reminder': id_reminder,
+            };
+
+            $.ajaxSetup({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+            });
+            $.ajax({
+                type : 'POST',
+                url : "{{route('reminderdays')}}",
+                data : data,
+                dataType : "json",
+                success : function(result){
+                    if(result.msg.length > 0){
+                        alert(result.msg);
+                        location.href="{{route('reminder')}}";
+                    }
+                }
+            });/* end ajax */
         });
     }
 

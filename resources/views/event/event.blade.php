@@ -56,7 +56,7 @@
                     <div class="table-responsive">
                     <h4>Event Auto Reply</h4>
                     <hr/>
-                    <table class="table table-striped table-responsive" id="user-list">
+                    <table class="table table-striped table-responsive" id="event-autoreply-list">
                         <thead>
                             <th>User</th>
                             <th>event</th>
@@ -108,10 +108,11 @@
                     <!-- event schedule -->
                     <div class="table-responsive">
                     <h4>Event Schedule</h4>
-                    <table class="table table-striped table-responsive" id="user-list">
+                    <table class="table table-striped table-responsive" id="event-list">
                         <thead>
                             <th>User</th>
-                            <th>event</th>
+                            <th>Event Name</th>
+                            <th>Event Date</th>
                             <th>Amount Days to Send</th>
                             <th>Sending Hour</th>
                             <th>Message</th>
@@ -120,11 +121,12 @@
                             <th>Action</th>
                         </thead>
                         <tbody>
-                            @if(!is_null($event))
+                            @if($event->count() > 0)
                             @foreach($event as $rows)
                                 <tr>
                                     <td>{{$rows->user_id}}</td>
                                     <td>{{$rows->name}}</td>
+                                    <td>{{$rows->event_date}}</td>
                                     <td>{{$rows->days}}</td>
                                     <td>{{$rows->hour_time}}</td>
                                     <td class="wraptext">
@@ -134,12 +136,12 @@
                                     <td>{{$rows->created_at}}</td>
                                     <td>{{$rows->updated_at}}</td>
                                     <td>
-                                        <a href="{{url('reminder-status/'.$rows->id.'/'.$rows->status.'')}}" class="btn btn-primary btn-sm"> @if($rows->status == 0)
+                                        <a href="{{url('eventstatus/'.$rows->id.'/'.$rows->status.'')}}" class="btn btn-primary btn-sm"> @if($rows->status == 0)
                                             Activate
                                         @else
                                             Deactivate
                                         @endif</a>
-
+                                        <!-- edit button -->
                                         <div class="mt-1"><a class="btn btn-warning btn-sm edit-col" id="{{$rows->id}}">Edit</a></div>
                                     </td>
                                 </tr>
@@ -206,6 +208,7 @@
                         <label for="name" class="col-md-4 col-form-label text-md-right">Event Date</label>
                         <div class="col-md-6">
                             <input type="text" id="datetimepicker" class="form-control" name="date_event" autocomplete="off" />
+                            <span class="error date_event"></span>
                         </div>
                     </div>
 
@@ -217,20 +220,24 @@
                                   <option value="1">H-</option>
                                   <option value="2">H+</option>
                                 </select>
+                                <span class="error schedule"></span>
                             </div>
                     </div> 
 
                     <div class="form-group row thedayh">
                         <label class="col-md-4 col-form-label text-md-right">Days and time To send message</label>
                         <div class="col-md-6">
-                            <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />
+                            <span id="datetime"></span>
+
+                            <span class="error id"></span>
+                            <span class="error listid"></span>
+                            <span class="error hour_time"></span>
                         </div>
                     </div> 
 
-                    <div class="form-group row">
-                         <div class="col-md-4 text-md-right"><a class="btn btn-success btn-sm add-day">Add Day and Time</a></div>
-                        <div id="append" class="col-md-6"></div>
-                    </div>
+                    <input type="hidden" name="id" />
+                    <input type="hidden" name="list_id" />
+
 
                     <div class="form-group mt-2">
                         <button type="submit" class="btn btn-warning">Edit</button>
@@ -244,16 +251,29 @@
   </div>
 
 <script type="text/javascript">
+
+     var hday = '<input name="day" type="hidden" value="0" /><input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
+
+      var hmin = '<select name="day" class="form-control col-sm-8 float-left days delcols"><?php for($x=-90;$x<=-1;$x++) {
+            echo "<option value=".$x.">$x days before event</option>";
+      }?></select>'+
+      '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+      ;
+
+      var hplus = '<select name="day" class="form-control col-sm-8 float-left days delcols"><?php for($x=1;$x<=100;$x++) {
+            echo "<option value=".$x.">$x days after event</option>";
+      }?></select>'+
+      '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+      ;
+
     $(document).ready(function(){
         getText();
         updateMessage();
         emojiOne();
         table();
         displayEditForm();
-        displayAddDaysBtn();
+        displayScheduleOption();
         MDTimepicker();
-        addDays();
-        delDays();
         updateEventSchedule();
     });
 
@@ -274,9 +294,11 @@
 
        function displayEditForm()
       {
+
         $("body").on('click','.edit-col',function(){
             var id = $(this).attr('id');
             $("#editbox").modal();
+            $("input[name='id']").val(id);
             $.ajax({
                 type : 'GET',
                 url : '{{route("displayeventschedule")}}',
@@ -284,67 +306,26 @@
                 dataType : "json",
                 success : function(result){
                    $("input[name='date_event']").val(result.date_event);
-                   $("input[name='day']").val(result.day);
+                   $("input[name='list_id']").val(result.list_id);
+
+                   if(result.day < 0){ 
+                       $('select[name="schedule"] > option[value="' + 1 + '"]').prop('selected',true);
+                       $("#datetime").html(hmin);
+                   } else if(result.day == 0){
+                        $('select[name="schedule"] > option[value="' + 0 + '"]').prop('selected',true);
+                        $("#datetime").html(hday);
+                   } else {
+                        $('select[name="schedule"] > option[value="' + 2 + '"]').prop('selected',true);
+                        $("#datetime").html(hplus);
+                   }
+                   $('select[name="day"] > option[value="' +result.day+ '"]').prop('selected',true);
                    $("input[name='hour']").val(result.hour);
                 }
             });
         });
       }
 
-     function displayAddDaysBtn()
-     {
-        $(".add-day").hide();
-        $("#schedule").change(function(){
-          var val = $(this).val();
-
-          if(val == 0){
-            $(".thedayh").show();
-            $("#hour").prop('disabled',false);
-            $(".add-day").hide();
-            $(".delcols").remove();
-          } else {
-            $(".thedayh").hide();
-            $("#hour").prop('disabled',true);
-            $(".add-day").show();
-          }
-
-        });
-     }
-
-    function addDays(){
-      $("body").on('click','.add-day',function(){
-        var day = $("#schedule").val();
-        var pos = $(".days").length;
-        
-        if(day == 1){
-             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=-90;$x<=-1;$x++) {
-                echo "<option value=".$x.">$x</option>";
-          }?></select>'+
-          '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
-          '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
-          '<div class="clearfix"></div>';
-        } else {
-             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=1;$x<=100;$x++) {
-                echo "<option value=".$x.">$x</option>";
-          }?></select>'+
-            '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
-            '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
-            '<div class="clearfix"></div>';
-        }
-
-        $("#append").append(box_html);
-      });
-    }
-
-    function delDays(){
-      $("body").on("click",".del",function(){
-        var pos = $(this).attr('id');
-        $("."+pos).remove();
-        $("#"+pos).remove();
-      });
-    }
-
-    function updateEventSchedule()
+        function updateEventSchedule()
     {
         $("body").on('submit','#edit_event',function(e){
             e.preventDefault();
@@ -356,19 +337,32 @@
             });
             $.ajax({
                 type : 'POST',
-                url : "{{route('remindermessage')}}",
+                url : "{{route('updatevent')}}",
                 data : data,
                 dataType : "json",
                 success : function(result){
-                    alert(result.msg);
-                    location.href="{{route('reminder')}}";
+                    if(result.error == true){
+                        $(".error.id").html(result.id);
+                        $(".error.listid").html(result.list_id);
+                        $(".error.days").html(result.day);
+                        $(".error.hour_time").html(result.hour);
+                        $(".error.date_event").html(result.date_event);
+                    } else {
+                        alert(result.message);
+                        location.href="{{route('event')}}";
+                    }
                 }
             });/* end ajax */
         });
     }
 
-    function table(){
-        $("#user-list").dataTable({
+     function table(){
+        $("#event-list").dataTable({
+            'pageLength':5,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        });
+
+        $("#event-autoreply-list").dataTable({
             'pageLength':5,
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
         });
@@ -414,11 +408,63 @@
                 dataType : "json",
                 success : function(result){
                     alert(result.msg);
-                    location.href="{{route('reminder')}}";
+                    location.href="{{route('event')}}";
                 }
             });/* end ajax */
         });
     }
+
+    /**/
+
+     function displayScheduleOption()
+     {
+        $("#schedule").change(function(){
+          var val = $(this).val();
+
+          if(val == 0){
+            $("#datetime").html(hday);
+          } else if(val == 1) {
+            $("#datetime").html(hmin);
+          } else {
+            $("#datetime").html(hplus);
+          }
+
+        });
+     }
+
+    function addDays(){
+      $("body").on('click','.add-day',function(){
+        var day = $("#schedule").val();
+        var pos = $(".days").length;
+        
+        if(day == 1){
+             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=-90;$x<=-1;$x++) {
+                echo "<option value=".$x.">$x</option>";
+          }?></select>'+
+          '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
+          '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
+          '<div class="clearfix"></div>';
+        } else {
+             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=1;$x<=100;$x++) {
+                echo "<option value=".$x.">$x</option>";
+          }?></select>'+
+            '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
+            '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
+            '<div class="clearfix"></div>';
+        }
+
+        $("#append").append(box_html);
+      });
+    }
+
+    function delDays(){
+      $("body").on("click",".del",function(){
+        var pos = $(this).attr('id');
+        $("."+pos).remove();
+        $("#"+pos).remove();
+      });
+    }
+
 </script>
 
 @endsection

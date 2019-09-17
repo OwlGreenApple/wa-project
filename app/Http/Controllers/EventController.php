@@ -31,7 +31,7 @@ class EventController extends Controller
 
         $event = Reminder::where([['reminders.user_id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])
                 ->join('lists','reminders.list_id','=','lists.id')
-                ->select('lists.name','reminders.*')
+                ->select('lists.name','lists.event_date','reminders.*')
                 ->get();
 
     	return view('event.event',['data'=>$eventautoreply,'event'=>$event]);
@@ -315,7 +315,7 @@ class EventController extends Controller
     						->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
                             ->rightJoin('reminders','reminders.id','=','reminder_customers.reminder_id')
     						->select('reminder_customers.*','lists.name','customers.wa_number','lists.event_date',
-                                'reminders.days'
+                                'reminders.days','reminders.message'
                             )->orderBy('reminder_customers.id','desc')
     						->get();
     	return view('event.event-customer',['data'=>$remindercustomer]);
@@ -324,12 +324,13 @@ class EventController extends Controller
     public function displayEventSchedule(Request $request)
     {
         $id = $request->id;
-        $event = Reminder::where([['id',$id],['days','>=',0],['hour_time','<>','0']])->first();
+        $event = Reminder::where([['reminders.id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.event_date','lists.id AS list_id')->first();
 
        $data = array(
             'date_event'=>$event->event_date,
             'day'=>$event->days,
             'hour'=>$event->hour_time,
+            'list_id'=>$event->list_id,
        );
 
         return response()->json($data);
@@ -340,68 +341,98 @@ class EventController extends Controller
     public function updateEvent(Request $request)
     {
         $user_id = Auth::id();
-        $req = $request->all();
-        $message = $req['message'];
-        $event_date = $req['event_date'];
-        $schedule = $req['schedule'];
         $sender = Sender::where('user_id',$user_id)->first();
+        $id = $request->id;
+        $list_id = $request->list_id;
+        $data['error'] = false;
+        $today = Carbon::now()->format('Y-m-d h:i');
 
-
-        if((empty($req['day']) || empty($req['hour'])) && $schedule == 0)
-        {
-            $req['day'] = array(0);
-            $req['hour'] = array($req['hour']);
-            $days = $req['day'];
-            $hour = $req['hour'];
-        } else if((empty($req['day']) || empty($req['hour'])) && $schedule > 0) {
-            $days = null;
-            $hour = null;
-        } else {
-            $days = $req['day'];
-            $hour = $req['hour'];
-        }
-
-        if($days == null || $hour == null) {
-            $error['days'] = 'Days and time should not blank';
-            return response()->json($error);
-        }
-
-        $gettime = array_combine($days,$hour);
+         if($request->date_event < $today){
+            $data = array(
+                'error'=>true,
+                'date_event'=>'Date event cannot be less than today',
+            );
+            return response()->json($data);
+        } 
 
         $rules = array(
-            'event_date'=>['required',new CheckDateEvent],
+            'id'=>['required','numeric'],
+            'list_id'=>['required','numeric'],
+            'day'=>['required'],
+            'hour'=>['required'],
+            'date_event'=>['required'],
         );
 
         $validator = Validator::make($request->all(),$rules);
-        $err = $validator->errors();
-        $error['even_date'] = $err->first('event_date');
+        $errors = $validator->errors();
 
-        /* Validator */
         if($validator->fails()){
-            return response()->json($error);
-        } else {
-            /* prevent duplicate days */
-            if($this->has_dupes($req['day']) == false){
-                echo 'Do not use same value for day';
-            } 
-            //$req['id'] == checkbox list
-            foreach($gettime as $day=>$hour){
-                $update = array(
-                    ''
-                );
-                $reminder = Reminder::where('id',$id_reminder)->update($update
-                );
-            }
+            $data = array(
+                'id'=>$errors->first('id'),
+                'list_id'=>$errors->first('list_id'),
+                'day'=>$errors->first('day'),
+                'hour'=>$errors->first('hour'),
+                'date_event'=>$errors->first('date_event'),
+                'error'=>true
+            );
+            return response()->json($data);
         }
 
-        /* if reminder stored / save successfully */
-        if($reminder == true){
-            $data['message'] = 'Your event has been updated';
+        $event = Reminder::where('id',$id)->update([
+            'days'=>$request->day,
+            'hour_time'=>$request->hour,
+        ]);
+
+        if($event == true){
+            $list = UserList::where('id',$list_id)->update(['event_date'=>$request->date_event]);
+        } else {
+            $data['message'] = 'Error, unable to update event date';
+            return response()->json($data);
+        }
+
+        // if reminder and lists updated successfully
+        if($list == true){
+            $data['message'] = 'Your event reminder has been updated';
         } else {
             $data['message'] = 'Error, unable to update event';
         }
 
         return response()->json($data);
+
+    }
+
+    /* Change reminder and reminder-customer status */
+    public function setEventStatus($id_reminder,$status){
+
+        /* From on to off */
+        if($status == 1){
+            $turn = 0;
+            $turn_customer = 3;
+        } else {
+            $turn = 1;
+            $turn_customer = 0;
+        }
+
+        $reminder = Reminder::where('id','=',$id_reminder)->update([
+            'status'=>$turn
+        ]);
+
+        /* if correct then reminder's status updated */
+        if($reminder == true){
+            $remindercustomer =  ReminderCustomers::where([
+                ['reminder_id','=',$id_reminder],
+            ])->whereIn('status', [0,3])->update(['status'=> $turn_customer]);
+        } else {
+            return redirect('event')->with('error','Error-001! Unable to changed reminder status');
+        }
+
+        /* if correct then reminder-customer's status updated */
+        if($remindercustomer == true){
+            return redirect('event')->with('message','Your reminder status just changed');
+        } else {
+            /* if there is no status = 0 */
+            return redirect('event')->with('warning','Warning! Your reminder status just changed, but nothing reminder for customer');
+        }
     }
 
 /* End event controller */

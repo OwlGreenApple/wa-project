@@ -19,11 +19,16 @@ class ReminderController extends Controller
 	/* Display created reminder */
     public function index(){
     	$id = Auth::id();
-    	$list = Reminder::where([['reminders.user_id',$id]])
+    	$list = Reminder::where([['reminders.user_id',$id],['lists.is_event','=',0],['reminders.days','>',0]])
     			->join('lists','reminders.list_id','=','lists.id')
-    			->select('lists.name','reminders.*')
+    			->select('lists.name','lists.event_date','reminders.*')
     			->get();
-    	return view('reminder.reminder',['data'=>$list]);
+
+        $listautoreply = Reminder::where([['reminders.user_id',$id],['lists.is_event','=',0],['reminders.days','=',0],['reminders.hour_time','=',null]])
+                ->join('lists','reminders.list_id','=','lists.id')
+                ->select('lists.name','lists.event_date','reminders.*')
+                ->get();
+    	return view('reminder.reminder',['data'=>$list,'autoreply'=>$listautoreply]);
     }
 
     /* Display form to create reminder auto reply */
@@ -178,12 +183,14 @@ class ReminderController extends Controller
     {
     	$id_user = Auth::id();
     	$remindercustomer = ReminderCustomers::where([['reminder_customers.user_id','='                ,$id_user],
-                            ['reminders.is_event','=',0]])
+                            ['lists.is_event','=',0],
+                            ['reminders.hour_time','=',null],
+                            ])
     						->join('lists','lists.id','=','reminder_customers.list_id')
     						->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
                             ->rightJoin('reminders','reminders.id','=','reminder_customers.reminder_id')
     						->select('reminder_customers.*','lists.name','customers.wa_number','customers.created_at AS csrg',
-                                'reminders.is_event'
+                                'reminders.message','reminders.days'
                             )->orderBy('reminder_customers.id','desc')
     						->get();
     	return view('reminder.reminder-customer',['data'=>$remindercustomer]);
@@ -234,6 +241,27 @@ class ReminderController extends Controller
             $data['msg'] = 'Reminder message just updated';
         } else {
             $data['msg'] = 'Error!! Unable to update reminder message';
+        }
+
+        return response()->json($data);
+    } 
+
+    /* Update reminder days */
+    public function updateReminderDays(Request $request){
+        $id = $request->id_reminder;
+        $days = $request->days;
+
+        if($days == 0 || empty($days) || preg_match('/^[a-z][A-Z]$/i',$days)){
+            $data['msg'] = 'Invalid days';
+            return response()->json($data);
+        }
+
+        $reminder = Reminder::where('id','=',$id)->update(['days'=>$days]);
+
+        if($reminder == true){
+            $data['msg'] = 'Reminder day just updated';
+        } else {
+            $data['msg'] = 'Error!! Unable to update reminder day';
         }
 
         return response()->json($data);

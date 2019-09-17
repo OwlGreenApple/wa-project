@@ -18,15 +18,17 @@ class ListsTableSeeder extends Seeder
             'name' => 'Activflash',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-            'wa_number' => "",
+            'wa_number' => "+62817318368",
         ]); 
 
          DB::table('lists')->insert([
         	'user_id' => 1,
             'name' => 'Omnifluencer',
+            'is_event'=>1,
+            'event_date'=> Carbon::now(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-            'wa_number' => "",
+            'wa_number' => "+62817318368",
         ]);
 
          DB::table('lists')->insert([
@@ -34,7 +36,7 @@ class ListsTableSeeder extends Seeder
             'name' => 'Omnilinks',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-            'wa_number' => "",
+            'wa_number' => "+62817318368",
         ]);
     }
 

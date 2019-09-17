@@ -61,6 +61,8 @@ Route::group(['middleware'=>['auth','web']],function(){
 	// change reminder's status
 	Route::get('reminder-status/{id_reminder}/{status}','ReminderController@setReminderStatus');
 	Route::post('remindermessage','ReminderController@updateReminderMessage')->name('remindermessage');
+	Route::post('reminderdays','ReminderController@updateReminderDays')->name('reminderdays');
+	
 	// reminder auto reply
 	Route::get('reminderautoreply','ReminderController@reminderAutoReply')->name('reminderautoreply');
 	Route::post('addreminderautoreply','ReminderController@addReminderAutoReply')->name('addreminderautoreply');
@@ -71,6 +73,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
 	Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');
 	Route::get('eventautoreplyturn/{id}/{status}','EventController@turnEventAutoReply');
+	Route::get('eventstatus/{id}/{status}','EventController@setEventStatus');
 
 	# scheduled event
 	Route::get('eventform','EventController@eventForm')->name('eventform');
