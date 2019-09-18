@@ -43,7 +43,14 @@
                             </div>
                         </div>
 
-                        <input type="hidden" name="listname" value="{{$listname}}"/>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <input type="hidden" name="listname" value="{{$listname}}"/>
+                            </div>
+                            <div class="col-md-6">
+                                <span class="error error_list"></span>
+                            </div>
+                        </div>
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
@@ -108,7 +115,8 @@
                         $(".name").text(result.name);
                         $(".wa_number").text(result.wa_number);
                         $(".code_country").text(result.code_country);
-                        $(".error_message").text(result.message)
+                        $(".error_message").text(result.message);
+                        $(".error_list").text(result.list);
                     }
                 }
             });

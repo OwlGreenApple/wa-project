@@ -18,6 +18,7 @@ class ListController extends Controller
 {
 
     public function test(){
+        return $this->generateRandomListName();
         //session_start();
         //$id = Auth::id();
           //  $user_name = Auth::user()->name;
@@ -129,7 +130,9 @@ class ListController extends Controller
 
     /* create random list name */
     public function generateRandomListName(){
-        return strtolower(Str::random(8));
+        //return strtolower(Str::random(8));
+        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+        return substr(str_shuffle($permitted_chars), 0, 8);
     }
 
 }

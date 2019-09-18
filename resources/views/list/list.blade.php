@@ -131,7 +131,7 @@
 
      function table(){
          $("#user-list").dataTable({
-            'pageLength':1,
+            'pageLength':5,
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
             "destroy":true,
         });

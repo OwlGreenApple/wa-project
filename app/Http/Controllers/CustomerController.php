@@ -114,14 +114,15 @@ class CustomerController extends Controller
         }
 
         # if status from event has set to 0 or disabled
-        if($wasengger == null){
+        if($wasengger == null && $status > 1){
             $data['success'] = true;
             $data['message'] = 'Thank You For Join Us';
             return response()->json($data);
-        }
-
-        # if wassenger has no response then it will say error 
-        if(empty($wasengger)){
+        } else if($wasengger !== null && $status == 1){
+            $data['success'] = true;
+            $data['message'] = 'Thank You For Join Us';
+            return response()->json($data);
+        } else {
             $data['success'] = false;
             $data['message'] = 'Error-WAS! Sorry there is something wrong with our system';
             return response()->json($data);

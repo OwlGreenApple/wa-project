@@ -24,6 +24,11 @@ class CheckCustomer
          $req = $request->all();
          $wa_number = '+62'.$request->wa_number;
 
+         if($this->checkList($req['listname']) == false){
+            $error['list'] = 'Please do not modify list name';
+            return response()->json($error);
+         }
+
          /* Avoid customer fill 0 as a leading number on wa number */
          if(!preg_match('/^[1-9][0-9]*$/',$req['wa_number'])){
             $error['wa_number'] = 'Please do not use 0 as first number';
@@ -82,6 +87,21 @@ class CheckCustomer
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function checkList($listname){
+        $check_link = UserList::where([
+            ['name','=',$listname],
+            ['status','=',1],
+        ])->first();
+
+        if(empty($listname)){
+            return false;
+        } elseif(is_null($check_link)) {
+            return false;
+        } else {
+            return true;
         }
     }
 
