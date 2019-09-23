@@ -100,6 +100,11 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 	/* Senders */
 	Route::post('addsender','SenderController@addSender')->name('addsender');
+
+	/* CKEditor */
+	Route::get('ckbrowse', 'CKController@ck_browse')->name('ckbrowse');
+	Route::get('ckdelete', 'CKController@ck_delete_image')->name('ckdelete');
+	Route::get('ckupload', 'CKController@ck_upload_image')->name('ckupload');
 });
 
 /* Customers */

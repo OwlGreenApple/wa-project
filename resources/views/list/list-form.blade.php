@@ -128,11 +128,12 @@
 
 <script type="text/javascript">
     /* CKEditor */
-    var editor = CKEDITOR.replace( 'editor1',{
+    CKEDITOR.replace( 'editor1',{
+        filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
+        filebrowserUploadUrl: "{{ route('ckupload') }}",
         extraPlugins: ['filebrowser','colorbutton','justify','image2','font'],
         removePlugins : 'image',
     });
-    CKFinder.setupCKEditor( editor );
 
     CKEDITOR.editorConfig = function( config ) {
         config.extraPlugins = 'filebrowser,colorbutton,justify,image2,font';
