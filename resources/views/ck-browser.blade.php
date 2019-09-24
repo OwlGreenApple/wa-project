@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<meta name="csrf_token" content = "{{ csrf_token() }}">
-    <title>Example: Browsing Files</title>
-	<script type="text/javascript" src="{{asset('assets/js/jquery.min.js')}}"></script>
+	<meta name="csrf-token" content = "{{ csrf_token() }}">
+     <title>Files & Images</title>
+
+	<script type="text/javascript" src="{{asset('assets/js/jquery-3.2.1.min.js')}}"></script>
+	<script src="{{ asset('/assets/js/app.js') }}"></script>
+
+	<!-- Styles -->
+    <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet"> 
+
     <script>
         // Helper function to get parameters from the query string.
         function getUrlParam( paramName ) {
@@ -24,11 +31,16 @@
 </head>
 <body>
 
+	<div class="col-md-12 row">
 	@foreach($data as $row)
-		<img onclick="returnFileUrl('{{url('/public/images')}}/{{$row}}')" src="{{url('/public/ckfinder/'.$folder.'')}}/{{$row}}" />
-			<!--<input type="radio" name="filename" value="{{$row}}"/>-->
-			<button class="del" data="{{$row}}">Delete</button>
+		<div class="col-lg-3 text-center">
+			<div class="ck-border mt-5">
+				<img class="ck-browser" onclick="returnFileUrl('{{url('/public/ckeditor/'.$folder.'')}}/{{$row}}')" src="{{url('/public/ckeditor/'.$folder.'')}}/{{$row}}" />
+			</div>
+			<div class="mt-2"><button class="del btn btn-danger btn-sm" data="{{$row}}">Delete</button></div>
+		</div>
 	@endforeach
+	</div>
    <!--<button onclick="returnFileUrl()">Select File</button>-->
    
    <script type="text/javascript">
@@ -39,18 +51,25 @@
 		function deleteImage()
 		{
 			$(".del").click(function(e){
+				var conf = confirm('Are you sure want to delete this file?');
 				e.preventDefault();
 				var filename = $(this).attr('data');
-				$.ajax({
-					header : $("meta[name='csrf_token']").attr('content'),
-					type : 'GET',
-					url : "{{route('ckdelete')}}",
-					data : {'filename' : filename},
-					dataType : 'json',
-					success : function(response){
-						alert(response.msg);
-					}
-				});
+
+				if(conf == true){
+					$.ajax({
+						header : $("meta[name='csrf-token']").attr('content'),
+						type : 'GET',
+						url : "{{route('ckdelete')}}",
+						data : {'filename' : filename},
+						dataType : 'json',
+						success : function(response){
+							alert(response.msg);
+							location.reload(true);
+						}
+					});/*end ajax*/
+				} else {
+					return false;
+				}
 			});
 		}
    </script>

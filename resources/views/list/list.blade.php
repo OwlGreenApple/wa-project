@@ -110,14 +110,15 @@
 
 <script type="text/javascript">
   /* CKEditor */
-    var editor = CKEDITOR.replace( 'editor1',{
-        extraPlugins: ['filebrowser','colorbutton','justify','image2','font'],
+    CKEDITOR.replace( 'editor1',{
+        filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
+        filebrowserUploadUrl: "{{ route('ckupload') }}",
+        extraPlugins: ['uploadimage','colorbutton','justify','image2','font'],
         removePlugins : 'image',
     });
-    CKFinder.setupCKEditor( editor );
 
     CKEDITOR.editorConfig = function( config ) {
-        config.extraPlugins = 'filebrowser,colorbutton,justify,image2,font';
+        config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font';
         config.removePlugins = 'image';
     };
 

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
 	<meta name="csrf_token" content = "{{ csrf_token() }}">
-    <title>Example: Browsing Files</title>
-	<script type="text/javascript" src="{{asset('assets/js/jquery.min.js')}}"></script>
+    <title>Files & Images</title>
+	<script type="text/javascript" src="{{asset('assets/js/jquery-3.2.1.min.js')}}"></script>
     <script>
         // Helper function to get parameters from the query string.
         function getUrlParam( paramName ) {
@@ -25,7 +25,7 @@
 <body>
 
 	@foreach($data as $row)
-		<img onclick="returnFileUrl('{{url('/public/images')}}/{{$row}}')" src="{{url('/public/images')}}/{{$row}}" />
+		<img onclick="returnFileUrl('{{url('/public/ckeditor')}}/{{$row}}')" src="{{url('/public/ckeditor')}}/{{$row}}" />
 			<!--<input type="radio" name="filename" value="{{$row}}"/>-->
 			<button class="del" data="{{$row}}">Delete</button>
 	@endforeach

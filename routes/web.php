@@ -36,7 +36,6 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('createlist','ListController@listForm')->name('createlist');
 	Route::post('addlist','ListController@addList')->middleware('userlist')->name('addlist'); 
 	Route::get('userlist','ListController@userList')->name('userlist');
-	Route::post('listupload','ListController@uploadListImage')->name('listupload');
 	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
 	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');
 	Route::post('updatelistcontent','ListController@updateListContent')->name('updatelistcontent');
@@ -104,7 +103,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	/* CKEditor */
 	Route::get('ckbrowse', 'CKController@ck_browse')->name('ckbrowse');
 	Route::get('ckdelete', 'CKController@ck_delete_image')->name('ckdelete');
-	Route::get('ckupload', 'CKController@ck_upload_image')->name('ckupload');
+	Route::post('ckupload', 'CKController@ck_upload_image')->name('ckupload');
 });
 
 /* Customers */

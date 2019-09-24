@@ -35,6 +35,12 @@
                         </div>
                     @endif 
 
+                    @if (session('error_number'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('error_number') }}
+                        </div>
+                    @endif 
+
                      <form name="event_form" method="POST" action="{{ route('addlist') }}">
                         @csrf
                         <div class="form-group row">
@@ -131,12 +137,12 @@
     CKEDITOR.replace( 'editor1',{
         filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
         filebrowserUploadUrl: "{{ route('ckupload') }}",
-        extraPlugins: ['filebrowser','colorbutton','justify','image2','font'],
+        extraPlugins: ['uploadimage','colorbutton','justify','image2','font'],
         removePlugins : 'image',
     });
 
     CKEDITOR.editorConfig = function( config ) {
-        config.extraPlugins = 'filebrowser,colorbutton,justify,image2,font';
+        config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font';
         config.removePlugins = 'image';
     };
 
