@@ -20,6 +20,10 @@ class CheckUserLists
     public function handle($request, Closure $next)
     {
 
+        if(!isset($request->wa_number)){
+            return redirect('createlist')->with('error_number','Please, register your WhatsApp Number first');
+        }
+
         $rules = array(
             'wa_number'=>['required'],
             'category'=>['required','numeric'],

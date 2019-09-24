@@ -101,19 +101,6 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    /* Upload image from list */
-    public function uploadListImage(Request $request){
-        $file = $request->file('upload');
-        if($request->hasfile('upload'))
-         {
-            $file = $request->file('upload');
-            $name=time().$file->getClientOriginalName();
-            $file->move(public_path().'/assets/images/', $name);
-            //$file->store('imagesupload');
-            $url = url('public/assets/images/'.$name.'');
-         }
-         return response()->json([ 'fileName' => $name, 'uploaded' => true, 'url'=> $url]);
-    }
 
     /* check random list name */
     public function createRandomListName(){

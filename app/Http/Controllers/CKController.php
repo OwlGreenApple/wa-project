@@ -18,7 +18,7 @@ class CKController extends Controller
 		$id = Auth::id();
 		$folder = $username.'-'.$id;
 
-		$path = public_path().'/ckfinder/'.$folder;
+		$path = public_path().'/ckeditor/'.$folder;
 		$dir['image'] = scandir($path,1);
 		
 		$x = 0;
@@ -35,8 +35,12 @@ class CKController extends Controller
 	}
 	
 	public function ck_delete_image(Request $request){
+		$username = Auth::user()->name;
+		$id = Auth::id();
+		$folder = $username.'-'.$id;
 		$image_name = $request->filename;
-		$path = public_path().'/images/'.$image_name;
+
+		$path = public_path().'/ckeditor/'.$folder.'/'.$image_name;
 	
 		if(file_exists($path)){
 			unlink($path);
@@ -46,8 +50,24 @@ class CKController extends Controller
 		}
 		return json_encode($data);
 	}
+
+	 /* Upload image from list */
+    public function ck_upload_image(Request $request){
+    	$username = Auth::user()->name;
+		$id = Auth::id();
+		$folder = $username.'-'.$id;
+        $file = $request->file('upload');
+
+        /* this function doesn't have validation, next time create for validation */
+
+        if($request->hasfile('upload'))
+         {
+            $file = $request->file('upload');
+            $name=time().$file->getClientOriginalName();
+            $file->move(public_path().'/ckeditor/'.$folder.'/', $name);
+            $url = url('public/ckeditor/'.$folder.'/'.$name.'');
+         }
+         return response()->json([ 'fileName' => $name, 'uploaded' => true, 'url'=> $url]);
+    }
 	
-	public function ck_upload_image(){
-		 return;
-	}
 }

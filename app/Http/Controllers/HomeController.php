@@ -31,20 +31,20 @@ class HomeController extends Controller
         session_start();
         $id = Auth::id();
         $user_name = Auth::user()->name;
-        if (env('APP_ENV') == 'local'){
-          $directory = public_path().'/ckfinder/'.$user_name.'-'.$id;
+        $folder = $user_name.'-'.$id;
+
+        /*if (env('APP_ENV') == 'local'){
+          $directory = public_path().'/ckeditor/'.$folder;
         }
         else {
-          $directory = 'home2/activwa/public_html/ckfinder/'.$user_name.'-'.$id;
-        }
-       
-        if(!isset($_SESSION['editor_path'])){
-            $_SESSION['editor_path'] = public_path().'/ckfinder/'.$user_name.'-'.$id;
-        }
+          $directory = 'home2/activwa/public_html/ckfinder/'.$folder;
+        }*/
+
+        $directory = public_path().'/ckeditor/'.$folder;
 
         if(!file_exists($directory))
         {
-            mkdir($directory, 0741,true);
+            mkdir($directory, 0755,true);
             //$path = $directory;
             //File::makeDirectory($path, $mode = 0741, true, true);
         }

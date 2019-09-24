@@ -67,6 +67,7 @@ class CustomerController extends Controller
             $customer->name = $request->name;
             $customer->wa_number = $wa_number;
             $customer->save();
+            $customer_subscribe_date = $customer->created_at;
         }
 
         # if customer successful sign up 
@@ -78,7 +79,7 @@ class CustomerController extends Controller
                 ['reminders.hour_time','=',null],
                 ])->join('lists','reminders.list_id','=','lists.id')
                 ->select('reminders.*')->first();
-           
+
             // Reminder
     		$reminder_id = Reminder::where([
                 ['reminders.list_id','=',$get_id_list->id],
