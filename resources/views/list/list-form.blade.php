@@ -72,7 +72,7 @@
 
                             <div class="col-md-8">
                                 <select name="category" class="form-control">
-                                    <option value="0">Message</option>
+                                    <option value="0">Request Message</option>
                                     <option value="1">Event</option>
                                 </select>
 
@@ -106,11 +106,27 @@
                                 </div> 
                             </div>
                         </div>
-                        @endif          
-                                
-                        <div class="form-group">
+                        @endif      
+
+                         <div class="form-group">
+                            <label>Page Header</label>
                             <div class="col-md-12">
                                  <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
+                            </div>
+                        </div> 
+    
+                                
+                        <div class="form-group">
+                            <label>Pixel</label>
+                            <div class="col-md-12">
+                                 <textarea name="pixel_txt" class="form-control"></textarea>
+                            </div>
+                        </div> 
+
+                        <div class="form-group">
+                            <label>Message</label>
+                            <div class="col-md-12">
+                                 <textarea name="message_txt" class="form-control"></textarea>
                             </div>
                         </div> 
 

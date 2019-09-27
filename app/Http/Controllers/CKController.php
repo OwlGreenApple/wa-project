@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class CKController extends Controller
 {
@@ -57,8 +58,17 @@ class CKController extends Controller
 		$id = Auth::id();
 		$folder = $username.'-'.$id;
         $file = $request->file('upload');
+       	
+        $rules = [
+            'upload' => 'required|image|mimes:jpeg,png,jpg,gif|max:1024',
+        ];
 
-        /* this function doesn't have validation, next time create for validation */
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->fails()){
+        	$error =  $validator->errors();
+        	return response()->json(['uploaded' => $error->first('upload')]);
+        }
 
         if($request->hasfile('upload'))
          {

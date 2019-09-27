@@ -11,9 +11,13 @@ class SenderController extends Controller
 {
     public function addSender(Request $request){
     	$req = $request->all();
-    	$wa_number = $request->wa_number;
+    	$wa_number = '+62'.$request->wa_number;
 
-		$sender = new Sender;
+      if(preg_match('/^[62]*$[0-9]*$/',$req['wa_number'])){
+          return redirect('home')->with('error','Please do not use 62 as first number, just use number after 0 or +62');
+       }
+
+		  $sender = new Sender;
     	$sender->user_id = Auth::id();
     	$sender->wa_number = $wa_number;
     	$sender->save();

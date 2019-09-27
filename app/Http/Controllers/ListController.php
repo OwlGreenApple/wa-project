@@ -43,6 +43,8 @@ class ListController extends Controller
         $list->is_event = $request->category;
         $list->event_date = $request->date_event;
         $list->content = $request->editor1;
+        $list->pixel_text = $request->pixel_txt;
+        $list->message_text = $request->message_txt;
     	$list->save();
 
     	if($list->save() == true){
@@ -74,9 +76,12 @@ class ListController extends Controller
             $data = null;
         } else {
             $data = array(
+                'list_name'=>$list->name,
                 'content'=> $list->content,
                 'is_event'=>$list->is_event,
                 'event_date'=>$list->event_date,
+                'pixel'=>$list->pixel_text,
+                'message'=>$list->message_text
             );
         }
         return response()->json($data);
@@ -87,10 +92,14 @@ class ListController extends Controller
         $id = $request->id;
         $date_event = $request->date_event;
         $editor = $request->editor;
+        $pixel = $request->pixel;
+        $message = $request->message;
 
         $lists = UserList::where('id',$id)->update([
             'event_date'=>$date_event,
             'content'=> $editor,
+            'pixel_text'=> $pixel,
+            'message_text'=> $message,
         ]);
 
         if($lists == true){

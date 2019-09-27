@@ -98,7 +98,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('deletetemplate','TemplatesController@delTemplate')->name('deletetemplate');
 
 	/* Senders */
-	Route::post('addsender','SenderController@addSender')->name('addsender');
+	Route::post('addsender','SenderController@addSender')->middleware('wanumber')->name('addsender');
 
 	/* CKEditor */
 	Route::get('ckbrowse', 'CKController@ck_browse')->name('ckbrowse');

@@ -1,6 +1,41 @@
-@extends('layouts.customer')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-@section('content')
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Waku') }}</title>
+
+    <!-- Scripts -->
+    <script src="{{ asset('/assets/js/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('/assets/js/app.js') }}"></script>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+
+    <!-- Styles -->
+    <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet">
+
+    <?php echo $pixel;?>
+     
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url('/') }}">
+                    {{ config('app.name', 'Laravel') }}
+                </a>
+            </div>
+        </nav>
+
+<main class="py-4">
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-10">
@@ -54,9 +89,11 @@
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
-                                </button>
+                                <div id="submit">
+                                    <button  type="submit" class="btn btn-primary">
+                                        {{ __('Register') }}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -79,9 +116,6 @@
       <div class="modal-body">
         <p><!-- message here --></p>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
     </div>
 
   </div>
@@ -97,6 +131,7 @@
         $("#addcustomer").submit(function(e){
             e.preventDefault();
             var data = $(this).serialize();
+            $("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
              $.ajaxSetup({
               headers: {
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -107,10 +142,12 @@
                 url : "{{ route('addcustomer') }}",
                 data : data,
                 success : function(result){
+                    $("#submit").html('<button type="submit" class="btn btn-primary">Register</button>');
                     if(result.success == true){
                         $(".modal-body > p").text(result.message);
                         getModal();
-                        clearField();
+                        location.href= result.wa_link;
+                        //clearField();
                     } else {
                         $(".name").text(result.name);
                         $(".wa_number").text(result.wa_number);
@@ -136,4 +173,8 @@
     }
 </script>
 
-@endsection
+  </main>
+
+ </div>
+</body>
+</html>

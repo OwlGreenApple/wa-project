@@ -83,7 +83,7 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Edit Name</h4>
+        <h4 class="modal-title">Edit : <span class="list_name"></span></h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
@@ -96,8 +96,20 @@
             </div>
 
             <div class="form-group">
+               <label><b>Page Header</b></label>
                <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
             </div> 
+
+            <div class="form-group">
+               <label><b>Pixel</b></label>
+               <textarea name="pixel_txt" class="form-control"></textarea>
+            </div>  
+
+            <div class="form-group">
+               <label><b>Message</b></label>
+               <textarea name="message_txt" class="form-control"></textarea>
+            </div> 
+            
             <input type="hidden" name="idlist"/>
             <input type="hidden" name="page_position"/>
             <button type="submit" class="btn btn-default">Edit List</button>
@@ -193,6 +205,9 @@
                         $("input[name='date_event']").val(result.event_date);
                         $("input[name='page_position']").val(databutton);
                     }
+                   $(".list_name").html(result.list_name);
+                   $("textarea[name='pixel_txt']").val(result.pixel);
+                   $("textarea[name='message_txt']").val(result.message);
                    CKEDITOR.instances.editor1.setData( result.content );
                 }
             });
@@ -208,7 +223,9 @@
              var data = {
                 id : $("input[name='idlist']").val(),
                 date_event : $("input[name='date_event']").val(),
-                editor : CKEDITOR.instances.editor1.getData()
+                editor : CKEDITOR.instances.editor1.getData(),
+                pixel : $("textarea[name='pixel_txt']").val(),
+                message : $("textarea[name='message_txt']").val(),
              };
 
             $.ajaxSetup({

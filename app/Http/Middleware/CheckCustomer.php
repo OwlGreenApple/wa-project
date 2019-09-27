@@ -22,6 +22,13 @@ class CheckCustomer
     
         /* Get all data from request and then fetch it in array */
          $req = $request->all();
+         $wa_number = $request->wa_number;
+
+         if(!is_numeric($wa_number)){
+            $error['wa_number'] = 'Please use valid numbers';
+            return response()->json($error);
+         }
+
          $wa_number = '+62'.$request->wa_number;
 
          if($this->checkList($req['listname']) == false){
@@ -31,12 +38,12 @@ class CheckCustomer
 
          /* Avoid customer fill 0 as a leading number on wa number */
          if(!preg_match('/^[1-9][0-9]*$/',$req['wa_number'])){
-            $error['wa_number'] = 'Please do not use 0 as first number';
+            $error['wa_number'] = 'Please do not use 0 or +';
             return response()->json($error);
          } 
 
          if(preg_match('/^[62][0-9]*$/',$req['wa_number'])){
-            $error['wa_number'] = 'Please do not use 62 as first number, just use number after 0 or +62';
+            $error['wa_number'] = 'Please do not use 62 as first number';
             return response()->json($error);
          }
 

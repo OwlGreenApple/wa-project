@@ -2,7 +2,7 @@
 
 @section('content')
 
-<!-- navbar 
+<!-- navbar -->
 <div class="container mb-2">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -19,11 +19,10 @@
         </div>
     </div>
 </div>
- end navbar -->
+<!- end navbar -->
 
-<!--
+<!-- -->
 <div class="container mb-2">
-    <!-- add lis
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -48,10 +47,11 @@
 
                             <div class="col-md-8">
                                <input type="text" class="form-control" name="wa_number" />
+                               <small>Please do not use +62 62 or 0 but use 8xxxxxx instead</small>
                             </div>
                         </div>  
                         
-                        <!-- submit button 
+                        <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
@@ -60,13 +60,13 @@
                             </div>
                         </div>
                      </form>
-                     <!-- end form 
+                     <!-- end form -->
 
                 </div>
             </div>
         </div>
     </div>
-<!-- end container 
+<!-- end container -->
 </div>
 
 <div class="container mb-2">

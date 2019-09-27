@@ -64,13 +64,18 @@ class SendWA extends Command
     {
         /* Users counter */
         //$user = User::select('id','counter')->get();
-        $sender = Sender::select('id','counter','user_id')->get();
+        
+        $user = User::select('id')->get();
         $wasengger = null;
 
-        foreach($sender as $userow){
-
-            $id_user = $userow->user_id;
-            $count = $userow->counter;
+        if($user->count() > 0){
+        foreach($user as $userow){
+            $id_user = $userow->id;
+            $sender = Sender::where([['user_id','=',$id_user]])->select('counter')->first();
+            if(!is_null($sender)){
+              $count = $sender->counter;
+            }
+            
             $check_event = ReminderCustomers::where([
               ['reminder_customers.user_id',$id_user],
               ['reminder_customers.status',0],
@@ -215,6 +220,7 @@ class SendWA extends Command
 
         /* end user looping */
         }
+        }/* end user if */
 
     /* End function handle */    
     }
@@ -259,11 +265,15 @@ class SendWA extends Command
 
     /* Event date */
     public function dateEvent(){
-      $sender = Sender::select('id','counter','user_id')->get();
+      $user = User::select('id')->get();
 
-      foreach($sender as $rowuser){
-          $id_user = $rowuser->user_id;
-          $count = $rowuser->counter;
+      if($user->count() > 0){
+      foreach($user as $rowuser){
+          $id_user = $rowuser->id;
+          $sender = Sender::select('counter')->where([['user_id','=',$id_user]])->first();
+          if(!is_null($sender)){
+              $count = $sender->counter;
+            }
           $idr = null;
           $wasengger = null;
           $event = null;
@@ -386,7 +396,9 @@ class SendWA extends Command
           } 
           
           
-      } /* end foreach sender */
+      } /* end foreach user */
+
+      } /* end if */
 
     }
 
