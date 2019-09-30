@@ -382,7 +382,7 @@ class SendWA extends Command
                
                 if($update == true && $checkuser->count() > 0){
                    $count = $count - 1;
-                   $user_update = User::where('id',$id_user)->update(['counter'=>$count]);
+                   $user_update = Sender::where('user_id',$id_user)->update(['counter'=>$count]);
                 } else if($update == false && $checkuser->count() > 0) {
                    echo 'Error!! unable to update';
                    break;

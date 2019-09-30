@@ -5,7 +5,7 @@
 <!-- navbar -->
 <div class="container mb-2">
     <div class="row justify-content-center">
-        <div class="col-md-10">
+        <div class="col-md-11">
             <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
               <ul class="navbar-nav">
                 <li class="nav-item">
@@ -23,7 +23,7 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-10">
+        <div class="col-md-11">
             <div class="card">
                 <div class="card-header"><b>Event</b></div>
 
@@ -67,7 +67,7 @@
                             <th>Action</th>
                         </thead>
                         <tbody>
-                            @if(!is_null($data))
+                            @if($data->count() > 0)
                             @foreach($data as $row)
                                 <tr>
                                     <td>{{$row->user_id}}</td>
@@ -95,8 +95,6 @@
                                     </td>
                                 </tr>
                             @endforeach
-                            @else
-                                'No Data'
                             @endif
                         </tbody>
                     </table>
@@ -137,17 +135,17 @@
                                     <td>{{$rows->updated_at}}</td>
                                     <td>
                                         <a href="{{url('eventstatus/'.$rows->id.'/'.$rows->status.'')}}" class="btn btn-primary btn-sm"> @if($rows->status == 0)
-                                            Activate
+                                            Run
                                         @else
-                                            Deactivate
+                                            Pause
                                         @endif</a>
                                         <!-- edit button -->
                                         <div class="mt-1"><a class="btn btn-warning btn-sm edit-col" id="{{$rows->id}}">Edit</a></div>
+                                        <div class="mt-1"><a class="btn btn-danger btn-sm del-col" id="{{$rows->id}}">Delete</a></div>
+                                        <div class="mt-1"><a class="btn btn-success btn-sm" id="{{$rows->id}}">Download CSV</a></div>
                                     </td>
                                 </tr>
                             @endforeach
-                            @else
-                                'No Data'
                             @endif
                         </tbody>
                     </table>
@@ -238,7 +236,6 @@
                     <input type="hidden" name="id" />
                     <input type="hidden" name="list_id" />
 
-
                     <div class="form-group mt-2">
                         <button type="submit" class="btn btn-warning">Edit</button>
                     </div>
@@ -275,6 +272,7 @@
         displayScheduleOption();
         MDTimepicker();
         updateEventSchedule();
+        delEvent();
     });
 
     /* Datetimepicker */
@@ -325,7 +323,7 @@
         });
       }
 
-        function updateEventSchedule()
+    function updateEventSchedule()
     {
         $("body").on('submit','#edit_event',function(e){
             e.preventDefault();
@@ -356,15 +354,38 @@
         });
     }
 
+    function delEvent(){
+         $("body").on('click','.del-col',function(){
+            var id = $(this).attr('id');
+            var conf = confirm('Are you sure?');
+
+            if(conf == true){
+                 $.ajax({
+                    type : 'GET',
+                    url : '{{route("deletevents")}}',
+                    data : {'id':id},
+                    dataType : "json",
+                    success : function(result){
+                      alert(result.message);
+                      location.reload(true);
+                    }
+                });
+            } else {
+                return false;
+            }
+           
+        });
+    }
+
      function table(){
         $("#event-list").dataTable({
-            'pageLength':5,
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            'pageLength':10,
+            //"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
         });
 
         $("#event-autoreply-list").dataTable({
-            'pageLength':5,
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            'pageLength':10,
+            //"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
         });
     }
 

@@ -39,6 +39,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
 	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');
 	Route::post('updatelistcontent','ListController@updateListContent')->name('updatelistcontent');
+	Route::get('deletelistcontent','ListController@delListContent')->name('deletelistcontent');
 
 	/* BroadCast */
 	Route::get('broadcast','BroadCastController@index')->name('broadcast');
@@ -82,6 +83,8 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('eventcustomer','EventController@displayEventCustomers')->name('eventcustomer');
 	Route::get('displayeventschedule','EventController@displayEventSchedule')->name('displayeventschedule');
 	Route::post('updatevent','EventController@updateEvent')->name('updatevent');
+	Route::get('deletevents','EventController@delEvent')->name('deletevents');
+	Route::get('export_csv','EventController@exportEventSubscriber')->name('export_csv');
 
 
 	/* Templates */

@@ -5,7 +5,7 @@
 
 <div class="container mb-2">
     <div class="row justify-content-center">
-        <div class="col-md-9">
+        <div class="col-md-11">
             <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
               <ul class="navbar-nav">
                 <li class="nav-item">
@@ -20,7 +20,7 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-9">
+        <div class="col-md-11">
             <div class="card">
                 <div class="card-header"><b>User's List</b></div>
 
@@ -31,41 +31,42 @@
                         <thead>
                             <th>List Name</th>
                             <th>Category</th>
+                            <th>Subcribers</th>
                             <th>Date Event</th>
                             <th>Created</th>
                             <th>Updated</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
-                            @if(!is_null($data))
-                            @foreach($data as $row)
+                          @if($data !== null)
+                            @foreach($data as $row => $val)
                                 <tr>
                                     <td>
-                                        @if($row->is_event == 0)
-                                            <a data-toggle="tooltip" data-clipboard-text="{{url('/'.$row->name)}}" class="copy tip">{{$row->name}}</a>
+                                        @if($val[0]->is_event == 0)
+                                            <a target="_blank" href="{{url('/'.$val[0]->name)}}" class="copy">{{$val[0]->name}}</a>
                                         @else
-                                           <a data-toggle="tooltip" data-clipboard-text="{{url('ev/'.$row->name)}}" class="copy tip">{{$row->name}}</a>
+                                           <a target="_blank" href="{{url('ev/'.$val[0]->name)}}" class="copy">{{$val[0]->name}}</a>
                                         @endif
                                     </td>
                                     <td>
-                                        @if($row->is_event == 0)
+                                        @if($val[0]->is_event == 0)
                                             Message
                                         @else
                                             Event
                                         @endif
                                     </td>
-                                    <td>{{$row->event_date}}</td>
-                                    <td>{{$row->created_at}}</td>
-                                    <td>{{$row->updated_at}}</td>
+                                    <td>{{$val[1]}}</td>
+                                    <td>{{$val[0]->event_date}}</td>
+                                    <td>{{$val[0]->created_at}}</td>
+                                    <td>{{$val[0]->updated_at}}</td>
                                     <td>
-                                        <a class="btn btn-success btn-sm" href="{{url('/usercustomer/'.$row->id)}}">See Customers</a>
-                                        <a class="btn btn-info btn-sm edit" id="{{$row->id}}">Edit</a>
+                                        <a class="btn btn-success btn-sm" href="{{url('/usercustomer/'.$val[0]->id)}}">See Subscribers</a>
+                                        <a class="btn btn-info btn-sm edit" id="{{$val[0]->id}}">Edit</a> 
+                                        <a class="btn btn-danger btn-sm del" id="{{$val[0]->id}}">Delete</a>
                                     </td>
                                 </tr>
                             @endforeach
-                            @else
-                                'No Data'
-                            @endif
+                           @endif 
                         </tbody>
                     </table>
                 </div>
@@ -138,14 +139,15 @@
         table();
         displayEditor();
         updateEditor();
-        copyClipBoard();
-        bootstrapTooltip();
+        delEditor();
+        //copyClipBoard();
+        //bootstrapTooltip();
     });
 
      function table(){
          $("#user-list").dataTable({
-            'pageLength':5,
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            'pageLength':10,
+            //"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
             "destroy":true,
         });
     }
@@ -251,6 +253,29 @@
                 }
             });
         });
+    }
+
+    function delEditor(){
+      $("body").on("click",".del",function(){
+        var q = confirm('Are you sure to delete?');
+        var id = $(this).attr('id');
+
+        if(q == true){
+           $.ajax({
+              type : 'GET',
+              url : '{{route("deletelistcontent")}}',
+              data : {'id':id},
+              dataType : "json",
+              success : function(result){
+                 alert(result.message);
+                 location.reload(true);
+              }
+           });
+        } else {
+          return false;
+        }
+
+      });
     }
 
 </script>

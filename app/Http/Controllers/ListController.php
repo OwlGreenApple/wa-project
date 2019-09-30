@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\UserList;
 use App\Customer;
 use App\Sender;
+use DB;
 
 class ListController extends Controller
 {
@@ -58,8 +59,40 @@ class ListController extends Controller
     public function userList()
     {
     	$id_user = Auth::id();
-    	$userlist = UserList::where('user_id','=',$id_user)->get();
-    	return view('list.list',['data'=>$userlist]);
+        $countsubscriber = DB::table('lists')
+                    ->where('lists.user_id','=',$id_user)
+                    ->join('customers','lists.id','=','customers.list_id')
+                    ->select(DB::raw('COUNT(customers.list_id) AS totalsubscriber'))
+                    ->groupBy('customers.list_id')
+                    ->get();
+        
+        $userlist = Userlist::where('user_id',$id_user)->get();
+
+        if($userlist->count() > 0)
+        {
+             foreach($userlist as $row){
+                 $total = DB::table('customers')->where('list_id','=',$row->id)->select(DB::raw('COUNT(list_id) AS totalsubscriber'))->groupBy('list_id')->first();
+
+                 if(is_null($total)){
+                    $total_subs = 0;
+                 } else {
+                    $total_subs = $total->totalsubscriber;
+                 }
+                $data[] = array($row,$total_subs);
+            }
+        } else {
+            $data = null;
+        }
+
+        //[0] = list data
+        //[1] = total subscriber on each list
+
+    	return view('list.list',['data'=>$data]);
+    }
+
+    public function total_count($idlist){
+        $cst = DB::table('customers')->where('list_id','=',$idlist)->select(DB::raw('COUNT(list_id) AS totalsubscriber'))->groupBy('list_id')->first();
+
     }
 
     public function userCustomer($id_list)
@@ -106,6 +139,25 @@ class ListController extends Controller
             $data['message'] = 'Data updated successfully';
         } else {
             $data['message'] = 'Error! Data failed to update';
+        }
+        return response()->json($data);
+    }
+
+    public function delListContent(Request $request)
+    {
+        $id = $request->id;
+        $delete_userlist = UserList::where('id',$id)->delete();
+
+        if($delete_userlist == true){
+            $delete = Customer::where('list_id','=',$id)->delete();
+        } else {
+            $data['message'] = 'Sorry, cannot delete list, there is error';
+        }
+
+        if($delete == true){
+            $data['message'] = 'Data deleted successfully';
+        } else {
+            $data['message'] = 'Sorry, cannot delete customer, there is error';
         }
         return response()->json($data);
     }

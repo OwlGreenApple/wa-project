@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
 use App\Rules\CheckDateEvent;
 use App\UserList;
 use App\Reminder;
@@ -392,6 +394,23 @@ class EventController extends Controller
 
         // if reminder and lists updated successfully
         if($list == true){
+            $remindercustomer = ReminderCustomers::where('reminder_id',$id)->get();
+        } else {
+            $data['message'] = 'Error, unable to update event';
+        } 
+
+        if($remindercustomer->count() > 0){
+           foreach($remindercustomer as $row){
+                $wa_sender_id = $row->id_wa;
+                if($wa_sender_id !== null){
+                    $update_send_target = ReminderCustomers::where('id',$row->id)->update(['id_wa'=>null, 'status'=>0]);
+                }
+            }
+        } else {
+            $update_send_target = null;
+        }
+
+        if($update_send_target == true || $update_send_target == null){
             $data['message'] = 'Your event reminder has been updated';
         } else {
             $data['message'] = 'Error, unable to update event';
@@ -423,16 +442,39 @@ class EventController extends Controller
                 ['reminder_id','=',$id_reminder],
             ])->whereIn('status', [0,3])->update(['status'=> $turn_customer]);
         } else {
-            return redirect('event')->with('error','Error-001! Unable to changed reminder status');
+            return redirect('event')->with('error','Error-001! Unable to change reminder status');
         }
 
         /* if correct then reminder-customer's status updated */
         if($remindercustomer == true){
-            return redirect('event')->with('message','Your reminder status just changed');
+            return redirect('event')->with('message','Your reminder status has been change');
         } else {
             /* if there is no status = 0 */
             return redirect('event')->with('warning','Warning! Your reminder status just changed, but nothing reminder for customer');
         }
+    }
+
+    public function delEvent(Request $request){
+        $id = $request->id;
+        $del_event = Reminder::where('id',$id)->delete();
+
+        if($del_event == true){
+            $event = ReminderCustomers::where('reminder_id','=',$id)->delete();
+        } else {
+            $data['message'] = 'Sorry, cannot delete this event, there is error';
+            return response()->json($data);
+        }
+
+        if($event == true){
+            $data['message'] = 'Event has been deleted';
+        } else {
+            $data['message'] = 'Sorry, cannot delete this event, there is error';
+        }
+         return response()->json($data);
+    }
+
+    public function exportEventSubscriber(){
+        return Excel::download(new UsersExport, 'users.xlsx');
     }
 
 /* End event controller */

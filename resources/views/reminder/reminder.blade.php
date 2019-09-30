@@ -124,7 +124,7 @@
                                     <td> 
                                         <span class="get-day-{{$row->id}}">    {{$row->days}}
                                         </span>
-                                        <div class="mt-1"><small><a class="display_days" id="{{$row->id}}">Edit</a></small></div>
+                                        <!--<div class="mt-1"><small><a class="display_days" id="{{$row->id}}">Edit</a></small></div>-->
                                     </td>
                                     <td class="wraptext">
                                         <span class="get-text-{{$row->id}}">{{$row->message}}</span>

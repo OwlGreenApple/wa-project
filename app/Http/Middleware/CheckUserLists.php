@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\UserList;
+use App\Sender;
+use App\Rules\CheckDateEvent;
 
 class CheckUserLists
 {
@@ -27,7 +29,7 @@ class CheckUserLists
         $rules = array(
             'wa_number'=>['required'],
             'category'=>['required','numeric'],
-            //'event_date'=>['required',new CheckDateEvent],
+            'event_date'=>['required',new CheckDateEvent],
         );
 
         $validator = Validator::make($request->all(),$rules);
@@ -67,13 +69,12 @@ class CheckUserLists
             $date_event = true;
         }
 
-        /*$checkwa = $this->checkWANumber($wa_number);
+        $checkwa = $this->checkWANumber($wa_number);
         if($checkwa == false ){
-            $error['wa_check_number'] = 'Sorry, this number has been used by another users';
+            $error['wa_check_number'] = 'Sorry, this number is not yours';
         } else {
             $error['wa_check_number'] = '';
         }
-        */
 
         /* convert array to object */
         $err_object = (object)$error;
@@ -95,17 +96,16 @@ class CheckUserLists
         }
     }
 
-    /* To prevent if user use another number 
+    /* To prevent if user use another number */
     private function checkWANumber($wa_number){
-
         $userid = Auth::id();
-        $getlistid = Sender::where([['user_id',$userid],['wa_number','=',$wa_number]])->first()->id;
+        $getlist = Sender::where([['user_id',$userid],['wa_number','=',$wa_number]])->first();
 
-        if(is_null($getlist)){
+        if(!is_null($getlist)){
             return true;
         } else {
             return false;
         }
-    }*/
+    }
 
 }

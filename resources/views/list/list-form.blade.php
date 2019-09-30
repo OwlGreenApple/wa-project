@@ -50,7 +50,7 @@
                                @if($data->count() > 0)
                                     <select name="wa_number" class="form-control">
                                         @foreach($data as $row)
-                                            <option value="{{$row->wa_number}}">       {{$row->wa_number}}
+                                            <option value="{{$row->wa_number}}">{{$row->wa_number}}
                                             </option>
                                         @endforeach
                                     </select>

@@ -60,17 +60,17 @@
                          <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Lists Option</label>
                             <div class="col-md-6">
-                                @foreach($data as $row)
-                                <div class="form-check">
-                                  <input class="form-check-input" name="id[]" type="checkbox" value="{{$row->id}}">
-                                  <label class="form-check-label" for="{{$row->id}}">
-                                    {{$row->name}}
-                                  </label>
-                                </div>
-                                 @endforeach
-                                <!-- end check box -->
+
+                                <select class="form-control" name="list_id" id="display-template">
+                                  @if($data->count() > 0)
+                                    @foreach($data as $row)
+                                      <option value="{{$row->id}}">{{$row->name}}</option>
+                                    @endforeach
+                                  @endif
+                                </select>
+
                                  @if (session('error'))
-                                    <div class="error">{{ session('error')->first('id') }}</div>
+                                    <div class="error">{{ session('error')->first('list_id') }}</div>
                                  @endif
                             </div>
                         </div> 
