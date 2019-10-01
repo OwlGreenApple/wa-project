@@ -64,6 +64,9 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('reminder-status/{id_reminder}/{status}','ReminderController@setReminderStatus');
 	Route::post('remindermessage','ReminderController@updateReminderMessage')->name('remindermessage');
 	Route::post('reminderdays','ReminderController@updateReminderDays')->name('reminderdays');
+	Route::get('delreminder','ReminderController@delReminder')->name('delreminder');
+	Route::get('export_reminder_subscriber','ReminderController@exportSubscriber')->name('export_reminder_subscriber');
+	Route::get('export_reminder_csv/{id_list}','ReminderController@exportReminderSubscriber');
 	
 	// reminder auto reply
 	Route::get('reminderautoreply','ReminderController@reminderAutoReply')->name('reminderautoreply');
@@ -84,8 +87,8 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('displayeventschedule','EventController@displayEventSchedule')->name('displayeventschedule');
 	Route::post('updatevent','EventController@updateEvent')->name('updatevent');
 	Route::get('deletevents','EventController@delEvent')->name('deletevents');
-	Route::get('export_csv','EventController@exportEventSubscriber')->name('export_csv');
-
+	Route::get('exportsubscriber','EventController@exportSubscriber')->name('exportsubscriber');
+	Route::get('export_csv/{id_list}','EventController@exportEventSubscriber');
 
 	/* Templates */
 	Route::get('templates','TemplatesController@templateForm')->name('templates');

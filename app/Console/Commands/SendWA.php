@@ -63,8 +63,6 @@ class SendWA extends Command
     public function handle()
     {
         /* Users counter */
-        //$user = User::select('id','counter')->get();
-        
         $user = User::select('id')->get();
         $wasengger = null;
 
@@ -88,7 +86,7 @@ class SendWA extends Command
                 ['broad_cast_customers.user_id','=',$id_user],
                 ['broad_cast_customers.status','=',0],
             ])->leftJoin('customers','customers.id','=','broad_cast_customers.customer_id')
-            ->select('customers.wa_number','broad_cast_customers.message','broad_cast_customers.id')
+            ->select('customers.wa_number','customers.name','broad_cast_customers.message','broad_cast_customers.id')
             ->orderBy('broad_cast_customers.id','asc');
 
             /* Broadcast */
@@ -98,7 +96,7 @@ class SendWA extends Command
                 foreach($broadcast as $id){
                       /*... Wasennger function ...*/
                       $wa_number = $id->wa_number;
-                      $message = $id->message;
+                      $message = str_replace('{name}',$id->name,$id->message);
                       /* Send WA */
 
                        try
@@ -126,29 +124,24 @@ class SendWA extends Command
                             'status'=>$status,
                         ]);
                      } else {
-                           echo 'Error!! Unable to send WA to customer';
+                         break;  
                      }
                     
                       if($update_broadcast == true){
                             // cut user's wa bandwith
+                            $device_id = $wasengger->device;
                             $count = $count - 1;
-                            Sender::where('id',$id_user)->update(['counter'=>$count]);
+                            Sender::where([['id',$id_user],['device_id',$device_id]])->update(['counter'=>$count]);
                       } else {
                             echo 'Error!! Unable to update broadcast customer';
                       }
                 }
             } else if($check_event->count() > 0){
+                # Event 
                return $this->dateEvent();
             } else {
             /* Reminder */
                 $current_time = Carbon::now();
-                /*
-                $reminder_customers = ReminderCustomers::where([
-                    ['user_id','=',$id_user],
-                    ['status','=',0],
-                ])->orderBy('id','asc');
-                */
-
                /* get days from reminder */
                 $reminder = ReminderCustomers::where([
                                   ['reminder_customers.user_id','=',$id_user],
@@ -157,7 +150,7 @@ class SendWA extends Command
                                   ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
                                   ->join('lists','lists.id','=','reminders.list_id')
                                   ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-                                  ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.days','reminders.message','customers.created_at AS cstreg','customers.wa_number')
+                                  ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.days','reminders.message','customers.created_at AS cstreg','customers.wa_number','customers.name')
                                 ->take($count)
                                 ->get();
 
@@ -169,14 +162,15 @@ class SendWA extends Command
                     $reminder_customer_status = $col->rc_st;
                     $reminder_customers_id = $col->rcs_id;
                     $wa_number = $col->wa_number;
-                    $message = $col->message;
+                    $message = str_replace('{name}',$col->name,$col->message);;
                     $event_date = $col->event_date;
-                    $wasengger = null;
 
                     /* if the time has reach or pass added time */
                     if(($current_time >= $adding) && $reminder_customer_status == 0){
                          /* wasengger */
                          $wasengger = $this->sendWA($wa_number,$message);
+                    } else {
+                         $wasengger = null;
                     }
 
                     /* Determine status on reminder-customer */
@@ -201,13 +195,14 @@ class SendWA extends Command
                             'status'=>$status,
                         ]);
                     } else {
-                        continue;
+                        break;
                     }
                       
                     if($update_reminder_customer == true){
                          // cut user's wa bandwith
+                        $deviceId = $wasengger->device;
                         $count = $count - 1;
-                        $sender_update = Sender::where('user_id',$id_user)->update(['counter'=>$count]);
+                        $sender_update = Sender::where([['user_id',$id_user],['device_id','=',$deviceId]])->update(['counter'=>$count]);
                     } else {
                         echo 'Error!! Unable to update reminder customer';
                     }
@@ -259,7 +254,7 @@ class SendWA extends Command
           throw new Exception($err);
         } else {
           //echo $response."\n";
-            return json_decode($response);
+          return json_decode($response);
         }
     }
 
@@ -314,7 +309,7 @@ class SendWA extends Command
               }
           }
 
-          if(!empty($idr) || $idr !== null)
+          if($idr !== null)
           {
               foreach($idr as $id_reminder){
                //echo $id_reminder."\n";
@@ -323,7 +318,7 @@ class SendWA extends Command
                       ['reminder_customers.user_id','=',$id_user],
                       ['reminder_customers.reminder_id','=',$id_reminder],
                       ['reminder_customers.status','=',0],
-                ])->join('customers','customers.id','=','reminder_customers.customer_id')->join('reminders','reminders.id','=','reminder_customers.reminder_id')->select('customers.wa_number','reminders.message','reminder_customers.id AS rc_id','customers.id AS cs_id','reminder_customers.reminder_id AS id_reminder')->get();
+                ])->join('customers','customers.id','=','reminder_customers.customer_id')->join('reminders','reminders.id','=','reminder_customers.reminder_id')->select('customers.wa_number','customers.name','reminders.message','reminder_customers.id AS rc_id','customers.id AS cs_id','reminder_customers.reminder_id AS id_reminder')->get();
                 
 
                 foreach($remindercustomer as $col){
@@ -334,7 +329,7 @@ class SendWA extends Command
           
 
           /* limit data according on count */
-          if(!empty($event)){
+          if($event !== null){
              $event = array_slice($event,0,$count);
           }
           
@@ -344,17 +339,18 @@ class SendWA extends Command
              foreach($event as $col)
               {
                 $wa_number = $col->wa_number;
-                $message = $col->message;
+                $message = str_replace('{name}',$col->name,$col->message);
                 $id_reminder = $col->id_reminder;
 
                 try
                 {
-                  $wasengger = $this->sendWA($wa_number,$message);
+                    $wasengger = $this->sendWA($wa_number,$message);
                 }catch(Exception $e){
                     echo $e->getMessage();
+                    $wasengger = null;
                 }
 
-                if(!empty($wasengger)){
+                if($wasengger !== null){
                     $delivery_status = $wasengger->deliveryStatus;
                     if($delivery_status == 'queued'){
                       $status = 1;
@@ -381,8 +377,9 @@ class SendWA extends Command
                 $checkuser = ReminderCustomers::where('user_id',$id_user)->get();
                
                 if($update == true && $checkuser->count() > 0){
+                   $deviceId = $wasengger->device;
                    $count = $count - 1;
-                   $user_update = Sender::where('user_id',$id_user)->update(['counter'=>$count]);
+                   $user_update = Sender::where([['user_id',$id_user],['device_id','=',$deviceId]])->update(['counter'=>$count]);
                 } else if($update == false && $checkuser->count() > 0) {
                    echo 'Error!! unable to update';
                    break;

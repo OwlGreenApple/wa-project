@@ -59,9 +59,9 @@
                                @endif
 
 
-                                @if(session('error'))
+                                @if(session('wa_check_number'))
                                     <div class="error" role="alert">
-                                        {{ session('error')->wa_check_number }}
+                                        {{ session('wa_check_number') }}
                                     </div>
                                 @endif 
                             </div>
@@ -76,14 +76,14 @@
                                     <option value="1">Event</option>
                                 </select>
 
-                                @if (session('error'))
+                                @if (session('category'))
                                     <div class="error">
-                                        {{ session('error')->category }}
+                                        {{ session('category') }}
                                     </div> 
                                 @endif
-                                @if (session('error'))
+                                @if (session('isevent'))
                                     <div class="error">
-                                        {{ session('error')->isevent }}
+                                        {{ session('isevent') }}
                                     </div>
                                 @endif
                             </div>
@@ -97,12 +97,12 @@
                             </div>
                         </div>
 
-                         @if (session('error'))
+                         @if (session('date_event'))
                          <div class="form-group row">
                              <label class="col-md-3 col-form-label text-md-right"></label>
                             <div class="col-md-8">
                                <div class="error">
-                                    {{ session('error')->date_event }}
+                                    {{ session('date_event') }}
                                 </div> 
                             </div>
                         </div>

@@ -5,7 +5,7 @@
 <!-- navbar -->
 <div class="container mb-2">
     <div class="row justify-content-center">
-        <div class="col-md-10">
+        <div class="col-md-11">
             <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
               <ul class="navbar-nav">
                 <li class="nav-item">
@@ -23,7 +23,7 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-10">
+        <div class="col-md-11">
             <div class="card">
                 <div class="card-header"><b>Reminder</b></div>
 
@@ -82,9 +82,9 @@
                                     <td>{{$row->updated_at}}</td>
                                     <td>
                                         <a href="{{url('reminder-status/'.$row->id.'/'.$row->status.'')}}" class="btn btn-primary btn-sm"> @if($row->status == 0)
-                                            Activate
+                                            Run
                                         @else
-                                            Deactivate
+                                            Pause
                                         @endif</a>
                                     </td>
                                 </tr>
@@ -122,7 +122,7 @@
                                     <td>{{$row->user_id}}</td>
                                     <td>{{$row->name}}</td>
                                     <td> 
-                                        <span class="get-day-{{$row->id}}">    {{$row->days}}
+                                        <span class="get-day-{{$row->id}}">{{$row->days}}
                                         </span>
                                         <!--<div class="mt-1"><small><a class="display_days" id="{{$row->id}}">Edit</a></small></div>-->
                                     </td>
@@ -134,15 +134,16 @@
                                     <td>{{$row->updated_at}}</td>
                                     <td>
                                         <a href="{{url('reminder-status/'.$row->id.'/'.$row->status.'')}}" class="btn btn-primary btn-sm"> @if($row->status == 0)
-                                            Activate
+                                            Run
                                         @else
-                                            Deactivate
+                                            Pause
                                         @endif</a>
+
+                                          <a id="{{$row->id}}" class="btn btn-danger btn-sm del-col">Delete</a>
+                                         <a id="{{encrypt($row->list_id)}}" class="btn btn-info btn-sm download-col">Download CSV</a>
                                     </td>
                                 </tr>
                             @endforeach
-                            @else
-                                'No Data'
                             @endif
                         </tbody>
                     </table>
@@ -223,6 +224,8 @@
         table();
         getDays();
         updateDays();
+        delDays();
+        csvReminder();
     });
 
     function table(){
@@ -276,6 +279,43 @@
                     }
                 }
             });/* end ajax */
+        });
+    }
+
+    function delDays(){
+        $("body").on('click','.del-col',function(){
+            var id = $(this).attr('id');
+            var conf = confirm('Are you sure?');
+
+            if(conf == true){
+                 $.ajax({
+                    type : 'GET',
+                    url : '{{route("delreminder")}}',
+                    data : {'id':id},
+                    dataType : "json",
+                    success : function(result){
+                      alert(result.message);
+                      location.reload(true);
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+    }
+
+    function csvReminder(){
+         $("body").on('click','.download-col',function(){
+            var id = $(this).attr('id');
+             $.ajax({
+                type : 'GET',
+                url : '{{route("export_reminder_subscriber")}}',
+                data : {'id':id},
+                dataType : "json",
+                success : function(result){
+                   location.href=result.url;
+                }
+            });
         });
     }
 

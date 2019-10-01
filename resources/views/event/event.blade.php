@@ -142,7 +142,7 @@
                                         <!-- edit button -->
                                         <div class="mt-1"><a class="btn btn-warning btn-sm edit-col" id="{{$rows->id}}">Edit</a></div>
                                         <div class="mt-1"><a class="btn btn-danger btn-sm del-col" id="{{$rows->id}}">Delete</a></div>
-                                        <div class="mt-1"><a class="btn btn-success btn-sm" id="{{$rows->id}}">Download CSV</a></div>
+                                        <div class="mt-1"><a class="btn btn-success btn-sm download-col" id="{{encrypt($rows->list_id)}}">Download CSV</a></div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -273,6 +273,7 @@
         MDTimepicker();
         updateEventSchedule();
         delEvent();
+        csvEvent();
     });
 
     /* Datetimepicker */
@@ -374,6 +375,21 @@
                 return false;
             }
            
+        });
+    } 
+
+    function csvEvent(){
+         $("body").on('click','.download-col',function(){
+            var id = $(this).attr('id');
+             $.ajax({
+                type : 'GET',
+                url : '{{route("exportsubscriber")}}',
+                data : {'id':id},
+                dataType : "json",
+                success : function(result){
+                   location.href=result.url;
+                }
+            });
         });
     }
 

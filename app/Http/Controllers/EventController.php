@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Rules\CheckDateEvent;
@@ -404,10 +405,12 @@ class EventController extends Controller
                 $wa_sender_id = $row->id_wa;
                 if($wa_sender_id !== null){
                     $update_send_target = ReminderCustomers::where('id',$row->id)->update(['id_wa'=>null, 'status'=>0]);
+                } else {
+                    $update_send_target = null; //nothing to update
                 }
             }
         } else {
-            $update_send_target = null;
+            $update_send_target = null; //nothing to update
         }
 
         if($update_send_target == true || $update_send_target == null){
@@ -423,6 +426,17 @@ class EventController extends Controller
     /* Change reminder and reminder-customer status */
     public function setEventStatus($id_reminder,$status){
 
+        if(empty($id_reminder) && empty($status))
+        {
+             return redirect('event')->with('error','Error! Please do not change the values');
+        }
+
+        if($status == 0 || $status == 1){
+           $pass = true;
+        } else {
+           return redirect('event')->with('error','Error! Please do not change the values');
+        }
+ 
         /* From on to off */
         if($status == 1){
             $turn = 0;
@@ -473,8 +487,34 @@ class EventController extends Controller
          return response()->json($data);
     }
 
-    public function exportEventSubscriber(){
-        return Excel::download(new UsersExport, 'users.xlsx');
+    public function exportSubscriber(Request $request){
+        $iduser = Auth::id();
+        $id_list = $request->id;
+
+        if(!empty($iduser) && !empty($id_list) || is_numeric($id_list))
+        {
+            $data['url'] = url("/export_csv/".$id_list."");
+        } else {
+            $data['url'] = 'You had logout, please login';
+        }
+        return response()->json($data);
+    }
+
+    public function exportEventSubscriber($id_list){
+        $id_user = Auth::id();
+
+        try{
+            $id_list = decrypt($id_list);
+        }catch(DecryptException $e){
+            return redirect('event');
+        }
+       
+        $customer = Customer::where([['list_id',$id_list],['user_id','=',$id_user]])->get();
+       
+        if(empty($id_list) || empty($id_user) || $customer->count() <= 0){
+            return redirect('event');
+        }
+        return (new UsersExport($id_list))->download('users.csv');
     }
 
 /* End event controller */

@@ -37,6 +37,7 @@ class ListController extends Controller
 
     public function addList(Request $request)
     {
+
     	$list = new UserList;
     	$list->user_id = Auth::id();
     	$list->name = $this->createRandomListName();

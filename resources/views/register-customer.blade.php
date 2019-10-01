@@ -75,6 +75,7 @@
                                     </div>
                                 <!-- end row -->    
                                 </div>
+                                 <small>Please do not use +62 62 or 0 but use 8xxxxxx instead</small>
                             </div>
                         </div>
 
@@ -111,7 +112,6 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Thank You</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <p><!-- message here --></p>
@@ -146,7 +146,7 @@
                     if(result.success == true){
                         $(".modal-body > p").text(result.message);
                         getModal();
-                        location.href= result.wa_link;
+                        setTimeout(function(){location.href= result.wa_link} , 1000);   
                         //clearField();
                     } else {
                         $(".name").text(result.name);

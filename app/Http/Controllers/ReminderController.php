@@ -43,7 +43,12 @@ class ReminderController extends Controller
         $user_id = Auth::id();
         $req = $request->all();
         $message = $req['message'];
-        $list_id = $req['listid'];
+
+        if(isset($req['listid'])){
+            $list_id = $req['listid'];
+        } else {
+            return redirect('reminderautoreply')->with('error_autoreply','Please create message or event on list first');
+        }
 
         $checklist = Reminder::where([['reminders.list_id',$list_id],['reminders.hour_time',null],['lists.is_event','=',0]])
         ->join('lists','reminders.list_id','=','lists.id')
@@ -95,7 +100,12 @@ class ReminderController extends Controller
         $user_id = Auth::id();
         $message = $request->message;
         $days = $request->day;
-        $list_id = $request->list_id;
+
+        if(isset($request->list_id)){
+            $list_id = $request->list_id;
+        } else {
+            return redirect('reminderform');
+        }
         
         $sender = Sender::where('user_id',$user_id)->first();
 
@@ -314,7 +324,7 @@ class ReminderController extends Controller
             return redirect('reminder')->with('message','Your reminder status just changed');
         } else {
             /* if there is no status = 0 */
-            return redirect('reminder')->with('warning','Warning! Your reminder status just changed, but nothing reminder for customer');
+            return redirect('reminder')->with('warning','Warning! Your reminder status just changed, but you do not have any message for subscribers');
         }
     }
 
@@ -353,6 +363,55 @@ class ReminderController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    public function delReminder(Request $request){
+        $id = $request->id;
+        $del_event = Reminder::where('id',$id)->delete();
+
+        if($del_event == true){
+            $event = ReminderCustomers::where('reminder_id','=',$id)->delete();
+        } else {
+            $data['message'] = 'Sorry, cannot delete this event, there is error';
+            return response()->json($data);
+        }
+
+        if($event == true){
+            $data['message'] = 'Reminder has been deleted';
+        } else {
+            $data['message'] = 'Sorry, cannot delete this reminder, there is error';
+        }
+         return response()->json($data);
+    }
+
+    public function exportSubscriber(Request $request){
+        $iduser = Auth::id();
+        $id_list = $request->id;
+
+        if(!empty($iduser) && !empty($id_list) || is_numeric($id_list))
+        {
+            $data['url'] = url("/export_csv/".$id_list."");
+        } else {
+            $data['url'] = 'You had logout, please login';
+        }
+        return response()->json($data);
+    }
+
+    public function exportReminderSubscriber($id_list){
+        $id_user = Auth::id();
+
+        try{
+            $id_list = decrypt($id_list);
+        }catch(DecryptException $e){
+            return redirect('reminder');
+        }
+       
+        $customer = Customer::where([['list_id',$id_list],['user_id','=',$id_user]])->get();
+       
+        if(empty($id_list) || empty($id_user) || $customer->count() <= 0){
+            return redirect('reminder');
+        }
+        return (new UsersExport($id_list))->download('users.csv');
     }
 
 /* end class reminder controller */    

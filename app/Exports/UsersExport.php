@@ -2,20 +2,38 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
-use App\ReminderCustomers;
+//use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Excel;
+use Illuminate\Contracts\Support\Responsable;
+use App\Customer;
 
-class UsersExport implements FromCollection
+class UsersExport implements FromQuery, Responsable 
 {
 
-	public function __construct($query) {
-	    $this->query = $query;
-	  }
-    /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
+	use Exportable;
+
+	public function __construct(int $idreminder)
     {
-        return ReminderCustomer::where();
+        $this->id_reminder = $idreminder;
     }
+
+
+	//private $fileName = 'users.csv';
+
+	private $writerType = Excel::CSV;
+
+	 private $headers = [
+        'Content-Type' => 'text/csv',
+    ];
+
+     public function query()
+    {
+    	$id_user = Auth::id();
+        return Customer::query()->where([['list_id',$this->id_reminder],['user_id','=',$id_user]])->select('name','wa_number');
+    }
+
+/* end UsersExport */
 }
