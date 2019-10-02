@@ -84,6 +84,7 @@
                                     <div class="error">{{ session('error')->first('message') }}</div>
                                  @endif
                              </div>
+                             <div class="col-md-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>
                         </div> 
 
                          <div class="form-group row">
@@ -155,6 +156,17 @@
           });
       });
 
+     $(function(){
+        $('#tagname').on('click', function(){
+            var tag = '{name}';
+            var cursorPos = $('#divInput-description-post').prop('selectionStart');
+            var v = $('#divInput-description-post').val();
+            var textBefore = v.substring(0,  cursorPos );
+            var textAfter  = v.substring( cursorPos, v.length );
+            $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(textBefore+ tag +textAfter );
+        });
+     });
+
     $(document).ready(function(){
         displayTemplate();
         displayAddDaysBtn();
@@ -163,6 +175,7 @@
         //addDays();
         //delDays();
     });
+
 
       function MDTimepicker(){
         $("body").on('focus','.timepicker',function(){

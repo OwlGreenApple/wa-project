@@ -152,8 +152,8 @@
                         $(".name").text(result.name);
                         $(".wa_number").text(result.wa_number);
                         $(".code_country").text(result.code_country);
-                        $(".error_message").text(result.message);
                         $(".error_list").text(result.list);
+                        $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
                     }
                 }
             });

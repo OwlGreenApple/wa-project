@@ -50,7 +50,7 @@ class ReminderController extends Controller
             return redirect('reminderautoreply')->with('error_autoreply','Please create message or event on list first');
         }
 
-        $checklist = Reminder::where([['reminders.list_id',$list_id],['reminders.hour_time',null],['lists.is_event','=',0]])
+        $checklist = Reminder::where([['reminders.list_id',$list_id],['reminders.days',0],['reminders.hour_time',null],['lists.is_event','=',0]])
         ->join('lists','reminders.list_id','=','lists.id')
         ->select('reminders.*')
         ->first();
@@ -139,23 +139,21 @@ class ReminderController extends Controller
         }
 
         # Input eligible customer id
-
+        $datacustomer = array();
         if($customer->count() > 0){
             foreach($customer as $rows){
                 $customer_signup = Carbon::parse($rows->created_at);
                 $adding_day = $customer_signup->addDays($days);
                 if($adding_day >= $created_date){
                     $datacustomer[] = $rows;
-                } else {
-                    $datacustomer = null;
-                }
+                } 
             }
         } else {
             $datacustomer = null;
         }
 
-        # check whether user have customer 
-        if($datacustomer == null){
+        # indicate user doesn't have customer / subscriber
+        if($datacustomer == null || count($datacustomer) == 0){
             return redirect('reminderform')->with('status','Your reminder has been set!');
         } else {
             # display data customer 
@@ -367,12 +365,20 @@ class ReminderController extends Controller
 
     public function delReminder(Request $request){
         $id = $request->id;
-        $del_event = Reminder::where('id',$id)->delete();
+        $id_user = Auth::id();
+        $del_event = Reminder::where([['id','=',$id],['user_id','=',$id_user]])->delete();
 
         if($del_event == true){
-            $event = ReminderCustomers::where('reminder_id','=',$id)->delete();
+            $event = ReminderCustomers::where([['reminder_id','=',$id],['user_id','=',$id_user]])->get();
         } else {
-            $data['message'] = 'Sorry, cannot delete this event, there is error';
+            $data['message'] = 'Sorry, cannot delete this reminder, there is error';
+            return response()->json($data);
+        }
+
+        if($event->count() > 0){
+            $event = ReminderCustomers::where([['reminder_id','=',$id],['user_id','=',$id_user]])->delete();
+        } else {
+            $data['message'] = 'Reminder has been deleted';
             return response()->json($data);
         }
 

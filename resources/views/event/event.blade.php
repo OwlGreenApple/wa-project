@@ -88,10 +88,12 @@
                                             }
                                         @endphp
                                         <a href="{{url('eventautoreplyturn/'.$row->id.'/'.$turn.'')}}" class="btn btn-primary btn-sm"> @if($row->status == 0)
-                                            Activate
+                                            Run
                                         @else
-                                            Deactivate
+                                            Pause
                                         @endif</a>
+
+                                        <a class="btn btn-danger btn-sm del-col" id="{{$row->id}}">Delete</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -142,7 +144,10 @@
                                         <!-- edit button -->
                                         <div class="mt-1"><a class="btn btn-warning btn-sm edit-col" id="{{$rows->id}}">Edit</a></div>
                                         <div class="mt-1"><a class="btn btn-danger btn-sm del-col" id="{{$rows->id}}">Delete</a></div>
-                                        <div class="mt-1"><a class="btn btn-success btn-sm download-col" id="{{encrypt($rows->list_id)}}">Download CSV</a></div>
+                                        <div class="mt-1"><a class="btn btn-success btn-sm download-col" id="{{encrypt($rows->list_id)}}">Download CSV</a></div> 
+                                        <!--
+                                        <div class="mt-1"><a class="btn btn-info btn-sm import-col" id="{{encrypt($rows->list_id)}}">Import CSV</a></div>
+                                         -->
                                     </td>
                                 </tr>
                             @endforeach
@@ -169,11 +174,12 @@
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
-            Event Message
+            <h4>Event Message</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
             <div class="form-group">
+                 <div class="mb-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>
                 <form id="update_message">
                     <textarea id="divInput-description-post" rows="5" class="form-control message"></textarea><!-- display message -->
                     <input type="hidden" class="id_reminder" />
@@ -195,7 +201,7 @@
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
-            Event Message
+            <h4>Event Schedule</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
@@ -247,7 +253,51 @@
     </div>
   </div>
 
+  <!-- Modal -->
+  <div class="modal fade" id="importbox" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4>Event Schedule</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <form id="importform">
+                     <div class="form-group row">
+                        <label for="name" class="col-md-4 col-form-label text-md-right">Import</label>
+                        <div class="col-md-6">
+                            <input type="file" class="form-control" name="csv_file" />
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="id" />
+                    <input type="hidden" name="list_id" />
+                    <div class="form-group mt-2">
+                        <button type="submit" class="btn btn-warning">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
 <script type="text/javascript">
+
+     $(function(){
+        $('#tagname').on('click', function(){
+            var tag = '{name}';
+            var cursorPos = $('#divInput-description-post').prop('selectionStart');
+            var v = $('#divInput-description-post').val();
+            var textBefore = v.substring(0,  cursorPos );
+            var textAfter  = v.substring( cursorPos, v.length );
+            $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(textBefore+ tag +textAfter );
+        });
+     });
 
      var hday = '<input name="day" type="hidden" value="0" /><input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
 
@@ -274,6 +324,8 @@
         updateEventSchedule();
         delEvent();
         csvEvent();
+        displayImport();
+        csvImport();
     });
 
     /* Datetimepicker */
@@ -291,9 +343,50 @@
         });
       }
 
-       function displayEditForm()
+      function displayImport()
       {
+        $("body").on('click','.import-col',function(){
+            var id = $(this).attr('id');
+            $("#importbox").modal();
+            $("input[name='id']").val(id);
+            
+        });
+      }
 
+      function csvImport()
+      {
+        $("body").on('submit','#importform',function(e){
+            e.preventDefault();
+            var id = $(this).attr('id');
+            var data = new FormData($(this)[0]);
+            $.ajaxSetup({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+            });
+            $.ajax({
+                type : 'POST',
+                url : "{{route('import_csv_ev')}}",
+                data : data,
+                contentType: false,
+                processData: false,
+                success : function(result){
+                    if(result.error == true){
+                        $(".error.id").html(result.id);
+                        $(".error.listid").html(result.list_id);
+                        $(".error.days").html(result.day);
+                        $(".error.hour_time").html(result.hour);
+                        $(".error.date_event").html(result.date_event);
+                    } else {
+                        //
+                    }
+                }
+            });/* end ajax */
+        });
+      }
+
+      function displayEditForm()
+      {
         $("body").on('click','.edit-col',function(){
             var id = $(this).attr('id');
             $("#editbox").modal();

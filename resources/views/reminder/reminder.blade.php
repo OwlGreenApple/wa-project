@@ -86,11 +86,11 @@
                                         @else
                                             Pause
                                         @endif</a>
+
+                                         <a id="{{$row->id}}" class="btn btn-danger btn-sm del-col">Delete</a>
                                     </td>
                                 </tr>
                             @endforeach
-                            @else
-                                'No Data'
                             @endif
                         </tbody>
                     </table>
@@ -163,12 +163,13 @@
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
-            Reminder Message
+            <h4>Reminder Message</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
             <div class="form-group">
                 <form id="update_message">
+                     <div class="mb-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>
                     <textarea id="divInput-description-post" rows="5" class="form-control message"></textarea><!-- display message -->
                     <input type="hidden" class="id_reminder" />
                     <div class="mt-2">
@@ -189,7 +190,7 @@
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
-            Reminder Message
+            <h4>Reminder Schedule</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
@@ -217,6 +218,18 @@
   </div>
 
 <script type="text/javascript">
+
+     $(function(){
+        $('#tagname').on('click', function(){
+            var tag = '{name}';
+            var cursorPos = $('#divInput-description-post').prop('selectionStart');
+            var v = $('#divInput-description-post').val();
+            var textBefore = v.substring(0,  cursorPos );
+            var textAfter  = v.substring( cursorPos, v.length );
+            $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(textBefore+ tag +textAfter );
+        });
+     });
+
     $(document).ready(function(){
         getText();
         updateMessage();
@@ -230,13 +243,13 @@
 
     function table(){
         $("#user-list").dataTable({
-            'pageLength':5,
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            'pageLength':10,
+            //"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
         });
 
         $("#reminder-message").dataTable({
-            'pageLength':5,
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            'pageLength':10,
+            //"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
         });
     }
 

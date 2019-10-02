@@ -28,7 +28,9 @@ Auth::routes();
 /* User Customer */
 
 Route::get('/home', 'HomeController@index')->name('home');//home.blade
+Route::get('csvimport', 'HomeController@importCSVPage')->name('csvimport');//home.blade
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
+Route::post('importcustomercsv','HomeController@importCustomerCSV')->name('importcustomercsv');
 
 Route::group(['middleware'=>['auth','web']],function(){
 	/* Lists */
@@ -89,6 +91,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('deletevents','EventController@delEvent')->name('deletevents');
 	Route::get('exportsubscriber','EventController@exportSubscriber')->name('exportsubscriber');
 	Route::get('export_csv/{id_list}','EventController@exportEventSubscriber');
+	Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');
 
 	/* Templates */
 	Route::get('templates','TemplatesController@templateForm')->name('templates');

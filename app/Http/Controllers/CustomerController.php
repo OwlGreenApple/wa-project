@@ -87,9 +87,9 @@ class CustomerController extends Controller
     		$data['message'] = 'Error-001! Sorry there is something wrong with our system';
             return response()->json($data);
     	}
-        
-         // Event
+
         if($is_event == 1 && $valid_customer == true){
+            // Event
             $reminder = Reminder::where([
                 ['reminders.list_id','=',$get_id_list->id],
                 ['lists.is_event','=',1],
@@ -99,7 +99,9 @@ class CustomerController extends Controller
                 ->leftJoin('lists','reminders.list_id','=','lists.id')
                 ->select('reminders.*','lists.event_date')
                 ->get();
-        } else if($is_event == 0 && $valid_customer == true) {
+        } 
+        else if($is_event == 0 && $valid_customer == true) {
+            // Reminder
              $reminder = Reminder::where([
                 ['reminders.list_id','=',$get_id_list->id],
                 ['lists.is_event','=',0],
@@ -111,10 +113,13 @@ class CustomerController extends Controller
                 ->select('reminders.*')
                 ->get(); 
         }
+        
+        if($reminder->count() > 0 && $is_event == 1)
+        {
+           //Event
+            foreach($reminder as $row)
+            {
 
-         if($reminder->count() > 0 && $is_event == 1)
-         {
-            foreach($reminder as $row){
                  $today_event = Carbon::now()->toDateString();
                  $days = (int)$row->days;
                  $event_date = Carbon::parse($row->event_date);
@@ -134,27 +139,24 @@ class CustomerController extends Controller
                     $reminder_customer->reminder_id = $row->id;
                     $reminder_customer->customer_id = $customerid;
                     $reminder_customer->save();
+                    $eligible = true;
                  } else {
-                    return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
+                    $eligible = false;
                  }
-
-                 if($reminder_customer->save() == true){
-                     return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
-                 } else {
-                     $data['success'] = false;
-                     $data['message'] = 'Error-001! Sorry there is something wrong with our system';
-                     return response()->json($data);
-                 }
-                
             }
-        } else {
-            return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
-        } 
 
-        // Reminder
-        if($reminder->count() > 0 && $is_event == 0)
+             if($reminder_customer->save() == true && !empty($eligible)){
+                 return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
+             } else {
+                 $data['success'] = false;
+                 $data['message'] = 'Error-001! Sorry there is something wrong with our system';
+                 return response()->json($data);
+             }
+        } else if($reminder->count() > 0 && $is_event == 0) 
         {
-            foreach($reminder as $row){
+            // Reminder
+            foreach($reminder as $row)
+            {
                 $days = (int)$row->days;
                 $after_sum_day = Carbon::parse($customer_subscribe_date)->addDays($days);
                 $validday = $after_sum_day->toDateString();
@@ -167,24 +169,25 @@ class CustomerController extends Controller
                     $reminder_customer->sender_id = $sender->id;
                     $reminder_customer->reminder_id = $row->id;
                     $reminder_customer->customer_id = $customerid;
-                    $reminder_customer->save();  
+                    $reminder_customer->save(); 
+                    $eligible = true; 
                  } else {
-                     return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
+                    $eligible = true;
                  }
+            }
 
-                  # if reminder has been set up into reminder-customer 
-                    if($reminder_customer->save() == true){
-                        return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
-                    } else {
-                        $data['success'] = false;
-                        $data['message'] = 'Error-002! Sorry there is something wrong with our system';
-                        return response()->json($data);
-                    }
-
-            }      
+             # if reminder has been set up into reminder-customer 
+            if($reminder_customer->save() == true && !empty($eligible)){
+                return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
+            } else {
+                $data['success'] = false;
+                $data['message'] = 'Error-002! Sorry there is something wrong with our system';
+                return response()->json($data);
+            }    
         } else {
             return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
-        } 
+        }
+
     }    
          
    public function autoReply($listid,$wa_number,$list_message,$list_wa_number,$customer_name){
@@ -197,6 +200,7 @@ class CustomerController extends Controller
                 ['reminders.list_id','=',$listid],
                 ['reminders.days','=',0],
                 ['reminders.hour_time','=',null],
+                ['reminders.status','=',1],
                 ])->join('lists','reminders.list_id','=','lists.id')
                 ->select('reminders.*')->first();
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
+use App\Imports\UsersImport;
 use App\Rules\CheckDateEvent;
 use App\UserList;
 use App\Reminder;
@@ -124,30 +125,30 @@ class EventController extends Controller
             return redirect('eventform')->with('error',$err);
         } else {
             //$req['id'] == checkbox list
-                $reminder = new Reminder;
-                $reminder->user_id = $user_id;
-                $reminder->list_id = $request->list_id;
-                $reminder->days = $request->day;
-                $reminder->hour_time = $request->hour;
-                $reminder->message = $request->message;
-                $reminder->save();
+            $reminder = new Reminder;
+            $reminder->user_id = $user_id;
+            $reminder->list_id = $request->list_id;
+            $reminder->days = $request->day;
+            $reminder->hour_time = $request->hour;
+            $reminder->message = $request->message;
+            $reminder->save();
         }
 
         /* if reminder stored / save successfully */
         if($reminder->save() == true){
             /* retrieve customer id */
-                $event = Reminder::where([
-                            ['reminders.id','=',$reminder->id],
-                            ['reminders.status','=',1],
-                            ['customers.status','=',1],
-                            ['customers.list_id','=',$request->list_id],
-                            ])->join('customers','customers.list_id','=','reminders.list_id')->select('reminders.*','customers.id AS csid')->get();
+            $event = Reminder::where([
+                    ['reminders.id','=',$reminder->id],
+                    ['reminders.status','=',1],
+                    ['customers.status','=',1],
+                    ['customers.list_id','=',$request->list_id],
+                    ])->join('customers','customers.list_id','=','reminders.list_id')->select('reminders.*','customers.id AS csid')->get();
         } else {
             return redirect('eventform')->with('status_error','Error!! failed to set event');
         }
 
         /* check whether user have customer */
-        if(count($event) == 0){
+        if($event->count() == 0){
             return redirect('eventform')->with('status','Your event has been set!');
         } else {
              foreach($event as $col){
@@ -168,7 +169,6 @@ class EventController extends Controller
             return redirect('eventform')->with('status_error','Error!! failed to set event for customer');
         }
     }
-
 
     public function addEventoldcode(Request $request){
         $user_id = Auth::id();
@@ -470,12 +470,20 @@ class EventController extends Controller
 
     public function delEvent(Request $request){
         $id = $request->id;
-        $del_event = Reminder::where('id',$id)->delete();
+        $id_user = Auth::id();
+        $del_event = Reminder::where([['id','=',$id],['user_id','=',$id_user]])->delete();
 
         if($del_event == true){
-            $event = ReminderCustomers::where('reminder_id','=',$id)->delete();
+            $event = ReminderCustomers::where([['reminder_id','=',$id],['user_id','=',$id_user]])->get();
         } else {
             $data['message'] = 'Sorry, cannot delete this event, there is error';
+            return response()->json($data);
+        }
+
+        if($event->count() > 0){
+            $event = ReminderCustomers::where([['reminder_id','=',$id],['user_id','=',$id_user]])->delete();
+        } else {
+            $data['message'] = 'Event has been deleted';
             return response()->json($data);
         }
 
@@ -515,6 +523,12 @@ class EventController extends Controller
             return redirect('event');
         }
         return (new UsersExport($id_list))->download('users.csv');
+    }
+
+    function importCSVEvent(Request $request)
+    {
+        $file = $request->file('csv_file');
+        Excel::import(new UsersImport(1), $file);
     }
 
 /* End event controller */

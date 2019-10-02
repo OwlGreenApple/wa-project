@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\UsersImport;
 use App\User;
 
 class HomeController extends Controller
@@ -68,5 +70,16 @@ class HomeController extends Controller
         } else {
             return redirect('home')->with('message','Error!,Your data failed to update');
         }
+    }
+
+    public function importCSVPage()
+    {
+        return view('auth.importcsv');
+    }
+
+    public function importCustomerCSV(Request $request){
+/* BE CAREFUL IF YOU PERFORM IMPORT USING THIS FUNCTION IT WOULD RETURN ALL DATA TO LIST_ID = 1 */
+        $file = $request->file('csv_file');
+        Excel::import(new UsersImport(1), $file);
     }
 }
