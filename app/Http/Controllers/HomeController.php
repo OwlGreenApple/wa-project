@@ -59,8 +59,6 @@ class HomeController extends Controller
         $user = User::where('id','=',Auth::id())->update(
             [
                 'name'=> $request->name,
-                'wa_number'=>$request->wa_number,
-                'api_key'=>$request->api_key,
                 'password'=>Hash::make($request->password)
             ]
         );
