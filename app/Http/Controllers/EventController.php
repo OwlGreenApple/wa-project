@@ -527,8 +527,15 @@ class EventController extends Controller
 
     function importCSVEvent(Request $request)
     {
+        $id_list = $request->list_id_import;
+        try{
+            $id_list = decrypt($id_list);
+        }catch(DecryptException $e){
+            return redirect('event');
+        }
+
         $file = $request->file('csv_file');
-        Excel::import(new UsersImport(1), $file);
+        Excel::import(new UsersImport($id_list), $file);
     }
 
 /* End event controller */

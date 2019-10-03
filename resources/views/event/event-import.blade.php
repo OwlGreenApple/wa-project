@@ -145,6 +145,9 @@
                                         <div class="mt-1"><a class="btn btn-warning btn-sm edit-col" id="{{$rows->id}}">Edit</a></div>
                                         <div class="mt-1"><a class="btn btn-danger btn-sm del-col" id="{{$rows->id}}">Delete</a></div>
                                         <div class="mt-1"><a class="btn btn-success btn-sm download-col" id="{{encrypt($rows->list_id)}}">Download CSV</a></div> 
+                                        
+                                        <div class="mt-1"><a class="btn btn-info btn-sm import-col" id="{{$rows->list_id}}">Import CSV</a></div>
+                                        
                                     </td>
                                 </tr>
                             @endforeach
@@ -250,6 +253,38 @@
     </div>
   </div>
 
+  <!-- Import -->
+  <div class="modal fade" id="importbox" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4>Import Subscribers</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <form id="importform">
+                     <div class="form-group row">
+                        <label for="name" class="col-md-4 col-form-label text-md-right">Import</label>
+                        <div class="col-md-6">
+                            <input type="file" class="form-control" name="csv_file" />
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="list_id_import" />
+                    <div class="form-group mt-2">
+                        <button type="submit" class="btn btn-warning">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
 <script type="text/javascript">
 
      $(function(){
@@ -288,6 +323,8 @@
         updateEventSchedule();
         delEvent();
         csvEvent();
+        displayImport();
+        csvImport();
     });
 
     /* Datetimepicker */
@@ -302,6 +339,42 @@
             $(this).mdtimepicker({
               format: 'hh:mm',
             });
+        });
+      }
+
+      function displayImport()
+      {
+        $("body").on('click','.import-col',function(){
+            var listid = $(this).attr('id');
+            $("#importbox").modal();
+            $("input[name='list_id_import']").val(listid);
+        });
+      }
+
+      function csvImport()
+      {
+        $("body").on('submit','#importform',function(e){
+            e.preventDefault();
+            var data = new FormData($(this)[0]);
+            $.ajaxSetup({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+            });
+            $.ajax({
+                type : 'POST',
+                url : "{{route('import_csv_ev')}}",
+                data : data,
+                contentType: false,
+                processData: false,
+                success : function(result){
+                   $('input').val('');
+                   alert('Data has imported');
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                }
+            });/* end ajax */
         });
       }
 

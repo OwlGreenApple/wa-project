@@ -46,6 +46,12 @@ class UsersImport implements ToModel
     		$row[8] = '+62'.$row[8];
     	}
 
+    	$filterwa = Customer::where([['wa_number','=',$row[8]],['list_id','=',$this->id_list]])->first();
+
+    	if(!is_null($filterwa)){
+    		return null;
+    	}
+
         return new Customer([
            'user_id'  => Auth::id(),
            'list_id'  => $this->id_list,
