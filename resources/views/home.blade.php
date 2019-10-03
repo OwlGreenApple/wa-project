@@ -21,7 +21,7 @@
 </div>
 <!- end navbar -->
 
-<!-- -->
+<!-- 
 <div class="container mb-2">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -51,7 +51,7 @@
                             </div>
                         </div>  
                         
-                        <!-- submit button -->
+                        <!-- submit button 
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
@@ -60,14 +60,16 @@
                             </div>
                         </div>
                      </form>
-                     <!-- end form -->
+                     <!-- end form 
 
                 </div>
             </div>
         </div>
     </div>
-<!-- end container -->
+<!-- end container 
 </div>
+
+-->
 
 <div class="container mb-2">
     <!-- Profile List -->

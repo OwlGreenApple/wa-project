@@ -50,6 +50,27 @@ class BroadCastController extends Controller
     	$message = $req['message'];
     	$msg = array('message'=>$message);
         $sender = Sender::where('user_id',$user_id)->first();
+        
+        /*
+        $checkarray = array();
+        foreach($req['id'] as $row=>$list_id){
+             $customer = Customer::where([
+                ['list_id','=',$list_id],
+                ['status','=',1],
+            ])->get();
+             
+            if(count($req['id']) > 1){
+                foreach($customer as $rows){
+                    //$checkarray[] = $rows;
+                    echo $rows->wa_number;
+                }
+            }
+        }
+
+         print('<pre>'.print_r(array_unique($checkarray),true).'</pre>');
+            die('');
+
+         */   
 
     	/* Validator to limit max message character */
     	  $rules = array(
@@ -77,10 +98,10 @@ class BroadCastController extends Controller
     		
     		foreach($req['id'] as $row=>$list_id){
     			/* retrieve customer id */
-    			$customer = Customer::where([
-    				['list_id','=',$list_id],
-    				['status','=',1],
-    			])->get();
+                 $customer = Customer::where([
+                    ['list_id','=',$list_id],
+                    ['status','=',1],
+                ])->distinct('wa_number')->get();
     			/* retrieve broadcast id according on created at */
     			$created_date = $broadcast->created_at;
     			$broadcast_get_id = BroadCast::where([
@@ -89,6 +110,7 @@ class BroadCastController extends Controller
     			])->select('id')->get();
     			/* insert into broadcast customer */
     			foreach($customer as $col){
+                    $check_wa_number = Customer::where('wa_number','=',$col->wa_number)->first();
     				foreach($broadcast_get_id as $id_broadcast){
     					$broadcastcustomer = new BroadCastCustomers;
 			    		$broadcastcustomer->user_id = $user_id;

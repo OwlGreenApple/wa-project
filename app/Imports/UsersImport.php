@@ -26,7 +26,7 @@ class UsersImport implements ToModel
 
     	if(empty($row[1]))
     	{
-    		$row[1] = '';
+    		$row[1] = 'Gamechanger';
     	}
 
     	if(empty($row[8]))
