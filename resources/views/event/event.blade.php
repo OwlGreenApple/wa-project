@@ -142,7 +142,7 @@
                                             Pause
                                         @endif</a>
                                         <!-- edit button -->
-                                        <div class="mt-1"><a class="btn btn-warning btn-sm edit-col" id="{{$rows->id}}">Edit</a></div>
+                                        <div class="mt-1"><a class="btn btn-warning btn-sm edit-col @if($rows->status == 1) disabled @endif" @if($rows->status == 0) id="{{$rows->id}}" @endif >Edit</a></div>
                                         <div class="mt-1"><a class="btn btn-danger btn-sm del-col" id="{{$rows->id}}">Delete</a></div>
                                         <div class="mt-1"><a class="btn btn-success btn-sm download-col" id="{{encrypt($rows->list_id)}}">Download CSV</a></div> 
                                     </td>

@@ -70,7 +70,7 @@
 </div>
 
 <div class="container mb-2">
-    <!-- Profile List
+    <!-- Profile List -->
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -84,7 +84,7 @@
                 <div class="card-body">
                      <form method="POST" action="{{ route('updateuser') }}">
                         @csrf
-                        <!-- name 
+                        <!-- name -->
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
 
@@ -93,7 +93,7 @@
                             </div>
                         </div>  
                        
-                        <!-- Password 
+                        <!-- Password -->
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Change Password </label>
 
@@ -101,7 +101,7 @@
                                 <input type="password" class="form-control" name="password" />
                             </div>
                         </div> 
-                        <!-- submit button 
+                        <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
@@ -110,37 +110,12 @@
                             </div>
                         </div>
                      </form>
-                     <!-- end form 
+                     <!-- end form -->
 
                 </div>
             </div>
         </div>
     </div>
-<!-- end container 
-</div>
--->   
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        //addWACol();
-        //delWACol();
-    });
-
-    function addWACol(){
-        $("body").on("click",".addfield",function(){
-            var pos = $(".wa_number_box").length;
-            var box_field = '<input type="text" class="pos-'+pos+' form-control float-left col-sm-10 mb-2 wa_number_box" name="wa_number[]" /><a class="btn btn-warning float-left del" id="pos-'+pos+'">Delete</a><div class="clearfix"></div>';
-            $(".item").append(box_field);
-        });
-    }
-
-     function delWACol(){
-        $("body").on("click",".del",function(){
-           var id = $(this).attr('id');
-           $("."+id).remove();
-           $("#"+id).remove();
-        });
-    }
-</script>
-
+<!-- end container -->
+</div>  
 @endsection

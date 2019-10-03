@@ -123,9 +123,9 @@
                         <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                   Submit
-                                </button>
+                                <button id="submit" type="submit" class="btn btn-primary">
+                                     Submit
+                                  </button>
                             </div>
                         </div>
                      </form>
@@ -172,10 +172,24 @@
         displayAddDaysBtn();
         MDTimepicker();
         neutralizeClock();
+        //loader();
         //addDays();
         //delDays();
     });
 
+     function loader(){
+         $("#submit").click(function(){
+          $(this).html('<div class="imgloader"></div>');
+           $(".imgloader").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
+         });
+      }
+
+
+     $(window).load(function() {
+          $(".imgloader").html("<button type='submit'>Submit</button>");
+      });
+
+     
 
       function MDTimepicker(){
         $("body").on('focus','.timepicker',function(){

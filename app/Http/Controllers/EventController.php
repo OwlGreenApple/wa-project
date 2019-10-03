@@ -312,7 +312,7 @@ class EventController extends Controller
     public function displayEventCustomers()
     {
     	$id_user = Auth::id();
-    	$remindercustomer = ReminderCustomers::where([['reminder_customers.user_id','='                ,$id_user]
+    	$remindercustomer = ReminderCustomers::where([['reminder_customers.user_id','='                ,$id_user],['lists.is_event','=',1]
                             ])
     						->join('lists','lists.id','=','reminder_customers.list_id')
     						->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
