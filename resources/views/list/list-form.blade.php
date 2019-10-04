@@ -106,7 +106,16 @@
                                 </div> 
                             </div>
                         </div>
-                        @endif      
+                        @endif     
+
+                        <!--<div class="form-group row">
+                            <label class="col-md-3 col-form-label text-md-right">Create input</label>
+
+                            <div class="col-md-8">
+                               <a id="open_modal" class="btn btn-primary btn-sm">Create Field</a>
+                            </div>
+                        </div>
+                    -->
 
                          <div class="form-group">
                             <label>Page Header</label>
@@ -148,6 +157,31 @@
 <!-- end container -->   
 </div>
 
+<!-- Modal To Add Column -->
+  <div class="modal fade" id="openMenu" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4>Create Field</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2"><input class="btn btn-default btn-sm add-field" type="button" value="Add Field" /></div>
+                <form id="update_message">
+                    <div class="form-group row">
+                        <div id="append"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
 <script type="text/javascript">
     /* CKEditor */
     CKEDITOR.replace( 'editor1',{
@@ -164,7 +198,17 @@
 
     $(document).ready(function(){
         displayEventField();
+        openMenu();
+        addCols();
+        delCols();
     });
+
+    function openMenu()
+    {
+        $('#open_modal').click(function(){
+            $("#openMenu").modal();
+        });
+    }
 
     /* Datetimepicker */
      $("body").on('focus','.evd',function () {
@@ -188,6 +232,23 @@
             }
             
         });
+    }
+
+     function addCols(){
+      $("body").on('click','.add-field',function(){
+            var len = $(".fields").length;
+             var box_html = '<input class="form-control col-sm-8 float-left fields pos-'+len+'" /><a id="'+len+'" class="del col-sm-4 btn btn-warning">Delete</a>';
+
+        $("#append").append(box_html);
+      });
+    }
+
+    function delCols(){
+      $("body").on("click",".del",function(){
+        var pos = $(this).attr('id');
+        $(".pos-"+pos).remove();
+        $("#"+pos).remove();
+      });
     }
 
 </script>

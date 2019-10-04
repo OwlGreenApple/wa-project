@@ -69,15 +69,4 @@ class HomeController extends Controller
             return redirect('home')->with('message','Error!,Your data failed to update');
         }
     }
-
-    public function importCSVPage()
-    {
-        return view('auth.importcsv');
-    }
-
-    public function importCustomerCSV(Request $request){
-/* BE CAREFUL IF YOU PERFORM IMPORT USING THIS FUNCTION IT WOULD RETURN ALL DATA TO LIST_ID = 1 */
-        $file = $request->file('csv_file');
-        Excel::import(new UsersImport(1), $file);
-    }
 }

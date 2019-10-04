@@ -162,8 +162,6 @@
 <!-- end container -->   
 </div>
 
-
-
  <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
@@ -481,39 +479,6 @@
 
         });
      }
-
-    function addDays(){
-      $("body").on('click','.add-day',function(){
-        var day = $("#schedule").val();
-        var pos = $(".days").length;
-        
-        if(day == 1){
-             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=-90;$x<=-1;$x++) {
-                echo "<option value=".$x.">$x</option>";
-          }?></select>'+
-          '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
-          '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
-          '<div class="clearfix"></div>';
-        } else {
-             var box_html = '<select name="day[]" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=1;$x<=100;$x++) {
-                echo "<option value=".$x.">$x</option>";
-          }?></select>'+
-            '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
-            '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
-            '<div class="clearfix"></div>';
-        }
-
-        $("#append").append(box_html);
-      });
-    }
-
-    function delDays(){
-      $("body").on("click",".del",function(){
-        var pos = $(this).attr('id');
-        $("."+pos).remove();
-        $("#"+pos).remove();
-      });
-    }
 
 </script>
 

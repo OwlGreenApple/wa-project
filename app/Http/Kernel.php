@@ -64,6 +64,7 @@ class Kernel extends HttpKernel
         'userlist' => \App\Http\Middleware\CheckUserLists::class,
         'template' => \App\Http\Middleware\TemplateValidation::class,
         'wanumber' => \App\Http\Middleware\WACheckValidation::class,
+        'is_admin' => \App\Http\Middleware\AdminUser::class,
     ];
 
     /**

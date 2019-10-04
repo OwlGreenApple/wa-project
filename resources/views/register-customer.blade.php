@@ -64,7 +64,7 @@
 
                             <div class="col-md-7">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-2">
                                         <input name="code_country" class="form-control" data-countryCode="ID" value="+62" readonly/>
                                         <span class="error code_country"></span>
                                     </div>
@@ -75,7 +75,7 @@
                                     </div>
                                 <!-- end row -->    
                                 </div>
-                                 <small>Please do not use +62 62 or 0 but use 8xxxxxx instead</small>
+                                 <small>Tulis No HP dengan format: 8xxxxxxxx (tanpa angka 0 didepan), contoh: 812000333<small>
                             </div>
                         </div>
 
@@ -145,8 +145,9 @@
                     $("#submit").html('<button type="submit" class="btn btn-primary">Register</button>');
                     if(result.success == true){
                         $(".modal-body > p").text(result.message);
-                        getModal();
-                        setTimeout(function(){location.href= result.wa_link} , 1000);   
+                        location.href= result.wa_link;
+                        //getModal();
+                        //setTimeout(function(){location.href= result.wa_link} , 1000);   
                         //clearField();
                     } else {
                         $(".name").text(result.name);

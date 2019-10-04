@@ -28,9 +28,14 @@ Auth::routes();
 /* User Customer */
 
 Route::get('/home', 'HomeController@index')->name('home');//home.blade
-Route::get('csvimport', 'HomeController@importCSVPage')->name('csvimport');//home.blade
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
-Route::post('importcustomercsv','HomeController@importCustomerCSV')->name('importcustomercsv');
+
+Route::group(['middleware'=>['auth','web','is_admin']],function(){
+	Route::get('superadmin', 'AdminController@index');//home.blade
+	Route::get('loginuser/{id_user}', 'AdminController@LoginUser');//home.blade
+	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');//home.blade
+	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');
+});
 
 Route::group(['middleware'=>['auth','web']],function(){
 	/* Lists */

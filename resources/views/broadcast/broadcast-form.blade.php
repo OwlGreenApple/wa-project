@@ -36,6 +36,12 @@
                          </div>   
                     @endif 
 
+                    @if (session('status_warning'))
+                        <div class="alert alert-warning" role="alert">
+                            {{ session('status_warning') }}
+                         </div>   
+                    @endif 
+
                     @if (session('status_error'))
                         <div class="alert alert-danger" role="alert">
                             {{ session('status_error') }}
@@ -97,6 +103,7 @@
                             <div class="col-md-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>  
                         </div> 
 
+                         <input type="hidden" name="is_event" value="{{encrypt(0)}}"/>
                         <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">

@@ -84,7 +84,7 @@ class CustomerController extends Controller
              $valid_customer = true;
     	} else {
     		$data['success'] = false;
-    		$data['message'] = 'Error-001! Sorry there is something wrong with our system';
+    		$data['message'] = 'Error-000! Sorry there is something wrong with our system';
             return response()->json($data);
     	}
 
@@ -146,7 +146,7 @@ class CustomerController extends Controller
             }
 
              if($reminder_customer->save() == true && !empty($eligible)){
-                 return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
+                return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
              } else {
                  $data['success'] = false;
                  $data['message'] = 'Error-001! Sorry there is something wrong with our system';
@@ -172,7 +172,7 @@ class CustomerController extends Controller
                     $reminder_customer->save(); 
                     $eligible = true; 
                  } else {
-                    $eligible = true;
+                    $eligible = false;
                  }
             }
 
