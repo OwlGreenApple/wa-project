@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\Reminder;
 use App\ReminderCustomers;
 use App\Sender;
+use App\Additional;
 use App\Console\Commands\SendWA as SendMessage;
 
 class CustomerController extends Controller
@@ -28,7 +29,8 @@ class CustomerController extends Controller
     		return redirect('/');
     	} else {
             $list = UserList::where('name',$product_list)->first();
-    		return view('register-customer',['content'=>$list->content,'listname'=>$product_list,'pixel'=>$list->pixel_text,'message'=>$list->message_text]);
+            $additional = Additional::where('list_id',$list->id)->get();
+    		return view('register-customer',['id'=>encrypt($list->id),'content'=>$list->content,'listname'=>$product_list,'pixel'=>$list->pixel_text,'message'=>$list->message_text,'additional'=>$additional]);
     	}
     }
 
@@ -45,7 +47,6 @@ class CustomerController extends Controller
         } elseif(is_null($check_link)) {
             return redirect('/');
         } else {
-            //$request->session()->flash('userlist',$product_list);
             $list = UserList::where('name',$product_list)->first();
             return view('register-customer',['content'=>$list->content, 'listname'=>$product_list,'pixel'=>$list->pixel_text,'message'=>$list->message_text]);
         }
@@ -53,6 +54,8 @@ class CustomerController extends Controller
 
     public function addCustomer(Request $request){
         $listname = $request->listname;
+        $req = $request->all();
+
     	$get_id_list = UserList::where('name','=',$listname)->first();
         $wa_number = '+62'.$request->wa_number;
         $sender = Sender::where('user_id',$get_id_list->user_id)->first();
@@ -74,6 +77,7 @@ class CustomerController extends Controller
             $customer->list_id = $get_id_list->id;
             $customer->name = $request->name;
             $customer->wa_number = $wa_number;
+            $customer->additional = json_encode($req['data']);
             $customer->save();
             $customer_subscribe_date = $customer->created_at;
             $customerid = $customer->id;
@@ -141,12 +145,16 @@ class CustomerController extends Controller
                     $reminder_customer->save();
                     $eligible = true;
                  } else {
-                    $eligible = false;
+                    $eligible = null;
                  }
+                
             }
 
-             if($reminder_customer->save() == true && !empty($eligible)){
+             if($eligible == true){
                 return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
+             } else if($eligible == null) {
+                 $data['message'] = 'Sorry this event has expired';
+                 return response()->json($data);
              } else {
                  $data['success'] = false;
                  $data['message'] = 'Error-001! Sorry there is something wrong with our system';
@@ -172,13 +180,22 @@ class CustomerController extends Controller
                     $reminder_customer->save(); 
                     $eligible = true; 
                  } else {
-                    $eligible = false;
+                    $eligible = null;
                  }
             }
 
+            if($is_event == 1){
+                $msg = 'event';
+            } else {
+                $msg = 'reminder';
+            }
+
              # if reminder has been set up into reminder-customer 
-            if($reminder_customer->save() == true && !empty($eligible)){
+            if($eligible == true){
                 return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
+            } else if($eligible == null) {
+                $data['message'] = 'Sorry this '.$msg.' has expired';
+                return response()->json($data);
             } else {
                 $data['success'] = false;
                 $data['message'] = 'Error-002! Sorry there is something wrong with our system';

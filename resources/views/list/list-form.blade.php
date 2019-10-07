@@ -108,15 +108,22 @@
                         </div>
                         @endif     
 
-                        <!--<div class="form-group row">
+                        <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right">Create input</label>
 
-                            <div class="col-md-8">
-                               <a id="open_modal" class="btn btn-primary btn-sm">Create Field</a>
+                            <div class="col-md-8 row">
+                               <select id="type_fields" class="form-control col-md-8">
+                                    <option value="1">Fields</option>
+                                    <option value="2">Dropdown</option>
+                                </select>
+                                <input class="btn btn-default btn-sm add-field col-md-4" type="button" value="Add Field" />
                             </div>
                         </div>
-                    -->
 
+                        <div id="append" class="form-group row">
+                           <!-- display input here -->
+                        </div> 
+                  
                          <div class="form-group">
                             <label>Page Header</label>
                             <div class="col-md-12">
@@ -169,12 +176,41 @@
         </div>
         <div class="modal-body">
             <div class="form-group">
-                 <div class="mb-2"><input class="btn btn-default btn-sm add-field" type="button" value="Add Field" /></div>
-                <form id="update_message">
-                    <div class="form-group row">
-                        <div id="append"></div>
-                    </div>
+                 
+
+                <form id="save_fields">
+                    
                 </form>
+
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Modal Dropdown -->
+  <div class="modal fade" id="openDropdown" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2">
+                    <input class="btn btn-default btn-sm add-option" type="button" value="Add Option" />
+                </div>
+                 <div class="form-group">
+                    <label>Dropdown name</label>
+                   <input id="dropdown_name" type="text" class="form-control" />
+                </div> 
+                <label>Option Value</label>
+                <div id="appendoption" class="form-group row">
+                   <!-- display input here -->
+                </div> 
+                <div class="form-group">
+                   <button id="cdp" class="btn btn-success btn-sm">Create Dropdown</button>
+                </div>
             </div>
         </div>
       </div>
@@ -201,7 +237,33 @@
         openMenu();
         addCols();
         delCols();
+        //saveInputs();
+        addDropdown();
+        delDrop();
+        addDropdownToField();
     });
+
+    function saveInputs()
+    {
+        $("body").on("submit","#save_fields",function(e){
+            e.preventDefault();
+            var data = $(this).serialize();
+            $.ajaxSetup({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+            });
+            $.ajax({
+                type : 'POST',
+                url : "",
+                data : data,
+                dataType:'json',
+                success : function(result){
+
+                }
+            });
+        });
+    }
 
     function openMenu()
     {
@@ -235,19 +297,93 @@
     }
 
      function addCols(){
+      $("#cip").hide();
       $("body").on('click','.add-field',function(){
-            var len = $(".fields").length;
-             var box_html = '<input class="form-control col-sm-8 float-left fields pos-'+len+'" /><a id="'+len+'" class="del col-sm-4 btn btn-warning">Delete</a>';
+        var len = $(".fields").length;
+        var type = $("#type_fields").val();
+        var box_html;
 
-        $("#append").append(box_html);
+        if(type == 1)
+        {
+             box_html = '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" /><a id="'+len+'" class="del mb-2 col-md-2 btn btn-warning">Delete</a><select name="isoption[]" class="pos-'+len+' form-control col-md-3"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+        } else {
+            $("#openDropdown").modal();
+        }
+
+        if(len < 5){
+            $("#append").append(box_html);
+        } else {
+            alert('You only can create 5 inputs')
+        }
+      });
+    } 
+
+    function addDropdown()
+    {
+        $("body").on("click",".add-option",function(){
+            var len = $(".doption").length;
+            var dropdown = '<input class="form-control mb-2 col-sm-8 float-left doption dpos-'+len+'" /><a id="dpos-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
+
+            $("#appendoption").append(dropdown);
+        });
+    }
+
+    function addDropdownToField()
+    {
+         $("body").on("click","#cdp",function(){
+            var len = $(".fields").length;
+            var options = '';
+            var optionName = $("#dropdown_name").val();
+            $(".doption").each(function(){
+                value = $(this).val();
+                options += '<option value="'+value+'">'+value+'</option>';
+            });
+            var box_html = '<div class="pos-'+len+' form-control col-sm-3">'+optionName+'</div><select id="dropfields" name="fields[]" class="form-control mb-2 col-sm-5 float-left fields pos-'+len+'">'+options+'</select><a id="'+len+'" class="del mb-2 col-sm-3 btn btn-warning">Delete</a>';
+            $("#append").append(box_html);
+         });
+    }
+
+    /*function addCols(){
+      $("#cip").hide();
+      $("body").on('click','.add-field',function(){
+        $("#cip").show();
+        var len = $(".fields").length;
+        var box_html = '<input name="fields[]" class="form-control mb-2 col-sm-8 float-left fields pos-'+len+'" /><a id="'+len+'" class="del mb-2 col-sm-4 btn btn-warning">Delete</a>';
+
+        if(len < 5){
+            $("#append").append(box_html);
+        } else {
+            alert('You only can create 5 inputs')
+        }
       });
     }
+    */
 
     function delCols(){
       $("body").on("click",".del",function(){
+        var len = $(".fields").length;
         var pos = $(this).attr('id');
         $(".pos-"+pos).remove();
         $("#"+pos).remove();
+
+        if(len == 1){
+            $("#cip").hide();
+        } 
+
+      });
+    }  
+
+    function delDrop(){
+      $("body").on("click",".deloption",function(){
+        var len = $(".doption").length;
+        var dpos = $(this).attr('id');
+        $("."+dpos).remove();
+        $("#"+dpos).remove();
+
+        if(len == 1){
+            $("#cip").hide();
+        } 
+
       });
     }
 

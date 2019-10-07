@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Waku') }}</title>
+    <title>{{ config('app.name', 'Activwa') }}</title>
 
    <!-- Scripts -->
     <script src="{{ asset('/assets/js/jquery-3.2.1.min.js') }}"></script>

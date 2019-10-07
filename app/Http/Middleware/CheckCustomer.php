@@ -4,9 +4,11 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Encryption\DecryptException;
 use App\Rules\CheckWANumbers;
 use App\Customer;
 use App\UserList;
+use App\Additional;
 
 class CheckCustomer
 {
@@ -23,6 +25,15 @@ class CheckCustomer
         /* Get all data from request and then fetch it in array */
          $req = $request->all();
          $wa_number = $request->wa_number;
+         $id_list = $request->listid;
+
+          try{
+             $id_list = decrypt($id_list);
+          }catch(DecryptException $e){
+              $error['wa_number'] = 'Please do not change default value';
+              return response()->json($error);
+          }
+       
 
          if(!is_numeric($wa_number)){
             $error['wa_number'] = 'Please use valid numbers';
@@ -36,13 +47,21 @@ class CheckCustomer
             return response()->json($error);
          }
 
+
+         if($this->checkAdditional($req['data'],$id_list) !== true)
+         {
+            $result = $this->checkAdditional($req['data'],$id_list);
+            $error['data'] = json_decode($result,true);
+             return response()->json($error);
+         }
+
          /* Avoid customer fill 0 as a leading number on wa number */
          if(!preg_match('/^[1-9][0-9]*$/',$req['wa_number'])){
             $error['wa_number'] = 'Please do not use 0 or +';
             return response()->json($error);
          } 
 
-         if(preg_match('/^[62][0-9]*$/',$req['wa_number'])){
+         if(preg_match('/^62[0-9]/',$req['wa_number'])){
             $error['wa_number'] = 'Please do not use 62 as first number';
             return response()->json($error);
          }
@@ -107,6 +126,31 @@ class CheckCustomer
             return false;
         } elseif(is_null($check_link)) {
             return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function checkAdditional($data,$list_id){
+        if(count($data) > 0)
+        {
+            foreach($data as $name=>$val)
+            {
+                $value[] = $val;
+                $fieldname[] = $name;
+                $is_optional = Additional::where([['list_id',$list_id],['is_optional',1]])->whereIn('name',$fieldname)->get();
+            }
+
+             foreach($is_optional as $row)
+             {
+
+                if(empty($data[$row->name])){
+                     $error[$row->name] = "Column ".$row->name." cannot be empty ";
+                } else {
+                    return true;
+                }
+             }
+            return json_encode($error);
         } else {
             return true;
         }

@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\UserList;
 use App\Customer;
 use App\Sender;
+use App\Additional;
 use DB;
 
 class ListController extends Controller
@@ -37,7 +38,20 @@ class ListController extends Controller
 
     public function addList(Request $request)
     {
+        $req = $request->all();
+        if(isset($req['fields']) && isset($req['isoption'])){
+            $fields = $req['fields'];
+            $isoption = $req['isoption'];
+            $filter_fields = array_unique($fields);
+            $addt = array_combine($fields,$isoption);
+        } else {
+            $fields = array();
+        }
 
+         if(isset($req['fields']) && isset($req['isoption']) && (count($fields) <> count($filter_fields))){
+            return redirect('createlist')->with('status','Error! name of fields cannot be same');
+         }
+        
     	$list = new UserList;
     	$list->user_id = Auth::id();
     	$list->name = $this->createRandomListName();
@@ -48,12 +62,34 @@ class ListController extends Controller
         $list->pixel_text = $request->pixel_txt;
         $list->message_text = $request->message_txt;
     	$list->save();
+        $listid = $list->id;
 
     	if($list->save() == true){
-    		return redirect('createlist')->with('status','List has been created');
+            $cfields = count($fields);
     	} else {
     		return redirect('createlist')->with('status','Error!, failed to create list');
     	}
+
+        $success = false;
+        if($cfields > 0){
+            foreach($addt as $field_name=>$is_option){
+                $additional = new Additional;
+                $additional->list_id = $listid;
+                $additional->name = $field_name;
+                $additional->is_optional = $is_option;
+                $additional->save();
+                $success = true;
+            }
+        } else {
+            return redirect('createlist')->with('status','Your list has been created');
+        }
+
+        if($success == true){
+            return redirect('createlist')->with('status','Your list has been created');
+        } else {
+            return redirect('createlist')->with('status','Error!, failed to create list');
+        }
+
     }
 
     /* User product list */
@@ -99,7 +135,8 @@ class ListController extends Controller
     public function userCustomer($id_list)
     {
         $customer = Customer::where('list_id','=',$id_list)->get();
-        return view('list.list-customer',['data'=>$customer]);
+        $additional = Additional::where('list_id','=',$id_list)->get();
+        return view('list.list-customer',['data'=>$customer,'additional'=>$additional]);
     }
 
     public function displayListContent(Request $request){
@@ -162,7 +199,6 @@ class ListController extends Controller
         }
         return response()->json($data);
     }
-
 
     /* check random list name */
     public function createRandomListName(){

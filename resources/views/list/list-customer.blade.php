@@ -28,7 +28,14 @@
                     <table class="table table-striped table-responsive" id="user-customer">
                         <thead>
                             <th>Customer's Name</th>
-                            <th>Customer's WA</th>
+                            <th>WA Number</th>
+                           
+                            @if($additional->count() > 0)
+                                @foreach($additional as $field)
+                                  <th>{{ucfirst($field->name)}}</th>
+                                @endforeach
+                            @endif
+
                             <th>Created</th>
                             <th>Updated</th>
                             <!--<th>Status</th>
@@ -40,6 +47,18 @@
                                 <tr>
                                     <td>{{$row->name}}</td>
                                     <td>{{$row->wa_number}}</td>
+                                     @php 
+                                        $additional = array();
+                                        if($row->additional <> null){
+                                             $additional = json_decode($row->additional,true);
+                                        }
+                                     @endphp
+
+                                     @if(count($additional) > 0)
+                                        @foreach($additional as $field_name=>$value)
+                                           <td>{{$value}}</td>
+                                        @endforeach
+                                     @endif
                                     <td>{{$row->created_at}}</td>
                                     <td>{{$row->updated_at}}</td>
                                     <!--<td>

@@ -75,13 +75,28 @@
                                     </div>
                                 <!-- end row -->    
                                 </div>
-                                 <small>Tulis No HP dengan format: 8xxxxxxxx (tanpa angka 0 didepan), contoh: 812000333<small>
+                                 <small>Tulis No HP dengan format: 8xxxxxxxx (tanpa angka 0 didepan), contoh: 812000333</small>
                             </div>
                         </div>
+
+                        @if($additional->count() > 0)
+                        <div class="form-group row">
+                             @foreach($additional as $row)
+                                <label for="name" class="mb-2 col-md-4 col-form-label text-md-right">{{$row->name}}</label>
+
+                                <div class="col-md-7 mb-2">
+                                    <input type="text" class="form-control" name="data[{{$row->name}}]" />
+
+                                    <span class="error {{$row->name}}"></span>
+                                </div>
+                             @endforeach
+                        </div>
+                        @endif
 
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <input type="hidden" name="listname" value="{{$listname}}"/>
+                                <input type="hidden" name="listid" value="{{$id}}"/>
                             </div>
                             <div class="col-md-6">
                                 <span class="error error_list"></span>
@@ -154,7 +169,13 @@
                         $(".wa_number").text(result.wa_number);
                         $(".code_country").text(result.code_country);
                         $(".error_list").text(result.list);
-                        $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
+
+                        if(result.message !== undefined){
+                             $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
+                        }
+                        $.each(result.data, function(key, value) {
+                            $("."+key).text(value);
+                        })
                     }
                 }
             });

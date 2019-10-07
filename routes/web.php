@@ -47,6 +47,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');
 	Route::post('updatelistcontent','ListController@updateListContent')->name('updatelistcontent');
 	Route::get('deletelistcontent','ListController@delListContent')->name('deletelistcontent');
+	//Route::post('additional','ListController@additional')->name('additional');
 
 	/* BroadCast */
 	Route::get('broadcast','BroadCastController@index')->name('broadcast');
