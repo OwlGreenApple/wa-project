@@ -48,7 +48,7 @@ class CheckCustomer
          }
 
 
-         if($this->checkAdditional($req['data'],$id_list) !== true)
+         if(isset($req['data']) && $this->checkAdditional($req['data'],$id_list) !== true)
          {
             $result = $this->checkAdditional($req['data'],$id_list);
             $error['data'] = json_decode($result,true);
@@ -132,6 +132,7 @@ class CheckCustomer
     }
 
     public function checkAdditional($data,$list_id){
+        $error = array();
         if(count($data) > 0)
         {
             foreach($data as $name=>$val)
@@ -140,7 +141,12 @@ class CheckCustomer
                 $fieldname[] = $name;
                 $is_optional = Additional::where([['list_id',$list_id],['is_optional',1]])->whereIn('name',$fieldname)->get();
             }
+        } else {
+            return true;
+        }
 
+        if($is_optional->count() > 0)
+        {
              foreach($is_optional as $row)
              {
 
@@ -154,6 +160,7 @@ class CheckCustomer
         } else {
             return true;
         }
+
     }
 
 /* end middleware */    

@@ -29,13 +29,7 @@
                         <thead>
                             <th>Customer's Name</th>
                             <th>WA Number</th>
-                           
-                            @if($additional->count() > 0)
-                                @foreach($additional as $field)
-                                  <th>{{ucfirst($field->name)}}</th>
-                                @endforeach
-                            @endif
-
+                            <th>Additional</th>
                             <th>Created</th>
                             <th>Updated</th>
                             <!--<th>Status</th>
@@ -47,18 +41,12 @@
                                 <tr>
                                     <td>{{$row->name}}</td>
                                     <td>{{$row->wa_number}}</td>
-                                     @php 
-                                        $additional = array();
-                                        if($row->additional <> null){
-                                             $additional = json_decode($row->additional,true);
-                                        }
-                                     @endphp
-
-                                     @if(count($additional) > 0)
-                                        @foreach($additional as $field_name=>$value)
-                                           <td>{{$value}}</td>
-                                        @endforeach
-                                     @endif
+                                    <td> 
+                                        @if($row->additional <> null)
+                                        <a class="btn btn-info btn-sm addt" id="{{$row->id}}">Additional</a>
+                                        @endif
+                                    </td>
+                                    
                                     <td>{{$row->created_at}}</td>
                                     <td>{{$row->updated_at}}</td>
                                     <!--<td>
@@ -83,15 +71,57 @@
 <!-- end container -->   
 </div>
 
+<!-- Modal -->
+<div id="additional_popup" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Additonal Data</h4>
+      </div>
+      <div class="modal-body">
+        <p id="displayadditional"></p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function(){
         table();
+        displayDataAdditional();
     });
+
+    function displayDataAdditional(){
+        $("body").on("click",".addt",function(){
+            var listid = $(this).attr('id');
+            var boxdata = '';
+            $("#additional_popup").modal();
+
+            $.ajax({
+                type:'GET',
+                url:'{{route("customeradditional")}}',
+                data : {id:listid},
+                dataType : 'json',
+                success : function(response) 
+                {
+                    console.log(response.additonal);
+                    $.each(response.additonal,function(key,value){
+
+                        boxdata += '<div class="form-group row"><label class="col-md-3 col-form-label text-md-right"><b>'+key+'</b></label><div class="col-md-8">'+value+'</div></div></div>';
+                    });
+                    $("#displayadditional").html(boxdata);
+                }
+            });
+        });
+    }
 
      function table(){
         $("#user-customer").dataTable({
             'pageLength':10,
-            //"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, "All"]],
         });
     }
 </script>

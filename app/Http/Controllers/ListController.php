@@ -48,8 +48,32 @@ class ListController extends Controller
             $fields = array();
         }
 
+         #empty fields
+         if(isset($req['fields']) && isset($req['isoption'])){
+            foreach($fields as $ipt)
+            {
+                #empty fields
+                if(empty($ipt))
+                {
+                    return redirect('createlist')->with('error_number','Error! name of fields cannot be empty');
+                }
+
+                #maximum characters
+                if(strlen($ipt) > 20)
+                {
+                    return redirect('createlist')->with('error_number','Error! Maximum character length is 20');
+                }
+
+                # default name
+                if($ipt == 'name' || $ipt == 'wa_number'){
+                    return redirect('createlist')->with('error_number','Error! Sorry both of name and wa_number has set as default');
+                }
+            }
+         }
+
+         # fields that have same value
          if(isset($req['fields']) && isset($req['isoption']) && (count($fields) <> count($filter_fields))){
-            return redirect('createlist')->with('status','Error! name of fields cannot be same');
+            return redirect('createlist')->with('error_number','Error! name of fields cannot be same');
          }
         
     	$list = new UserList;
@@ -57,6 +81,7 @@ class ListController extends Controller
     	$list->name = $this->createRandomListName();
         $list->wa_number = $request->wa_number;
         $list->is_event = $request->category;
+        $list->label = $request->label_name;
         $list->event_date = $request->date_event;
         $list->content = $request->editor1;
         $list->pixel_text = $request->pixel_txt;
@@ -139,6 +164,20 @@ class ListController extends Controller
         return view('list.list-customer',['data'=>$customer,'additional'=>$additional]);
     }
 
+    public function customerAdditional(Request $request){
+        $id = $request->id;
+        $customer = Customer::where('id','=',$id)->select('additional')->first();
+
+        if(is_null($customer))
+        {
+            $data['message'] = 'No Data available';
+        } else {
+            $data_additonal = json_decode($customer->additional,true); 
+            $data['additonal'] = $data_additonal;
+        }
+        return response()->json($data);
+    }
+
     public function displayListContent(Request $request){
         $id = $request->id;
         $list = UserList::where('id',$id)->first();
@@ -146,15 +185,31 @@ class ListController extends Controller
         if(is_null($list)){
             $data = null;
         } else {
+            $additional = Additional::where('list_id',$id)->get();
             $data = array(
                 'list_name'=>$list->name,
                 'content'=> $list->content,
                 'is_event'=>$list->is_event,
                 'event_date'=>$list->event_date,
                 'pixel'=>$list->pixel_text,
-                'message'=>$list->message_text
+                'message'=>$list->message_text,
+                'additional'=>$additional
             );
         }
+        return response()->json($data);
+    }
+
+    #display field after update
+    public function displayAjaxAdditional(Request $request){
+        $id = $request->id;
+        $additional = Additional::where('list_id',$id)->get();
+        if($additional->count() > 0)
+        {
+            $data['additional'] = $additional;
+        } else {
+            $data['additional'] = null;
+        }
+
         return response()->json($data);
     }
 
@@ -196,6 +251,85 @@ class ListController extends Controller
             $data['message'] = 'Data deleted successfully';
         } else {
             $data['message'] = 'Sorry, cannot delete customer, there is error';
+        }
+        return response()->json($data);
+    }
+
+    public function delField(Request $request)
+    {
+        $id = $request->id;
+        $list_id = $request->list_id;
+
+        $additional = Additional::where([['id',$id],['list_id',$list_id]])->delete();
+
+        if($additional == true){
+            $data['msg'] = 'Field successfully deleted';
+        } else {
+            $data['msg'] = 'Sorry, unable to delete field, error';
+        }
+        return response()->json($data);
+    }
+
+    public function updateField(Request $request)
+    {
+        $data['error'] = true;
+        $req = $request->all();
+        $fields_array = array_column($req, 'field');
+        $fields_filter = array_unique($fields_array);
+
+        if(count($req) == 0)
+        {
+            $data['err'] = 'Error, you have no fields';
+            return response()->json($data);
+        }
+
+        # field that have same value
+        if(count($fields_array) !== count($fields_filter))
+        {
+            $data['err'] = 'Field value cannot be same';
+            return response()->json($data);
+        }
+
+        foreach($req as $row=>$val)
+        {
+
+          # empty field 
+          if(empty($val['field'])){
+            $data['err'] = 'Field cannot be empty';
+            return response()->json($data);
+          }
+
+          # maximum character length
+          if(strlen($val['field']) > 20){
+            $data['err'] = 'Maximum character length is 20';
+            return response()->json($data);
+          }
+
+          # default value
+          if($val['field'] == 'name' || $val['field'] == 'wa_number'){
+            $data['err'] = 'Sorry both of name and wa_number has set as default';
+            return response()->json($data);
+          }
+
+          if(!isset($val['id']))
+          {
+             $additional = new Additional;
+             $additional->list_id = $val['listid'];
+             $additional->name = $val['field'];
+             $additional->is_optional = $val['is_option'];
+             $additional->save();
+          } else {
+             $additional = Additional::where([['list_id',$val['listid']],['id',$val['id']]])->update(['name'=>$val['field'], 'is_optional'=>$val['is_option']]);
+          }
+          $listid = $val['listid'];
+        }
+
+        if($additional == true || $additional->save() == true){
+            $data['error'] = false;
+            $data['listid'] =  $listid;
+            $data['msg'] = 'Your fields updated succesfully';
+        } else {
+            $data['msg'] = 'Error, sorry unable to update your fields';
         }
         return response()->json($data);
     }

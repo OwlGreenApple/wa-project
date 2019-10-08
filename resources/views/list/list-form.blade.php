@@ -67,6 +67,13 @@
                             </div>
                         </div>   
 
+                         <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-md-right">Name List</label>
+                            <div class="col-md-8">
+                                 <input type="text" class="form-control" name="label_name" />
+                            </div>
+                        </div> 
+
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right">Category</label>
 
@@ -297,7 +304,6 @@
     }
 
      function addCols(){
-      $("#cip").hide();
       $("body").on('click','.add-field',function(){
         var len = $(".fields").length;
         var type = $("#type_fields").val();
@@ -365,11 +371,6 @@
         var pos = $(this).attr('id');
         $(".pos-"+pos).remove();
         $("#"+pos).remove();
-
-        if(len == 1){
-            $("#cip").hide();
-        } 
-
       });
     }  
 

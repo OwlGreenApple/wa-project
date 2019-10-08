@@ -184,13 +184,6 @@
          });
       }
 
-
-     $(window).load(function() {
-          $(".imgloader").html("<button type='submit'>Submit</button>");
-      });
-
-     
-
       function MDTimepicker(){
         $("body").on('focus','.timepicker',function(){
             $(this).mdtimepicker({

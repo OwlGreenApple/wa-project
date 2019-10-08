@@ -30,6 +30,7 @@
                     <table class="table table-striped table-responsive" id="user-list">
                         <thead>
                             <th>List Name</th>
+                            <th>List URL</th>
                             <th>Category</th>
                             <th>Subcribers</th>
                             <th>Date Event</th>
@@ -41,6 +42,7 @@
                           @if($data !== null)
                             @foreach($data as $row => $val)
                                 <tr>
+                                    <td>{{$val[0]->label}}</td>
                                     <td>
                                         @if($val[0]->is_event == 0)
                                             <a target="_blank" href="{{url('/'.$val[0]->name)}}" class="copy">{{$val[0]->name}}</a>
@@ -96,6 +98,24 @@
                 <span class="error event_date"></span>
             </div>
 
+             <div class="form-group">
+                <label><b>Create input additional</b></label>
+                <div class="col-md-6 row">
+                 <select id="type_fields" class="form-control col-md-8">
+                      <option value="1">Fields</option>
+                      <option value="2">Dropdown</option>
+                  </select>
+                  <input class="btn btn-default btn-sm add-field col-md-4" type="button" value="Add Field" />
+                 </div> 
+            </div>
+
+
+            <div class="form-group">
+               <label><div class="error errfield"></div></label>
+                  <span id="additional"></span>
+                  <button id="cid" type="button" class="btn btn-primary btn-sm">Save</button>
+            </div> 
+
             <div class="form-group">
                <label><b>Page Header</b></label>
                <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
@@ -140,38 +160,15 @@
         displayEditor();
         updateEditor();
         delEditor();
-        //copyClipBoard();
-        //bootstrapTooltip();
+        delCols();
+        addCols();
+        saveFields();
     });
 
      function table(){
          $("#user-list").dataTable({
             'pageLength':10,
-            //"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-            "destroy":true,
-        });
-    }
-
-    /* clipboard */
-    function copyClipBoard()
-    {
-         var clipboard = new ClipboardJS('.copy');
-
-        /*clipboard.on('success', function(e) {
-            //alert('You had copied the text');
-            clipboard.destroy();
-        });*/
-    }
-
-    /* Tool Tip */
-    function bootstrapTooltip()
-    {
-        $("body").on("click",".tip",function(){
-             $('[data-toggle="tooltip"]').tooltip({
-                animated: 'fade',
-                placement: 'top',
-                title : 'Click To Copy Link',
-             });
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         });
     }
 
@@ -210,10 +207,124 @@
                    $(".list_name").html(result.list_name);
                    $("textarea[name='pixel_txt']").val(result.pixel);
                    $("textarea[name='message_txt']").val(result.message);
+
+                   var box_html = '';
+                   var is_option = {};
+                   $.each(result.additional,function(key, value){
+                      var len = key;
+                      box_html += '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input id='+value.id+' name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+
+                        is_option[len] = value.is_optional;
+                   });
+                   $("#additional").html(box_html);
+                   $.each(is_option,function(key, value){
+                      $(".selopt-"+key+"").val(value);
+                   });
                    CKEDITOR.instances.editor1.setData( result.content );
+                   var clen = $(".fields").length;
+                    if(clen == 0)
+                    {
+                      $("#cid").hide();
+                    } else {
+                      $("#cid").show();
+                    }
                 }
             });
         });
+    }
+
+    function addCols(){
+      $("body").on('click','.add-field',function(){
+        var type = $("#type_fields").val();
+        var len = $(".fields").length;
+        var box_html;
+        $("#cid").show();
+
+        if(type == 1)
+        {
+             box_html = '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning">Delete</a><select class="pos-'+len+' form-control col-md-3 sel_is_option"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+        } else {
+            $("#openDropdown").modal();
+        }
+
+        if(len < 5){
+            $("#additional").append(box_html);
+        } else {
+            alert('You only can create 5 inputs')
+        }
+      });
+    } 
+
+    function saveFields(){
+        $("#cid").click(function(){
+            var data = {};
+            var len = $(".fields").length;
+
+            for(x=0;x<len;x++)
+            {
+               var fields = $(".fields").eq(x).val();
+               var idfields = $(".fields").eq(x).attr('id');
+               var is_option = $(".sel_is_option").eq(x).val();
+               var list_id = $("input[name='idlist']").val();
+               data[x] = {id : idfields,field : fields, is_option : is_option, listid:list_id};
+            }
+
+            $.ajaxSetup({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+            });
+             $.ajax({
+                type : 'POST',
+                url : '{{route("updateadditional")}}',
+                data : data,
+                dataType : "json",
+                success : function(result){
+                  if(result.error == false)
+                  {
+                       if(result.listid.length > 0)
+                        {
+                           displayAjaxCols(result.listid);
+                        }
+                  }
+                 
+                  if(result.error == true)
+                  {
+                    $(".errfield").html('<div class="alert alert-danger">'+result.err+'</div>');
+                  } else {
+                    $(".errfield").html('');
+                    alert(result.msg);
+                  }
+                }
+            });
+        });
+    }
+
+    function displayAjaxCols(id)
+    {
+      var box_html = '';
+      var is_option = {};
+      $.ajax({
+        type : 'GET',
+        url : '{{route("displayajaxfield")}}',
+        data : {'id':id},
+        dataType : "json",
+        success : function(result){
+            if(result.additional !== null)
+            {
+                $.each(result.additional,function(key, value){
+                var len = key;
+                box_html += '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input id='+value.id+' name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+                  is_option[len] = value.is_optional;
+                 });
+                 $("#additional").html(box_html);
+                 $.each(is_option,function(key, value){
+                      $(".selopt-"+key+"").val(value);
+                 });
+            }
+        }
+      });  
+     
     }
 
     function updateEditor(){
@@ -252,6 +363,7 @@
                    //location.href="{{route('userlist')}}";
                 }
             });
+
         });
     }
 
@@ -277,6 +389,44 @@
 
       });
     }
+
+    function delCols(){
+      $("body").on("click",".del_fields",function(){
+        var len = $(".fields").length;
+        var pos = $(this).attr('id');
+        var id_attribute = $(this).attr('idbase');
+        var listid = $(this).attr('listid');
+        var conf = confirm('Are you sure want to delete this fields?');
+
+        if(conf == true)
+        {
+            if(id_attribute == undefined && listid == undefined)
+            {
+                $(".pos-"+pos).remove();
+                $("#"+pos).remove();
+            } else {
+              $.ajax({
+                type : 'GET',
+                url : '{{route("delfield")}}',
+                data : {'id':id_attribute, 'list_id':listid},
+                success : function(response){
+                  alert(response.msg);
+                  $(".pos-"+pos).remove();
+                  $("#"+pos).remove();
+                }
+              });
+            }
+        } else {
+          return false;
+        }
+
+        if(len < 2)
+        {
+            $("#cid").hide();
+        }
+
+      });
+    }  
 
 </script>
 @endsection

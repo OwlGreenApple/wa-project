@@ -47,7 +47,12 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');
 	Route::post('updatelistcontent','ListController@updateListContent')->name('updatelistcontent');
 	Route::get('deletelistcontent','ListController@delListContent')->name('deletelistcontent');
-	//Route::post('additional','ListController@additional')->name('additional');
+
+	/* Additional */
+	Route::get('delfield','ListController@delField')->name('delfield');
+	Route::post('updateadditional','ListController@updateField')->name('updateadditional');
+	Route::get('displayajaxfield','ListController@displayAjaxAdditional')->name('displayajaxfield');
+	Route::get('customeradditional','ListController@customerAdditional')->name('customeradditional');
 
 	/* BroadCast */
 	Route::get('broadcast','BroadCastController@index')->name('broadcast');

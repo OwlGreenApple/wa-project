@@ -37,6 +37,14 @@ class CheckUserLists
             return redirect('createlist')->with('error_number','Please, register your WhatsApp Number first');
         }
 
+        if(empty($request->label_name)){
+            return redirect('createlist')->with('error_number','Column name list cannot be empty');
+        }
+
+        if(strlen($request->label_name) > 190){
+            return redirect('createlist')->with('error_number','Column name list maximum length is 190');
+        }
+
         if($this->checkEvent($is_event) == false ){
             return redirect('createlist')->with('isevent','Please do not change category value');
         } 

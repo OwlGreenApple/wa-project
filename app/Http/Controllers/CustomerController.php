@@ -48,7 +48,8 @@ class CustomerController extends Controller
             return redirect('/');
         } else {
             $list = UserList::where('name',$product_list)->first();
-            return view('register-customer',['content'=>$list->content, 'listname'=>$product_list,'pixel'=>$list->pixel_text,'message'=>$list->message_text]);
+            $additional = Additional::where('list_id',$list->id)->get();
+            return view('register-customer',['id'=>encrypt($list->id),'content'=>$list->content, 'listname'=>$product_list,'pixel'=>$list->pixel_text,'message'=>$list->message_text,'additional'=>$additional]);
         }
     }
 
@@ -68,6 +69,13 @@ class CustomerController extends Controller
         $list_message = $get_id_list->message_text;
         $list_wa_number = $get_id_list->wa_number;
 
+        if(isset($req['data']))
+        {
+            $addt = json_encode($req['data']);
+        } else {
+            $addt = null;
+        }
+
         # Filter to avoid unavailable link 
         if(is_null($get_id_list)){
             return redirect('/');
@@ -77,7 +85,7 @@ class CustomerController extends Controller
             $customer->list_id = $get_id_list->id;
             $customer->name = $request->name;
             $customer->wa_number = $wa_number;
-            $customer->additional = json_encode($req['data']);
+            $customer->additional = $addt;
             $customer->save();
             $customer_subscribe_date = $customer->created_at;
             $customerid = $customer->id;
