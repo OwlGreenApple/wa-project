@@ -39,17 +39,29 @@ class ListController extends Controller
     public function addList(Request $request)
     {
         $req = $request->all();
-        if(isset($req['fields']) && isset($req['isoption'])){
+
+        if(isset($req['fields'])){
             $fields = $req['fields'];
-            $isoption = $req['isoption'];
             $filter_fields = array_unique($fields);
+            $isoption = $req['isoption'];
             $addt = array_combine($fields,$isoption);
         } else {
             $fields = array();
         }
 
-         #empty fields
-         if(isset($req['fields']) && isset($req['isoption'])){
+        # if isoption which mean fields otherwise dropdown
+        if(isset($req['dropdown']))
+        {
+            $dropdown = $req['dropdown'];
+            $filter_dropdown = array_unique($dropdown);
+            $dropfields = $req['dropfields'];
+            $drop = array_combine($dropdown,$dropfields);
+        } else {
+            $dropdown = array();
+        }
+
+        # validation fields
+        if(isset($req['fields'])){
             foreach($fields as $ipt)
             {
                 #empty fields
@@ -69,13 +81,54 @@ class ListController extends Controller
                     return redirect('createlist')->with('error_number','Error! Sorry both of name and wa_number has set as default');
                 }
             }
-         }
+        }
 
-         # fields that have same value
-         if(isset($req['fields']) && isset($req['isoption']) && (count($fields) <> count($filter_fields))){
+        # fields that have same value
+        if(isset($req['fields']) && isset($req['isoption']) && (count($fields) <> count($filter_fields))){
             return redirect('createlist')->with('error_number','Error! name of fields cannot be same');
-         }
+        }
+
+        # validation dropdown
+        if(isset($req['dropdown'])){
+            foreach($dropdown as $ipt)
+            {
+                #empty fields
+                if(empty($ipt))
+                {
+                    return redirect('createlist')->with('error_number','Error! name of fields cannot be empty');
+                }
+
+                #maximum characters
+                if(strlen($ipt) > 20)
+                {
+                    return redirect('createlist')->with('error_number','Error! Maximum character length is 20');
+                }
+
+                # default name
+                if($ipt == 'name' || $ipt == 'wa_number'){
+                    return redirect('createlist')->with('error_number','Error! Sorry both of name and wa_number has set as default');
+                }
+            }
+        }
+
+        # fields that have same value
+        if(isset($req['dropdown']) && (count($dropdown) <> count($filter_dropdown))){
+            return redirect('createlist')->with('error_number','Error! name of fields cannot be same');
+        }
+
+        # Filter to avoid same name both of field and dropdown
+        if(isset($req['fields']) && isset($req['dropdown']))
+        {
+            $merge = array_merge($req['fields'],$req['dropdown']);
+            $array_filter = array_unique($merge);
+        }
+
+        if(isset($req['fields']) && isset($req['dropdown']) && count($merge) <> count($array_filter))
+        {
+            return redirect('createlist')->with('error_number','Error! name of fields cannot be same');
+        } 
         
+        # Insert list to database
     	$list = new UserList;
     	$list->user_id = Auth::id();
     	$list->name = $this->createRandomListName();
@@ -91,11 +144,15 @@ class ListController extends Controller
 
     	if($list->save() == true){
             $cfields = count($fields);
+            $cdropdown = count($dropdown);
     	} else {
     		return redirect('createlist')->with('status','Error!, failed to create list');
     	}
 
         $success = false;
+        $data = array();
+
+        # insert fields to additional
         if($cfields > 0){
             foreach($addt as $field_name=>$is_option){
                 $additional = new Additional;
@@ -106,13 +163,45 @@ class ListController extends Controller
                 $success = true;
             }
         } else {
-            return redirect('createlist')->with('status','Your list has been created');
+            $success = null;
         }
 
+        if($cdropdown > 0)
+        {
+            # insert dropdown to additional
+            foreach($drop as $dropdowname=>$val)
+            {
+                $additional = new Additional;
+                $additional->list_id = $listid;
+                $additional->is_field = 1;
+                $additional->name = $dropdowname;
+                $additional->save();
+
+                $parent_id = $additional->id;
+                $data[$dropdowname] = $val;
+
+                //insert dropdown option to additional
+                foreach($data[$dropdowname] as $optionname)
+                {
+                    $additional = new Additional;
+                    $additional->id_parent = $parent_id;
+                    $additional->list_id = $listid;
+                    $additional->name = $optionname;
+                    $additional->save();
+                    $success = true;
+                }
+            }
+        } else {
+            $success = null;
+        }
+
+        # if success insert all additonal
         if($success == true){
             return redirect('createlist')->with('status','Your list has been created');
+        } else if($success == null) {
+            return redirect('createlist')->with('status','Your list has been created');
         } else {
-            return redirect('createlist')->with('status','Error!, failed to create list');
+            return redirect('createlist')->with('error_number','Error!, failed to create list');
         }
 
     }

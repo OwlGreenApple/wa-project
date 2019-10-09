@@ -79,19 +79,25 @@
                             </div>
                         </div>
 
-                        @if($additional->count() > 0)
                         <div class="form-group row">
-                             @foreach($additional as $row)
-                                <label for="name" class="mb-2 col-md-4 col-form-label text-md-right">{{$row->name}}</label>
+                        @foreach($additional as $row=>$val)
+                            <label for="name" class="mb-2 col-md-4 col-form-label text-md-right">{{$row}}</label>
 
-                                <div class="col-md-7 mb-2">
-                                    <input type="text" class="form-control" name="data[{{$row->name}}]" />
-
-                                    <span class="error {{$row->name}}"></span>
-                                </div>
-                             @endforeach
+                            <div class="col-md-7 mb-2">
+                                @foreach($val as $key=>$col)
+                                    @if($key == 0)
+                                         <input type="text" class="form-control" name="data[{{$row}}]" />
+                                    @else
+                                        <select name="data[{{$row}}]" class="form-control">
+                                            @foreach($col as $opt)
+                                                <option value="{{$opt}}">{{$opt}}</option>
+                                            @endforeach
+                                        </select>
+                                    @endif
+                                @endforeach
+                            </div>
+                        @endforeach
                         </div>
-                        @endif
 
                         <div class="form-group row">
                             <div class="col-md-6">

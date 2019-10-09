@@ -45,6 +45,10 @@ class CheckUserLists
             return redirect('createlist')->with('error_number','Column name list maximum length is 190');
         }
 
+        if($this->checkListLabel($request->label_name) == false){
+             return redirect('createlist')->with('error_number','Column name list available');
+        }
+
         if($this->checkEvent($is_event) == false ){
             return redirect('createlist')->with('isevent','Please do not change category value');
         } 
@@ -80,6 +84,17 @@ class CheckUserLists
         $getlist = Sender::where([['user_id',$userid],['wa_number','=',$wa_number]])->first();
 
         if(!is_null($getlist)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function checkListLabel($label_name){
+        $userid = Auth::id();
+        $checklistname = UserList::where([['user_id',$userid],['label','=',$label_name]])->first();
+        if(is_null($checklistname))
+        {
             return true;
         } else {
             return false;

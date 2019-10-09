@@ -79,6 +79,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Additonal Data</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <p id="displayadditional"></p>
@@ -110,7 +111,7 @@
                     console.log(response.additonal);
                     $.each(response.additonal,function(key,value){
 
-                        boxdata += '<div class="form-group row"><label class="col-md-3 col-form-label text-md-right"><b>'+key+'</b></label><div class="col-md-8">'+value+'</div></div></div>';
+                        boxdata += '<div class="form-group row"><label class="col-md-3 col-form-label text-md-right"><b class="text-capitalize">'+key+'</b></label><div class="col-md-8 form-control">'+value+'</div></div></div>';
                     });
                     $("#displayadditional").html(boxdata);
                 }

@@ -248,6 +248,7 @@
         addDropdown();
         delDrop();
         addDropdownToField();
+        displayDropdownMenu();
     });
 
     function saveInputs()
@@ -309,17 +310,15 @@
         var type = $("#type_fields").val();
         var box_html;
 
-        if(type == 1)
-        {
-             box_html = '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" /><a id="'+len+'" class="del mb-2 col-md-2 btn btn-warning">Delete</a><select name="isoption[]" class="pos-'+len+' form-control col-md-3"><option value="0">Optional</option><option value="1">Require</option></select></div>';
-        } else {
+         box_html = '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" /><a id="'+len+'" class="del mb-2 col-md-2 btn btn-warning">Delete</a><select name="isoption[]" class="pos-'+len+' form-control col-md-3"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+       
+        if(len < 5 && type == 1){
+            $("#append").append(box_html);
+        } else if(len < 5 && type == 2) {
             $("#openDropdown").modal();
         }
-
-        if(len < 5){
-            $("#append").append(box_html);
-        } else {
-            alert('You only can create 5 inputs')
+        else {
+            alert('You only can create 5 inputs');
         }
       });
     } 
@@ -327,14 +326,44 @@
     function addDropdown()
     {
         $("body").on("click",".add-option",function(){
+            var flen = $(".fields").length;
             var len = $(".doption").length;
-            var dropdown = '<input class="form-control mb-2 col-sm-8 float-left doption dpos-'+len+'" /><a id="dpos-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
+            var dropdown = '<input class="form-control mb-2 col-sm-8 float-left fields doption dpos-'+len+'" /><a id="dpos-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
 
-            $("#appendoption").append(dropdown);
+            if(flen < 5){
+                $("#appendoption").append(dropdown);
+            } else {
+                alert('You only can create 5 inputs')
+            }
         });
     }
 
+
     function addDropdownToField()
+    {
+         $("body").on("click","#cdp",function(){
+            var len = $(".fields").length;
+            var options = '';
+            var optionName = $("#dropdown_name").val();
+            $(".doption").each(function(){
+                value = $(this).val();
+                options += '<input name="dropfields['+len+'][]" class="form-control" value="'+value+'"/>';
+            });
+            var box_html = '<label class="col-md-3"></label> <div class="col-md-9 row"><input name="dropdown[]" pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+optionName+'" /><a id="'+len+'" class="del mb-2 col-sm-3 btn btn-warning">Delete</a><div style="padding : 0" id="togglepos-'+len+'" class="pos-'+len+' col-sm-9 hiddendropdown mb-2">'+options+'</div></div>';
+            $("#append").append(box_html);
+
+         });
+    }
+
+    function displayDropdownMenu()
+    {
+        $("body").on("click",".toggledropdown",function(){
+            var id = $(this).attr('pos');
+            $("#togglepos-"+id).slideToggle();
+        });
+    }
+
+    /*function addDropdownToField()
     {
          $("body").on("click","#cdp",function(){
             var len = $(".fields").length;
@@ -347,7 +376,7 @@
             var box_html = '<div class="pos-'+len+' form-control col-sm-3">'+optionName+'</div><select id="dropfields" name="fields[]" class="form-control mb-2 col-sm-5 float-left fields pos-'+len+'">'+options+'</select><a id="'+len+'" class="del mb-2 col-sm-3 btn btn-warning">Delete</a>';
             $("#append").append(box_html);
          });
-    }
+    }*/
 
     /*function addCols(){
       $("#cip").hide();
