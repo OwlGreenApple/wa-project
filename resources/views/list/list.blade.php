@@ -141,6 +141,35 @@
   </div>
 </div>
 
+<!-- Modal Dropdown -->
+  <div class="modal fade child-modal" id="openDropdown" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2">
+                    <input class="btn btn-default btn-sm add-option" type="button" value="Add Option" />
+                </div>
+                 <div class="form-group">
+                    <label>Dropdown name</label>
+                   <input id="dropdown_name" type="text" class="form-control" />
+                </div> 
+                <label>Option Value</label>
+                <div id="appendoption" class="form-group row">
+                   <!-- display input here -->
+                </div> 
+                <div class="form-group">
+                   <button id="cdp" class="btn btn-success btn-sm">Create Dropdown</button>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
 <script type="text/javascript">
   /* CKEditor */
     CKEDITOR.replace( 'editor1',{
@@ -157,15 +186,19 @@
 
     $(document).ready(function(){
         table();
+        fixModal();
         displayEditor();
         updateEditor();
         delEditor();
         delCols();
         addCols();
         saveFields();
+        displayDropdownMenu();
+        addDropdownToField();
+        addDropdown();
     });
 
-     function table(){
+    function table(){
          $("#user-list").dataTable({
             'pageLength':10,
             "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -178,6 +211,15 @@
             format : 'YYYY-MM-DD HH:mm',
           });
       });
+
+     /* Fix bootstrap modal if stuck after open another modal */
+     function fixModal()
+     {
+      $(document).find('.child-modal').on('hidden.bs.modal', function () {
+          //console.log('hiding child modal');
+          $('body').addClass('modal-open');
+      });
+     }
 
     function displayEditor(){
          $("body").on('click','.edit',function(){
@@ -210,12 +252,30 @@
 
                    var box_html = '';
                    var is_option = {};
+                   var options = '';
+
                    $.each(result.additional,function(key, value){
                       var len = key;
-                      box_html += '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input id='+value.id+' name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+                      // dropdown
+                      if(value.is_field == 1 && value.id_parent == 0)
+                      {
+                       box_html += '<div class="col-md-9 row dropdown"><input id='+value.id+' pos="'+value.id+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a></div>';
+                      }
 
-                        is_option[len] = value.is_optional;
+                      // option
+                      if(value.is_field == 0 && value.id_parent > 0)
+                      {
+                        box_html += '<div class="col-md-9 row hiddendropdown togglepos-'+value.id_parent+'"><input id='+value.id+' pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 float-left dropdownopt" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a></div><div class="clearfix"></div>';
+                      }
+
+                      if(value.is_field == 0 && value.id_parent == 0)
+                      {
+                         box_html += '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input id='+value.id+' name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+                           is_option[len] = value.is_optional;
+                      }  
+                     
                    });
+
                    $("#additional").html(box_html);
                    $.each(is_option,function(key, value){
                       $(".selopt-"+key+"").val(value);
@@ -238,37 +298,104 @@
         var type = $("#type_fields").val();
         var len = $(".fields").length;
         var box_html;
-        $("#cid").show();
 
-        if(type == 1)
+         box_html = '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning">Delete</a><select name="isoption[]" class="pos-'+len+' form-control col-md-3"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+       
+        if(len < 5 && type == 1)
         {
-             box_html = '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning">Delete</a><select class="pos-'+len+' form-control col-md-3 sel_is_option"><option value="0">Optional</option><option value="1">Require</option></select></div>';
-        } else {
+            $("#additional").append(box_html);
+        } 
+        else if(len < 5 && type == 2) {
             $("#openDropdown").modal();
         }
-
-        if(len < 5){
-            $("#additional").append(box_html);
-        } else {
-            alert('You only can create 5 inputs')
+        else 
+        {
+            alert('You only can create 5 inputs');
         }
+
       });
     } 
+
+    function addDropdown()
+    {
+        $("body").on("click",".add-option",function(){
+            var flen = $(".fields").length;
+            var len = $(".doption").length;
+            var dropdown = '<input class="form-control mb-2 col-sm-8 float-left fields doption pos-'+len+'" /><a id="pos-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
+
+            if(flen < 5){
+                $("#appendoption").append(dropdown);
+            } else {
+                alert('You only can create 5 inputs');
+            }
+        });
+    }
+
+    function addDropdownToField()
+    {
+         $("body").on("click","#cdp",function(){
+            $("#cid").show();
+            var len = $(".fields").length;
+            var options = '';
+            var optionName = $("#dropdown_name").val();
+            $(".doption").each(function(){
+                value = $(this).val();
+                options += '<input class="dropfield-'+len+' form-control dropdownopt pos-'+len+'" value="'+value+'"/>';
+            });
+            var box_html = '<div class="col-md-9 row"><input name="dropdown[]" pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+optionName+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning pos-'+len+'">Delete</a><div style="padding : 0" class="pos-'+len+' col-sm-9 togglepos-'+len+' hiddendropdown mb-2">'+options+'</div></div>';
+            
+            $(".doption, .deloption").remove();
+
+            if(len < 5)
+            {
+                $("#additional").append(box_html);
+            }
+            else 
+            {
+                alert('You only can create 5 inputs');
+            }
+
+         });
+    }
 
     function saveFields(){
         $("#cid").click(function(){
             var data = {};
             var len = $(".fields").length;
+            var dlen;
+            var dropfields;
 
+            /* Fields */
             for(x=0;x<len;x++)
             {
+               var opt = [];
                var fields = $(".fields").eq(x).val();
                var idfields = $(".fields").eq(x).attr('id');
                var is_option = $(".sel_is_option").eq(x).val();
                var list_id = $("input[name='idlist']").val();
-               data[x] = {id : idfields,field : fields, is_option : is_option, listid:list_id};
-            }
 
+
+               var posfields = $(".fields").eq(x).attr('pos');
+               dlen = $(".dropfield-"+posfields).length;
+
+
+              /*dropfield */
+                for(d=0;d<dlen;d++)
+                {
+                   dropfields = $(".dropfield-"+posfields).eq(d).val();
+                   opt[d] = dropfields;
+                }
+                 
+               data[x] = {
+                    id : idfields,
+                    field : fields, 
+                    is_option : is_option, 
+                    listid : list_id, 
+                    dropfields : opt, 
+               };
+               
+            }
+            
             $.ajaxSetup({
                   headers: {
                       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -314,10 +441,28 @@
             {
                 $.each(result.additional,function(key, value){
                 var len = key;
-                box_html += '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input id='+value.id+' name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
-                  is_option[len] = value.is_optional;
+               // dropdown
+                      if(value.is_field == 1 && value.id_parent == 0)
+                      {
+                       box_html += '<div class="col-md-9 row dropdown"><input id='+value.id+' pos="'+value.id+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a></div>';
+                      }
+
+                      // option
+                      if(value.is_field == 0 && value.id_parent > 0)
+                      {
+                        box_html += '<div class="col-md-9 row hiddendropdown togglepos-'+value.id_parent+'"><input id='+value.id+' pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 float-left dropdownopt" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a></div><div class="clearfix"></div>';
+                      }
+
+                      if(value.is_field == 0 && value.id_parent == 0)
+                      {
+                         box_html += '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input id='+value.id+' name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+                           is_option[len] = value.is_optional;
+                      }  
+
                  });
+
                  $("#additional").html(box_html);
+                 //to make is optionnal choosen according on DB
                  $.each(is_option,function(key, value){
                       $(".selopt-"+key+"").val(value);
                  });
@@ -325,6 +470,14 @@
         }
       });  
      
+    }
+
+    function displayDropdownMenu()
+    {
+        $("body").on("click",".toggledropdown",function(){
+            var id = $(this).attr('pos');
+            $(".togglepos-"+id).slideToggle();
+        });
     }
 
     function updateEditor(){
@@ -403,7 +556,6 @@
             if(id_attribute == undefined && listid == undefined)
             {
                 $(".pos-"+pos).remove();
-                $("#"+pos).remove();
             } else {
               $.ajax({
                 type : 'GET',
@@ -412,7 +564,6 @@
                 success : function(response){
                   alert(response.msg);
                   $(".pos-"+pos).remove();
-                  $("#"+pos).remove();
                 }
               });
             }

@@ -333,11 +333,10 @@
             if(flen < 5){
                 $("#appendoption").append(dropdown);
             } else {
-                alert('You only can create 5 inputs')
+                alert('You only can create 5 inputs');
             }
         });
     }
-
 
     function addDropdownToField()
     {
@@ -350,7 +349,15 @@
                 options += '<input name="dropfields['+len+'][]" class="form-control" value="'+value+'"/>';
             });
             var box_html = '<label class="col-md-3"></label> <div class="col-md-9 row"><input name="dropdown[]" pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+optionName+'" /><a id="'+len+'" class="del mb-2 col-sm-3 btn btn-warning">Delete</a><div style="padding : 0" id="togglepos-'+len+'" class="pos-'+len+' col-sm-9 hiddendropdown mb-2">'+options+'</div></div>';
-            $("#append").append(box_html);
+            
+            if(len < 5)
+            {
+                $("#append").append(box_html);
+            }
+            else 
+            {
+                alert('You only can create 5 inputs');
+            }
 
          });
     }

@@ -348,13 +348,26 @@ class ListController extends Controller
     {
         $id = $request->id;
         $list_id = $request->list_id;
+        $deladditional = false;
 
-        $additional = Additional::where([['id',$id],['list_id',$list_id]])->delete();
+        $additional = Additional::where([['id',$id],['list_id',$list_id]]);
 
-        if($additional == true){
+        $addtional_dropdown = Additional::where([['list_id',$list_id],['id_parent',$id]]);
+
+        if(!is_null($additional->first()))
+        {
+            $deladditional = $additional->delete();
+        } 
+
+        if($addtional_dropdown->count() > 0)
+        {
+            $deladditionaldropdown = $addtional_dropdown->delete();
+        } 
+
+        if($deladditional == true){
             $data['msg'] = 'Field successfully deleted';
         } else {
-            $data['msg'] = 'Sorry, unable to delete field, error';
+            $data['msg'] = 'ID not available to delete';
         }
         return response()->json($data);
     }
@@ -400,15 +413,42 @@ class ListController extends Controller
             return response()->json($data);
           }
 
-          if(!isset($val['id']))
+          if(!isset($val['id']) && isset($val['is_option']))
           {
              $additional = new Additional;
              $additional->list_id = $val['listid'];
              $additional->name = $val['field'];
              $additional->is_optional = $val['is_option'];
              $additional->save();
-          } else {
+          }
+          else if(!isset($val['id']) && isset($val['dropfields']))
+          {
+
+             $additional = new Additional;
+             $additional->list_id = $val['listid'];
+             $additional->name = $val['field'];
+             $additional->save();
+             $id_addt = $additional->id;
+
+             if(count($val['dropfields']) > 0)
+              {
+                 foreach($val['dropfields'] as $drop)
+                 {
+                     $additional = new Additional;
+                     $additional->id_parent = $id_addt;
+                     $additional->list_id = $val['listid'];
+                     $additional->name =$drop;
+                     $additional->save();
+                 }
+              }
+          }
+          else if(isset($val['is_option'])) 
+          {
              $additional = Additional::where([['list_id',$val['listid']],['id',$val['id']]])->update(['name'=>$val['field'], 'is_optional'=>$val['is_option']]);
+          } 
+          else if(!isset($val['is_option']))
+          {
+             $additionaldropdown = Additional::where([['list_id',$val['listid']],['id',$val['id']]])->update(['name'=>$val['field']]);
           }
           $listid = $val['listid'];
         }

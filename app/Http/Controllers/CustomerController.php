@@ -32,6 +32,7 @@ class CustomerController extends Controller
             $additional = Additional::where('list_id',$list->id)->get();
             $data = array();
             $arr = array();
+            $data['fields'] = array();
 
             if($additional->count() > 0)
             {
@@ -86,6 +87,7 @@ class CustomerController extends Controller
             $additional = Additional::where('list_id',$list->id)->get();
             $data = array();
             $arr = array();
+            $data['fields'] = array();
 
             if($additional->count() > 0)
             {
@@ -295,8 +297,7 @@ class CustomerController extends Controller
                 ['reminders.days','=',0],
                 ['reminders.hour_time','=',null],
                 ['reminders.status','=',1],
-                ])->join('lists','reminders.list_id','=','lists.id')
-                ->select('reminders.*')->first();
+                ])->select('reminders.*')->first();
 
         if(is_null($autoreply)){
             $data['success'] = true;
