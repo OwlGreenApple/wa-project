@@ -38,6 +38,15 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 });
 
 Route::group(['middleware'=>['auth','web']],function(){
+	/* Create Device */
+	Route::get('createdevice','CreateDeviceController@index')->name('createdevice');
+	Route::get('devicepackage','CreateDeviceController@devicePackage')->name('devicepackage');
+	Route::get('devicecheckout','CreateDeviceController@checkout')->name('devicecheckout');
+	Route::get('thanks','CreateDeviceController@thankYou')->name('thanks');
+	#delete if not needed anymore
+	Route::get('temporary','CreateDeviceController@temporary')->name('temporary');
+
+
 	/* Lists */
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
 	Route::get('createlist','ListController@listForm')->name('createlist');
