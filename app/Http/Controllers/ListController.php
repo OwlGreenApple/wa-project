@@ -276,6 +276,7 @@ class ListController extends Controller
         } else {
             $additional = Additional::where('list_id',$id)->get();
             $data = array(
+                'list_label'=>$list->label,
                 'list_name'=>$list->name,
                 'content'=> $list->content,
                 'is_event'=>$list->is_event,
@@ -296,7 +297,86 @@ class ListController extends Controller
         {
             $data['additional'] = $additional;
         } else {
-            $data['additional'] = null;
+            $data['additional'] = array();
+        }
+
+        return response()->json($data);
+    }
+
+    #display field after update
+    public function editDropfields(Request $request){
+        $parent_id = $request->id;
+        $additional = Additional::where('id_parent',$parent_id)->get();
+        if($additional->count() > 0)
+        {
+            $data['dropfields'] = $additional;
+        } else {
+            $data['dropfields'] = array();
+        }
+
+        return response()->json($data);
+    }
+
+    public function insertOptions(Request $request)
+    {
+        $parent_id = $request->parent_id;
+        $list_id = $request->list_id;
+        $success = false;
+
+        #combine id and value from existing option
+        if($request->editid !== null && $request->values !== null)
+        {
+            $dataedit = array_combine($request->editid,$request->values);
+        }
+        else 
+        {
+            $dataedit = null;
+        }
+
+        #insert new option
+        if($request->data !== null && count($request->data) > 0)
+        {
+            foreach($request->data as $row)
+            {
+                $additional = new Additional;
+                $additional->id_parent = $parent_id;
+                $additional->list_id = $list_id;
+                $additional->name = $row;
+                $additional->save();
+            }
+
+            if($additional->save() == true)
+            {
+                $success = true;
+            }
+        }
+        #data edit
+        else if($dataedit !== null && count($dataedit) > 0)
+        {
+            foreach($dataedit as $id=>$values)
+            {
+                $additionaldropdown = Additional::where([['id',$id]])->update(['name'=>$values]);
+            }
+
+            if($additionaldropdown == true)
+            {
+                $success = true;
+            }
+        }
+        else
+        {
+            $data['msg'] = 'Please create option first!';
+            return response()->json($data);
+        }
+
+        if($success == true)
+        {
+            $data['msg'] = 'Your option menu has been added!';
+            $data['listid'] = $list_id;
+        } 
+        else
+        {
+            $data['msg'] = 'Error! Sorry there is trouble with our system';
         }
 
         return response()->json($data);
@@ -376,8 +456,12 @@ class ListController extends Controller
     {
         $data['error'] = true;
         $req = $request->all();
+
         $fields_array = array_column($req, 'field');
         $fields_filter = array_unique($fields_array);
+        $additional = null;
+        $id_addt = null;
+        $dropfieldscount = 0;
 
         if(count($req) == 0)
         {
@@ -413,6 +497,7 @@ class ListController extends Controller
             return response()->json($data);
           }
 
+          #fields
           if(!isset($val['id']) && isset($val['is_option']))
           {
              $additional = new Additional;
@@ -421,39 +506,45 @@ class ListController extends Controller
              $additional->is_optional = $val['is_option'];
              $additional->save();
           }
-          else if(!isset($val['id']) && isset($val['dropfields']))
+          else if(isset($val['is_option']) && isset($val['id'])) 
+          {
+             $additional = Additional::where([['list_id',$val['listid']],['id',$val['id']]])->update(['name'=>$val['field'], 'is_optional'=>$val['is_option']]);
+          } 
+
+          #dropdown
+          if(!isset($val['id']) && isset($val['dropfields']))
           {
 
              $additional = new Additional;
              $additional->list_id = $val['listid'];
+             $additional->is_field = 1;
              $additional->name = $val['field'];
              $additional->save();
              $id_addt = $additional->id;
-
-             if(count($val['dropfields']) > 0)
-              {
-                 foreach($val['dropfields'] as $drop)
-                 {
-                     $additional = new Additional;
-                     $additional->id_parent = $id_addt;
-                     $additional->list_id = $val['listid'];
-                     $additional->name =$drop;
-                     $additional->save();
-                 }
-              }
-          }
-          else if(isset($val['is_option'])) 
-          {
-             $additional = Additional::where([['list_id',$val['listid']],['id',$val['id']]])->update(['name'=>$val['field'], 'is_optional'=>$val['is_option']]);
+             $dropfieldscount = count($val['dropfields']);
           } 
-          else if(!isset($val['is_option']))
+
+          #insert dropfields to DB
+          if(!isset($val['id']) && isset($val['dropfields']) && $dropfieldscount > 0 && $id_addt !== null)
+          {
+             foreach($val['dropfields'] as $drop)
+             {
+                 $additional = new Additional;
+                 $additional->id_parent = $id_addt;
+                 $additional->list_id = $val['listid'];
+                 $additional->name =$drop;
+                 $additional->save();
+             }
+          }
+          else if(!isset($val['dropfields']) && isset($val['id']))
           {
              $additionaldropdown = Additional::where([['list_id',$val['listid']],['id',$val['id']]])->update(['name'=>$val['field']]);
           }
           $listid = $val['listid'];
-        }
 
-        if($additional == true || $additional->save() == true){
+        }/* end foreach */
+
+        if($additional == true || $additional->save() == true || $additionaldropdown == true){
             $data['error'] = false;
             $data['listid'] =  $listid;
             $data['msg'] = 'Your fields updated succesfully';

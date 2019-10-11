@@ -86,7 +86,10 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Edit : <span class="list_name"></span></h4>
+        <h4 class="modal-title">
+            <div>Edit : <span class="list_label"></span></div>
+            <div>URL : <span class="list_name"></span></div>
+        </h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
@@ -170,6 +173,37 @@
     </div>
   </div>
 
+  <!-- Modal Edit Dropdown -->
+  <div class="modal fade child-modal" id="editDropdown" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2">
+                    <input class="btn btn-warning btn-sm add-edit-option" type="button" value="Add Option" />
+                </div>
+               
+                <label>Option List</label>
+                <form id="optionform">
+                    <div id="editoptions" class="form-group row">
+                       <!-- display input here -->
+                    </div> 
+
+                    <input type="hidden" name="parent_id"/>
+                    <input type="hidden" name="list_id"/>
+                    <div class="form-group">
+                       <button id="edp" class="btn btn-success btn-sm">Edit Dropdown</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
 <script type="text/javascript">
   /* CKEditor */
     CKEDITOR.replace( 'editor1',{
@@ -196,6 +230,10 @@
         displayDropdownMenu();
         addDropdownToField();
         addDropdown();
+        editOption();
+        addOption();
+        insertOption();
+        delOption();
     });
 
     function table(){
@@ -246,6 +284,7 @@
                         $("input[name='date_event']").val(result.event_date);
                         $("input[name='page_position']").val(databutton);
                     }
+                   $(".list_label").html(result.list_label);
                    $(".list_name").html(result.list_name);
                    $("textarea[name='pixel_txt']").val(result.pixel);
                    $("textarea[name='message_txt']").val(result.message);
@@ -259,18 +298,19 @@
                       // dropdown
                       if(value.is_field == 1 && value.id_parent == 0)
                       {
-                       box_html += '<div class="col-md-9 row dropdown"><input id='+value.id+' pos="'+value.id+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a></div>';
+                       box_html += '<div class="col-md-9 row dropdown pos-'+len+'"><input id='+value.id+' pos="'+value.id+'" class="cidlen fields form-control col-sm-6 toggledropdown" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><a class="btn btn-default btn-sm edit-option" id="'+value.id+'" list_id = '+value.list_id+'>Edit Option</a></div>';
                       }
 
-                      // option
+                      /* option
                       if(value.is_field == 0 && value.id_parent > 0)
                       {
-                        box_html += '<div class="col-md-9 row hiddendropdown togglepos-'+value.id_parent+'"><input id='+value.id+' pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 float-left dropdownopt" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a></div><div class="clearfix"></div>';
+                        box_html += '<div class="col-md-9 row hiddendropdown togglepos-'+value.id_parent+'"><div class="dropfield pos-'+len+' form-control col-sm-6 float-left">'+value.name+'</div><div class="clearfix"></div></div>';
                       }
+                      */
 
                       if(value.is_field == 0 && value.id_parent == 0)
                       {
-                         box_html += '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input id='+value.id+' name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+                         box_html += '<div class="col-md-3 text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input id='+value.id+' name="fields[]" class="cidlen form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields pos-'+len+' mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
                            is_option[len] = value.is_optional;
                       }  
                      
@@ -293,16 +333,112 @@
         });
     }
 
+    function editOption()
+    {
+      $("body").on("click",".edit-option",function(){
+         var id = $(this).attr('id');
+         var listid = $(this).attr('list_id');
+         var box_html = '';
+
+         $("#editDropdown").modal();
+         $("input[name='parent_id']").val(id);
+         $("input[name='list_id']").val(listid);
+
+         $.ajax({
+            type : 'GET',
+            url : '{{route("editdropfields")}}',
+            data : {'id':id},
+            dataType : 'json',
+            success : function(result)
+            {
+               $.each(result.dropfields,function(key, value){
+                  var len = key;
+                  box_html += '<input id='+value.id+' class="dropdownopt form-control mb-2 col-sm-8 float-left doption opt-'+len+'" value="'+value.name+'" /><a id="opt-'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning deloption" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a>';
+                });
+                $("#editoptions").html(box_html);
+            }
+         });
+
+      });
+    }
+
+     function addOption()
+    {
+        $("body").on("click",".add-edit-option",function(){
+            var len = $(".doption").length;
+            var dropdownOptions = '<input class="newoption form-control mb-2 col-sm-8 float-left doption opt-'+len+'" /><a id="opt-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
+
+            $("#editoptions").append(dropdownOptions);
+        });
+    }
+
+    function insertOption()
+    {
+        $("body").on("submit","#optionform",function(e){
+          e.preventDefault();
+          var dataedit = {};
+          var dlen = $(".dropdownopt");
+          var values = [];
+          var id = [];
+          var parent_id = $("input[name='parent_id']").val();
+          var list_id = $("input[name='list_id']").val();
+          var newopt = $(".newoption");
+          var data = [];
+  
+          for(i=0;i<dlen.length;i++)
+          {
+            values[i] = dlen.eq(i).val();
+            id[i] = dlen.eq(i).attr('id');
+          }
+
+          for(j=0;j<newopt.length;j++)
+          {
+            data[j] = newopt.eq(j).val();
+          }
+
+          dataedit = {'editid':id, 'values':values, 'parent_id':parent_id, 'list_id':list_id, 'data':data};
+
+          $.ajaxSetup({
+              headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+          });
+          $.ajax({
+            type : 'POST',
+            url : '{{route("insertoptions")}}',
+            data : dataedit,
+            dataType : 'json',
+            success : function(response)
+            {
+                alert(response.msg);
+                $(".doption, .deloption").remove();
+                displayAjaxCols(response.listid);
+            }
+          });
+
+        });
+    }
+
+    function delOption()
+    {
+      $("body").on("click",".deloption",function(){
+          var opt = $(this).attr('id');
+          $('#'+opt).remove();
+          $('.'+opt).remove();
+      });
+    }
+
     function addCols(){
       $("body").on('click','.add-field',function(){
         var type = $("#type_fields").val();
         var len = $(".fields").length;
         var box_html;
 
-         box_html = '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning">Delete</a><select name="isoption[]" class="pos-'+len+' form-control col-md-3"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+         box_html = '<div class="col-md-3 text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input name="fields[]" class="cidlen form-control mb-2 col-md-6 fields pos-'+len+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning pos-'+len+'">Delete</a><select class="pos-'+len+' form-control col-md-3 sel_is_option"><option value="0">Optional</option><option value="1">Require</option></select></div>';
        
         if(len < 5 && type == 1)
         {
+            $("#cid").show();
             $("#additional").append(box_html);
         } 
         else if(len < 5 && type == 2) {
@@ -321,7 +457,7 @@
         $("body").on("click",".add-option",function(){
             var flen = $(".fields").length;
             var len = $(".doption").length;
-            var dropdown = '<input class="form-control mb-2 col-sm-8 float-left fields doption pos-'+len+'" /><a id="pos-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
+            var dropdown = '<input class="form-control mb-2 col-sm-8 float-left doption opt-'+len+'" /><a id="opt-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
 
             if(flen < 5){
                 $("#appendoption").append(dropdown);
@@ -342,7 +478,7 @@
                 value = $(this).val();
                 options += '<input class="dropfield-'+len+' form-control dropdownopt pos-'+len+'" value="'+value+'"/>';
             });
-            var box_html = '<div class="col-md-9 row"><input name="dropdown[]" pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+optionName+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning pos-'+len+'">Delete</a><div style="padding : 0" class="pos-'+len+' col-sm-9 togglepos-'+len+' hiddendropdown mb-2">'+options+'</div></div>';
+            var box_html = '<div class="col-md-9 row"><input pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown cidlen" value="'+optionName+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning pos-'+len+'">Delete</a><div style="padding : 0" class="pos-'+len+' col-sm-9 togglepos-'+len+' hiddendropdown mb-2">'+options+'</div></div>';
             
             $(".doption, .deloption").remove();
 
@@ -374,17 +510,15 @@
                var is_option = $(".sel_is_option").eq(x).val();
                var list_id = $("input[name='idlist']").val();
 
-
+                /*dropfield */
                var posfields = $(".fields").eq(x).attr('pos');
                dlen = $(".dropfield-"+posfields).length;
 
-
-              /*dropfield */
-                for(d=0;d<dlen;d++)
-                {
-                   dropfields = $(".dropfield-"+posfields).eq(d).val();
-                   opt[d] = dropfields;
-                }
+               for(d=0;d<dlen;d++)
+               {
+                  dropfields = $(".dropfield-"+posfields).eq(d).val();
+                  opt[d] = dropfields;
+               }
                  
                data[x] = {
                     id : idfields,
@@ -444,18 +578,18 @@
                // dropdown
                       if(value.is_field == 1 && value.id_parent == 0)
                       {
-                       box_html += '<div class="col-md-9 row dropdown"><input id='+value.id+' pos="'+value.id+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a></div>';
+                       box_html += '<div class="col-md-9 row dropdown"><input id='+value.id+' pos="'+value.id+'" class="fields pos-'+len+' form-control cidlen col-sm-6 toggledropdown" value="'+value.name+'" /><a id="'+len+'" class="del_fields pos-'+len+' mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><a class="btn btn-default btn-sm edit-option" id="'+value.id+'" list_id = '+value.list_id+'>Edit Option</a></div>';
                       }
 
                       // option
                       if(value.is_field == 0 && value.id_parent > 0)
                       {
-                        box_html += '<div class="col-md-9 row hiddendropdown togglepos-'+value.id_parent+'"><input id='+value.id+' pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 float-left dropdownopt" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a></div><div class="clearfix"></div>';
+                        box_html += '<div class="col-md-9 row hiddendropdown togglepos-'+value.id_parent+'"><input id='+value.id+' pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 float-left dropdownopt" value="'+value.name+'" /><a id="'+len+'" class="del_fields pos-'+len+' mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a></div><div class="clearfix"></div>';
                       }
 
                       if(value.is_field == 0 && value.id_parent == 0)
                       {
-                         box_html += '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input id='+value.id+' name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+                         box_html += '<div class="col-md-3 text-md-right pos-'+len+'"></div><div class="col-md-9 cidlen row pos-'+len+'"><input id='+value.id+' name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields pos-'+len+' mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select class="pos-'+len+' sel_is_option form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
                            is_option[len] = value.is_optional;
                       }  
 
@@ -545,35 +679,35 @@
 
     function delCols(){
       $("body").on("click",".del_fields",function(){
-        var len = $(".fields").length;
+        var len = $(".cidlen").length;
         var pos = $(this).attr('id');
         var id_attribute = $(this).attr('idbase');
         var listid = $(this).attr('listid');
-        var conf = confirm('Are you sure want to delete this fields?');
 
-        if(conf == true)
+        if(id_attribute !== undefined && listid !== undefined)
         {
-            if(id_attribute == undefined && listid == undefined)
+          var conf = confirm('Are you sure want to delete this fields?');
+          if(conf == true)
             {
-                $(".pos-"+pos).remove();
-            } else {
               $.ajax({
                 type : 'GET',
                 url : '{{route("delfield")}}',
                 data : {'id':id_attribute, 'list_id':listid},
                 success : function(response){
                   alert(response.msg);
-                  $(".pos-"+pos).remove();
+                  $("."+pos).remove();
+                  $("#"+pos).remove();
                 }
               });
+            } 
+            else 
+            {
+              return false;
             }
         } else {
-          return false;
-        }
-
-        if(len < 2)
-        {
-            $("#cid").hide();
+          $("."+pos).remove();
+          $("#"+pos).remove();
+          $(".pos-"+pos).remove();
         }
 
       });

@@ -47,6 +47,8 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');
 	Route::post('updatelistcontent','ListController@updateListContent')->name('updatelistcontent');
 	Route::get('deletelistcontent','ListController@delListContent')->name('deletelistcontent');
+	Route::get('editdropfields','ListController@editDropfields')->name('editdropfields');
+	Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
 
 	/* Additional */
 	Route::get('delfield','ListController@delField')->name('delfield');
