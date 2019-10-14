@@ -58,6 +58,8 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('deletelistcontent','ListController@delListContent')->name('deletelistcontent');
 	Route::get('editdropfields','ListController@editDropfields')->name('editdropfields');
 	Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
+	Route::post('insertfields','ListController@insertFields')->name('insertfields');
+	Route::post('insertdropdown','ListController@insertDropdown')->name('insertdropdown');
 
 	/* Additional */
 	Route::get('delfield','ListController@delField')->name('delfield');

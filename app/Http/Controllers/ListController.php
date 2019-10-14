@@ -317,6 +317,103 @@ class ListController extends Controller
         return response()->json($data);
     }
 
+    public function insertFields(Request $request)
+    {
+        $fields = $request->fields;
+        $is_option = $request->is_option;
+        $list_id = $request->field_list;
+
+        if($fields !== null && $is_option !== null)
+        {
+            $data = array_combine($fields,$is_option);
+            foreach($data as $name => $isoption)
+            {
+                $additional = new Additional;
+                $additional->list_id = $list_id;
+                $additional->name = $name;
+                $additional->is_optional = $isoption;
+                $additional->save();
+            }
+
+            if($additional->save() == true)
+            {
+                $data['error'] = false;
+                $data['msg'] = 'Your field has been added!';
+                $data['listid'] = $list_id;
+            }
+            else
+            {
+                $data['error'] = true;
+                $data['msg'] = 'There is error, unable to add field!';
+            }
+        }
+        else
+        {
+             $data['msg'] = 'Please create at least 1 field';
+        }
+        return response()->json($data);
+    }
+
+    public function insertDropdown(Request $request)
+    {
+        $dropdowname = $request->dropdowname;
+        $options = $request->doptions;
+        $list_id = $request->dropdownlist;
+        $uccess = false;
+
+        if($request->dropdowname !== null)
+        {
+            $additional = new Additional;
+            $additional->list_id = $list_id;
+            $additional->is_field = 1;
+            $additional->name = $dropdowname;
+            $additional->save();
+            $parent_id = $additional->id;
+        } 
+        else
+        {
+            $data['msg'] = 'Dropdown name cannot be empty';
+            return response()->json($data);
+        }
+
+        if($additional->save() == true)
+        {
+            $count = count($options);
+        }
+        else 
+        {
+            $data['msg'] = 'Error!! Unable to create dropdown';
+            return response()->json($data);
+        }
+
+        if($count > 0)
+        {
+            foreach($options as $name)
+            {
+                $childs = new Additional;
+                $childs->id_parent = $parent_id;
+                $childs->list_id = $list_id;
+                $childs->name = $name;
+                $childs->save();
+            }
+        }
+        else
+        {
+            $data['msg'] = 'Dropdown created successfully';
+        }
+
+        if($childs->save() == true)
+        {
+            $data['msg'] = 'Dropdown created successfully';
+        } 
+        else
+        {
+            $data['msg'] = 'Error 001 - Unable to make option';
+        }
+        $data['listid'] = $list_id;
+        return response()->json($data);
+    }
+
     public function insertOptions(Request $request)
     {
         $parent_id = $request->parent_id;
@@ -445,6 +542,7 @@ class ListController extends Controller
         } 
 
         if($deladditional == true){
+            $data['listid'] = $list_id;
             $data['msg'] = 'Field successfully deleted';
         } else {
             $data['msg'] = 'ID not available to delete';
@@ -456,6 +554,15 @@ class ListController extends Controller
     {
         $data['error'] = true;
         $req = $request->all();
+
+        if(count($req['is_option']) > 0)
+        {
+            $cfield = array_combine($req['field'], $req['is_option']);
+        }
+
+        dd($cfield);
+
+        die('');
 
         $fields_array = array_column($req, 'field');
         $fields_filter = array_unique($fields_array);
@@ -476,75 +583,42 @@ class ListController extends Controller
             return response()->json($data);
         }
 
-        foreach($req as $row=>$val)
+        foreach($req as $row)
         {
 
+            echo $req['field'];
           # empty field 
-          if(empty($val['field'])){
+          if(empty($req['field'])){
             $data['err'] = 'Field cannot be empty';
             return response()->json($data);
           }
 
           # maximum character length
-          if(strlen($val['field']) > 20){
+          if(strlen($row['field']) > 20){
             $data['err'] = 'Maximum character length is 20';
             return response()->json($data);
           }
 
           # default value
-          if($val['field'] == 'name' || $val['field'] == 'wa_number'){
+          if($req['field'] == 'name' || $req['field'] == 'wa_number'){
             $data['err'] = 'Sorry both of name and wa_number has set as default';
             return response()->json($data);
           }
 
           #fields
-          if(!isset($val['id']) && isset($val['is_option']))
+          if(isset($req['is_option']) && isset($req['id'])) 
           {
-             $additional = new Additional;
-             $additional->list_id = $val['listid'];
-             $additional->name = $val['field'];
-             $additional->is_optional = $val['is_option'];
-             $additional->save();
-          }
-          else if(isset($val['is_option']) && isset($val['id'])) 
-          {
-             $additional = Additional::where([['list_id',$val['listid']],['id',$val['id']]])->update(['name'=>$val['field'], 'is_optional'=>$val['is_option']]);
+             $additional = Additional::where([['list_id',$req['listid']],['id',$req['id']]])->update(['name'=>$req['field'], 'is_optional'=>$req['is_option']]);
           } 
-
-          #dropdown
-          if(!isset($val['id']) && isset($val['dropfields']))
+          else
           {
-
-             $additional = new Additional;
-             $additional->list_id = $val['listid'];
-             $additional->is_field = 1;
-             $additional->name = $val['field'];
-             $additional->save();
-             $id_addt = $additional->id;
-             $dropfieldscount = count($val['dropfields']);
+             $additionaldropdown = Additional::where([['list_id',$req['listid']],['id',$req['id']]])->update(['name'=>$req['field']]);
           } 
-
-          #insert dropfields to DB
-          if(!isset($val['id']) && isset($val['dropfields']) && $dropfieldscount > 0 && $id_addt !== null)
-          {
-             foreach($val['dropfields'] as $drop)
-             {
-                 $additional = new Additional;
-                 $additional->id_parent = $id_addt;
-                 $additional->list_id = $val['listid'];
-                 $additional->name =$drop;
-                 $additional->save();
-             }
-          }
-          else if(!isset($val['dropfields']) && isset($val['id']))
-          {
-             $additionaldropdown = Additional::where([['list_id',$val['listid']],['id',$val['id']]])->update(['name'=>$val['field']]);
-          }
-          $listid = $val['listid'];
+          $listid = $req['listid'];
 
         }/* end foreach */
 
-        if($additional == true || $additional->save() == true || $additionaldropdown == true){
+        if($additional == true || $additionaldropdown == true){
             $data['error'] = false;
             $data['listid'] =  $listid;
             $data['msg'] = 'Your fields updated succesfully';

@@ -117,6 +117,8 @@
                 <div class="card-body">
                     <h4>Welcome To ActivWA</h4>
                     <a href="{{route('createdevice')}}" class="btn btn-primary">Create New</a>
+
+                    <div id="img"><!-- wassenger barcode here --></div>
                 </div>
             </div><!-- end card -->
 
@@ -166,4 +168,25 @@
     </div>
 <!-- end container -->
 </div>  
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        getScanBarcode();
+    });
+
+    function getScanBarcode()
+    {
+        $.ajax({
+            headers: {'Access-Control-Allow-Origin': 'https://wassenger.com/' },
+            type : 'GET',
+            url : 'https://api.wassenger.com/v1/devices/5d6e15906de1a4001c90a0f4/scan',
+            dataType : 'image/xml+svg',
+            data : {token : '717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080'},
+            success : function(result)
+            {
+                $("#img").attr('src','data:image/png;base64,'+data)
+            }
+        })
+    }
+</script>
 @endsection
