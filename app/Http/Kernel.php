@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'wanumber' => \App\Http\Middleware\WACheckValidation::class,
         'is_admin' => \App\Http\Middleware\AdminUser::class,
         'checkadditional' => \App\Http\Middleware\CheckAdditional::class,
+        'cors' => \App\Http\Middleware\Cors::class,
     ];
 
     /**

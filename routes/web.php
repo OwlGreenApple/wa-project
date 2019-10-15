@@ -27,7 +27,8 @@ Route::get('justcarbon','EventController@JUSTCARBON');
 Auth::routes();
 /* User Customer */
 
-Route::get('/home', 'HomeController@index')->name('home');//home.blade
+Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');//home.blade
+Route::get('scan', 'HomeController@getScanBarcode')->name('scan');
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
 Route::group(['middleware'=>['auth','web','is_admin']],function(){

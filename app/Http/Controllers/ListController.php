@@ -50,13 +50,14 @@ class ListController extends Controller
         }
 
         # if isoption which mean fields otherwise dropdown
-        if(isset($req['dropdown']))
+        if(isset($req['dropdown']) && isset($req['dropfields']))
         {
             $dropdown = $req['dropdown'];
             $filter_dropdown = array_unique($dropdown);
             $dropfields = $req['dropfields'];
             $drop = array_combine($dropdown,$dropfields);
         } else {
+            $filter_dropdown = null;
             $dropdown = array();
         }
 
@@ -109,6 +110,11 @@ class ListController extends Controller
                     return redirect('createlist')->with('error_number','Error! Sorry both of name and wa_number has set as default');
                 }
             }
+        }
+
+        if($filter_dropdown == null)
+        {
+             return redirect('createlist')->with('error_number','Error! you must create option if create dropdown');
         }
 
         # fields that have same value

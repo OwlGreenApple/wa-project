@@ -19,3 +19,26 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Protect .env
+<Files .env>
+Order Allow,Deny
+Deny from all
+</Files>
+
+# Protect .env.example
+<Files .env.example>
+Order Allow,Deny
+Deny from all
+</Files>
+
+# Protect composer.json
+<Files composer.json>
+Order Allow,Deny
+Deny from all
+</Files>
+
+# Force SSL
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
