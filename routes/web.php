@@ -54,7 +54,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('userlist','ListController@userList')->name('userlist');
 	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
 	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');
-	Route::post('updatelistcontent','ListController@updateListContent')->name('updatelistcontent');
+	Route::post('updatelistcontent','ListController@updateListContent')->middleware('checkadditional')->name('updatelistcontent');
 	Route::get('deletelistcontent','ListController@delListContent')->name('deletelistcontent');
 	Route::get('editdropfields','ListController@editDropfields')->name('editdropfields');
 	Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');

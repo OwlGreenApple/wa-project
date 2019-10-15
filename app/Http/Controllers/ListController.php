@@ -486,6 +486,10 @@ class ListController extends Controller
         $editor = $request->editor;
         $pixel = $request->pixel;
         $message = $request->message;
+        $fields = $request->fields;
+        $dropfields = $request->dropfields;
+        $additional = null;
+        $additionaldropdown = null;
 
         $lists = UserList::where('id',$id)->update([
             'event_date'=>$date_event,
@@ -494,9 +498,41 @@ class ListController extends Controller
             'message_text'=> $message,
         ]);
 
-        if($lists == true){
+
+        if($fields !== null)
+        {
+            foreach($fields as $row)
+            {
+                $additional = Additional::where([['list_id',$id],['id',$row['idfield']]])->update(['name'=>$row['field'], 'is_optional'=>$row['isoption']]);
+            }
+        } 
+
+        if($dropfields !== null)
+        {
+            foreach($dropfields as $col)
+            {
+                $additionaldropdown = Additional::where([['list_id',$id],['id',$col['idfield']]])->update(['name'=>$col['field']]);
+            }
+        }
+
+        ##
+
+        $data['listid'] = $id;
+        
+        if($lists == true || $additional == true || $additionaldropdown == true || $additional == null || $additionaldropdown == null)
+        {
             $data['message'] = 'Data updated successfully';
-        } else {
+        } 
+        else if($additional == false)
+        {
+            $data['message'] = 'Error! Unable to update field';
+        } 
+        else if($additionaldropdown == false)
+        {
+            $data['message'] = 'Error! Unable to update dropdown field';
+        }
+        else 
+        {
             $data['message'] = 'Error! Data failed to update';
         }
         return response()->json($data);
