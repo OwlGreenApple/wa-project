@@ -116,9 +116,7 @@
 
                 <div class="card-body">
                     <h4>Welcome To ActivWA</h4>
-                    <a href="{{route('createdevice')}}" class="btn btn-primary">Create New</a>
-
-                    <div id="img"><!-- wassenger barcode here --></div>
+                    <a href="{{route('registerdevice')}}" class="btn btn-primary">Create New</a>
                 </div>
             </div><!-- end card -->
 
@@ -168,53 +166,4 @@
     </div>
 <!-- end container -->
 </div>  
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        getScanBarcode();
-    });
-
-    function getScanBarcode()
-    {
-
-        $("#img").text('Loading....');
-        $.ajax({
-            type : 'GET',
-            url : '{{route("scan")}}',
-            dataType : 'html',
-            success : function(result)
-            {
-                $("#img").html(result);
-            }
-        })
-
-
-        /*var settings = {
-          "async": true,
-          "crossDomain": true,
-          "url": "https://api.wassenger.com/v1/devices/5d6e15906de1a4001c90a0f4/scan?force=true"+'?callback=?',
-          "method": "GET",
-          "headers": {
-            'Access-Control-Allow-Origin': '*'
-          },
-          data : {
-            "token": "717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080",
-          },
-          contentType : 'application/javascript',
-          dataType : 'jsonp',
-          jsonpCallback: "localJsonpCallback"
-        }
-
-        function localJsonpCallback(json)
-        {
-            console.log(json);
-        }
-
-        $.ajax(settings).done(function (response) {
-           console.log(response);
-        });
-
-        */
-    }
-</script>
 @endsection

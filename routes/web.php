@@ -28,7 +28,6 @@ Auth::routes();
 /* User Customer */
 
 Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');//home.blade
-Route::get('scan', 'HomeController@getScanBarcode')->name('scan');
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
 Route::group(['middleware'=>['auth','web','is_admin']],function(){
@@ -40,13 +39,22 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 
 Route::group(['middleware'=>['auth','web']],function(){
 	/* Create Device */
-	Route::get('createdevice','CreateDeviceController@index')->name('createdevice');
+	Route::get('registerdevice','CreateDeviceController@index')->name('registerdevice');
+	Route::post('createdevice', 'CreateDeviceController@createDevice')->name('createdevice');
+	Route::get('deviceauthorize', 'CreateDeviceController@deviceAuthorize');
+
 	Route::get('devicepackage','CreateDeviceController@devicePackage')->name('devicepackage');
 	Route::get('devicecheckout','CreateDeviceController@checkout')->name('devicecheckout');
 	Route::get('thanks','CreateDeviceController@thankYou')->name('thanks');
 	#delete if not needed anymore
 	Route::get('temporary','CreateDeviceController@temporary')->name('temporary');
+	#delete if not needed anymore
 
+	/* Device status and profile */
+	Route::get('devices','DeviceController@deviceList')->name('devices');
+	Route::get('authorize', 'DeviceController@getScanBarcodeAuthorize')->name('authorize');
+	Route::get('scan', 'DeviceController@getScanBarcodeChangePhone')->name('scan');
+	Route::get('profile', 'DeviceController@getDetailDevice')->name('profile');
 
 	/* Lists */
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');

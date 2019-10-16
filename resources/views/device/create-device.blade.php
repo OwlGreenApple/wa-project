@@ -37,31 +37,24 @@
                         </div>
                     @endif
 
-                     <form method="POST" action="">
+                     <form method="POST" action="{{route('createdevice')}}">
                         @csrf
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right">Device Name</label>
 
                             <div class="col-md-8">
                                <input type="text" class="form-control" name="device_name" />
-                            </div>
-                        </div>  
-
-                        <div class="form-group row">
-                            <label class="col-md-3 col-form-label text-md-right">WA Number</label>
-
-                            <div class="col-md-8">
-                               <input type="text" class="form-control" name="wa_number" />
-                               <small>Please do not use +62 62 or 0 but use 8xxxxxx instead</small>
+                                <small>This would be as your device name</small>
                             </div>
                         </div>  
                         
                         <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <a href="{{route('devicepackage')}}" class="btn btn-primary">
+                                <button class="btn btn-primary">Create Device</button>
+                                <!--<a href="{{'devicepackage'}}" class="btn btn-primary">
                                     Create Sender
-                                </a>
+                                </a>-->
                             </div>
                         </div>
                      </form>

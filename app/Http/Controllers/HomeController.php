@@ -70,34 +70,5 @@ class HomeController extends Controller
         }
     }
 
-    public function getScanBarcode()
-    {
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://api.wassenger.com/v1/devices/5d6e15906de1a4001c90a0f4/scan?force=true",
-          CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_ENCODING => "",
-          CURLOPT_MAXREDIRS => 10,
-          CURLOPT_TIMEOUT => 30,
-          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-          CURLOPT_CUSTOMREQUEST => "GET",
-          CURLOPT_HTTPHEADER => array(
-            "token: 717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080"
-          ),
-        ));
-
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
-
-        curl_close($curl);
-
-        if ($err) {
-          echo "cURL Error #:" . $err;
-        } else {
-          echo $response;
-        }
-    }
-
 /* end class HomeController */
 }
