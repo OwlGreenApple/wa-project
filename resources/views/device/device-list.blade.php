@@ -16,6 +16,10 @@
         <div class="modal-body">
             <div id="authorizescan"></div>
         </div>
+
+        <div class="modal-body">
+            <div id="authorizecomplete"></div>
+        </div>
       </div>
       
     </div>
@@ -35,8 +39,9 @@
         <div class="modal-body">
             <div id="changenumberscan"></div>
         </div>
-        <div class="modal-footer">
-          If you want to change your number, please logout from whatsapp web on your device.<br/> After scan wait approximately <b>1 minutes</b> until it authorized. 
+        <div class="col-md-12">
+          <div>If you want to change your number, please logout from whatsapp web on your device.</div>
+          <div>After scan wait approximately <b>1-3 minutes</b> then refresh your browser </div> 
         </div>
 
       </div>
@@ -71,7 +76,7 @@
                                     <td>{{$no}}</td>
                                     <td>{{$row->name}}</td>
                                     <td>{{$row->wa_number}}</td>
-                                    <td>{{$data[$row->id]['status']}}</td>
+                                    <td id="devicestatus">{{$data[$row->id]['status']}}</td>
                                     <td><a id="{{$row->device_id}}" class="btn btn-info btn-sm authorize">Authorize</a></td>
                                     <td><a id="{{$row->device_id}}" class="btn btn-warning btn-sm changenumber">Change Number</a></td>
                                     <td><a id="{{$row->device_id}}" class="btn btn-danger btn-sm deletedevice">Delete Device</a></td>
@@ -101,47 +106,68 @@
         $(".authorize").click(function(){
             var device_id = $(this).attr('id');
             $("#openAuthorize").modal();
+            var svg = false;
 
             $.ajax({
                 beforeSend: function() {
                     $("#authorizescan").text('Loading....');
                 },
                 type : 'GET',
-                url : '{{route("authorize")}}',
-                data : {'id':device_id},
+                url : '{{url("authorize")}}/'+device_id,
                 dataType : 'html',
-                success : function(result)
+                success : function(result,textStatus,jqXHR)
                 {
-                    $("#authorizescan").html(result);
+                    var response = jqXHR.responseText;
+                    if(response.indexOf('svg') > 0)
+                    {
+                        $("#authorizescan").html(result);
+                        svg = true;
+                    }
+                    else
+                    {
+                        var obj =jQuery.parseJSON(response);
+                        $("#authorizescan").text('Status : '+obj.status+', '+obj.message);
+                    }
+                },
+                complete: function(xhr, textStatus) {
+                    //console.log(xhr.status);
+                    if(xhr.status == 200 && svg == true)
+                    {
+                        $("#authorizecomplete").text('Please wait until it reload');
+                        setTimeout(function(){checkAuthorize(device_id)},20000);
+                    }
+                }, 
+                error : function(jqXHR,textStatus,error)
+                {
+                    console.log(error);
                 }
             })
+
         });
 
-        /*
-        var settings = {
-          "async": true,
-          "crossDomain": true,
-          "url": "https://api.wassenger.com/v1/devices/5d6e15906de1a4001c90a0f4/scan?force=true",
-          "method": "GET",
-          "headers": {
-            'Access-Control-Allow-Origin': '*'
-          },
-          data : {
-            "token": "717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080",
-          },
-          dataType : 'json',
-          //jsonpCallback: "localJsonpCallback"
-        }
+    }
 
-        function localJsonpCallback(json)
-        {
-            $("#img").html(json);
-        }
-
-        $.ajax(settings).done(function (response) {
-           console.log(response);
-        });
-        */
+    function checkAuthorize(id)
+    {
+        var current_status = $("#devicestatus").text();
+         $.ajax({
+            type : 'GET',
+            url : '{{url("devicestatus")}}/'+id,
+            dataType : 'json',
+            success : function(result)
+            {
+                if(result.status !== current_status)
+                {
+                    /* this is true (status changed) */
+                    location.href='{{route("devices")}}';
+                }
+                else
+                {
+                    /* this is false (status won't changed) */
+                    alert('Sorry, something wrong with system, please reload your browser and authorize again')
+                }
+            }
+        })
     }
 
     function getScanBarcodeChangeNumber()

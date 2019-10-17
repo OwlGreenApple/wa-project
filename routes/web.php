@@ -52,9 +52,10 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 	/* Device status and profile */
 	Route::get('devices','DeviceController@deviceList')->name('devices');
-	Route::get('authorize', 'DeviceController@getScanBarcodeAuthorize')->name('authorize');
+	Route::get('authorize/{device_id}', 'DeviceController@getScanBarcodeAuthorize');
 	Route::get('scan', 'DeviceController@getScanBarcodeChangePhone')->name('scan');
 	Route::get('profile', 'DeviceController@getDetailDevice')->name('profile');
+	Route::get('devicestatus/{device_id}', 'DeviceController@getStatusDevice');
 
 	/* Lists */
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');

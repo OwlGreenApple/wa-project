@@ -31,9 +31,8 @@ class DeviceController extends Controller
     }
 
     #scan to authorize phone
-    public function getScanBarcodeAuthorize(Request $request)
+    public function getScanBarcodeAuthorize($id)
     {
-    	$id =  $request->id;
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
