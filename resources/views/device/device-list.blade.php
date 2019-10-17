@@ -39,6 +39,11 @@
         <div class="modal-body">
             <div id="changenumberscan"></div>
         </div>
+
+        <div class="modal-body">
+            <div id="changenumbercomplete"></div>
+        </div>
+
         <div class="col-md-12">
           <div>If you want to change your number, please logout from whatsapp web on your device.</div>
           <div>After scan wait approximately <b>1-3 minutes</b> then refresh your browser </div> 
@@ -164,6 +169,7 @@
                 else
                 {
                     /* this is false (status won't changed) */
+                    //setInterval(function(){alert('aaaa')},3000)
                     alert('Sorry, something wrong with system, please reload your browser and authorize again')
                 }
             }
@@ -174,8 +180,13 @@
     {
          $(".changenumber").click(function(){
             var device_id = $(this).attr('id');
+            var svg = false;
             $("#openChange").modal();
 
+            /*checkCurrentNumber(device_id,
+                function(current_number){ put ajax here...  }
+            );*/
+                    
             $.ajax({
                 beforeSend: function() {
                     $("#changenumberscan").text('Loading....');
@@ -184,13 +195,82 @@
                 url : '{{route("scan")}}',
                 data : {'id':device_id},
                 dataType : 'html',
-                success : function(result)
+                success : function(result,textStatus,jqXHR)
                 {
-                    $("#changenumberscan").html(result);
+                    var response = jqXHR.responseText;
+                    if(response.indexOf('svg') > 0)
+                    {
+                        $("#changenumberscan").html(result);
+                        svg = true;
+                    }
+                    else if(response.indexOf('message') > 0)
+                    {
+                        var obj =jQuery.parseJSON(result);
+                        $("#changenumberscan").text('Status : '+obj.status+', '+obj.message);
+                    }
+                    else
+                    {
+                        $("#changenumberscan").text(result);
+                    }  
+                },
+                complete: function(xhr, textStatus) {
+                    //console.log(xhr.status);
+                    if(xhr.status == 200 && svg == true)
+                    {
+                        $("#changenumbercomplete").text('Please wait until page reload');
+                        setTimeout(function(){updateNumber(device_id)},30000);
+                    }
+                }, 
+                error : function(jqXHR,textStatus,error)
+                {
+                    console.log(error);
                 }
             })
+
+              
         });
     }
+
+     function updateNumber(id,current_number)
+    {
+        $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
+        $.ajax({
+            type : 'POST',
+            url : '{{route("updatenumber")}}',
+            dataType : 'json',
+            data : {deviceid : id},
+            success : function(response){
+               if(response.status == true)
+               {
+                    alert("Your phone number has been updated");
+               }
+               else
+               {
+                    alert("Your phone number failed to updated, please wait 1-2 minutes then try to change again");
+               }
+               location.href='{{route("devices")}}';
+            }
+        })
+    }
+
+    /* currently 
+    function checkCurrentNumber(id,callback)
+    {
+        var phone;
+        $.ajax({
+            type : 'GET',
+            url : '{{url("devicedetail")}}/'+id,
+            dataType : 'json',
+            success : function(data){
+                callback(data.phone);
+            }
+        })
+    } 
+    */
 </script>
 
 @endsection

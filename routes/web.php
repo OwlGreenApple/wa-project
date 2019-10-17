@@ -48,14 +48,16 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('thanks','CreateDeviceController@thankYou')->name('thanks');
 	#delete if not needed anymore
 	Route::get('temporary','CreateDeviceController@temporary')->name('temporary');
+	Route::get('testcurl','CreateDeviceController@testcurl')->name('testcurl');
 	#delete if not needed anymore
 
 	/* Device status and profile */
 	Route::get('devices','DeviceController@deviceList')->name('devices');
 	Route::get('authorize/{device_id}', 'DeviceController@getScanBarcodeAuthorize');
 	Route::get('scan', 'DeviceController@getScanBarcodeChangePhone')->name('scan');
-	Route::get('profile', 'DeviceController@getDetailDevice')->name('profile');
+	Route::get('devicedetail/{device_id}', 'DeviceController@getDetailDevice')->name('devicedetail');
 	Route::get('devicestatus/{device_id}', 'DeviceController@getStatusDevice');
+	Route::post('updatenumber', 'DeviceController@updateNumber')->name('updatenumber');
 
 	/* Lists */
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');

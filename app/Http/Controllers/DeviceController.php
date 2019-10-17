@@ -114,7 +114,7 @@ class DeviceController extends Controller
 		curl_close($curl);
 
 		if ($err) {
-		   return json_decode($err);
+		   return json_decode($err,true);
 		  //echo "cURL Error #:" . $err;
 		} else {
 		   return json_decode($response,true);
@@ -122,9 +122,8 @@ class DeviceController extends Controller
 		}
     }
 
-    public function getDetailDevice()
+    public function getDetailDevice($deviceid)
     {
-    	$deviceid = '5d6e15906de1a4001c90a0f4';
     	$curl = curl_init();
 		curl_setopt_array($curl, array(
 		  CURLOPT_URL => "https://api.wassenger.com/v1/devices/".$deviceid."",
@@ -145,10 +144,35 @@ class DeviceController extends Controller
 		curl_close($curl);
 
 		if ($err) {
-		  echo "cURL Error #:" . $err;
+		  return json_decode($err,true);
+		  //echo "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		  return json_decode($response,true);
+		  //echo $response;
 		}
+    }
+
+    #update number after user scan
+    public function updateNumber(Request $request)
+    {
+    	$userid = Auth::id();
+    	$deviceid = $request->deviceid;
+    	//$oldnumber = $request->oldnumber;
+
+    	$afterscan = $this->getDetailDevice($deviceid);
+    	$newnumber = $afterscan['phone'];
+
+    	$sender = Sender::where([['user_id',$userid],['device_id','=',$deviceid]])->update(['wa_number'=>$newnumber]);
+
+    	if($sender == true)
+    	{
+    		$data['status'] = true;
+    	}
+    	else
+    	{
+    		$data['status'] = false;
+    	}
+    	return response()->json($data);
     }
 
 /* end class devicecontroller */    
