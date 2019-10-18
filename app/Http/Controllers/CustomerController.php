@@ -130,7 +130,6 @@ class CustomerController extends Controller
 
     	$get_id_list = UserList::where('name','=',$listname)->first();
         $wa_number = '+62'.$request->wa_number;
-        $sender = Sender::where('user_id',$get_id_list->user_id)->first();
         $today = Carbon::now();
         $wassenger = null;
         $evautoreply = false;
@@ -139,6 +138,7 @@ class CustomerController extends Controller
         #message & pixel
         $list_message = $get_id_list->message_text;
         $list_wa_number = $get_id_list->wa_number;
+        $sender = Sender::where([['user_id',$get_id_list->user_id],['wa_number','=',$get_id_list->wa_number]])->first();
 
         if(isset($req['data']))
         {
@@ -288,6 +288,7 @@ class CustomerController extends Controller
          
    public function autoReply($listid,$wa_number,$list_message,$list_wa_number,$customer_name){
         #send wa link to send message to list owner
+        $list_wa_device = $list_wa_number;
         $list_wa_number = str_replace("+","",$list_wa_number);
         $data['wa_link'] = 'https://api.whatsapp.com/send?phone='.$list_wa_number.'&text='.$list_message.'';
 
@@ -306,7 +307,8 @@ class CustomerController extends Controller
         } else {
              # wassenger
             $user_id = $autoreply->user_id;
-            $getsender = Sender::where('user_id',$user_id)->first();
+            $getsender = Sender::where([['user_id',$user_id],['wa_number','=',$list_wa_device]])->first();
+            $deviceid = $getsender->device_id;
 
             $message = str_replace('{name}',$customer_name,$autoreply->message);
             $status = $autoreply->status;
@@ -314,7 +316,7 @@ class CustomerController extends Controller
 
         if($status == 1){
             $sendmessage = new SendMessage;
-            $wasengger = $sendmessage->sendWA($wa_number,$message);
+            $wasengger = $sendmessage->sendWA($wa_number,$message,$deviceid);
         } else {
             $wasengger = null;
         }

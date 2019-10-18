@@ -33,6 +33,12 @@
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
                         </div>
+                    @endif 
+
+                    @if (session('errorsender'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('errorsender') }}
+                        </div>
                     @endif
 
                     <form id="get_template">

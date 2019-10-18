@@ -106,8 +106,6 @@ class ReminderController extends Controller
         } else {
             return redirect('reminderform');
         }
-        
-        $sender = Sender::where('user_id',$user_id)->first();
 
         $rules = array(
             'list_id'=>['required'],
@@ -117,6 +115,10 @@ class ReminderController extends Controller
 
         $validator = Validator::make($request->all(),$rules);
         $err = $validator->errors();
+
+        $listdata = UserList::where('id',$list_id)->select('wa_number')->first();
+        $devicenumber = $listdata->wa_number;
+        $sender = Sender::where([['user_id',$user_id],['wa_number','=',$devicenumber]])->first();
 
         if($validator->fails()){
             return redirect('reminderform')->with('error',$err);

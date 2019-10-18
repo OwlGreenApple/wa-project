@@ -14,6 +14,47 @@ class DeviceController extends Controller
         $this->token = '717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080';
     }
 
+
+    public function test()
+    {
+	        $api_key = '717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080';
+	        $curl = curl_init();
+
+	        $data = array(
+	            'phone'=>'+62895342472008',
+	            'message'=>'activfans',
+	            'device'=>'5da93e6cf6e10b001d08c691',
+	        );
+
+	        curl_setopt_array($curl, array(
+	          CURLOPT_URL => "https://api.wassenger.com/v1/messages",
+	          CURLOPT_RETURNTRANSFER => true,
+	          CURLOPT_ENCODING => "",
+	          CURLOPT_MAXREDIRS => 10,
+	          CURLOPT_TIMEOUT => 30,
+	          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	          CURLOPT_CUSTOMREQUEST => "POST",
+	          CURLOPT_POSTFIELDS => json_encode($data,true),
+	          CURLOPT_HTTPHEADER => array(
+	            "content-type: application/json",
+	            "token: ".$api_key.""
+	          ),
+	        ));
+
+	        $response = curl_exec($curl);
+	        $err = curl_error($curl);
+
+	        curl_close($curl);
+
+	        if ($err) {
+	          echo "cURL Error #:" . $err;
+	          throw new Exception($err);
+	        } else {
+	          //echo $response."\n";
+	          return json_decode($response);
+	        }
+    }
+
     public function deviceList()
     {
     	$userid = Auth::id();

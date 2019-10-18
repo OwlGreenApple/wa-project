@@ -86,7 +86,7 @@ class SendWA extends Command
                 ['broad_cast_customers.user_id','=',$id_user],
                 ['broad_cast_customers.status','=',0],
             ])->leftJoin('customers','customers.id','=','broad_cast_customers.customer_id')
-            ->select('customers.wa_number','customers.name','broad_cast_customers.message','broad_cast_customers.id')
+            ->select('customers.wa_number','customers.name','broad_cast_customers.message','broad_cast_customers.id','broad_cast_customers.sender_id')
             ->orderBy('broad_cast_customers.id','asc');
 
             /* Broadcast */
@@ -97,16 +97,31 @@ class SendWA extends Command
                       /*... Wasennger function ...*/
                       $wa_number = $id->wa_number;
                       $message = str_replace('{name}',$id->name,$id->message);
+                      $senderid = $id->sender_id;
+
                       /* Send WA */
+                       $sender = Sender::where('id','=',$senderid)->select('device_id')->first();
+                        if(is_null($sender))
+                        {
+                            BroadCastCustomers::where([
+                                ['id',$id->id],
+                                ['status','=',0],
+                            ])->update([
+                                'id_wa'=>0,
+                                'status'=>3,
+                            ]);
+                            return $this->handle();
+                        }
+                        $deviceid = $sender->device_id;
 
                        try
                         {
-                          $wasengger = $this->sendWA($wa_number,$message);
+                          $wasengger = $this->sendWA($wa_number,$message,$deviceid);
                         }catch(Exception $e){
                             echo $e->getMessage();
                         }
                      
-                     if($wasengger !== null)
+                     if($wasengger !== null && $wasengger->status == 'queued')
                      {
                          /* Determine status on BroadCast-customer */
                           $delivery_status = $wasengger->deliveryStatus;
@@ -124,6 +139,7 @@ class SendWA extends Command
                             'status'=>$status,
                         ]);
                      } else {
+                         echo 'Wassenger error code : '.$wasengger->status;
                          break;  
                      }
                     
@@ -139,78 +155,10 @@ class SendWA extends Command
             } else if($check_event->count() > 0){
                 # Event 
                return $this->dateEvent();
-            } else {
-            /* Reminder */
-                $current_time = Carbon::now();
-               /* get days from reminder */
-                $reminder = ReminderCustomers::where([
-                                  ['reminder_customers.user_id','=',$id_user],
-                                  ['reminder_customers.status','=',0],
-                                  ['lists.is_event','=',0]
-                                  ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
-                                  ->join('lists','lists.id','=','reminders.list_id')
-                                  ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-                                  ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.days','reminders.message','customers.created_at AS cstreg','customers.wa_number','customers.name')
-                                ->take($count)
-                                ->get();
-
-                /* check date reminder customer and update if succesful sending */
-                foreach($reminder as $col) {
-                    $day_reminder = $col->days; // how many days
-                    $customer_signup = Carbon::parse($col->cstreg);
-                    $adding = $customer_signup->addDays($day_reminder);
-                    $reminder_customer_status = $col->rc_st;
-                    $reminder_customers_id = $col->rcs_id;
-                    $wa_number = $col->wa_number;
-                    $message = str_replace('{name}',$col->name,$col->message);;
-                    $event_date = $col->event_date;
-
-                    /* if the time has reach or pass added time */
-                    if(($current_time >= $adding) && $reminder_customer_status == 0){
-                         /* wasengger */
-                         $wasengger = $this->sendWA($wa_number,$message);
-                    } else {
-                         $wasengger = null;
-                    }
-
-                    /* Determine status on reminder-customer */
-
-                    if($wasengger !== null){
-                        $delivery_status = $wasengger->deliveryStatus;
-                        if($delivery_status == 'queued'){
-                          $status = 1;
-                        } elseif($delivery_status == 'sent') {
-                          $status = 2;
-                        } elseif($delivery_status == 'failed') {
-                          $status = 5;
-                        } else {
-                          $status = 0;
-                        } 
-
-                        $update_reminder_customer = ReminderCustomers::where([
-                            ['id',$reminder_customers_id],
-                            ['status','=',0],
-                        ])->update([
-                            'id_wa'=>$wasengger->id,
-                            'status'=>$status,
-                        ]);
-                    } else {
-                        break;
-                    }
-                      
-                    if($update_reminder_customer == true){
-                         // cut user's wa bandwith
-                        $deviceId = $wasengger->device;
-                        $count = $count - 1;
-                        $sender_update = Sender::where([['user_id',$id_user],['device_id','=',$deviceId]])->update(['counter'=>$count]);
-                    } else {
-                        echo 'Error!! Unable to update reminder customer';
-                    }
-
-                    if($sender_update == false){
-                        echo 'Error!! Unable to update counter';
-                    }
-                }
+            } 
+            else 
+            {
+               return $this->dateReminder();
             }
 
         /* end user looping */
@@ -220,13 +168,14 @@ class SendWA extends Command
     /* End function handle */    
     }
 
-    public function sendWA($wa_number,$message){
+    public function sendWA($wa_number,$message,$device){
         $api_key = '717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080';
         $curl = curl_init();
 
         $data = array(
             'phone'=>$wa_number,
-            'message'=>$message
+            'message'=>$message,
+            'device'=>$device,
         );
 
         curl_setopt_array($curl, array(
@@ -251,7 +200,6 @@ class SendWA extends Command
 
         if ($err) {
           echo "cURL Error #:" . $err;
-          throw new Exception($err);
         } else {
           //echo $response."\n";
           return json_decode($response);
@@ -265,24 +213,21 @@ class SendWA extends Command
       if($user->count() > 0){
       foreach($user as $rowuser){
           $id_user = $rowuser->id;
-          $sender = Sender::select('counter')->where([['user_id','=',$id_user]])->first();
-          if(!is_null($sender)){
-              $count = $sender->counter;
-            }
           $idr = null;
-          $wasengger = null;
+          $wasenggerevent = null;
           $event = null;
 
           $reminder = Reminder::where([
                   ['reminders.user_id',$id_user],
                   ['reminders.status',1],
                   ['lists.is_event',1],
-          ])->join('lists','reminders.list_id','=','lists.id')->select('reminders.*','lists.event_date')->get();
+          ])->join('lists','reminders.list_id','=','lists.id')
+          ->select('reminders.*','lists.event_date','lists.wa_number AS device_number')->get();
 
-          /* reminder */
-
+          /* event */
           if($reminder->count() > 0){
                foreach($reminder as $rows){
+                $device_number = $rows->device_number;
                 $id_reminder = $rows->id;
                 $today = Carbon::now();
                 $event_date = Carbon::parse($rows->event_date);
@@ -290,7 +235,24 @@ class SendWA extends Command
                 //hour according user set it to send WA
                 $hour = $rows->hour_time.':00';
                 //$hour = date('H:m:s',strtotime($rows->hour_time));
+                $sendercounter = Sender::where('wa_number','=',$device_number)->select('counter')->first();
 
+                if(is_null($sendercounter))
+                {
+                   Reminder::where('id',$id_reminder)->update(['status'=>0]);
+                   ReminderCustomers::where([
+                        ['reminder_id',$id_reminder],
+                    ])->update([
+                        'id_wa'=>0,
+                        'status'=>3,
+                    ]);
+                   return $this->handle();
+                }
+                else
+                {
+                    $count = $sendercounter->counter;
+                }
+               
                 /* if the day before / substract */
                 if($days < 0){
                   $days = abs($days);
@@ -318,22 +280,24 @@ class SendWA extends Command
                       ['reminder_customers.user_id','=',$id_user],
                       ['reminder_customers.reminder_id','=',$id_reminder],
                       ['reminder_customers.status','=',0],
-                ])->join('customers','customers.id','=','reminder_customers.customer_id')->join('reminders','reminders.id','=','reminder_customers.reminder_id')->select('customers.wa_number','customers.name','reminders.message','reminder_customers.id AS rc_id','customers.id AS cs_id','reminder_customers.reminder_id AS id_reminder')->get();
+                ])->join('customers','customers.id','=','reminder_customers.customer_id')->join('reminders','reminders.id','=','reminder_customers.reminder_id')->select('customers.wa_number','customers.name','reminders.message','reminder_customers.id AS rc_id','customers.id AS cs_id','reminder_customers.reminder_id AS id_reminder','reminder_customers.sender_id')->get();
                 
-
                 foreach($remindercustomer as $col){
                     $event[] = $col;
                 }
               } # end foreach reminder 
           }
-          
 
+          
           /* limit data according on count */
           if($event !== null){
              $event = array_slice($event,0,$count);
           }
+          else
+          {
+            return $this->dateReminder();
+          }
           
-
           /* update according on reminder customer */
           if(!empty($event) || $event !== null){
              foreach($event as $col)
@@ -341,17 +305,33 @@ class SendWA extends Command
                 $wa_number = $col->wa_number;
                 $message = str_replace('{name}',$col->name,$col->message);
                 $id_reminder = $col->id_reminder;
+                $senderid = $col->sender_id;
+
+                $sender = Sender::where('id','=',$senderid)->select('device_id')->first();
+                if(is_null($sender))
+                {
+                    ReminderCustomers::where([
+                        ['id',$reminder_customers_id],
+                        ['status','=',0],
+                    ])->update([
+                        'id_wa'=>0,
+                        'status'=>3,
+                    ]);
+                    return $this->handle();
+                }
+               
+                $deviceid = $sender->device_id;
 
                 try
                 {
-                    $wasengger = $this->sendWA($wa_number,$message);
+                    $wasenggerevent = $this->sendWA($wa_number,$message,$deviceid);
                 }catch(Exception $e){
                     echo $e->getMessage();
-                    $wasengger = null;
+                    $wasenggerevent = null;
                 }
 
-                if($wasengger !== null){
-                    $delivery_status = $wasengger->deliveryStatus;
+                if($wasenggerevent !== null && $wasenggerevent->status == 'queued'){
+                    $delivery_status = $wasenggerevent->deliveryStatus;
                     if($delivery_status == 'queued'){
                       $status = 1;
                     } elseif($delivery_status == 'sent') {
@@ -368,16 +348,17 @@ class SendWA extends Command
                       ['status','=',0],
                     ])->update([
                       'status'=>$status,
-                      'id_wa'=>$wasengger->id
+                      'id_wa'=>$wasenggerevent->id
                     ]);
                 } else {
+                    echo 'Wassenger error code : '.$wasenggerevent->status;
                     break;
                 }
 
                 $checkuser = ReminderCustomers::where('user_id',$id_user)->get();
                
                 if($update == true && $checkuser->count() > 0){
-                   $deviceId = $wasengger->device;
+                   $deviceId = $wasenggerevent->device;
                    $count = $count - 1;
                    $user_update = Sender::where([['user_id',$id_user],['device_id','=',$deviceId]])->update(['counter'=>$count]);
                 } else if($update == false && $checkuser->count() > 0) {
@@ -391,12 +372,123 @@ class SendWA extends Command
                 //echo $col->rc_id."--".$wa_number."\n";
               }
           } 
-          
+  
           
       } /* end foreach user */
 
       } /* end if */
 
+    }
+
+    public function dateReminder()
+    {
+       /* Users counter */
+        $user = User::select('id')->get();
+        $wasenggerreminder = null;
+        if($user->count() > 0)
+        {
+          foreach($user as $userow)
+          {
+              $id_user = $userow->id;
+              $sender = Sender::where([['user_id','=',$id_user]])->select('counter')->first();
+              if(!is_null($sender)){
+                $count = $sender->counter;
+              }
+              
+              /* Reminder */
+                $current_time = Carbon::now();
+               /* get days from reminder */
+                $reminder = ReminderCustomers::where([
+                                  ['reminder_customers.user_id','=',$id_user],
+                                  ['reminder_customers.status','=',0],
+                                  ['lists.is_event','=',0],
+                                  ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
+                                  ->join('lists','lists.id','=','reminders.list_id')
+                                  ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
+                                  ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.days','reminders.message','customers.created_at AS cstreg','customers.wa_number','customers.name')
+                                ->take($count)
+                                ->get();
+
+                /* check date reminder customer and update if succesful sending */
+                foreach($reminder as $col) 
+                {
+                    $day_reminder = $col->days; // how many days
+                    $customer_signup = Carbon::parse($col->cstreg);
+                    $adding = $customer_signup->addDays($day_reminder);
+                    $reminder_customer_status = $col->rc_st;
+                    $reminder_customers_id = $col->rcs_id;
+                    $wa_number = $col->wa_number;
+                    $event_date = $col->event_date;
+                    $senderid = $col->sender_id;
+                   //$message = str_replace('{name}',$col->name,$col->message);
+                    $message = $col->message;
+
+
+                    $sender = Sender::where('id','=',$senderid)->select('device_id')->first();
+                    if(is_null($sender))
+                    {
+                        ReminderCustomers::where([
+                            ['id',$reminder_customers_id],
+                            ['status','=',0],
+                        ])->update([
+                            'id_wa'=>0,
+                            'status'=>3,
+                        ]);
+                        return $this->handle();
+                    }
+                    $deviceid = $sender->device_id;
+
+                    /* if the time has reach or pass added time */
+                    if(($current_time >= $adding) && $reminder_customer_status == 0){
+                         /* wasengger */
+                         $wasenggerreminder = $this->sendWA($wa_number,$message,$deviceid);
+                    } else {
+                         $wasenggerreminder = null;
+                    }
+
+                    /* Determine status on reminder-customer */
+                    if($wasenggerreminder !== null && $wasenggerreminder->status == 'queued'){
+                        $delivery_status = $wasenggerreminder->deliveryStatus;
+                        if($delivery_status == 'queued'){
+                          $status = 1;
+                        } elseif($delivery_status == 'sent') {
+                          $status = 2;
+                        } elseif($delivery_status == 'failed') {
+                          $status = 5;
+                        } else {
+                          $status = 0;
+                        } 
+
+                        $update_reminder_customer = ReminderCustomers::where([
+                            ['id',$reminder_customers_id],
+                            ['status','=',0],
+                        ])->update([
+                            'id_wa'=>$wasenggerreminder->id,
+                            'status'=>$status,
+                        ]);
+                    } else {
+                        echo 'Wassenger error code : '.$wasenggerreminder->status;
+                        break;
+                    }
+                      
+                    if($update_reminder_customer == true){
+                         // cut user's wa bandwith
+                        $deviceId = $wasenggerreminder->device;
+                        $count = $count - 1;
+                        $sender_update = Sender::where([['user_id',$id_user],['device_id','=',$deviceId]])->update(['counter'=>$count]);
+                    } else {
+                        echo 'Error!! Unable to update reminder customer';
+                    }
+
+                    if($sender_update == false){
+                        echo 'Error!! Unable to update counter';
+                    }
+                }
+
+          /* end user looping */
+          }
+        /* end user if */  
+        }
     }
 
 /* End command class */    

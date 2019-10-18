@@ -112,7 +112,7 @@ class ListController extends Controller
             }
         }
 
-        if($filter_dropdown == null)
+        if(isset($req['dropdown']) && $filter_dropdown == null)
         {
              return redirect('createlist')->with('error_number','Error! you must create option if create dropdown');
         }

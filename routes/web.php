@@ -38,6 +38,8 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 });
 
 Route::group(['middleware'=>['auth','web']],function(){
+	Route::get('tesdevice','DeviceController@test')->name('tesdevice');
+
 	/* Create Device */
 	Route::get('registerdevice','CreateDeviceController@index')->name('registerdevice');
 	Route::post('createdevice', 'CreateDeviceController@createDevice')->middleware('checkdevicename')->name('createdevice');

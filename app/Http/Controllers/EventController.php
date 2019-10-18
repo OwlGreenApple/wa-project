@@ -100,7 +100,6 @@ class EventController extends Controller
 
     public function addEvent(Request $request){
         $user_id = Auth::id();
-        $sender = Sender::where('user_id',$user_id)->first();
 
         if($request->schedule == 0){
             $request->day = 0;
@@ -119,6 +118,16 @@ class EventController extends Controller
 
         $validator = Validator::make($request->all(),$rules);
         $err = $validator->errors();
+
+        #Sender
+        $listdata = UserList::where('id',$request->list_id)->select('wa_number')->first();
+        $devicenumber = $listdata->wa_number;
+        $sender = Sender::where([['user_id',$user_id],['wa_number','=',$devicenumber]])->first();
+
+        if(is_null($sender))
+        {
+            return redirect('eventform')->with('errorsender','Sorry, this list phone number is not available');
+        }
 
         /* Validator */
         if($validator->fails()){

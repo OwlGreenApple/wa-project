@@ -49,7 +49,6 @@ class BroadCastController extends Controller
     	$user_id = Auth::id();
     	$req = $request->all();
     	$message = $req['message'];
-        $sender = Sender::where('user_id',$user_id)->first();
         
         #prevent user to change value is_event
         try{
@@ -132,6 +131,10 @@ class BroadCastController extends Controller
         if($customer->count() > 0)
         {
             foreach($customer as $col){
+                $listdata = UserList::where('id',$col->lid)->select('wa_number')->first();
+                $devicenumber = $listdata->wa_number;
+                $sender = Sender::where([['user_id',$user_id],['wa_number','=',$devicenumber]])->first();
+
                 $broadcastcustomer = new BroadCastCustomers;
                 $broadcastcustomer->user_id = $user_id;
                 $broadcastcustomer->list_id = $col->lid;
