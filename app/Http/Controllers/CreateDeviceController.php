@@ -264,7 +264,7 @@ class CreateDeviceController extends Controller
 
     public function createDevice(Request $request)
     {
-    	/*$curl = curl_init();
+    	$curl = curl_init();
     	$data = array(
     		"alias"=>$request->device_name,
     		"billingPlan"=>"gateway-professional",
@@ -279,10 +279,10 @@ class CreateDeviceController extends Controller
 		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => json_encode($data),
+		  CURLOPT_POSTFIELDS => json_encode($data,true),
 		  CURLOPT_HTTPHEADER => array(
 		    "content-type: application/json",
-		    "token: 11789023944rfefr00sqd"
+		    "token: 717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080"
 		  ),
 		));
 
@@ -290,38 +290,41 @@ class CreateDeviceController extends Controller
 		$err = curl_error($curl);
 
 		curl_close($curl);
-
+		
 		if ($err) {
-		  echo "cURL Error #:" . $err;
+		  return redirect('registerdevice')->with('error','cURL Error #: '.$err);
 		} else {
-		  echo $response;
+		  $data = json_decode($response,true);
+	      $user_id = Auth::id();
+		  $sender = new Sender;
+		  $sender->user_id = $user_id;
+		  $sender->name = $request->device_name;
+		  $sender->wa_number = "0";
+		  $sender->device_id = $data['id'];
+		  $sender->save();
 		}
-		*/
-
-		/*$user_id - Auth::id();
-		$sender = new Sender;
-		$sender->user_id = $user_id;
-		$sender->name = $user_id;
-		$sender->wa_number = $user_id;
-		$sender->device_id = $user_id;
-		$sender->save();
 
 		if($sender->save() == true)
 		{
-			return redirect('deviceauthorize/deviceid');
+			return redirect('deviceauthorize')->with('deviceid',$data['id']);
 		}
 		else
 		{
 			return redirect('registerdevice')->with('error','Sorry, cannot save device to database please contact admin');
 		}
-		*/
     }
 
     public function deviceAuthorize()
     {
-    	//$deviceid = '5d6e15906de1a4001c90a0f4';
-    	$authorize = new DeviceController();
-    	return view('device.device-authorize',['qrcode'=>$authorize]);
+    	if(session("deviceid") !== null)
+    	{
+    		$authorize = new DeviceController();
+    		return view('device.device-authorize',['qrcode'=>$authorize]);
+    	}
+    	else
+    	{
+    		return redirect('registerdevice');
+    	}
     }
 
     /**/

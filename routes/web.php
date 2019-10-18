@@ -40,7 +40,7 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 Route::group(['middleware'=>['auth','web']],function(){
 	/* Create Device */
 	Route::get('registerdevice','CreateDeviceController@index')->name('registerdevice');
-	Route::post('createdevice', 'CreateDeviceController@createDevice')->name('createdevice');
+	Route::post('createdevice', 'CreateDeviceController@createDevice')->middleware('checkdevicename')->name('createdevice');
 	Route::get('deviceauthorize', 'CreateDeviceController@deviceAuthorize');
 
 	Route::get('devicepackage','CreateDeviceController@devicePackage')->name('devicepackage');
@@ -48,7 +48,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('thanks','CreateDeviceController@thankYou')->name('thanks');
 	#delete if not needed anymore
 	Route::get('temporary','CreateDeviceController@temporary')->name('temporary');
-	Route::get('testcurl','CreateDeviceController@testcurl')->name('testcurl');
+	//Route::get('testcurl','CreateDeviceController@testcurl')->name('testcurl');
 	#delete if not needed anymore
 
 	/* Device status and profile */

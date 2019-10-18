@@ -135,7 +135,7 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            $(".alert").delay(5000).fadeOut(3000);
+            $(".alert-success,.alert-warning,.alert-danger").delay(5000).fadeOut(3000);
         });
     </script>
 

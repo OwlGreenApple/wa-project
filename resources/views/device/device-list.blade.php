@@ -62,7 +62,7 @@
                 <div class="card-header"><b>My Devices</b></div>
 
                 <div class="card-body">
-
+                    <h6 class="alert alert-info">If your number doesn't change after scan qr code on <b>Change Number</b> please logout from your whatssapp web and then rescan</h5>
                     <table class="table table-striped table-responsive" id="user-list">
                         <thead>
                             <th>No</th>
@@ -71,7 +71,7 @@
                             <th>Status</th>
                             <th>Authorize</th>
                             <th>Change Number</th>
-                            <th>Delete Device</th>
+                            <!--<th>Delete Device</th>-->
                         </thead>
                         <tbody>
                             @if(count($data) > 0)
@@ -84,7 +84,7 @@
                                     <td id="devicestatus">{{$data[$row->id]['status']}}</td>
                                     <td><a id="{{$row->device_id}}" class="btn btn-info btn-sm authorize">Authorize</a></td>
                                     <td><a id="{{$row->device_id}}" class="btn btn-warning btn-sm changenumber">Change Number</a></td>
-                                    <td><a id="{{$row->device_id}}" class="btn btn-danger btn-sm deletedevice">Delete Device</a></td>
+                                    <!--<td><a id="row->device_id" class="btn btn-danger btn-sm deletedevice">Delete Device</a></td>-->
                                   </tr>
                                 @php $no++; @endphp
                                 @endforeach
@@ -217,7 +217,7 @@
                     //console.log(xhr.status);
                     if(xhr.status == 200 && svg == true)
                     {
-                        $("#changenumbercomplete").text('Please wait until page reload');
+                        $("#changenumbercomplete").text('Please wait 30 seconds until page reload');
                         setTimeout(function(){updateNumber(device_id)},30000);
                     }
                 }, 

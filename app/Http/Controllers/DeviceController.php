@@ -144,12 +144,13 @@ class DeviceController extends Controller
 		curl_close($curl);
 
 		if ($err) {
-		  return json_decode($err,true);
+		  $data = $err;
 		  //echo "cURL Error #:" . $err;
 		} else {
-		  return json_decode($response,true);
+		  $data = $response;
 		  //echo $response;
 		}
+		return json_decode($data,true);
     }
 
     #update number after user scan
