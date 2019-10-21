@@ -87,7 +87,6 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">
-            <div>Edit : <span class="list_label"></span></div>
             <div>URL : <span class="list_name"></span></div>
         </h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -95,6 +94,12 @@
 
       <div class="modal-body">
          <form id="edit_list">
+            <div class="form-group">
+                <label class="col-form-label text-md-right"><b>List Name</b></label>
+                <input type="text" class="form-control list_label" name="list_label" />
+                <span class="error list_label"></span>
+            </div>
+
             <div class="form-group dtev">
                 <label class="col-form-label text-md-right"><b>Event Date</b></label>
                 <span id="event_date"></span>
@@ -134,7 +139,7 @@
             
             <input type="hidden" name="idlist"/>
             <input type="hidden" name="page_position"/>
-            <button type="submit" class="btn btn-default">Edit List</button>
+            <button type="submit" id="btn-edit" class="btn btn-default">Edit List</button>
          </form>
       </div>
     </div>
@@ -328,7 +333,7 @@
                         $("input[name='date_event']").val(result.event_date);
                         $("input[name='page_position']").val(databutton);
                     }
-                   $(".list_label").html(result.list_label);
+                   $(".list_label").val(result.list_label);
                    $(".list_name").html(result.list_name);
                    $("textarea[name='pixel_txt']").val(result.pixel);
                    $("textarea[name='message_txt']").val(result.message);
@@ -427,6 +432,7 @@
             e.preventDefault();
              var databutton = $("input[name='page_position']").val(); // get data button position
              databutton = parseInt(databutton) -1;
+             $("#btn-edit").html('Loading....');
 
              var fields = $(".fields");
              var isoption = $(".is_option");
@@ -454,6 +460,7 @@
              // all data
              var data = {
                 id : $("input[name='idlist']").val(),
+                list_label : $("input[name='list_label']").val(),
                 date_event : $("input[name='date_event']").val(),
                 editor : CKEDITOR.instances.editor1.getData(),
                 pixel : $("textarea[name='pixel_txt']").val(),
@@ -473,18 +480,27 @@
                 data : data,
                 dataType : "json",
                 success : function(result){
-                   alert(result.message);
+                   $("#btn-edit").html('Edit List');
                    if(result.error == undefined)
                    {
+                      $(".list_label, .event_date").html('');
+                      alert(result.message);
                       displayAjaxCols(result.listid);
                    }
-                   
+                   else if(result.additionalerror == true)
+                   {
+                      alert(result.message);
+                   }
+                   else
+                   {
+                      $(".list_label").html(result.label);
+                      $(".event_date").html(result.date_event);
+                   }
                 }
             });
 
         });
     }
-
 
     function editOption()
     {

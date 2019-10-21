@@ -60,7 +60,8 @@
                     <table class="table table-striped table-responsive" id="user-list">
                         <thead>
                             <th>User</th>
-                            <th>lists</th>
+                            <th>lists name</th>
+                            <th>lists url</th>
                             <th>Days</th>
                             <th>Message</th>
                             <th>Created At</th>
@@ -72,6 +73,7 @@
                             @foreach($autoreply as $row)
                                 <tr>
                                     <td>{{$row->user_id}}</td>
+                                    <td>{{$row->label}}</td>
                                     <td>{{$row->name}}</td>
                                     <td>{{$row->days}}</td>
                                     <td class="wraptext">
@@ -107,40 +109,18 @@
                     <div class="table-responsive">
                     <table class="table table-striped table-responsive" id="reminder-message">
                         <thead>
-                            <th>User</th>
-                            <th>lists</th>
-                            <th>Days</th>
-                            <th>Message</th>
-                            <th>Created At</th>
-                            <th>Updated At</th>
+                            <th>lists name</th>
+                            <th>lists url</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
                             @if($data->count() > 0)
                             @foreach($data as $row)
                                 <tr>
-                                    <td>{{$row->user_id}}</td>
+                                    <td>{{$row->label}}</td>
                                     <td>{{$row->name}}</td>
-                                    <td> 
-                                        <span class="get-day-{{$row->id}}">{{$row->days}}
-                                        </span>
-                                        <!--<div class="mt-1"><small><a class="display_days" id="{{$row->id}}">Edit</a></small></div>-->
-                                    </td>
-                                    <td class="wraptext">
-                                        <span class="get-text-{{$row->id}}">{{$row->message}}</span>
-                                        <div><small><a id="{{$row->id}}" class="display_popup">Read More</a></small></div>
-                                    </td>
-                                    <td>{{$row->created_at}}</td>
-                                    <td>{{$row->updated_at}}</td>
                                     <td>
-                                        <a href="{{url('reminder-status/'.$row->id.'/'.$row->status.'')}}" class="btn btn-primary btn-sm"> @if($row->status == 0)
-                                            Run
-                                        @else
-                                            Pause
-                                        @endif</a>
-
-                                          <a id="{{$row->id}}" class="btn btn-danger btn-sm del-col">Delete</a>
-                                         <a id="{{encrypt($row->list_id)}}" class="btn btn-info btn-sm download-col">Download CSV</a>
+                                         <a id="{{$row->list_id}}" class="btn btn-info btn-sm view-reminder">View Reminder</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -156,7 +136,25 @@
 <!-- end container -->   
 </div>
 
- <!-- Modal -->
+  <!-- Modal Reminder total -->
+  <div class="modal fade" id="reminderTotal" role="dialog">
+    <div class="modal-dialog" style="max-width : 800px">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4>Reminder Message</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+           <span id="reminder-table"></span>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
     
@@ -182,6 +180,7 @@
       
     </div>
   </div>
+
 
   <!-- Modal Edit Days -->
   <div class="modal fade" id="editDays" role="dialog">
@@ -239,7 +238,27 @@
         updateDays();
         delDays();
         csvReminder();
+        viewReminder();
     });
+
+    function viewReminder()
+    {
+        $("body").on("click",".view-reminder",function(){
+            var id = $(this).attr('id');
+            $("#reminderTotal").modal();
+            $.ajax({
+                type : 'GET',
+                url : '{{route("reminderlist")}}',
+                data : {'listid':id},
+                dataType : 'html',
+                success : function(result)
+                {
+                   $("#reminder-table").html(result);
+                }
+            })
+
+        });
+    }
 
     function table(){
         $("#user-list").dataTable({

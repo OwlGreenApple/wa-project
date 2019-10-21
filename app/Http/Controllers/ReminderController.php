@@ -21,14 +21,28 @@ class ReminderController extends Controller
     	$id = Auth::id();
     	$list = Reminder::where([['reminders.user_id',$id],['lists.is_event','=',0],['reminders.days','>',0]])
     			->join('lists','reminders.list_id','=','lists.id')
-    			->select('lists.name','lists.event_date','reminders.*')
+    			->select('lists.name','lists.label','reminders.*')
+                ->groupBy('lists.name')
     			->get();
 
         $listautoreply = Reminder::where([['reminders.user_id',$id],['lists.is_event','=',0],['reminders.days','=',0],['reminders.hour_time','=',null]])
                 ->join('lists','reminders.list_id','=','lists.id')
-                ->select('lists.name','lists.event_date','reminders.*')
+                ->select('lists.name','lists.event_date','lists.label','reminders.*')
                 ->get();
     	return view('reminder.reminder',['data'=>$list,'autoreply'=>$listautoreply]);
+    }
+
+    public function displayReminderList(Request $request)
+    {
+        $data = array();
+        $id = Auth::id();
+        $listid = $request->listid;
+        $reminder = Reminder::where([['reminders.list_id','=',$listid],['reminders.user_id',$id],['lists.is_event','=',0],['reminders.days','>',0]])
+                ->join('lists','reminders.list_id','=','lists.id')
+                ->select('lists.name','lists.label','reminders.*')
+                ->get();
+
+        return view('reminder.reminder-table',['data' => $reminder]);
     }
 
     /* Display form to create reminder auto reply */

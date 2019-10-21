@@ -58,8 +58,8 @@
                     <hr/>
                     <table class="table table-striped table-responsive" id="event-autoreply-list">
                         <thead>
-                            <th>User</th>
-                            <th>event</th>
+                            <th>Event Name</th>
+                            <th>Event URL</th>
                             <th>Days</th>
                             <th>Message</th>
                             <th>Created At</th>
@@ -70,7 +70,7 @@
                             @if($data->count() > 0)
                             @foreach($data as $row)
                                 <tr>
-                                    <td>{{$row->user_id}}</td>
+                                    <td>{{$row->label}}</td>
                                     <td>{{$row->name}}</td>
                                     <td>{{$row->days}}</td>
                                     <td class="wraptext">
@@ -110,41 +110,20 @@
                     <h4>Event Schedule</h4>
                     <table class="table table-striped table-responsive" id="event-list">
                         <thead>
-                            <th>User</th>
                             <th>Event Name</th>
+                            <th>Event URL</th>
                             <th>Event Date</th>
-                            <th>Amount Days to Send</th>
-                            <th>Sending Hour</th>
-                            <th>Message</th>
-                            <th>Created At</th>
-                            <th>Updated At</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
                             @if($event->count() > 0)
                             @foreach($event as $rows)
                                 <tr>
-                                    <td>{{$rows->user_id}}</td>
+                                    <td>{{$rows->label}}</td>
                                     <td>{{$rows->name}}</td>
                                     <td>{{$rows->event_date}}</td>
-                                    <td>{{$rows->days}}</td>
-                                    <td>{{$rows->hour_time}}</td>
-                                    <td class="wraptext">
-                                        <span class="get-text-{{$rows->id}}">{{$rows->message}}</span>
-                                        <div><small><a id="{{$rows->id}}" class="display_popup">Read More | Edit</a></small></div>
-                                    </td>
-                                    <td>{{$rows->created_at}}</td>
-                                    <td>{{$rows->updated_at}}</td>
                                     <td>
-                                        <a href="{{url('eventstatus/'.$rows->id.'/'.$rows->status.'')}}" class="btn btn-primary btn-sm"> @if($rows->status == 0)
-                                            Run
-                                        @else
-                                            Pause
-                                        @endif</a>
-                                        <!-- edit button -->
-                                        <div class="mt-1"><a class="btn btn-warning btn-sm edit-col @if($rows->status == 1) disabled @endif" @if($rows->status == 0) id="{{$rows->id}}" @endif >Edit</a></div>
-                                        <div class="mt-1"><a class="btn btn-danger btn-sm del-col" id="{{$rows->id}}">Delete</a></div>
-                                        <div class="mt-1"><a class="btn btn-success btn-sm download-col" id="{{encrypt($rows->list_id)}}">Download CSV</a></div> 
+                                        <div class="mt-1"><a id="{{$rows->list_id}}" class="btn btn-info btn-sm view-event">View Event</a></div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -161,6 +140,24 @@
     </div>
 <!-- end container -->   
 </div>
+
+<!-- Modal Event total -->
+  <div class="modal fade" id="eventTotal" role="dialog">
+    <div class="modal-dialog" style="max-width : 1024px">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4>Event List</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+           <span id="event-table"></span>
+        </div>
+      </div>
+      
+    </div>
+  </div>
 
  <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
@@ -286,6 +283,7 @@
         updateEventSchedule();
         delEvent();
         csvEvent();
+        viewEvent();
     });
 
     /* Datetimepicker */
@@ -334,6 +332,25 @@
             });
         });
       }
+
+    function viewEvent()
+    {
+        $("body").on("click",".view-event",function(){
+            var id = $(this).attr('id');
+            $("#eventTotal").modal();
+            $.ajax({
+                type : 'GET',
+                url : '{{route("eventlist")}}',
+                data : {'listid':id},
+                dataType : 'html',
+                success : function(result)
+                {
+                   $("#event-table").html(result);
+                }
+            })
+
+        });
+    }  
 
     function updateEventSchedule()
     {

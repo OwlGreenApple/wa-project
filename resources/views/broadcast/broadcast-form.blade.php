@@ -77,7 +77,7 @@
                                 <div class="form-check">
                                   <input class="form-check-input" name="id[]" type="checkbox" value="{{$row->id}}">
                                   <label class="form-check-label" for="{{$row->id}}">
-                                    {{$row->name}}
+                                    {{$row->label}}
                                   </label>
                                 </div>
                                  @endforeach

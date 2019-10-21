@@ -30,15 +30,29 @@ class EventController extends Controller
     	$id = Auth::id();
     	$eventautoreply = Reminder::where([['reminders.user_id',$id],['reminders.days',0],['reminders.hour_time','=',null],['lists.is_event','=',1]])
     			->join('lists','reminders.list_id','=','lists.id')
-    			->select('lists.name','reminders.*')
+    			->select('lists.name','lists.label','reminders.*')
     			->get();
 
         $event = Reminder::where([['reminders.user_id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])
                 ->join('lists','reminders.list_id','=','lists.id')
-                ->select('lists.name','lists.event_date','reminders.*')
+                ->select('lists.name','lists.event_date','lists.label','reminders.*')
+                ->groupBy('lists.name')
                 ->get();
 
     	return view('event.event',['data'=>$eventautoreply,'event'=>$event]);
+    }
+
+     public function displayEventList(Request $request)
+    {
+        $data = array();
+        $id = Auth::id();
+        $listid = $request->listid;
+        $event = Reminder::where([['reminders.list_id','=',$listid],['reminders.user_id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])
+                ->join('lists','reminders.list_id','=','lists.id')
+                ->select('lists.name','lists.event_date','lists.label','reminders.*')
+                ->get();
+
+        return view('event.event-table',['event' => $event]);
     }
 
     public function eventAutoReply(){

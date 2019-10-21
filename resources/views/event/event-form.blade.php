@@ -70,7 +70,7 @@
                               <select class="form-control" name="list_id" id="display-template">
                                   @if($data->count() > 0)
                                     @foreach($data as $row)
-                                      <option value="{{$row->id}}">{{$row->name}}</option>
+                                      <option value="{{$row->id}}">{{$row->label}}</option>
                                     @endforeach
                                   @endif
                                 </select>

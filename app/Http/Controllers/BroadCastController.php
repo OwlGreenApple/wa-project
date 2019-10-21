@@ -21,11 +21,19 @@ class BroadCastController extends Controller
 
     public function index(){
     	$id = Auth::id();
-    	$list = BroadCast::where('broad_casts.user_id',$id)
+
+        #broadcast reminder
+    	$broadcast_reminder = BroadCast::where([['broad_casts.user_id',$id],['lists.is_event','=',0]])
     			->join('lists','broad_casts.list_id','=','lists.id')
     			->select('lists.name','broad_casts.*')
     			->get();
-    	return view('broadcast.broadcast',['data'=>$list]);
+
+        #broadcast event
+        $broadcast_event = BroadCast::where([['broad_casts.user_id',$id],['lists.is_event','=',1]])
+                ->join('lists','broad_casts.list_id','=','lists.id')
+                ->select('lists.name','broad_casts.*')
+                ->get();
+    	return view('broadcast.broadcast',['data'=>$broadcast_reminder,'event'=>$broadcast_event]);
     }
 
     /* Broadcast form reminder */
@@ -167,12 +175,21 @@ class BroadCastController extends Controller
     /* Display broadcast customer page */
     public function displayBroadCastCustomer(){
     	$id_user = Auth::id();
-    	$broadcastcustomer = BroadCastCustomers::where('broad_cast_customers.user_id','=',$id_user)
+
+        #broadcast reminder
+    	$broadcastreminder = BroadCastCustomers::where([['broad_cast_customers.user_id','=',$id_user],['lists.is_event','=',0]])
     						->join('lists','lists.id','=','broad_cast_customers.list_id')
     						->rightJoin('customers','customers.id','=','broad_cast_customers.customer_id')
     						->select('lists.name','broad_cast_customers.*','customers.wa_number')
     						->get();
-    	return view('broadcast.broadcast-customer',['data'=>$broadcastcustomer]);
+
+        #broadcast event
+        $broadcastevent = BroadCastCustomers::where([['broad_cast_customers.user_id','=',$id_user],['lists.is_event','=',1]])
+                            ->join('lists','lists.id','=','broad_cast_customers.list_id')
+                            ->rightJoin('customers','customers.id','=','broad_cast_customers.customer_id')
+                            ->select('lists.name','broad_cast_customers.*','customers.wa_number')
+                            ->get();
+    	return view('broadcast.broadcast-customer',['data'=>$broadcastreminder, 'event'=>$broadcastevent]);
     }
 
 /* end class broadcast controller */    	

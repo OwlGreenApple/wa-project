@@ -94,6 +94,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 	/* Reminder */
 	Route::get('reminder','ReminderController@index')->name('reminder'); 
+	Route::get('reminderlist','ReminderController@displayReminderList')->name('reminderlist'); 
 	// form to create reminder
 	Route::get('reminderform','ReminderController@reminderForm')->name('reminderform'); 
 	// set reminder into database
@@ -114,6 +115,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 	/* Event */
 	Route::get('event','EventController@index')->name('event');
+	Route::get('eventlist','EventController@displayEventList')->name('eventlist');
 	# auto reply event
 	Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
 	Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');

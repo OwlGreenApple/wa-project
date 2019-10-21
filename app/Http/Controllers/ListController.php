@@ -487,7 +487,9 @@ class ListController extends Controller
 
     /* Update List content */
     public function updateListContent(Request $request){
+        $userid = Auth::id();
         $id = $request->id;
+        $list_label = $request->list_label;
         $date_event = $request->date_event;
         $editor = $request->editor;
         $pixel = $request->pixel;
@@ -496,8 +498,10 @@ class ListController extends Controller
         $dropfields = $request->dropfields;
         $additional = null;
         $additionaldropdown = null;
+        $data['additionalerror'] = false;
 
-        $lists = UserList::where('id',$id)->update([
+        $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
+            'label'=>$list_label,
             'event_date'=>$date_event,
             'content'=> $editor,
             'pixel_text'=> $pixel,
@@ -531,14 +535,17 @@ class ListController extends Controller
         } 
         else if($additional == false)
         {
+            $data['additionalerror'] = true;
             $data['message'] = 'Error! Unable to update field';
         } 
         else if($additionaldropdown == false)
         {
+            $data['additionalerror'] = true;
             $data['message'] = 'Error! Unable to update dropdown field';
         }
         else 
         {
+            $data['additionalerror'] = true;
             $data['message'] = 'Error! Data failed to update';
         }
         return response()->json($data);
