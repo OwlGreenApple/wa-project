@@ -243,16 +243,19 @@
 <script type="text/javascript">
   /* CKEditor */
     CKEDITOR.replace( 'editor1',{
+        allowedContent: true,
         filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
         filebrowserUploadUrl: "{{ route('ckupload') }}",
-        extraPlugins: ['uploadimage','colorbutton','justify','image2','font'],
+        extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
         removePlugins : 'image',
     });
 
     CKEDITOR.editorConfig = function( config ) {
-        config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font';
+        config.extraAllowedContent = true;
+        config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font','videoembed';
         config.removePlugins = 'image';
     };
+
 
     var limit = 'You only can create 5 inputs';
 
