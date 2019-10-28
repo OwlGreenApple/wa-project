@@ -58,18 +58,7 @@
     border-color: #edf2ff;
 }
 
-@media(max-width: 1024px)
-{
-	img {
-		height : auto !important;
-		width  : 100% !important;
-	}
-
-	iframe{
-		width  :100%;
-		height  : auto;
-	}
-}
+/* media */
 
 @media(min-width : 768px)
 {
@@ -77,4 +66,34 @@
 	{
 		width : 52px;
 	}
+}
+
+@media(min-width : 240px) and (max-width : 360px)
+{
+	iframe{
+		width  :100%;
+		height  : auto;
+	}
+}
+
+@media(min-width : 361px) and (max-width : 414px)
+{
+	iframe{
+		width  : 100%;
+		height  : 168px;
+	}
+}
+
+@media(min-width : 415px) and (max-width: 1024px)
+{
+	img {
+		height : auto !important;
+		width  : 100% !important;
+	}
+
+	iframe{
+		width : 100%;
+		height  : 270px;
+	}
+
 }
