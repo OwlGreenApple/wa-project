@@ -101,6 +101,7 @@
                 <span class="error event_date"></span>
             </div>
 
+            <!--
              <div class="form-group">
                 <label><b>Create input additional</b></label>
                 <div class="col-md-6 row">
@@ -118,6 +119,7 @@
                   <span id="additional"></span>
                   <button id="cid" type="button" class="btn btn-primary btn-sm">Save</button>
             </div> 
+            -->
 
             <div class="form-group">
                <label><b>Page Header</b></label>
@@ -136,7 +138,7 @@
             
             <input type="hidden" name="idlist"/>
             <input type="hidden" name="page_position"/>
-            <button type="submit" class="btn btn-default">Edit List</button>
+            <button type="submit" class="btn btn-default">Save</button>
          </form>
       </div>
     </div>
@@ -207,14 +209,16 @@
 <script type="text/javascript">
   /* CKEditor */
     CKEDITOR.replace( 'editor1',{
+        allowedContent: true,
         filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
         filebrowserUploadUrl: "{{ route('ckupload') }}",
-        extraPlugins: ['uploadimage','colorbutton','justify','image2','font'],
+        extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
         removePlugins : 'image',
     });
 
     CKEDITOR.editorConfig = function( config ) {
-        config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font';
+        config.extraAllowedContent = true;
+        config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font','videoembed';
         config.removePlugins = 'image';
     };
 
@@ -640,7 +644,7 @@
                 dataType : "json",
                 success : function(result){
                    alert(result.message);
-                   table();
+                   //table();
                    /*$("#user-list").dataTable({
                         "pageLength":5,
                         "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
