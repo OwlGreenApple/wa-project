@@ -103,6 +103,9 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('templates')) ? 'active' : '' }}" href="{{ route('templates') }}">Template</a>
+                            </li> 
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('devices')) ? 'active' : '' }}" href="{{ route('devices') }}">Devices</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -134,7 +137,7 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            $(".alert").delay(5000).fadeOut(3000);
+            $(".alert-success,.alert-warning,.alert-danger").delay(5000).fadeOut(3000);
         });
     </script>
 

@@ -21,7 +21,7 @@
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet">
 
-    <?php echo $pixel;?>
+    {!! $pixel !!}
      
 </head>
 <body>
@@ -42,7 +42,8 @@
             <div class="card">
     
                 <div class="col-md-12">
-                    <?php echo $content;?>
+                    {!! $content !!}
+
                 </div>
 
                 <div class="card-body">

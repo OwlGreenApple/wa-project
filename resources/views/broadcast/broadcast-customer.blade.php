@@ -20,17 +20,18 @@
 </div>
 <!-- end navbar -->
 
+<!-- Broadcast customer reminder -->
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header"><b>Broadcast Customer's List</b></div>
+                <div class="card-header"><h5><b>Broadcast Customer Reminder</b></h5></div>
 
                 <div class="card-body table-responsive">
                     <table class="table table-striped" id="broadcast-customer">
                         <thead>
-                            <th>Product Name</th>
-                            <th>Broadcast ID</th>
+                            <th>List Name</th>
+                            <th>List URL</th>
                             <th>Customer WA Number</th>
                             <th>Message</th>
                             <th>Created</th>
@@ -38,11 +39,11 @@
                             <th>Send Status</th>
                         </thead>
                         <tbody>
-                            @if(!is_null($data))
+                            @if($data->count() > 0)
                             @foreach($data as $row)
                                 <tr>
+                                    <td>{{$row->label}}</td>
                                     <td>{{$row->name}}</td>
-                                    <td>{{$row->broadcast_id}}</td>
                                     <td>{{$row->wa_number}}</td>
                                     <td class="wraptext">
                                         <span class="get-text-{{$row->id}}">
@@ -67,8 +68,65 @@
                                     </td>
                                 </tr>
                             @endforeach
-                            @else
-                                'No Data'
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+                <!-- end card-body -->  
+            </div>
+        </div>
+    </div>
+<!-- end container -->   
+</div>
+
+<!-- Broadcast customer event -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header"><h5><b>Broadcast Customer Event</b></h5></div>
+
+                <div class="card-body table-responsive">
+                    <table class="table table-striped" id="broadcast-event">
+                        <thead>
+                            <th>List Name</th>
+                            <th>List URL</th>
+                            <th>Customer WA Number</th>
+                            <th>Message</th>
+                            <th>Created</th>
+                            <th>Updated</th>
+                            <th>Send Status</th>
+                        </thead>
+                        <tbody>
+                            @if($event->count() > 0)
+                            @foreach($event as $rows)
+                                <tr>
+                                    <td>{{$rows->label}}</td>
+                                    <td>{{$rows->name}}</td>
+                                    <td>{{$rows->wa_number}}</td>
+                                    <td class="wraptext">
+                                        <span class="get-text-{{$rows->id}}">
+                                            {{$rows->message}}
+                                        </span>
+                                        <div><small>
+                                            <a id="{{$rows->id}}" class="display_popup">Read More</a>
+                                        </small></div>
+                                    </td>
+                                    <td>{{$rows->created_at}}</td>
+                                    <td>{{$rows->updated_at}}</td>
+                                    <td>
+                                        @if($rows->status == 0)
+                                            Pending
+                                        @elseif($rows->status == 1)
+                                            <span class="text-warning">Queue</span>
+                                        @elseif($rows->status == 2)
+                                            <span class="text-success">Sent</span> 
+                                        @elseif($rows->status == 5)
+                                            <span class="text-danger">Failed</span>    
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
                             @endif
                         </tbody>
                     </table>
@@ -108,9 +166,9 @@
     });
 
      function table(){
-        $("#broadcast-customer").dataTable({
-            'pageLength':5,
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        $("#broadcast-customer, #broadcast-event").dataTable({
+            'pageLength':10,
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         });
     }
 

@@ -27,7 +27,7 @@ Route::get('justcarbon','EventController@JUSTCARBON');
 Auth::routes();
 /* User Customer */
 
-Route::get('/home', 'HomeController@index')->name('home');//home.blade
+Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');//home.blade
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
 Route::group(['middleware'=>['auth','web','is_admin']],function(){
@@ -38,6 +38,29 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 });
 
 Route::group(['middleware'=>['auth','web']],function(){
+	Route::get('tesdevice','DeviceController@test')->name('tesdevice');
+
+	/* Create Device */
+	Route::get('registerdevice','CreateDeviceController@index')->name('registerdevice');
+	Route::post('createdevice', 'CreateDeviceController@createDevice')->middleware('checkdevicename')->name('createdevice');
+	Route::get('deviceauthorize', 'CreateDeviceController@deviceAuthorize');
+
+	Route::get('devicepackage','CreateDeviceController@devicePackage')->name('devicepackage');
+	Route::get('devicecheckout','CreateDeviceController@checkout')->name('devicecheckout');
+	Route::get('thanks','CreateDeviceController@thankYou')->name('thanks');
+	#delete if not needed anymore
+	Route::get('temporary','CreateDeviceController@temporary')->name('temporary');
+	//Route::get('testcurl','CreateDeviceController@testcurl')->name('testcurl');
+	#delete if not needed anymore
+
+	/* Device status and profile */
+	Route::get('devices','DeviceController@deviceList')->name('devices');
+	Route::get('authorize/{device_id}', 'DeviceController@getScanBarcodeAuthorize');
+	Route::get('scan', 'DeviceController@getScanBarcodeChangePhone')->name('scan');
+	Route::get('devicedetail/{device_id}', 'DeviceController@getDetailDevice')->name('devicedetail');
+	Route::get('devicestatus/{device_id}', 'DeviceController@getStatusDevice');
+	Route::post('updatenumber', 'DeviceController@updateNumber')->name('updatenumber');
+
 	/* Lists */
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
 	Route::get('createlist','ListController@listForm')->name('createlist');
@@ -45,10 +68,12 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('userlist','ListController@userList')->name('userlist');
 	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
 	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');
-	Route::post('updatelistcontent','ListController@updateListContent')->name('updatelistcontent');
+	Route::post('updatelistcontent','ListController@updateListContent')->middleware('checkadditional')->name('updatelistcontent');
 	Route::get('deletelistcontent','ListController@delListContent')->name('deletelistcontent');
 	Route::get('editdropfields','ListController@editDropfields')->name('editdropfields');
 	Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
+	Route::post('insertfields','ListController@insertFields')->name('insertfields');
+	Route::post('insertdropdown','ListController@insertDropdown')->name('insertdropdown');
 
 	/* Additional */
 	Route::get('delfield','ListController@delField')->name('delfield');
@@ -69,6 +94,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 	/* Reminder */
 	Route::get('reminder','ReminderController@index')->name('reminder'); 
+	Route::get('reminderlist','ReminderController@displayReminderList')->name('reminderlist'); 
 	// form to create reminder
 	Route::get('reminderform','ReminderController@reminderForm')->name('reminderform'); 
 	// set reminder into database
@@ -89,6 +115,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 	/* Event */
 	Route::get('event','EventController@index')->name('event');
+	Route::get('eventlist','EventController@displayEventList')->name('eventlist');
 	# auto reply event
 	Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
 	Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');

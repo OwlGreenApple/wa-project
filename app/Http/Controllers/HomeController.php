@@ -69,4 +69,6 @@ class HomeController extends Controller
             return redirect('home')->with('message','Error!,Your data failed to update');
         }
     }
+
+/* end class HomeController */
 }

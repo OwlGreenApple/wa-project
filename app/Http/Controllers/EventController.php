@@ -30,15 +30,29 @@ class EventController extends Controller
     	$id = Auth::id();
     	$eventautoreply = Reminder::where([['reminders.user_id',$id],['reminders.days',0],['reminders.hour_time','=',null],['lists.is_event','=',1]])
     			->join('lists','reminders.list_id','=','lists.id')
-    			->select('lists.name','reminders.*')
+    			->select('lists.name','lists.label','reminders.*')
     			->get();
 
         $event = Reminder::where([['reminders.user_id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])
                 ->join('lists','reminders.list_id','=','lists.id')
-                ->select('lists.name','lists.event_date','reminders.*')
+                ->select('lists.name','lists.event_date','lists.label','reminders.*')
+                ->groupBy('lists.name')
                 ->get();
 
     	return view('event.event',['data'=>$eventautoreply,'event'=>$event]);
+    }
+
+     public function displayEventList(Request $request)
+    {
+        $data = array();
+        $id = Auth::id();
+        $listid = $request->listid;
+        $event = Reminder::where([['reminders.list_id','=',$listid],['reminders.user_id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])
+                ->join('lists','reminders.list_id','=','lists.id')
+                ->select('lists.name','lists.event_date','lists.label','reminders.*')
+                ->get();
+
+        return view('event.event-table',['event' => $event]);
     }
 
     public function eventAutoReply(){
@@ -100,7 +114,6 @@ class EventController extends Controller
 
     public function addEvent(Request $request){
         $user_id = Auth::id();
-        $sender = Sender::where('user_id',$user_id)->first();
 
         if($request->schedule == 0){
             $request->day = 0;
@@ -119,6 +132,16 @@ class EventController extends Controller
 
         $validator = Validator::make($request->all(),$rules);
         $err = $validator->errors();
+
+        #Sender
+        $listdata = UserList::where('id',$request->list_id)->select('wa_number')->first();
+        $devicenumber = $listdata->wa_number;
+        $sender = Sender::where([['user_id',$user_id],['wa_number','=',$devicenumber]])->first();
+
+        if(is_null($sender))
+        {
+            return redirect('eventform')->with('errorsender','Sorry, this list phone number is not available');
+        }
 
         /* Validator */
         if($validator->fails()){

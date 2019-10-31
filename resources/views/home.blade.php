@@ -71,10 +71,55 @@
 
 -->
 
+<!-- Modal Edit Dropdown -->
+  <div class="modal fade child-modal" id="createNew" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2">
+                    <input class="btn btn-warning btn-sm add-edit-option" type="button" value="Add Option" />
+                </div>
+               
+                <label>Option List</label>
+                <form id="optionform">
+                    <div id="editoptions" class="form-group row">
+                       <!-- display input here -->
+                    </div> 
+
+                    <input type="hidden" name="parent_id"/>
+                    <input type="hidden" name="list_id"/>
+                    <div class="form-group">
+                       <button id="edp" class="btn btn-success btn-sm">Edit Dropdown</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
 <div class="container mb-2">
     <!-- Profile List -->
     <div class="row justify-content-center">
         <div class="col-md-8">
+            <div class="card">
+                 @if (session('createnew'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('createnew') }}
+                    </div>
+                @endif
+                <div class="card-header"><b>Create New</b></div>
+
+                <div class="card-body">
+                    <h4>Welcome To ActivWA</h4>
+                    <a href="{{route('registerdevice')}}" class="btn btn-primary">Create New</a>
+                </div>
+            </div><!-- end card -->
+
             <div class="card">
                  @if (session('message'))
                     <div class="alert alert-success" role="alert">
@@ -115,7 +160,8 @@
                      <!-- end form -->
 
                 </div>
-            </div>
+            </div><!-- end card -->
+
         </div>
     </div>
 <!-- end container -->

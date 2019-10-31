@@ -228,7 +228,8 @@
 
 <script type="text/javascript">
     /* CKEditor */
-    CKEDITOR.replace( 'editor1',{
+     CKEDITOR.replace( 'editor1',{
+        allowedContent: true,
         allowedContent: true,
         filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
         filebrowserUploadUrl: "{{ route('ckupload') }}",
@@ -242,6 +243,7 @@
         config.removePlugins = 'image';
     };
 
+
     $(document).ready(function(){
         displayEventField();
         openMenu();
@@ -252,6 +254,7 @@
         delDrop();
         addDropdownToField();
         displayDropdownMenu();
+        delOption();
     });
 
     function saveInputs()
@@ -331,7 +334,7 @@
         $("body").on("click",".add-option",function(){
             var flen = $(".fields").length;
             var len = $(".doption").length;
-            var dropdown = '<input class="form-control mb-2 col-sm-8 float-left fields doption dpos-'+len+'" /><a id="dpos-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
+            var dropdown = '<input name="doption[]" class="form-control mb-2 col-sm-8 float-left doption dpos-'+len+'" /><a id="dpos-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
 
             if(flen < 5){
                 $("#appendoption").append(dropdown);
@@ -339,6 +342,16 @@
                 alert('You only can create 5 inputs');
             }
         });
+    }
+
+
+    function delOption()
+    {
+      $("body").on("click",".deloption",function(){
+          var opt = $(this).attr('id');
+          $('#'+opt).remove();
+          $('.'+opt).remove();
+      });
     }
 
     function addDropdownToField()
@@ -356,6 +369,7 @@
             if(len < 5)
             {
                 $("#append").append(box_html);
+                $(".doption, .deloption").remove();
             }
             else 
             {

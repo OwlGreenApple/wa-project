@@ -33,6 +33,12 @@
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
                         </div>
+                    @endif 
+
+                    @if (session('errorsender'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('errorsender') }}
+                        </div>
                     @endif
 
                     <form id="get_template">
@@ -64,7 +70,7 @@
                               <select class="form-control" name="list_id" id="display-template">
                                   @if($data->count() > 0)
                                     @foreach($data as $row)
-                                      <option value="{{$row->id}}">{{$row->name}}</option>
+                                      <option value="{{$row->id}}">{{$row->label}}</option>
                                     @endforeach
                                   @endif
                                 </select>

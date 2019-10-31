@@ -29,38 +29,69 @@
 
                 <div class="card-body">
 
-                 <div class="mb-2 row">
-                    <div class="col-md-3">
-                        <a class="btn btn-success btn-sm" href="{{route('broadcastform')}}">Create Broadcast Reminder</a>
-                    </div> 
+                     <div class="mb-2 row">
+                        <div class="col-md-3">
+                            <a class="btn btn-success btn-sm" href="{{route('broadcastform')}}">Create Broadcast Reminder</a>
+                        </div> 
 
-                    <div class="col-md-2">
-                        <a class="btn btn-success btn-sm" href="{{route('broadcasteventform')}}">Create Broadcast Event</a>
-                    </div>
-                 </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-success btn-sm" href="{{route('broadcasteventform')}}">Create Broadcast Event</a>
+                        </div>
+                     </div>
 
                 <hr/>
-
+                    <h5> Broadcast Event </h5>
+                    <!-- Broadcast Event -->
                     <table class="table table-striped table-responsive" id="broadcast-list">
                         <thead>
-                            <th>User</th>
-                            <th>lists</th>
+                            <th>lists Name</th>
+                            <th>lists URL</th>
                             <th>Message</th>
                             <th>Created At</th>
                             <th>Updated At</th>
                         </thead>
                         <tbody>
-                            @if(!is_null($data))
-                            @foreach($data as $row)
+                            @if($data->count() > 0)
+                                @foreach($data as $row)
+                                    <tr>
+                                        <td>{{$row->label}}</td>
+                                        <td>{{$row->name}}</td>
+                                        <td class="wraptext">
+                                            <span class="get-text-{{$row->id}}">{{$row->message}}</span>
+                                            <div><small><a id="{{$row->id}}" class="display_popup">Read More</a></small></div>
+                                        </td>
+                                        <td>{{$row->created_at}}</td>
+                                        <td>{{$row->updated_at}}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+
+                    <hr/>
+
+                    <h5> Broadcast Reminder </h5>
+                    <!-- Broadcast Reminder -->
+                    <table class="table table-striped table-responsive" id="broadcast-event">
+                        <thead>
+                            <th>lists Name</th>
+                            <th>lists URL</th>
+                            <th>Message</th>
+                            <th>Created At</th>
+                            <th>Updated At</th>
+                        </thead>
+                        <tbody>
+                            @if($event->count() > 0)
+                            @foreach($event as $rows)
                                 <tr>
-                                    <td>{{$row->user_id}}</td>
-                                    <td>{{$row->name}}</td>
+                                    <td>{{$rows->label}}</td>
+                                    <td>{{$rows->name}}</td>
                                     <td class="wraptext">
-                                        <span class="get-text-{{$row->id}}">{{$row->message}}</span>
-                                        <div><small><a id="{{$row->id}}" class="display_popup">Read More</a></small></div>
+                                        <span class="get-text-{{$rows->id}}">{{$rows->message}}</span>
+                                        <div><small><a id="{{$rows->id}}" class="display_popup">Read More</a></small></div>
                                     </td>
-                                    <td>{{$row->created_at}}</td>
-                                    <td>{{$row->updated_at}}</td>
+                                    <td>{{$rows->created_at}}</td>
+                                    <td>{{$rows->updated_at}}</td>
                                 </tr>
                             @endforeach
                             @else
@@ -103,9 +134,9 @@
     });
 
     function table(){
-        $("#broadcast-list").dataTable({
-            'pageLength':5,
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        $("#broadcast-list, #broadcast-event").dataTable({
+            'pageLength':10,
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         });
     }
 
