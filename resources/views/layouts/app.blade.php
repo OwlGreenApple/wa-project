@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Waku') }}</title>
+    <title>{{ config('app.name', 'Activwa') }}</title>
 
    <!-- Scripts -->
     <script src="{{ asset('/assets/js/jquery-3.2.1.min.js') }}"></script>
@@ -20,8 +20,11 @@
 
     <!-- Styles -->
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet">
+    <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet"> 
     <link href="{{ asset('/assets/datetimepicker/jquery.datetimepicker.css') }}" rel="stylesheet">
+
+    <!-- Font Awesome 4.7 -->
+    <link href="{{ asset('/assets/Font-Awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet">
 
      <!-- Emoji -->
     <link href="{{ asset('/assets/emoji/css/emojionearea.min.css') }}" rel="stylesheet"> 
@@ -30,7 +33,7 @@
 
     <!-- Data Table -->
     <link href="{{ asset('/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
-    <script type="text/javascript" src="{{ asset('/assets/DataTables/datatables.min.js') }}"></script>
+    <script defer type="text/javascript" src="{{ asset('/assets/DataTables/datatables.min.js') }}"></script>
 
     <!-- CKEditor -->
     <link href="{{ asset('/assets/ckeditor/contents.css') }}" rel="stylesheet" />
@@ -38,6 +41,18 @@
 
     <!-- CKFinder -->
     <script type="text/javascript" src="{{ asset('/assets/ckfinder/ckfinder.js') }}"></script>
+
+    <!-- Datetimepicker -->
+    <link href="{{ asset('/assets/datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="{{ asset('/assets/datetimepicker/js/moment.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/assets/datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script> 
+
+    <!-- MDtimepicker -->
+    <link href="{{ asset('/assets/MDTimePicker/mdtimepicker.min.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="{{ asset('/assets/MDTimePicker/mdtimepicker.min.js') }}"></script>
+
+    <!-- Clipboard -->
+    <script type="text/javascript" src="{{ asset('/assets/clipboard.js-master/clipboard.min.js') }}"></script> 
 
 </head>
 <body>
@@ -75,13 +90,16 @@
                                 <a class="nav-link {{ (request()->is('home')) ? 'active' : '' }}" href="{{ route('home') }}">Home</a>
                             </li> 
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('userlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists</a>
+                                <a class="nav-link {{ (Request::segment(1) == 'usercustomer') || (request()->is('userlist')) || (request()->is('createlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists & Events</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('broadcast')||request()->is('broadcast_customer')||request()->is('broadcastform')) ? 'active' : '' }}" href="{{ route('broadcast') }}">Broadcast</a>
+                                <a class="nav-link {{ (request()->is('broadcast')||request()->is('broadcast_customer')||request()->is('broadcastform')||request()->is('broadcasteventform')) ? 'active' : '' }}" href="{{ route('broadcast') }}">Broadcast</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder</a>
+                                <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')||request()->is('reminderautoreply')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder List</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('event')||request()->is('eventform')||request()->is('eventcustomer')||request()->is('eventautoreply')) ? 'active' : '' }}" href="{{ route('event') }}">Reminder Event</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('templates')) ? 'active' : '' }}" href="{{ route('templates') }}">Template</a>
@@ -116,7 +134,7 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            $(".alert").delay(2000).fadeOut(3000);
+            $(".alert").delay(5000).fadeOut(3000);
         });
     </script>
 

@@ -27,12 +27,18 @@
         <div class="col-md-8">
 
             <div class="card">
-                <div class="card-header"><b>Create BroadCast</b></div>
+                <div class="card-header"><b>Create BroadCast Reminder</b></div>
 
                 <div class="card-body">
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
+                         </div>   
+                    @endif 
+
+                    @if (session('status_warning'))
+                        <div class="alert alert-warning" role="alert">
+                            {{ session('status_warning') }}
                          </div>   
                     @endif 
 
@@ -94,13 +100,15 @@
                                      </div>   
                                  @endif 
                             </div>
+                            <div class="col-md-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>  
                         </div> 
 
+                         <input type="hidden" name="is_event" value="{{encrypt(0)}}"/>
                         <!-- submit button -->
                          <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                   Create Broadcast
+                                   Create Broadcast Reminder
                                 </button>
                             </div>
                         </div>
@@ -120,6 +128,18 @@
         pickerPosition: "right",
         mainPathFolder : "{{url('')}}",
     });
+
+    $(function(){
+        $('#tagname').on('click', function(){
+            var tag = '{name}';
+            var cursorPos = $('#divInput-description-post').prop('selectionStart');
+            var v = $('#divInput-description-post').val();
+            var textBefore = v.substring(0,  cursorPos );
+            var textAfter  = v.substring( cursorPos, v.length );
+            $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(textBefore+ tag +textAfter );
+        });
+     });
+
 </script>
 
 <script type="text/javascript">

@@ -10,16 +10,93 @@
    text-overflow: ellipsis;
 }
 
-.display_popup {
+.display_popup, small {
 	color : #3490dc !important;
 	cursor : pointer;
 }
 
-.message-text {
+.message-text, .copy {
 	color : #428bca !important;
 	cursor : pointer;
 }
 
 .nav-link.active {
 	color : #428bca !important;
+}
+
+.marker {
+	background-color : transparent !important;
+}
+
+.ck-browser {
+	width : 100%;
+	max-width : 200px;
+	cursor : pointer;
+	border : 1px solid transparent;
+}
+
+.ck-browser:hover {
+	border : 1px solid #999;
+}
+
+.ck-border {
+	padding : 15px;
+	border : 1px solid #dcdcdc;
+}
+
+#append, #appendoption, #editoptions {
+	padding : 15px;	
+}
+
+.hiddendropdown 
+{
+	display : none;
+}
+
+.dropdownopt {
+	background-color: #edf2ff;
+    border-color: #edf2ff;
+}
+
+/* media */
+
+@media(min-width : 768px)
+{
+	input[name='code_country']
+	{
+		width : 52px;
+	}
+}
+
+@media(min-width : 240px) and (max-width : 360px)
+{
+	iframe{
+		width  :100%;
+		height  : auto;
+	}
+}
+
+@media(min-width : 361px) and (max-width : 414px)
+{
+	iframe{
+		width  : 100%;
+		height  : 168px;
+	}
+}
+
+@media(min-width : 415px) and (max-width: 1024px)
+{
+	iframe{
+		width : 100%;
+		height  : 270px;
+	}
+
+}
+
+@media(max-width: 1024px)
+{
+	img {
+		height : auto !important;
+		width  : 100% !important;
+	}
 }

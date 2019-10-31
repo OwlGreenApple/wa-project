@@ -5,7 +5,10 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 use App\UserList;
+use App\Sender;
+use App\Rules\CheckDateEvent;
 
 class CheckUserLists
 {
@@ -19,16 +22,83 @@ class CheckUserLists
     public function handle($request, Closure $next)
     {
 
-        $rules = array(
-            'name'=>['required','max:32','unique:lists,name']
-        );
-        $validator = Validator::make($request->all(),$rules);
-        $err = $validator->errors();
-        if($validator->fails()){
-            return redirect('home')->with('error',$err->first('name'));
+        $wa_number = $request->wa_number;
+        $is_event = $request->category;
+
+        if(isset($request->date_event)){
+            $date_event = $request->date_event;
         } else {
-            return $next($request);
+            $date_event = null;
         }
         
+        $today = Carbon::now()->format('Y-m-d h:i');
+
+        if(!isset($request->wa_number)){
+            return redirect('createlist')->with('error_number','Please, register your WhatsApp Number first');
+        }
+
+        if(empty($request->label_name)){
+            return redirect('createlist')->with('error_number','Column name list cannot be empty');
+        }
+
+        if(strlen($request->label_name) > 190){
+            return redirect('createlist')->with('error_number','Column name list maximum length is 190');
+        }
+
+        if($this->checkListLabel($request->label_name) == false){
+             return redirect('createlist')->with('error_number','Column name list available');
+        }
+
+        if($this->checkEvent($is_event) == false ){
+            return redirect('createlist')->with('isevent','Please do not change category value');
+        } 
+
+        $checkwa = $this->checkWANumber($wa_number);
+        if($checkwa == false ){
+            return redirect('createlist')->with('wa_check_number','Sorry, this number is not yours');
+        } 
+
+        if($is_event == 1 && empty($date_event)){
+             return redirect('createlist')->with('date_event','Please fill date for event');
+        } 
+
+        if($date_event < $today && $is_event == 1){
+            return redirect('createlist')->with('date_event','Date event cannot be less with today');
+        } 
+       
+        return $next($request);
     }
+
+    /* To prevent if user change value number of event and message */
+    private function checkEvent($is_event){
+        if($is_event == 0 || $is_event == 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /* To prevent if user use another number */
+    private function checkWANumber($wa_number){
+        $userid = Auth::id();
+        $getlist = Sender::where([['user_id',$userid],['wa_number','=',$wa_number]])->first();
+
+        if(!is_null($getlist)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function checkListLabel($label_name){
+        $userid = Auth::id();
+        $checklistname = UserList::where([['user_id',$userid],['label','=',$label_name]])->first();
+        if(is_null($checklistname))
+        {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

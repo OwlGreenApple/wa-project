@@ -17,6 +17,9 @@ class CreateListsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->string('name');
+            $table->string('wa_number');
+            $table->boolean('is_event')->default(0);
+            $table->dateTime('event_date')->nullable();
             $table->text('content')->nullable();
             $table->timestamps();
             $table->boolean('status')->default(1);

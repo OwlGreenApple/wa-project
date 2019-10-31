@@ -26,7 +26,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header"><b>Create Reminder</b></div>
+                <div class="card-header"><b>Create Reminder Schedule</b></div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -60,17 +60,17 @@
                          <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Lists Option</label>
                             <div class="col-md-6">
-                                @foreach($data as $row)
-                                <div class="form-check">
-                                  <input class="form-check-input" name="id[]" type="checkbox" value="{{$row->id}}">
-                                  <label class="form-check-label" for="{{$row->id}}">
-                                    {{$row->name}}
-                                  </label>
-                                </div>
-                                 @endforeach
-                                <!-- end check box -->
+
+                                <select class="form-control" name="list_id" id="display-template">
+                                  @if($data->count() > 0)
+                                    @foreach($data as $row)
+                                      <option value="{{$row->id}}">{{$row->name}}</option>
+                                    @endforeach
+                                  @endif
+                                </select>
+
                                  @if (session('error'))
-                                    <div class="error">{{ session('error')->first('id') }}</div>
+                                    <div class="error">{{ session('error')->first('list_id') }}</div>
                                  @endif
                             </div>
                         </div> 
@@ -83,6 +83,7 @@
                                     <div class="error">{{ session('error')->first('message') }}</div>
                                  @endif
                              </div>
+                             <div class="col-md-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>
                         </div> 
 
                          <div class="form-group row">
@@ -160,6 +161,17 @@
         pickerPosition: "right",
         mainPathFolder : "{{url('')}}",
     });
+
+     $(function(){
+        $('#tagname').on('click', function(){
+            var tag = '{name}';
+            var cursorPos = $('#divInput-description-post').prop('selectionStart');
+            var v = $('#divInput-description-post').val();
+            var textBefore = v.substring(0,  cursorPos );
+            var textAfter  = v.substring( cursorPos, v.length );
+            $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(textBefore+ tag +textAfter );
+        });
+     }); 
 </script>
 
 <script type="text/javascript">

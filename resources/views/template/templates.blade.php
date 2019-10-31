@@ -78,6 +78,7 @@
             </div> 
             <div class="form-group">
                 <label class="col-form-label text-md-right"><b>Message</b></label>
+                 <div class="mb-2"><input class="btn btn-default btn-sm" type="button" id="tag_name" value="Add Name" /></div>  
                 <textarea id="divInput-template" class="form-control" name="message"></textarea>
                 <span class="error message"></span>
             </div> 
@@ -96,7 +97,7 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Edit Template</h4>
+        <h4 class="modal-title"><h4>Edit Template</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
@@ -109,6 +110,7 @@
             </div> 
             <div class="form-group">
                 <label class="col-form-label text-md-right"><b>Message</b></label>
+                 <div class="mb-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>  
                 <textarea id="divInput-edit-template" class="form-control" name="edit_message"></textarea>
                 <span class="error edit_message"></span>
             </div> 
@@ -121,13 +123,27 @@
   </div>
 </div>
 
+
 <!-- give emoji -->
  <script type="text/javascript">
     $("#divInput-description-post, #divInput-template, #divInput-edit-template").emojioneArea({
         pickerPosition: "right",
         mainPathFolder : "{{url('')}}",
     });
+
+    $(function(){
+        $('#tag_name').on('click', function(){
+            var tag = '{name}';
+            var cursorPos = $('#divInput-template').prop('selectionStart');
+            var v = $('#divInput-template').val();
+            var textBefore = v.substring(0,  cursorPos );
+            var textAfter  = v.substring( cursorPos, v.length );
+            $('#divInput-template').emojioneArea()[0].emojioneArea.setText(textBefore+ tag +textAfter );
+        });
+     });
 </script>
+
+<script src="{{ asset('/assets/js/caret.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -140,7 +156,7 @@
 
     function table(){
         $("#datatab").dataTable({
-            'pageLength':5
+            'pageLength':10,
         });
     }
 

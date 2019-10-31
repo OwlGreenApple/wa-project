@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Encryption\DecryptException;
 use App\UserList;
 use App\BroadCast;
 use App\BroadCastCustomers;
@@ -12,6 +13,7 @@ use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
 use App\User;
+use App\Sender;
 use Session;
 
 class BroadCastController extends Controller
@@ -26,12 +28,20 @@ class BroadCastController extends Controller
     	return view('broadcast.broadcast',['data'=>$list]);
     }
 
-    /* Display broadcast data */
+    /* Broadcast form reminder */
     public function FormBroadCast(){
     	$id_user = Auth::id();
-    	$userlist = UserList::where('user_id','=',$id_user)->get();
+    	$userlist = UserList::where([['user_id','=',$id_user],['is_event','=',0]])->get();
     	$templates = Templates::where('user_id','=',$id_user)->get();
     	return view('broadcast.broadcast-form',['data'=>$userlist,'templates'=>$templates]);
+    }
+ 
+     /* Broadcast form event */
+    public function eventFormBroadCast(){
+        $id_user = Auth::id();
+        $userlist = UserList::where([['user_id','=',$id_user],['is_event','=',1]])->get();
+        $templates = Templates::where('user_id','=',$id_user)->get();
+        return view('broadcast.broadcast-event-form',['data'=>$userlist,'templates'=>$templates]);
     }
 
     /* Create broadcast list */
@@ -39,8 +49,32 @@ class BroadCastController extends Controller
     	$user_id = Auth::id();
     	$req = $request->all();
     	$message = $req['message'];
-    	$msg = array('message'=>$message);
+        $sender = Sender::where('user_id',$user_id)->first();
+        
+        #prevent user to change value is_event
+        try{
+            $is_event = decrypt($request->is_event);
+        }catch(DecryptException $e){
+            return redirect('broadcast');
+        }
 
+        #determine redirect link
+        if($is_event == 1){
+            $link = 'broadcasteventform';
+        } else {
+            $link = 'broadcastform';
+        }
+
+        #prevent user to change value list id
+        $checklist = UserList::where('is_event',$is_event)->whereIn('id',$req['id'])->select('is_event')->count();
+
+        $total_list = count($req['id']);
+
+        if($total_list !== $checklist){
+            return redirect('broadcast');
+        } 
+        //print('<pre>'.print_r($checklist,true).'</pre>');
+     
     	/* Validator to limit max message character */
     	  $rules = array(
             'id'=>['required'],
@@ -51,7 +85,7 @@ class BroadCastController extends Controller
 
     	if($validator->fails()){
     		$error = $validator->errors();
-    		return redirect('broadcastform')->with('error',$error);
+    		return redirect($link)->with('error',$error);
     	} else {
     		foreach($req['id'] as $row=>$list_id){
 	    		$broadcast = new BroadCast;
@@ -59,47 +93,72 @@ class BroadCastController extends Controller
 	    		$broadcast->list_id = $list_id;
 	    		$broadcast->message = $message;
 	    		$broadcast->save();
+                $created_date = $broadcast->created_at;
+                $broadcast_id = $broadcast->id;
 	    	}
     	}
 
     	/* if successful inserted data broadcast into database then this run */
     	if($broadcast->save() == true){
-    		
-    		foreach($req['id'] as $row=>$list_id){
-    			/* retrieve customer id */
-    			$customer = Customer::where([
-    				['list_id','=',$list_id],
-    				['status','=',1],
-    			])->get();
-    			/* retrieve broadcast id according on created at */
-    			$created_date = $broadcast->created_at;
-    			$broadcast_get_id = BroadCast::where([
-    				['list_id','=',$list_id],
-    				['created_at','=',$created_date],
-    			])->select('id')->get();
-    			/* insert into broadcast customer */
-    			foreach($customer as $col){
-    				foreach($broadcast_get_id as $id_broadcast){
-    					$broadcastcustomer = new BroadCastCustomers;
-			    		$broadcastcustomer->user_id = $user_id;
-			    		$broadcastcustomer->list_id = $list_id;
-			    		$broadcastcustomer->broadcast_id = $id_broadcast->id;
-			    		$broadcastcustomer->customer_id = $col->id;
-			    		$broadcastcustomer->message = $message;
-			    		$broadcastcustomer->save();
-    				}
-    			}
-	    	}
+            if(count($req['id']) > 1){
+                # retrieve customer id 
+                $customer = Customer::where([
+                    ['customers.user_id','=',$user_id],
+                    ['customers.status','=',1],
+                    ['broad_casts.created_at','=',$created_date],
+                ])->leftJoin('broad_casts','broad_casts.list_id','=','customers.list_id')
+                  ->rightJoin('lists','lists.id','=','customers.list_id')
+                  ->whereIn('customers.list_id', $req['id'])
+                  ->select('customers.id','broad_casts.id AS bid','lists.id AS lid')
+                  ->groupBy('customers.wa_number')
+                  ->get();
+            } else {
+                # retrieve customer id 
+                $customer = Customer::where([
+                    ['customers.user_id','=',$user_id],
+                    ['customers.status','=',1],
+                    ['customers.list_id','=',$req['id'][0]],
+                    ['broad_casts.id','=',$broadcast_id],
+                ])->join('broad_casts','broad_casts.list_id','=','customers.list_id')
+                  ->join('lists','lists.id','=','customers.list_id')
+                  ->select('customers.id','broad_casts.id AS bid','lists.id AS lid')
+                  ->get();
+            }
+
     	} else {
-    		return redirect('broadcastform')->with('status_error','Error! Unable to create broadcast');
+    		return redirect($link)->with('status_error','Error! Unable to create broadcast');
     	}
 
+        if($customer->count() > 0)
+        {
+            foreach($customer as $col){
+                $broadcastcustomer = new BroadCastCustomers;
+                $broadcastcustomer->user_id = $user_id;
+                $broadcastcustomer->list_id = $col->lid;
+                $broadcastcustomer->sender_id = $sender->id;
+                $broadcastcustomer->broadcast_id = $col->bid;
+                $broadcastcustomer->customer_id = $col->id;
+                $broadcastcustomer->message = $message;
+                $broadcastcustomer->save();
+            }
+
+            if($broadcastcustomer->save() == true){
+                $success = true;
+            } else {
+                $success = false;
+            }
+        } else {
+            $success = null;
+        }
+
     	/* if successful inserted data broadcast-customer into database then this function run */
-    	if($broadcastcustomer->save() == true){
-    		return redirect('broadcastform')->with('status','Your message has been created');
+    	if($success == true){
+          return redirect($link)->with('status','Your message has been created');
+    	} else if($success == null) {
+    		 return redirect($link)->with('status_warning','Broadcast created, but nothing to send because you have no subscribers');
     	} else {
-    		return redirect('broadcastform')->with('status_error','Error!!Your message failed to create');
-    	}
+            return redirect($link)->with('status_error','Error!!Your message failed to create');
+        }
     }
 
     /* Display broadcast customer page */

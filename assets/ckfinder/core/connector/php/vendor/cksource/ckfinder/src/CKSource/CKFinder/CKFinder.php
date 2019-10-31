@@ -644,4 +644,9 @@ class CKFinder extends Container implements HttpKernelInterface
 
         return ($full ? $request->getSchemeAndHttpHost() : '').$request->getBaseUrl();
     }
+
+
+    public function test(){
+        echo 'aaaaa';
+    }
 }

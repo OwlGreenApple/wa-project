@@ -6,6 +6,11 @@
  * For the official documentation visit https://ckeditor.com/docs/ckfinder/ckfinder3-php/
  */
 
+session_start();
+
+if(isset($_SESSION['editor_path'])){
+    $path = $_SESSION['editor_path'];
+}
 /*============================ PHP Error Reporting ====================================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/debugging.html
 
@@ -60,19 +65,6 @@ $config['images'] = array(
     )
 );
 
-/*=================================== Backends ========================================*/
-// https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_backends
-
-$config['backends'][] = array(
-    'name'         => 'default',
-    'adapter'      => 'local',
-    'baseUrl'      => '/ckfinder/userfiles/',
-//  'root'         => '', // Can be used to explicitly set the CKFinder user files directory.
-    'chmodFiles'   => 0777,
-    'chmodFolders' => 0755,
-    'filesystemEncoding' => 'UTF-8',
-);
-
 /*================================ Resource Types =====================================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_resourceTypes
 
@@ -81,8 +73,8 @@ $config['defaultResourceTypes'] = '';
 $config['resourceTypes'][] = array(
     'name'              => 'Files', // Single quotes not allowed.
     'directory'         => 'files',
-    'maxSize'           => 0,
-    'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip',
+    'maxSize'           => '5M',
+    'allowedExtensions' => 'fla,flv,gif,mov,mp4,mpeg,mpg,swf',
     'deniedExtensions'  => '',
     'backend'           => 'default'
 );
@@ -90,11 +82,27 @@ $config['resourceTypes'][] = array(
 $config['resourceTypes'][] = array(
     'name'              => 'Images',
     'directory'         => 'images',
-    'maxSize'           => 0,
-    'allowedExtensions' => 'bmp,gif,jpeg,jpg,png',
+    'maxSize'           => '1M',
+    'allowedExtensions' => 'gif,jpeg,jpg,png',
     'deniedExtensions'  => '',
     'backend'           => 'default'
 );
+
+/*=================================== Backends ========================================*/
+// https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_backends
+
+
+$config['backends'][] = array(
+    'name'         => 'default',
+    'adapter'      => 'local',
+    'baseUrl'      =>  $path,
+    //'baseUrl'      => '/ckfinder/userfiles/',
+//  'root'         => '', // Can be used to explicitly set the CKFinder user files directory.
+    'chmodFiles'   => 0777,
+    'chmodFolders' => 0755,
+    'filesystemEncoding' => 'UTF-8',
+);
+
 
 /*================================ Access Control =====================================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_roleSessionVar

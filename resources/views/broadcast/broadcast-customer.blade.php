@@ -58,11 +58,11 @@
                                         @if($row->status == 0)
                                             Pending
                                         @elseif($row->status == 1)
-                                            Queued  
+                                            <span class="text-warning">Queue</span>
                                         @elseif($row->status == 2)
-                                            Sent 
+                                            <span class="text-success">Sent</span> 
                                         @elseif($row->status == 5)
-                                            Failed    
+                                            <span class="text-danger">Failed</span>    
                                         @endif
                                     </td>
                                 </tr>
@@ -87,6 +87,7 @@
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
+            <h4>Broadcast Message</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
@@ -113,8 +114,8 @@
         });
     }
 
-     function getText(){
-        $(".display_popup").click(function(){
+    function getText(){
+        $("body").on("click",".display_popup",function(){
             $("#myModal").modal();
             var id = $(this).attr('id');
             var txt = $(".get-text-"+id).text();

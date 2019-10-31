@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\UsersImport;
 use App\User;
 
 class HomeController extends Controller
@@ -26,7 +29,28 @@ class HomeController extends Controller
      */
     public function index()
     {
+
+        session_start();
         $id = Auth::id();
+        $user_name = Auth::user()->name;
+        $folder = $user_name.'-'.$id;
+
+        /*if (env('APP_ENV') == 'local'){
+          $directory = public_path().'/ckeditor/'.$folder;
+        }
+        else {
+          $directory = 'home2/activwa/public_html/ckfinder/'.$folder;
+        }*/
+
+        $directory = public_path().'/ckeditor/'.$folder;
+
+        if(!file_exists($directory))
+        {
+            mkdir($directory, 0755,true);
+            //$path = $directory;
+            //File::makeDirectory($path, $mode = 0741, true, true);
+        }
+
         $user = User::where('id','=',$id)->first();
         return view('home',['user'=>$user]);
     }
@@ -35,8 +59,6 @@ class HomeController extends Controller
         $user = User::where('id','=',Auth::id())->update(
             [
                 'name'=> $request->name,
-                'wa_number'=>$request->wa_number,
-                'api_key'=>$request->api_key,
                 'password'=>Hash::make($request->password)
             ]
         );
