@@ -115,7 +115,6 @@
                         </div>
                         @endif     
 
-                        <!--
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right">Create input</label>
 
@@ -129,9 +128,9 @@
                         </div>
 
                         <div id="append" class="form-group row">
-                           <!-- display input here 
+                           <!-- display input here -->
                         </div> 
-                        -->
+                        
                          <div class="form-group">
                             <label>Page Header</label>
                             <div class="col-md-12">
