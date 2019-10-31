@@ -106,7 +106,6 @@
                 <span class="error event_date"></span>
             </div>
 
-            <!--
              <div class="form-group">
                 <label><b>Create input additional</b></label>
                 <div class="col-md-6 row">
@@ -122,7 +121,6 @@
                 <label><div class="error errfield"></div></label>
                 <span id="additional"></span>
             </div> 
-            -->
 
             <div class="form-group">
                <label><b>Page Header</b></label>
@@ -141,7 +139,7 @@
             
             <input type="hidden" name="idlist"/>
             <input type="hidden" name="page_position"/>
-            <button type="submit" class="btn btn-default">Save</button>
+            <button type="submit" id="btn-edit" class="btn btn-default">Save</button>
          </form>
       </div>
     </div>
@@ -485,7 +483,7 @@
                 data : data,
                 dataType : "json",
                 success : function(result){
-                   $("#btn-edit").html('Edit List');
+                   $("#btn-edit").html('Save');
                    if(result.error == undefined)
                    {
                       $(".list_label, .event_date").html('');
@@ -839,46 +837,7 @@
         });
     }
 
-    function updateEditor(){
-        $("#edit_list").submit(function(e){
-            e.preventDefault();
-             var databutton = $("input[name='page_position']").val(); // get data button position
-             databutton = parseInt(databutton) -1;
-
-             var data = {
-                id : $("input[name='idlist']").val(),
-                date_event : $("input[name='date_event']").val(),
-                editor : CKEDITOR.instances.editor1.getData(),
-                pixel : $("textarea[name='pixel_txt']").val(),
-                message : $("textarea[name='message_txt']").val(),
-             };
-
-            $.ajaxSetup({
-                  headers: {
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                  }
-            });
-             $.ajax({
-                type : 'POST',
-                url : '{{route("updatelistcontent")}}',
-                data : data,
-                dataType : "json",
-                success : function(result){
-                   alert(result.message);
-                   //table();
-                   /*$("#user-list").dataTable({
-                        "pageLength":5,
-                        "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-                        "destroy":true,
-                     }).destroy();
-                   table.page(databutton).draw( 'page' );*/
-                   //location.href="{{route('userlist')}}";
-                }
-            });
-
-        });
-    }
-
+    
     function delEditor(){
       $("body").on("click",".del",function(){
         var q = confirm('Are you sure to delete?');
