@@ -74,6 +74,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
 	Route::post('insertfields','ListController@insertFields')->name('insertfields');
 	Route::post('insertdropdown','ListController@insertDropdown')->name('insertdropdown');
+	Route::post('duplicatelist','ListController@duplicateList')->name('duplicatelist');
 
 	/* Additional */
 	Route::get('delfield','ListController@delField')->name('delfield');

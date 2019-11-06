@@ -557,17 +557,31 @@ class ListController extends Controller
     {
         $id = $request->id;
         $delete_userlist = UserList::where('id',$id)->delete();
+        $checkdelete = UserList::where('id',$id)->first();
 
-        if($delete_userlist == true){
+        #if success delete list then delete customer / subscriber
+        if(is_null($checkdelete)){
             $delete = Customer::where('list_id','=',$id)->delete();
+            $checkdeletecustomer = Customer::where('list_id','=',$id)->get()->count();
         } else {
-            $data['message'] = 'Sorry, cannot delete list, there is error';
+            $data['message'] = 'Error, Sorry, cannot delete list';
+            return response()->json($data);
         }
 
-        if($delete == true){
+        #if success delete customer / subscriber
+        if($checkdeletecustomer == 0){
+            $deladditional = Additional::where('list_id','=',$id)->delete();
+            $checkdeladditional = Additional::where('list_id','=',$id)->get()->count();
+        } else {
+            $data['message'] = 'Error, Sorry, cannot delete customer';
+            return response()->json($data);
+        } 
+
+        #if success delete list additional
+        if($checkdeladditional == 0){
             $data['message'] = 'Data deleted successfully';
         } else {
-            $data['message'] = 'Sorry, cannot delete customer, there is error';
+            $data['message'] = 'Error, Sorry, cannot delete list addtional';
         }
         return response()->json($data);
     }
@@ -601,6 +615,145 @@ class ListController extends Controller
         return response()->json($data);
     }
 
+    public function duplicateList(Request $request)
+    {
+        $idlist = $request->id;
+        $userid = Auth::id();
+        $record = Userlist::where([['id',$idlist],['user_id',$userid]])->first();
+
+        if(is_null($record))
+        {
+            $response['error'] = true;
+            $response['message'] = 'Invalid id, please provide valid id!';
+            return response()->json($response);
+        }
+
+        #make copyname
+        $copy = Userlist::where('label','like','%'.$record->label.'%')->get()->count();
+
+        if($copy <= 1)
+        {
+            $embed = '-copy';
+        }
+        else
+        {
+            $copy = $copy-1;
+            $embed = '-copy-'.$copy;
+        }
+
+        $list = new UserList;
+        $list->user_id = Auth::id();
+        $list->name = $this->createRandomListName();
+        $list->wa_number = $record->wa_number;
+        $list->is_event = $record->is_event;
+        $list->label = $record->label.$embed;
+        $list->event_date = $record->event_date;
+        $list->content = $record->content;
+        $list->pixel_text = $record->pixel_text;
+        $list->message_text = $record->message_text;
+        $list->save();
+        $newIdList = $list->id; //new list id
+        $opt = array();
+
+        #if list successfully duplicated
+        if($list->save() == true)
+        {
+            $recordadditional = Additional::where('list_id',$idlist)->orderBy('id_parent','ASC')->orderBy('id','ASC')->get();
+        }
+        else
+        {
+            $response['error'] = true;
+            $response['message'] = 'Error, Sorry unable to duplicate list record';
+            return response()->json($response);
+        } 
+
+        #if additional available
+        if($recordadditional->count() > 0)
+        {
+            foreach($recordadditional as $rows)
+            {
+                if($rows->id_parent == 0)
+                {
+                    $parentgroup[] = $rows->id;
+                    $additional = new Additional;
+                    $additional->id_parent = $rows->id_parent;
+                    $additional->list_id = $newIdList;
+                    $additional->is_field = $rows->is_field;
+                    $additional->name = $rows->name;
+                    $additional->is_optional = $rows->is_optional;
+                    $additional->save();
+                }
+               
+            }
+
+            $options = Additional::where('list_id',$idlist)->whereIn('id_parent',$parentgroup)->orderBy('id_parent','ASC')->orderBy('id','ASC')->get();
+           
+            foreach ($options as $key=>$val) {
+                echo $key.'---'.$val->name.'<br>';
+            }
+
+            die('');
+        }
+        else
+        {
+            $response['error'] = false;
+            $response['message'] = 'List successfully duplicated!';
+            return response()->json($response);
+        }
+
+        $options = Additional::where('list_id',$idlist)->whereIn('id_parent',$idopt)->orderBy('id_parent','asc')->get();
+
+        
+        foreach ($opt as $newid => $value) 
+        {
+            foreach($options as $cols)
+            {
+                $opt[$newid] = $cols->name;
+            }
+        }
+
+        dd($opt);
+        die('');
+
+        #if dropdown has options
+        if($options->count() > 0)
+        {
+            foreach($options as $newparentid=>$cols)
+            {
+                foreach($cols as $row)
+                {
+                    $additional = new Additional;
+                    $additional->id_parent = $newparentid;
+                    $additional->list_id = $newIdList;
+                    $additional->is_field = 0;
+                    $additional->name = $row->name;
+                    $additional->is_optional = 0;
+                    $additional->save();
+                }
+            }
+        }
+        else
+        {
+            $response['error'] = false;
+            $response['message'] = 'List successfully duplicated!';
+            return response()->json($response);
+        }
+
+        #if additional saved successfully
+        if($additional->save() == true)
+        {
+            $response['error'] = false;
+            $response['message'] = 'List successfully duplicated!';
+        }
+        else
+        {
+            $response['error'] = true;
+            $response['message'] = 'Error, Sorry unable to duplicate list record';
+        }
+        return response()->json($response);
+    }
+
+    /* not used anymore */
     public function updateField(Request $request)
     {
         $data['error'] = true;

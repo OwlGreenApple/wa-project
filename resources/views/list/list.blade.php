@@ -65,6 +65,7 @@
                                         <a class="btn btn-success btn-sm" href="{{url('/usercustomer/'.$val[0]->id)}}">See Subscribers</a>
                                         <a class="btn btn-info btn-sm edit" id="{{$val[0]->id}}">Edit</a> 
                                         <a class="btn btn-danger btn-sm del" id="{{$val[0]->id}}">Delete</a>
+                                        <!--<a class="btn btn-warning btn-sm duplicate" id="{{$val[0]->id}}">Duplicate</a>-->
                                     </td>
                                 </tr>
                             @endforeach
@@ -277,8 +278,41 @@
         delOption();
         insertFields();
         openAdditional();
+        duplicateList();
     });
 
+    function duplicateList(){
+        $("body").on("click",".duplicate",function(){
+            var id = $(this).attr('id');
+            $("#div-loading").show();
+            $.ajaxSetup({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+            });
+             $.ajax({
+                type : 'POST',
+                url : '{{route("duplicatelist")}}',
+                data : {'id' : id},
+                dataType : "json",
+                success : function(result)
+                {
+                   $("#div-loading").hide();
+
+                   if(result.error == true)
+                   {
+                      alert(result.message);
+                   }
+                   else
+                   {
+                      alert(result.message);
+                      location.href = '{{route('userlist')}}';
+                   }
+                }
+            });
+
+        });
+    }
 
     function openAdditional()
     {
@@ -435,7 +469,7 @@
             e.preventDefault();
              var databutton = $("input[name='page_position']").val(); // get data button position
              databutton = parseInt(databutton) -1;
-             $("#btn-edit").html('Loading....');
+             $("#div-loading").show();
 
              var fields = $(".fields");
              var isoption = $(".is_option");
@@ -483,7 +517,7 @@
                 data : data,
                 dataType : "json",
                 success : function(result){
-                   $("#btn-edit").html('Save');
+                   $("#div-loading").hide();
                    if(result.error == undefined)
                    {
                       $(".list_label, .event_date").html('');

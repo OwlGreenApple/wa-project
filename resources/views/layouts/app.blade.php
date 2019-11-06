@@ -57,6 +57,12 @@
 </head>
 <body>
 
+    <!-- Loading -->
+    <div id="div-loading">
+      <div class="loadmain"></div>
+      <div class="background-load"></div>
+    </div>
+
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -139,6 +145,9 @@
         $(document).ready(function(){
             $(".alert-success,.alert-warning,.alert-danger").delay(5000).fadeOut(3000);
         });
+        $(window).on('load', function() { 
+          $("#div-loading").hide();
+        });   
     </script>
 
 </body>

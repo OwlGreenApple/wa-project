@@ -308,8 +308,17 @@ class CustomerController extends Controller
              # wassenger
             $user_id = $autoreply->user_id;
             $getsender = Sender::where([['user_id',$user_id],['wa_number','=',$list_wa_device]])->first();
-            $deviceid = $getsender->device_id;
+        }
 
+        if(is_null($getsender))
+        {
+            $data['success'] = false;
+            $data['message'] = 'Error-Send! Sorry, looks like if owner of this event had not set WA number yet';
+            return response()->json($data);
+        }
+        else
+        {
+            $deviceid = $getsender->device_id;
             $message = str_replace('{name}',$customer_name,$autoreply->message);
             $status = $autoreply->status;
         }
