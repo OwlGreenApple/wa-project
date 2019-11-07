@@ -65,7 +65,7 @@
                                         <a class="btn btn-success btn-sm" href="{{url('/usercustomer/'.$val[0]->id)}}">See Subscribers</a>
                                         <a class="btn btn-info btn-sm edit" id="{{$val[0]->id}}">Edit</a> 
                                         <a class="btn btn-danger btn-sm del" id="{{$val[0]->id}}">Delete</a>
-                                        <!--<a class="btn btn-warning btn-sm duplicate" id="{{$val[0]->id}}">Duplicate</a>-->
+                                        <a class="btn btn-warning btn-sm duplicate" id="{{$val[0]->id}}">Duplicate</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -165,7 +165,7 @@
                     <span id="append_fields"></span>
                     <input type="hidden" name="field_list"/>
                     <div class="form-group">
-                       <button id="cfd" class="btn btn-success btn-sm">Create New Fields</button>
+                       <button id="cfd" class="btn btn-success btn-sm">Create Fields</button>
                     </div>
                 </form>
             </div>
@@ -258,7 +258,7 @@
     };
 
 
-    var limit = 'You only can create 5 inputs';
+    var limit = 'You only can create 5 fields';
 
     $(document).ready(function(){
         table();
@@ -269,7 +269,7 @@
         delCols();
         addCols();
         addFields();
-        displayDropdownMenu();
+        //displayDropdownMenu();
         insertDropdown();
         addDropdown();
         editOption();
@@ -384,7 +384,7 @@
                       // dropdown
                       if(value.is_field == 1 && value.id_parent == 0)
                       {
-                       box_html += '<div class="col-md-9 row dropdown pos-'+len+'"><input field="1" id='+value.id+' pos="'+value.id+'" class="cidlen dropfields form-control col-sm-6 toggledropdown" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><a class="btn btn-info col-sm-2 mb-2 btn-sm edit-option" id="'+value.id+'" list_id = '+value.list_id+'>Edit Option</a></div>';
+                       box_html += '<div class="col-md-9 row dropdown pos-'+len+'"><input field="1" id='+value.id+' pos="'+value.id+'" class="cidlen colfields dropfields form-control col-sm-6" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><a class="btn btn-info col-sm-2 mb-2 btn-sm edit-option" id="'+value.id+'" list_id = '+value.list_id+'>Edit Option</a></div>';
                       }
 
                       /* option
@@ -396,7 +396,7 @@
 
                       if(value.is_field == 0 && value.id_parent == 0)
                       {
-                         box_html += '<div class="col-md-3 text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input field="0" id='+value.id+' name="field[]" class="cidlen form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields pos-'+len+' mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select name="is_option[]" class="is_option pos-'+len+' form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+                         box_html += '<div class="col-md-3 text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input field="0" id='+value.id+' name="field[]" class="cidlen form-control mb-2 col-md-6 fields colfields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields pos-'+len+' mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select name="is_option[]" class="is_option pos-'+len+' form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
                            is_option[len] = value.is_optional;
                       }  
                      
@@ -419,6 +419,7 @@
         });
     }
 
+    /* RESTORE HTML AFTER UPDATE OR DELETE */
     function displayAjaxCols(id)
     {
       var box_html = '';
@@ -433,10 +434,10 @@
             {
                 $.each(result.additional,function(key, value){
                 var len = key;
-               // dropdown
+                      // DROPDOWN
                       if(value.is_field == 1 && value.id_parent == 0)
                       {
-                        box_html += '<div class="col-md-9 row dropdown pos-'+len+'"><input field="1" id='+value.id+' pos="'+value.id+'" class="cidlen dropfields form-control col-sm-6 toggledropdown" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><a class="btn btn-info col-sm-2 mb-2 btn-sm edit-option" id="'+value.id+'" list_id = '+value.list_id+'>Edit Option</a></div>';
+                        box_html += '<div class="col-md-9 row dropdown pos-'+len+'"><input field="1" id='+value.id+' pos="'+value.id+'" class="cidlen colfields dropfields form-control col-sm-6" value="'+value.name+'" /><a id="'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><a class="btn btn-info col-sm-2 mb-2 btn-sm edit-option" id="'+value.id+'" list_id = '+value.list_id+'>Edit Option</a></div>';
                       }
 
                       /*option
@@ -447,7 +448,7 @@
 
                       if(value.is_field == 0 && value.id_parent == 0)
                       {
-                           box_html += '<div class="col-md-3 text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input field="0" id='+value.id+' name="field[]" class="cidlen form-control mb-2 col-md-6 fields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields pos-'+len+' mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select name="is_option[]" class="is_option pos-'+len+' form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+                           box_html += '<div class="col-md-3 text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input field="0" id='+value.id+' name="field[]" class="cidlen form-control mb-2 col-md-6 fields colfields pos-'+len+'" value="'+value.name+'" /><a id="'+len+'" class="del_fields pos-'+len+' mb-2 col-md-2 btn btn-warning" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a><select name="is_option[]" class="is_option pos-'+len+' form-control col-md-3 selopt-'+len+'"><option value="0">Optional</option><option value="1">Require</option></select></div>';
                            is_option[len] = value.is_optional;
                       }  
 
@@ -464,6 +465,7 @@
      
     }
 
+    /* EDIT OR UPDATE LIST */
     function updateEditor(){
         $("#edit_list").submit(function(e){
             e.preventDefault();
@@ -539,6 +541,7 @@
         });
     }
 
+    /* EDIT DROPDOWN OPTIONS */
     function editOption()
     {
       $("body").on("click",".edit-option",function(){
@@ -568,7 +571,8 @@
       });
     }
 
-     function addOption()
+    /* ADD DROPDOWN OPTIONS */
+    function addOption()
     {
         $("body").on("click",".add-edit-option",function(){
             var len = $(".doption").length;
@@ -578,6 +582,7 @@
         });
     }
 
+    /* SAVE DROPDOWN OPTIONS TO DATABASE */
     function insertOption()
     {
         $("body").on("submit","#optionform",function(e){
@@ -624,6 +629,7 @@
         });
     }
 
+    /* DELETE DROPDOWN OPTIONS */
     function delOption()
     {
       $("body").on("click",".deloption",function(){
@@ -633,10 +639,11 @@
       });
     }
 
+    /* ADD FIELD */
     function addCols(){
       $("body").on('click','.add-field',function(){
         var type = $("#type_fields").val();
-        var len = $(".fields").length;
+        var len = $(".colfields").length;
         var idlist = $("input[name='idlist']").val();
         $("input[name='field_list'], input[name='dropdownlist']").val(idlist);
        
@@ -660,9 +667,9 @@
     function addFields()
     {
        $("body").on('click','.add-field-column',function(){
-           var len = $(".fields").length;
+           var len = $(".colfields").length;
            var box_html;
-           box_html = '<div class="col-md-12 row field-pos-'+len+' field-col"><input name="fields[]" class="cidlen form-control mb-2 col-md-6 fields field-pos-'+len+'" /><a id="field-pos-'+len+'" class="del_fields field-col mb-2 col-md-2 btn btn-warning field-pos-'+len+'">Delete</a><select class="field-pos-'+len+' form-control col-md-3 field-col" name="is_option[]"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+           box_html = '<div class="col-md-12 row field-pos-'+len+' field-col"><input name="fields[]" class="cidlen form-control mb-2 col-md-6 colfields fieldinput field-pos-'+len+'" /><a id="field-pos-'+len+'" class="del_fields field-col mb-2 col-md-2 btn btn-warning field-pos-'+len+'">Delete</a><select class="field-pos-'+len+' form-control col-md-3 field-col" name="is_option[]"><option value="0">Optional</option><option value="1">Require</option></select></div>';
 
           if(len < 5)
           {
@@ -676,90 +683,161 @@
        });
     }
 
+    /* SAVE FIELDS */
     function insertFields()
     {
-        $("body").on("submit","#addFieldsForm",function(e){
+        $("body").on("submit","#addFieldsForm",function(e)
+        {
             e.preventDefault();
             var data = $(this).serialize();
-            $("#cfd").html("Loading...");
-            $.ajaxSetup({
-                  headers: {
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                  }
+            var len = $(".colfields").length;
+            var inputlen = $(".fieldinput").length;
+            var valid = [];
+            var duplicated = 0;
+
+            var check = $(".colfields");
+            check.each(function(i, result){
+               valid.push($(result).val());
             });
-             $.ajax({
-                type : 'POST',
-                url : '{{route("insertfields")}}',
-                data : data,
-                dataType : "json",
-                success : function(result){
-                  $("#cfd").html("Create New Fields");
-                  if(result.error == false)
-                  {
-                       if(result.listid.length > 0)
-                        {
-                           displayAjaxCols(result.listid);
-                        }
-                  }
-                 
-                  if(result.error == true)
-                  {
-                    $(".errfield").html('<div class="alert alert-danger">'+result.msg+'</div>');
-                  } else {
-                    $(".field-col").remove();
-                    alert(result.msg);
-                  }
+
+            var recipientsArray = valid.sort(); 
+            var reportRecipientsDuplicate = [];
+            for (var i = 0; i < recipientsArray.length - 1; i++) {
+                if (recipientsArray[i + 1] == recipientsArray[i]) {
+                    duplicated = 1;
                 }
-            });
+            }
+
+            if(len > 5)
+            {
+               alert(limit);
+            }
+            else if(inputlen < 1)
+            {
+               alert("You should create at least 1 input");
+            }
+            else if(duplicated == 1)
+            {
+               alert("Input field cannot be same");
+            }
+            else 
+            {
+                $("#cfd").html("Loading...");
+                $.ajaxSetup({
+                      headers: {
+                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                      }
+                });
+                 $.ajax({
+                    type : 'POST',
+                    url : '{{route("insertfields")}}',
+                    data : data,
+                    dataType : "json",
+                    success : function(result){
+                      $("#cfd").html("Create New Fields");
+                      if(result.error == false)
+                      {
+                           if(result.listid.length > 0)
+                            {
+                               displayAjaxCols(result.listid);
+                            }
+                      }
+                     
+                      if(result.error == true)
+                      {
+                        $(".errfield").html('<div class="alert alert-danger">'+result.msg+'</div>');
+                      } else {
+                        $(".field-col").remove();
+                        alert(result.msg);
+                      }
+                    }
+                });
+            }
+            
         });
     }
 
+    /* ADD DROPDOWN */
     function addDropdown()
     {
         $("body").on("click",".add-option",function(){
-            var flen = $(".fields").length;
+            var flen = $(".colfields").length;
             var len = $(".doption").length;
+            var checkdropdown = $("input[name='dropdowname']").val();
+            var valid = 1;
+
+            var check = $(".colfields");
+            check.each(function(i, result){
+                if($(result).val() == checkdropdown)
+                {
+                    valid = 0;
+                }
+                //console.log($(result).val());
+            });
+
             var dropdown = '<input name="doptions[]" class="form-control mb-2 col-sm-8 float-left doption opt-'+len+'" /><a id="opt-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
 
-            if(flen < 5){
+            if(flen < 5 && valid == 1 && checkdropdown.length > 0)
+            {
                 $("#appendoption").append(dropdown);
-            } else {
-                alert('You only can create 5 inputs');
+            } 
+            else if(checkdropdown.length == 0)
+            {
+                alert('Field cannot be empty');
+            } 
+            else if(valid == 0) 
+            {
+                alert('Field value cannot be same');
+            }
+            else 
+            {
+                alert(limit);
             }
         });
     }
 
+    /* SAVE DROPDOWN */
     function insertDropdown()
     {
          $("body").on("click","#cdp",function(e){
             e.preventDefault();
-            var len = $(".fields").length;
+            var len = $(".colfields").length;
             var data = $("#dropdownForms").serialize();
-            $(this).html('Loading...');
-
-            $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            var opt = $(".doption").length;
+            if(len >= 5)
+            {
+                alert(limit);
             }
-            });
-            $.ajax({
-              type : 'POST',
-              url : '{{route("insertdropdown")}}',
-              data : data,
-              dataType : 'json',
-              success : function(response)
-              {
-                  $("#cdp").html('Create Dropdown');
-                  alert(response.msg);
-                  $(".doption, .deloption").remove();
-
-                  if(response.listid.length > 0)
+            else if(opt < 1)
+            {
+                alert('You should create at least 1 input');
+            }
+            else
+            {
+              $("#div-loading").show();
+              $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+                });
+                $.ajax({
+                  type : 'POST',
+                  url : '{{route("insertdropdown")}}',
+                  data : data,
+                  dataType : 'json',
+                  success : function(response)
                   {
-                     displayAjaxCols(response.listid);
+                      $("#div-loading").hide();
+                      alert(response.msg);
+                      $(".doption, .deloption").remove();
+
+                      if(response.listid.length > 0)
+                      {
+                         displayAjaxCols(response.listid);
+                      }
                   }
-              }
-            });
-            
+                });
+            }
          });
     }
 
@@ -871,13 +949,14 @@
         });
     }
 
-    
+    /* DELETE LISTS */
     function delEditor(){
       $("body").on("click",".del",function(){
         var q = confirm('Are you sure to delete?');
         var id = $(this).attr('id');
 
         if(q == true){
+           $("#div-loading").show();
            $.ajax({
               type : 'GET',
               url : '{{route("deletelistcontent")}}',
@@ -895,6 +974,7 @@
       });
     }
 
+    /* DELETE FIELDS */
     function delCols(){
       $("body").on("click",".del_fields",function(){
         var len = $(".cidlen").length;

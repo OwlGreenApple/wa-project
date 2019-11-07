@@ -75,6 +75,9 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::post('insertfields','ListController@insertFields')->name('insertfields');
 	Route::post('insertdropdown','ListController@insertDropdown')->name('insertdropdown');
 	Route::post('duplicatelist','ListController@duplicateList')->name('duplicatelist');
+	Route::post('exportlistsubscriber','ListController@exportListSubscriber')->name('exportlistsubscriber');
+	Route::get('export_csv_list_subscriber/{id_list}','ListController@exportListCSVSubscriber');
+	Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers');
 
 	/* Additional */
 	Route::get('delfield','ListController@delField')->name('delfield');

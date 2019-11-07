@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ListSubscribersExport;
+use App\Imports\ListSubscribersImport;
 use App\UserList;
 use App\Customer;
 use App\Sender;
@@ -258,9 +261,61 @@ class ListController extends Controller
     {
         $customer = Customer::where('list_id','=',$id_list)->get();
         $additional = Additional::where('list_id','=',$id_list)->get();
-        return view('list.list-customer',['data'=>$customer,'additional'=>$additional]);
+        return view('list.list-customer',['data'=>$customer,'additional'=>$additional,'listid'=>$id_list]);
     }
 
+    #EXPORT SUBSCRIBER CUSTOMER INTO CSV
+    public function exportListSubscriber(Request $request){
+        $iduser = Auth::id();
+        $id_list = $request->id;
+
+        if(!empty($iduser) && !empty($id_list) || is_numeric($id_list))
+        {
+            $data['url'] = url("/export_csv/".$id_list."");
+        } else {
+            $data['url'] = 'You had logout, please login';
+        }
+        return response()->json($data);
+    }
+
+    public function exportListCSVSubscriber($id_list){
+        $id_user = Auth::id();
+        $customer = Customer::where([['list_id',$id_list],['user_id','=',$id_user]])->get();
+       
+        if(empty($id_list) || empty($id_user) || $customer->count() <= 0){
+            return redirect('event');
+        }
+        return (new ListSubscribersExport($id_list))->download('users.csv');
+    }
+
+    function importCSVListSubscribers(Request $request)
+    {
+        $id_list = $request->list_id_import;
+        $userid = Auth::id();
+
+        $check = UserList::where([['id',$id_list],['user_id',$userid]])->first();
+        if(is_null($check))
+        {
+            $msg['message'] = 'Invalid List!';
+            return response()->json($msg);
+        }
+
+        $file = $request->file('csv_file');
+        $import = new ListSubscribersImport($id_list);
+        Excel::import($import, $file);
+        
+        if($import->getRowCount() > 0)
+        {
+            $msg['message'] = 'Import Successful';
+        }
+        else
+        {
+            $msg['message'] = 'Import Failed';
+        }
+        return response()->json($msg);
+    }
+
+    #CUSTOMER ADDITIONAL INPUT
     public function customerAdditional(Request $request){
         $id = $request->id;
         $customer = Customer::where('id','=',$id)->select('additional')->first();
@@ -553,14 +608,24 @@ class ListController extends Controller
         return response()->json($data);
     }
 
+    #DELETE LIST
     public function delListContent(Request $request)
     {
         $id = $request->id;
-        $delete_userlist = UserList::where('id',$id)->delete();
-        $checkdelete = UserList::where('id',$id)->first();
+        $userid = Auth::id();
+        $check_userlist = UserList::where([['id',$id],['user_id',$userid]])->first();
+
+        if(is_null($check_userlist))
+        {
+            $data['message'] = 'Cannot delete list, because list not available';
+            return response()->json($data);
+        }
+
+        $delete_userlist = UserList::where([['id',$id],['user_id',$userid]])->delete();
+        $checkafterdelete = UserList::where([['id',$id],['user_id',$userid]])->first();
 
         #if success delete list then delete customer / subscriber
-        if(is_null($checkdelete)){
+        if(is_null($checkafterdelete)){
             $delete = Customer::where('list_id','=',$id)->delete();
             $checkdeletecustomer = Customer::where('list_id','=',$id)->get()->count();
         } else {
@@ -586,6 +651,7 @@ class ListController extends Controller
         return response()->json($data);
     }
 
+    #DELETE FIELD ADDITIONAL
     public function delField(Request $request)
     {
         $id = $request->id;
@@ -615,8 +681,10 @@ class ListController extends Controller
         return response()->json($data);
     }
 
+    #DUPLICATE LIST
     public function duplicateList(Request $request)
     {
+
         $idlist = $request->id;
         $userid = Auth::id();
         $record = Userlist::where([['id',$idlist],['user_id',$userid]])->first();
@@ -655,10 +723,12 @@ class ListController extends Controller
         $newIdList = $list->id; //new list id
         $opt = array();
 
-        #if list successfully duplicated
+        #IF LIST DUPLICATED SUCCESSFULLY
         if($list->save() == true)
         {
-            $recordadditional = Additional::where('list_id',$idlist)->orderBy('id_parent','ASC')->orderBy('id','ASC')->get();
+            $checkadditional = Additional::where('list_id',$idlist)->get();
+            #SORT ADDITIONAL BASED ON ID PARENT
+            $recordadditional = Additional::where('list_id',$idlist)->orderByRaw('CASE WHEN id_parent = 0 THEN id ELSE id_parent END ASC, CASE WHEN id_parent = 0 THEN 0 ELSE id END ASC')->get();
         }
         else
         {
@@ -667,14 +737,13 @@ class ListController extends Controller
             return response()->json($response);
         } 
 
-        #if additional available
-        if($recordadditional->count() > 0)
+        #IF ADDITIONAL AVAILABLE
+        if($checkadditional->count() > 0)
         {
             foreach($recordadditional as $rows)
             {
                 if($rows->id_parent == 0)
                 {
-                    $parentgroup[] = $rows->id;
                     $additional = new Additional;
                     $additional->id_parent = $rows->id_parent;
                     $additional->list_id = $newIdList;
@@ -683,16 +752,12 @@ class ListController extends Controller
                     $additional->is_optional = $rows->is_optional;
                     $additional->save();
                 }
-               
-            }
-
-            $options = Additional::where('list_id',$idlist)->whereIn('id_parent',$parentgroup)->orderBy('id_parent','ASC')->orderBy('id','ASC')->get();
-           
-            foreach ($options as $key=>$val) {
-                echo $key.'---'.$val->name.'<br>';
-            }
-
-            die('');
+                else
+                {
+                    $newparentid = $additional->id;
+                    $opt[$newparentid][] = $rows->name;
+                }
+            } 
         }
         else
         {
@@ -700,33 +765,20 @@ class ListController extends Controller
             $response['message'] = 'List successfully duplicated!';
             return response()->json($response);
         }
-
-        $options = Additional::where('list_id',$idlist)->whereIn('id_parent',$idopt)->orderBy('id_parent','asc')->get();
-
         
-        foreach ($opt as $newid => $value) 
+      
+        #IF DROPDOWN HAS OPTIONS
+        if(count($opt) > 0)
         {
-            foreach($options as $cols)
+            foreach($opt as $newparentid=>$cols)
             {
-                $opt[$newid] = $cols->name;
-            }
-        }
-
-        dd($opt);
-        die('');
-
-        #if dropdown has options
-        if($options->count() > 0)
-        {
-            foreach($options as $newparentid=>$cols)
-            {
-                foreach($cols as $row)
+                foreach($cols as $name)
                 {
                     $additional = new Additional;
                     $additional->id_parent = $newparentid;
                     $additional->list_id = $newIdList;
                     $additional->is_field = 0;
-                    $additional->name = $row->name;
+                    $additional->name = $name;
                     $additional->is_optional = 0;
                     $additional->save();
                 }
@@ -739,7 +791,7 @@ class ListController extends Controller
             return response()->json($response);
         }
 
-        #if additional saved successfully
+        #IF ADDITIONAL SAVED SUCCESSFULLY
         if($additional->save() == true)
         {
             $response['error'] = false;
@@ -753,7 +805,7 @@ class ListController extends Controller
         return response()->json($response);
     }
 
-    /* not used anymore */
+    /* NOT USED ANYMORE */
     public function updateField(Request $request)
     {
         $data['error'] = true;

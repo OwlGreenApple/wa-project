@@ -47,12 +47,6 @@ class LoginController extends Controller
     {
         session_start();
         $this->performLogout($request);
-       
-        if(isset($_SESSION['editor_path']))
-        {
-            unset($_SESSION['editor_path']);
-        }
-         
         return redirect()->route('visitor');
     }
 

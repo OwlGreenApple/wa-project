@@ -22,12 +22,15 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header"><b>User's Customer</b></div>
+                <div class="card-header"><b>List Subscriber</b></div>
 
                 <div class="card-body">
+                    <div><a id="{{$listid}}" class="btn btn-success btn-sm download-col">Export</a></div>
+                    <div><a id="{{$listid}}" class="btn btn-info btn-sm import-col">Import</a></div>
+
                     <table class="table table-striped table-responsive" id="user-customer">
                         <thead>
-                            <th>Customer's Name</th>
+                            <th>Subscriber's Name</th>
                             <th>WA Number</th>
                             <th>Additional</th>
                             <th>Created</th>
@@ -89,11 +92,95 @@
   </div>
 </div>
 
+<!-- Import Modal -->
+<div id="import_popup" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Import Data Subscribers</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="import_list_subscriber">
+            <div class="form-group">
+                <label class="col-form-label text-md-right"><b>File import(CSV)</b></label>
+                <input type="file" class="form-control" name="csv_file" />
+            </div>
+            <input type="hidden" name="list_id_import"/>
+            <button type="submit" id="btn-edit" class="btn btn-default">Save</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function(){
         table();
         displayDataAdditional();
+        csvExport();
+        openImport();
+        csvImport();
     });
+
+    //TO IMPORT
+    function openImport()
+    {
+        $(".import-col").click(function(){
+            $("#import_popup").modal();
+            var id = $(this).attr('id');
+            $("input[name='list_id_import']").val(id);
+        });
+    } 
+
+    function csvImport()
+    {
+        $("body").on("submit","#import_list_subscriber",function(e){
+            e.preventDefault();
+            var form = $(this)[0];
+            var data = new FormData(form);
+
+            $.ajaxSetup({
+              headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+            });
+            $.ajax({
+                type : 'POST',
+                enctype: 'multipart/form-data',
+                url : '{{url("import_csv_list_subscriber")}}',
+                processData: false,
+                contentType: false,
+                cache: false,
+                timeout: 600000,
+                data : data,
+                dataType : 'json',
+                success : function(response)
+                {
+                    alert(response.message);
+                }
+            })
+        });
+    }
+
+    //TO EXPORT
+    function csvExport(){
+         $("body").on('click','.download-col',function(){
+            var id = $(this).attr('id');
+             $.ajax({
+                type : 'GET',
+                url : '{{route("exportlistsubscriber")}}',
+                data : {'id':id},
+                dataType : "json",
+                success : function(result){
+                   location.href=result.url;
+                }
+            });
+        });
+    }
 
     function displayDataAdditional(){
         $("body").on("click",".addt",function(){
@@ -108,7 +195,7 @@
                 dataType : 'json',
                 success : function(response) 
                 {
-                    console.log(response.additonal);
+                    //console.log(response.additonal);
                     $.each(response.additonal,function(key,value){
 
                         boxdata += '<div class="form-group row"><label class="col-md-3 col-form-label text-md-right"><b class="text-capitalize">'+key+'</b></label><div class="col-md-8 form-control">'+value+'</div></div></div>';
