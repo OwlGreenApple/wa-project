@@ -25,8 +25,8 @@
                 <div class="card-header"><b>List Subscriber</b></div>
 
                 <div class="card-body">
-                    <div><a id="{{$listid}}" class="btn btn-success btn-sm download-col">Export</a></div>
-                    <div><a id="{{$listid}}" class="btn btn-info btn-sm import-col">Import</a></div>
+                    <div><a href="{{url('export_csv_list_subscriber')}}/{{$listid}}" class="btn btn-success btn-sm">Export</a></div>
+                    <!--<div><a id="{{$listid}}" class="btn btn-info btn-sm import-col">Import</a></div>-->
 
                     <table class="table table-striped table-responsive" id="user-customer">
                         <thead>
@@ -121,7 +121,6 @@
     $(document).ready(function(){
         table();
         displayDataAdditional();
-        csvExport();
         openImport();
         csvImport();
     });
@@ -163,22 +162,6 @@
                     alert(response.message);
                 }
             })
-        });
-    }
-
-    //TO EXPORT
-    function csvExport(){
-         $("body").on('click','.download-col',function(){
-            var id = $(this).attr('id');
-             $.ajax({
-                type : 'GET',
-                url : '{{route("exportlistsubscriber")}}',
-                data : {'id':id},
-                dataType : "json",
-                success : function(result){
-                   location.href=result.url;
-                }
-            });
         });
     }
 

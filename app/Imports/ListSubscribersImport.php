@@ -24,25 +24,28 @@ class ListSubscribersImport implements ToModel
         $this->id_list = $idlist;
     }
 
-   /* public function collection(Collection $rows)
-    {
-        $userid = Auth::id();
-        foreach ($rows as $row) 
-        {
-            ++$this->rows;
-            $addt = json_decode($row[2],true);
-            Customer::create([
-                'user_id'=>$userid,
-                'list_id'=>$this->id_list,
-                'name' => $row[0],
-                'wa_number' => $row[1],
-                'additional' => json_encode($addt),
-            ]);
-        }
-    }*/
-
     public function model(array $row)
     {
+        /*if($row[2] <> null)
+        {
+            $converting = [];
+            $replace = preg_replace("/\n/i", "", $row[2]);
+            $removespace = preg_replace('/\s+/', '', $replace);
+            $replace = explode(",",$removespace);
+
+            foreach($replace as $rows)
+            {
+                $converting[] = explode("=",$rows);
+            }
+        }*/
+        $result = array(
+           'user_id'  => Auth::id(),
+           'list_id'  => $this->id_list,
+            $customer->name,
+            $customer->wa_number
+        );
+        dd(count($row));
+        die('');
         ++$this->rows;
         return new Customer([
            'user_id'  => Auth::id(),

@@ -41,12 +41,24 @@ class ListSubscribersExport implements FromCollection, WithMapping, Responsable
 
     public function map($customer): array
     {
-    	//$parse = json_decode($customer->additional,true);
-        return [
-            $customer->name,
-            $customer->wa_number,
-            $customer->additional
-        ];
-    }
+    	$result = array($customer->name,$customer->wa_number);
+    	$parse = json_decode($customer->additional,true);
 
+    	if($parse <> null)
+    	{
+    		foreach($parse as $row=>$val)
+    		{
+    			array_push($result, $val);
+    		}
+    	}
+        return $result;
+    }
+	
+	/*foreach($parse as $tab=>$col)
+	{
+		$additional[] = $tab.' = '.$col.','."\n";
+	}
+
+	$additional[0] = ' '.$additional[0];
+	array_push($result, implode(" ",$additional));*/
 }

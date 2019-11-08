@@ -264,30 +264,21 @@ class ListController extends Controller
         return view('list.list-customer',['data'=>$customer,'additional'=>$additional,'listid'=>$id_list]);
     }
 
-    #EXPORT SUBSCRIBER CUSTOMER INTO CSV
-    public function exportListSubscriber(Request $request){
-        $iduser = Auth::id();
-        $id_list = $request->id;
-
-        if(!empty($iduser) && !empty($id_list) || is_numeric($id_list))
-        {
-            $data['url'] = url("/export_csv/".$id_list."");
-        } else {
-            $data['url'] = 'You had logout, please login';
-        }
-        return response()->json($data);
-    }
-
+    #EXPORT SUBSCRIBER / CUSTOMER INTO CSV
     public function exportListCSVSubscriber($id_list){
         $id_user = Auth::id();
         $customer = Customer::where([['list_id',$id_list],['user_id','=',$id_user]])->get();
+        $listname = Userlist::where([['id',$id_list],['user_id',$id_user]])->first();
+        $today = Date('d-m-Y');
        
-        if(empty($id_list) || empty($id_user) || $customer->count() <= 0){
-            return redirect('event');
+        if(empty($id_list) || empty($id_user) || $customer->count() <= 0 || is_null($listname)){
+            return redirect('userlist');
         }
-        return (new ListSubscribersExport($id_list))->download('users.csv');
+        $filename = 'subscriber-'.$listname->label.'.csv';
+        return (new ListSubscribersExport($id_list))->download($filename);
     }
 
+    #IMPORT SUBSCRIBER / CUSTOMER INTO CSV
     function importCSVListSubscribers(Request $request)
     {
         $id_list = $request->list_id_import;
