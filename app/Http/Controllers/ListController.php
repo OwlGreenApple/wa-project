@@ -17,6 +17,7 @@ use App\UserList;
 use App\Customer;
 use App\Sender;
 use App\Additional;
+use App\Reminder;
 use DB;
 
 class ListController extends Controller
@@ -700,6 +701,15 @@ class ListController extends Controller
             $embed = '-copy-'.$copy;
         }
 
+        $checknewlabellength = strlen($record->label.$embed);
+
+        if($checknewlabellength > 50)
+        {
+            $response['error'] = true;
+            $response['message'] = 'List name characters cannot more than 50 characters';
+            return response()->json($response); 
+        }
+
         $list = new UserList;
         $list->user_id = Auth::id();
         $list->name = $this->createRandomListName();
@@ -784,6 +794,38 @@ class ListController extends Controller
 
         #IF ADDITIONAL SAVED SUCCESSFULLY
         if($additional->save() == true)
+        {
+            $reminderList = Reminder::where([['list_id',$idlist],['user_id',$userid]])->get();
+        }
+        else
+        {
+            $response['error'] = true;
+            $response['message'] = 'Error, Sorry unable to duplicate list record';
+        }
+
+        # DUPLICATE ENTIRE LIST REMINDER
+        if($reminderList->count() > 0)
+        {
+            foreach($reminderList as $cols)
+            {
+                $reminder = new Reminder;
+                $reminder->user_id = Auth::id();
+                $reminder->list_id = $newIdList;
+                $reminder->days = $cols->days;
+                $reminder->hour_time = $cols->hour_time;
+                $reminder->message = $cols->message;
+                $reminder->save();
+            }
+        }
+        else
+        {
+            $response['error'] = false;
+            $response['message'] = 'List successfully duplicated!';
+            return response()->json($response);
+        }
+
+        #IF DUPLICATE REMINDER SUCCESSFULLY
+        if($reminder->save() == true)
         {
             $response['error'] = false;
             $response['message'] = 'List successfully duplicated!';

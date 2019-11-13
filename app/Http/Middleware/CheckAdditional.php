@@ -31,9 +31,9 @@ class CheckAdditional
             $error['label'] = 'List name cannot be empty';
         } 
 
-        if(strlen($label) > 30)
+        if(strlen($label) > 50)
         {
-            $error['label'] = 'List name cannot greater than 30 characters';
+            $error['label'] = 'List name cannot greater than 50 characters';
         }
 
         if($date_event !== null && $date_event < $today)

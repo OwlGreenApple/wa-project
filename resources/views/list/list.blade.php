@@ -306,7 +306,7 @@
                    else
                    {
                       alert(result.message);
-                      location.href = '{{route('userlist')}}';
+                      location.href = '{{route("userlist")}}';
                    }
                 }
             });

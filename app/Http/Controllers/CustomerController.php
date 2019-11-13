@@ -290,7 +290,8 @@ class CustomerController extends Controller
         #send wa link to send message to list owner
         $list_wa_device = $list_wa_number;
         $list_wa_number = str_replace("+","",$list_wa_number);
-        $data['wa_link'] = 'https://api.whatsapp.com/send?phone='.$list_wa_number.'&text='.$list_message.'';
+        $data['wa_link'] = 'whatsapp://send?phone='.$list_wa_number.'&text='.$list_message.'';
+        #$data['wa_link'] = 'https://api.whatsapp.com/send?phone='.$list_wa_number.'&text='.$list_message.'';
 
         # Sending event auto reply for customer, return true if user has not set auto reply yet
         $autoreply = Reminder::where([

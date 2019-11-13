@@ -41,8 +41,8 @@ class CheckUserLists
             return redirect('createlist')->with('error_number','Column name list cannot be empty');
         }
 
-        if(strlen($request->label_name) > 190){
-            return redirect('createlist')->with('error_number','Column name list maximum length is 190');
+        if(strlen($request->label_name) > 50){
+            return redirect('createlist')->with('error_number','Column name list maximum length is 50');
         }
 
         if($this->checkListLabel($request->label_name) == false){

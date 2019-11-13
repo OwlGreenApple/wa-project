@@ -64,7 +64,7 @@
                                 <select class="form-control" name="listid">
                                   @if($data->count() > 0)
                                     @foreach($data as $row)
-                                      <option value="{{$row->id}}">{{$row->name}}</option>
+                                      <option value="{{$row->id}}">{{$row->label}}</option>
                                     @endforeach
                                   @endif
                                 </select>

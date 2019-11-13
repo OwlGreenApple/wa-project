@@ -351,7 +351,7 @@ class SendWA extends Command
                       'id_wa'=>$wasenggerevent->id
                     ]);
                 } else {
-                    echo 'Wassenger error code : '.$wasenggerevent->status;
+                    echo 'Cannot send event message ';
                     break;
                 }
 
