@@ -15,7 +15,8 @@ class ApiController extends Controller
         $data = array(
             'list_id'=> '3',
             'wa_no'=>6287852700229,
-            'name'=>'test3',
+            'name'=>'test',
+            'email'=>'test@mail.com'
         );
 
         curl_setopt_array($curl, array(
@@ -56,6 +57,7 @@ class ApiController extends Controller
     	 $cust->user_id = $userid;
     	 $cust->list_id = $data['list_id'];
     	 $cust->name = $data['name'];
+    	 $cust->email = $data['email'];
     	 $cust->wa_number = $data['wa_no'];
     	 $cust->save();
 
