@@ -17,11 +17,13 @@ Route::get('/', function () {
     return view('welcome');
 })->name('visitor');
 
-Route::get('ck','ListController@generateRandomListName');
+//Route::get('ck','ListController@generateRandomListName');
 Route::get('send','SenderController@getDeviceId');
 
-
 Route::get('justcarbon','EventController@JUSTCARBON');
+
+Route::get('testapi','ApiController@testapi');
+Route::post('private-list','ApiController@register_list');
 
 
 Auth::routes();

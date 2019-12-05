@@ -20,5 +20,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'ckupload',
+        'private-list',
     ];
 }
