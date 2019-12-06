@@ -22,6 +22,7 @@ Route::get('send','SenderController@getDeviceId');
 
 Route::get('justcarbon','EventController@JUSTCARBON');
 
+/* API */
 Route::get('testapi','ApiController@testapi');
 Route::post('private-list','ApiController@register_list');
 

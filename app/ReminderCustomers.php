@@ -9,8 +9,8 @@ class ReminderCustomers extends Model
      /*
 		status : 
 		0 = pending
-		1 = on queue
-		2 = sent
+		1 = sent
+		2 = failed / error
 		3 = disabled
     */
 }

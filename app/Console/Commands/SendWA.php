@@ -13,6 +13,7 @@ use App\Customer;
 use Carbon\Carbon;
 use App\User;
 use App\Sender;
+use App\Http\Controllers\ApiController;
 
 class SendWA extends Command
 {
@@ -168,29 +169,25 @@ class SendWA extends Command
     /* End function handle */    
     }
 
-    public function sendWA($wa_number,$message,$device){
-        $api_key = '717c449cac6613abd70349cbd889b4955523292e7a45c49ebb2880b9b77e944d44f467389e75a080';
+    public function sendWA($uid,$to,$message,$idmessage)
+    {
         $curl = curl_init();
-
         $data = array(
-            'phone'=>$wa_number,
-            'message'=>$message,
-            'device'=>$device,
+            'token'=> 'cefa6dbce7d2ac646733e6954dc2b47a5da4257027ca9',
+            'uid'=>$uid, //number to send message
+            'to'=>$to, // number to receive message
+            'text'=>$message, //message
+            'custom_uid'=>$idmessage, //uuid
         );
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://api.wassenger.com/v1/messages",
+          CURLOPT_URL => "https://www.waboxapp.com/api/send/chat",
           CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
           CURLOPT_TIMEOUT => 30,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => "POST",
-          CURLOPT_POSTFIELDS => json_encode($data,true),
-          CURLOPT_HTTPHEADER => array(
-            "content-type: application/json",
-            "token: ".$api_key.""
-          ),
+          CURLOPT_POSTFIELDS => $data,
         ));
 
         $response = curl_exec($curl);
@@ -206,7 +203,7 @@ class SendWA extends Command
         }
     }
 
-    /* Event date */
+    /* EVENT */
     public function dateEvent(){
       $user = User::select('id')->get();
 
@@ -380,6 +377,7 @@ class SendWA extends Command
 
     }
 
+    /* REMINDER */
     public function dateReminder()
     {
        /* Users counter */
@@ -405,7 +403,7 @@ class SendWA extends Command
                                   ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
                                   ->join('lists','lists.id','=','reminders.list_id')
                                   ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-                                  ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.days','reminders.message','customers.created_at AS cstreg','customers.wa_number','customers.name')
+                                  ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.days','reminders.message','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email')
                                 ->take($count)
                                 ->get();
 
@@ -418,13 +416,33 @@ class SendWA extends Command
                     $reminder_customer_status = $col->rc_st;
                     $reminder_customers_id = $col->rcs_id;
                     $wa_number = $col->wa_number;
-                    $event_date = $col->event_date;
+                    //$event_date = $col->event_date;
                     $senderid = $col->sender_id;
                    //$message = str_replace('{name}',$col->name,$col->message);
                     $message = $col->message;
+                    $customerlistid = $col->clid;
+                    $customeremail = $col->email;
 
+                    #DETERMINE WHICH LIST WHO WILL GET GENERATE COUPON
+                    $run = true;
+                    if($customerlistid == 17) //omnilinkz
+                    {
+                      $url = 'https://omnilinkz.com/dashboard/generate-coupon';
+                      $idmessage = 'TSL-'.$reminder_customers_id;
+                      //$idmessage = 'OML-'.$reminder_customers_id;
+                    }
+                    elseif($customerlistid == 18) //omnifluencer
+                    { 
+                      $url = 'https://omnifluencer.com/generate-coupon';
+                      $idmessage = 'TSF-'.$reminder_customers_id;
+                      //$idmessage = 'OMF-'.$reminder_customers_id;
+                    }
+                    else
+                    {
+                      $run = false;
+                    }
 
-                    $sender = Sender::where('id','=',$senderid)->select('device_id')->first();
+                    $sender = Sender::where('id','=',$senderid)->select('wa_number')->first();
                     if(is_null($sender))
                     {
                         ReminderCustomers::where([
@@ -436,41 +454,49 @@ class SendWA extends Command
                         ]);
                         return $this->handle();
                     }
-                    $deviceid = $sender->device_id;
+                    $uid = $sender->wa_number;
+                    $to = $wa_number;
+
+                    /*
+                    if($run == true)
+                    {
+                        $coupon = new ApiController;
+                        $generatedcoupon = $coupon->generatecoupon($email,$url);
+                    }
+                    */
 
                     /* if the time has reach or pass added time */
                     if(($current_time >= $adding) && $reminder_customer_status == 0){
-                         /* wasengger */
-                         $wasenggerreminder = $this->sendWA($wa_number,$message,$deviceid);
+                         /* wabox */
+                         $waboxreminder = $this->sendWA($uid,$to,$message,$idmessage);
                     } else {
-                         $wasenggerreminder = null;
+                         $waboxreminder = null;
                     }
 
-                    /* Determine status on reminder-customer */
-                    if($wasenggerreminder !== null && $wasenggerreminder->status == 'queued'){
-                        $delivery_status = $wasenggerreminder->deliveryStatus;
-                        if($delivery_status == 'queued'){
-                          $status = 1;
-                        } elseif($delivery_status == 'sent') {
-                          $status = 2;
-                        } elseif($delivery_status == 'failed') {
-                          $status = 5;
-                        } else {
-                          $status = 0;
-                        } 
-
-                        $update_reminder_customer = ReminderCustomers::where([
-                            ['id',$reminder_customers_id],
-                            ['status','=',0],
-                        ])->update([
-                            'id_wa'=>$wasenggerreminder->id,
-                            'status'=>$status,
-                        ]);
-                    } else {
-                        echo 'Wassenger error code : '.$wasenggerreminder->status;
-                        break;
+                    if(!empty($waboxreminder['success']))
+                    {
+                        $status = 1;
+                        $id_wa = $waboxreminder["custom_uid"];
                     }
-                      
+                    elseif(!empty($waboxreminder['error']))
+                    {
+                        $status = 2;
+                        $id_wa = null;
+                    }
+                    else{
+                        $status = 0;
+                        $id_wa = null;
+                    }
+
+                    $update_reminder_customer = ReminderCustomers::where([
+                        ['id',$reminder_customers_id],
+                        ['status','=',0],
+                    ])->update([
+                        'id_wa'=>$id_wa,
+                        'status'=>$status,
+                    ]);  
+
+                    /*
                     if($update_reminder_customer == true){
                          // cut user's wa bandwith
                         $deviceId = $wasenggerreminder->device;
@@ -483,8 +509,8 @@ class SendWA extends Command
                     if($sender_update == false){
                         echo 'Error!! Unable to update counter';
                     }
+                    */
                 }
-
           /* end user looping */
           }
         /* end user if */  

@@ -57,11 +57,11 @@
                      <form method="POST" action="{{ route('reminderadd') }}">
                         @csrf
 
-                         <div class="form-group row">
+                        <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Lists Option</label>
                             <div class="col-md-6">
 
-                                <select class="form-control" name="list_id" id="display-template">
+                                <select class="form-control display-package" name="list_id" id="display-template">
                                   @if($data->count() > 0)
                                     @foreach($data as $row)
                                       <option value="{{$row->id}}">{{$row->label}}</option>
@@ -72,6 +72,15 @@
                                  @if (session('error'))
                                     <div class="error">{{ session('error')->first('list_id') }}</div>
                                  @endif
+                            </div>
+                        </div> 
+
+                        <div class="form-group row package">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Package <span class="package-name"></span></label>
+                            <div class="col-md-6">
+                                <select class="form-control" name="package" id="package">
+                                    <!-- display option from javascript here -->
+                                </select>
                             </div>
                         </div> 
 
@@ -179,7 +188,81 @@
         displayTemplate();
         setEvent();
         datepicker();
+        displayPackage();
     });
+
+    function displayPackage()
+    {
+      var list_id = $(".display-package > option:selected").val();
+      $(".display-package").change(function()
+      {
+        list_id = $(".display-package > option:selected").val();
+        if(list_id == 17 || list_id == 18)
+        {
+          $(".package").show();
+        }
+        else
+        {
+          $(".package").hide();
+        }
+
+        if(list_id == 17 )
+        {
+          $('#package').find('option').remove().end();
+          $(".package-name").html('Omnilinkz');
+          var elite2 = new Option("Beli 195rb Dapat 2 Bulan Elite", "package-elite-2", true, true);
+          var elite3 = new Option("Beli 295rb Dapat 3 Bulan Elite", "package-elite-3", false, false);
+          var elite5 = new Option("Beli 395rb Dapat 5 Bulan Elite", "package-elite-5", false, false);
+          var elite7 = new Option("Beli 495rb Dapat 7 Bulan Elite", "package-elite-7", false, false);
+          var sel = document.getElementById('package');
+          sel.add(elite2,0);
+          sel.add(elite3,1);
+          sel.add(elite5,2);
+          sel.add(elite7,3);
+        }
+        else if(list_id == 18)
+        {
+          $('#package').find('option').remove().end();
+          $(".package-name").html('Omnifluencer');
+          var premium1 = new Option("Beli 197rb Dapat 1 Bulan Premium", "package-premium-1", true, true);
+          var premium2 = new Option("Beli 297rb Dapat 2 Bulan Premium", "package-premium-2", false, false);
+          var premium4 = new Option("Beli 397rb Dapat 4 Bulan Premium", "package-premium-4", false, false);
+          var premium6 = new Option("Beli 497rb Dapat 6 Bulan Premium", "package-premium-6", false, false);
+          var sel = document.getElementById('package');
+          sel.add(premium1,0);
+          sel.add(premium2,1);
+          sel.add(premium4,2);
+          sel.add(premium6,3);
+        }
+        else
+        {
+          $('#package').find('option').remove().end();
+          $(".package-name").html('');
+        }
+      });
+      //APPLY WHEN BROWSER SUCCESSFULLY LOADED
+        if(list_id == 17 || list_id == 18)
+        {
+          $(".package").show();
+        }
+        else
+        {
+          $(".package").hide();
+        }
+
+        if(list_id == 17 )
+        {
+          $(".package-name").html('Omnilinkz');
+        }
+        else if(list_id == 18)
+        {
+          $(".package-name").html('Omnifluencer');
+        }
+        else
+        {
+          $(".package-name").html('');
+        }
+    }
 
     function datepicker(){
       $(".datepicker").datetimepicker();

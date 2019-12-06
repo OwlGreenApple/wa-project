@@ -114,6 +114,7 @@ class ReminderController extends Controller
         $user_id = Auth::id();
         $message = $request->message;
         $days = $request->day;
+        $package = $request->package;
 
         if(isset($request->list_id)){
             $list_id = $request->list_id;
@@ -141,6 +142,7 @@ class ReminderController extends Controller
             $reminder->user_id = $user_id;
             $reminder->list_id = $list_id;
             $reminder->days = $days;
+            $reminder->package = $package;
             $reminder->message = $message;
             $reminder->save();
             $created_date = $reminder->created_at;

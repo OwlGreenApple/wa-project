@@ -10,6 +10,7 @@
         <th>Action</th>
     </thead>
     <tbody>
+        @php $deleteremove = true; @endphp
         @if($data->count() > 0)
         @foreach($data as $row)
             <tr>
@@ -33,7 +34,21 @@
                         Pause
                     @endif</a>
 
-                      <a id="{{$row->id}}" class="btn btn-danger btn-sm del-col">Delete</a>
+                    <?php
+                        if($row->list_id == 17 || $row->list_id == 18)
+                        {
+                            $deleteremove = true;
+                        }
+                        else
+                        {
+                            $deleteremove = false;
+                        }
+                    ?>
+
+                    @if($deleteremove == false)
+                    <a id="{{$row->id}}" class="btn btn-danger btn-sm del-col">Delete</a>
+                    @endif
+
                      <a id="{{encrypt($row->list_id)}}" class="btn btn-info btn-sm download-col">Download CSV</a>
                 </td>
             </tr>

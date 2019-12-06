@@ -43,8 +43,8 @@ class WABox extends Command
             'token'=> 'cefa6dbce7d2ac646733e6954dc2b47a5da4257027ca9',
             'uid'=>6287852700229, //number to send message
             'to'=>62895342472008, // number to receive message
-            'text'=>'wabox terminal message', //message
-            'custom_uid'=>'aa0001', //uuid
+            'text'=>'wabox terminal message 3', //message
+            'custom_uid'=>'aa0005', //uuid
         );
 
         curl_setopt_array($curl, array(
@@ -65,7 +65,7 @@ class WABox extends Command
         if ($err) {
           echo "cURL Error #:" . $err;
         } else {
-          echo $response."\n";
+          echo $response;
         }
     }
 }
