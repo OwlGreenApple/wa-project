@@ -10,6 +10,7 @@ class ApiController extends Controller
 {
     public function testapi()
     {
+        //http://localhost/waku/private-list
     	$curl = curl_init();
 
         $data = array(
@@ -20,7 +21,7 @@ class ApiController extends Controller
         );
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "http://localhost/waku/private-list",
+          CURLOPT_URL => "https://activwa.com/dashboard/private-list",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_MAXREDIRS => 10,
           CURLOPT_TIMEOUT => 30,
@@ -45,12 +46,11 @@ class ApiController extends Controller
     public function register_list(Request $request)
     {
     	 $data = json_decode($request->getContent(),true);
-    	 
     	 $user_id = UserList::where('id',$data['list_id'])->first();
     	 if(is_null($user_id))
     	 {
     	 	$msg['is_error'] = 'Id not available, it may Deleted!!!';
-    	 	return json_encode($msg);
+    	 	return $msg;
     	 }
     	 $userid = $user_id->user_id;
     	 $cust = new Customer;
@@ -69,7 +69,7 @@ class ApiController extends Controller
     	 {
     	 	$msg['is_error'] = 1;
     	 }
-    	 return json_encode($msg);
+    	 return $msg;
     }
 
 /* end class */    
