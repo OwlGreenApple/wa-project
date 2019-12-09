@@ -5,6 +5,8 @@
         <th>lists url</th>
         <th>Days</th>
         <th>Message</th>
+        <th>Subject</th>
+        <th>Mail</th>
         <th>Created At</th>
         <th>Updated At</th>
         <th>Action</th>
@@ -23,6 +25,11 @@
                 </td>
                 <td class="wraptext">
                     <span class="get-text-{{$row->id}}">{{$row->message}}</span>
+                    <div><small><a id="{{$row->id}}" class="display_popup">Read More</a></small></div>
+                </td>
+                <td class="subject-{{$row->id}}">{{$row->subject}}</td>
+                <td class="wraptext">
+                    <span class="get-mailtext-{{$row->id}}">{{$row->mail}}</span>
                     <div><small><a id="{{$row->id}}" class="display_popup">Read More</a></small></div>
                 </td>
                 <td>{{$row->created_at}}</td>

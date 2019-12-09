@@ -169,6 +169,10 @@
                 <form id="update_message">
                      <div class="mb-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>
                     <textarea id="divInput-description-post" rows="5" class="form-control message"></textarea><!-- display message -->
+                    <label>Mail Subject</label>
+                    <input type="text" name="mailsubject" class="form-control" />
+                    <label>Mail Text</label>
+                    <textarea name="mailtext" rows="5" class="form-control"></textarea><!-- display message -->
                     <input type="hidden" class="id_reminder" />
                     <div class="mt-2">
                         <button type="submit" class="btn btn-warning">Edit</button>
@@ -356,7 +360,11 @@
             $("#myModal").modal();
             var id = $(this).attr('id');
             var txt = $(".get-text-"+id).text();
+            var mailtxt = $(".get-mailtext-"+id).text();
+            var subject = $(".subject-"+id).text();
             $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(txt);
+            $("textarea[name='mailtext']").text(mailtxt);
+            $("input[name='mailsubject']").val(subject);
             $(".id_reminder").val(id);
         });
     }
@@ -374,9 +382,13 @@
             e.preventDefault();
             var id_reminder = $('.id_reminder').val(); 
             var txt = $('.message').val();
+            var mailsubject = $("input[name='mailsubject']").val();
+            var mailtext = $("textarea[name='mailtext']").val();
             var data = {
                 'message': txt,
                 'id_reminder': id_reminder,
+                'subject': mailsubject,
+                'mailtext': mailtext,
             };
 
             $.ajaxSetup({

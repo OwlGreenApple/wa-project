@@ -93,6 +93,23 @@
                                  @endif
                              </div>
                              <div class="col-md-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>
+                        </div>   
+
+                         <div class="form-group row mail_omni">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Mail Subject</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="mailsubject" />
+                            </div>
+                        </div> 
+
+                        <div class="form-group row mail_omni">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Mail Message</label>
+                            <div class="col-md-6">
+                                <textarea class="form-control" name="mailmessage"></textarea>
+                                 @if (session('error'))
+                                    <div class="error">{{ session('error')->first('mailmessage') }}</div>
+                                 @endif
+                             </div>
                         </div> 
 
                          <div class="form-group row">
@@ -114,7 +131,7 @@
                             <div class="col-md-6">
                                 <select class="form-control" name="eventday">
                                   @php
-                                  for($x=1;$x<=100;$x++){
+                                  for($x=1;$x<=120;$x++){
                                    @endphp
                                     <option value="{{$x}}">-{{$x}}</option>
                                   @php  
@@ -132,7 +149,7 @@
                             <div class="col-md-6">
                                 <select class="form-control" name="day">
                                   @php
-                                  for($x=1;$x<=100;$x++){
+                                  for($x=1;$x<=120;$x++){
                                    @endphp
                                     <option value="{{$x}}">+{{$x}}</option>
                                   @php  
@@ -200,10 +217,12 @@
         if(list_id == 17 || list_id == 18)
         {
           $(".package").show();
+          $(".mail_omni").show();
         }
         else
         {
           $(".package").hide();
+          $(".mail_omni").hide();
         }
 
         if(list_id == 17 )
@@ -244,10 +263,12 @@
         if(list_id == 17 || list_id == 18)
         {
           $(".package").show();
+          $(".mail_omni").show();
         }
         else
         {
           $(".package").hide();
+          $(".mail_omni").hide();
         }
 
         if(list_id == 17 )

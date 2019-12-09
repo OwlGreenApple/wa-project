@@ -17,10 +17,10 @@ class ApiController extends Controller
     	$curl = curl_init();
 
         $data = array(
-            'list_id'=> 18,
-            'wa_no'=>62895342472008,
-            'name'=>'testomnifluencer',
-            'email'=>'test@mail.com'
+            'list_id'=> 17,
+            'wa_no'=>628123238793,
+            'name'=>'testomnilinkz',
+            'email'=>'celebgramme.dev@gmail.com',
         );
 
         curl_setopt_array($curl, array(
@@ -129,12 +129,23 @@ class ApiController extends Controller
     	return $msg;
     }
 
-    public function generatecoupon($email,$url)
+    public function testmail()
     {
-        //https://omnifluencer.com/generate-coupon
+        //$url = 'http://192.168.88.177/omnifluencer-project/sendmailfromactivwa';
+        $url = 'http://192.168.88.177/omnilinkz/sendmailfromactivwa';
+        $mail = 'celebgramme.dev@gmail.com';
+        $emaildata = 'code_coupon';
+        $subject = 'Test coupon code';
+        return $this->callMailApi($url,$mail,$emaildata,$subject);
+    }
+
+    public function callMailApi($url,$mail,$emaildata,$subject)
+    {
         $curl = curl_init();
         $data = array(
-            'email'=>$email
+            'mail'=>$mail,
+            'emaildata'=>$emaildata,
+            'subject'=>$subject,
         );
 
         curl_setopt_array($curl, array(
@@ -144,6 +155,7 @@ class ApiController extends Controller
           CURLOPT_TIMEOUT => 30,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTREDIR => 3,
           CURLOPT_POSTFIELDS => json_encode($data),
           CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
         ));
@@ -155,7 +167,51 @@ class ApiController extends Controller
         if ($err) {
           echo "cURL Error #:" . $err;
         } else {
-          return $response;
+          echo $response;
+          //return json_decode($response,true);
+        }
+    }
+
+
+    public function testcoupon()
+    {
+        $email = 'celebgramme.dev@gmail.com';
+        $package = 'package-premium-6';
+       // $url = 'http://192.168.88.177/omnifluencer-project/generate-coupon';
+        $url = 'http://192.168.88.177/omnilinkz/generate-coupon';
+        $this->generatecoupon($email,$package,$url);
+    }
+
+    public function generatecoupon($email,$package,$url)
+    {
+        //https://omnifluencer.com/generate-coupon
+        $curl = curl_init();
+        $data = array(
+            'email'=>$email,
+            'package'=>$package,
+        );
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTREDIR => 3,
+          CURLOPT_POSTFIELDS => json_encode($data),
+          CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if ($err) {
+          echo "cURL Error #:" . $err;
+        } else {
+          //echo $response;
+          return json_decode($response,true);
         }
     }
 

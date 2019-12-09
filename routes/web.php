@@ -24,6 +24,8 @@ Route::get('justcarbon','EventController@JUSTCARBON');
 
 /* API */
 Route::get('testapi','ApiController@testapi');
+Route::get('testcoupon','ApiController@testcoupon');
+Route::get('testmail','ApiController@testmail');
 Route::post('private-list','ApiController@register_list');
 
 

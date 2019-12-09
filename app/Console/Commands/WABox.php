@@ -44,7 +44,7 @@ class WABox extends Command
             'uid'=>6287852700229, //number to send message
             'to'=>62895342472008, // number to receive message
             'text'=>'wabox terminal message 3', //message
-            'custom_uid'=>'aa0005', //uuid
+            'custom_uid'=>'aa0006', //uuid
         );
 
         curl_setopt_array($curl, array(

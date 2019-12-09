@@ -115,6 +115,8 @@ class ReminderController extends Controller
         $message = $request->message;
         $days = $request->day;
         $package = $request->package;
+        $mailsubject = $request->mailsubject;
+        $mailmessage = $request->mailmessage;
 
         if(isset($request->list_id)){
             $list_id = $request->list_id;
@@ -144,6 +146,8 @@ class ReminderController extends Controller
             $reminder->days = $days;
             $reminder->package = $package;
             $reminder->message = $message;
+            $reminder->subject = $mailsubject;
+            $reminder->mail = $mailmessage;
             $reminder->save();
             $created_date = $reminder->created_at;
         }
@@ -358,8 +362,13 @@ class ReminderController extends Controller
     public function updateReminderMessage(Request $request){
         $id = $request->id_reminder;
         $message = $request->message;
+        $data = [
+            'message'=>$message,
+            'subject'=>$request->subject,
+            'mail'=>$request->mailtext,
+        ];
 
-        $reminder = Reminder::where('id','=',$id)->update(['message'=>$message]);
+        $reminder = Reminder::where('id','=',$id)->update($data);
 
         if($reminder == true){
             $data['msg'] = 'Reminder message just updated';

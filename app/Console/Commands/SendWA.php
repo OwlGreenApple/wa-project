@@ -199,7 +199,7 @@ class SendWA extends Command
           echo "cURL Error #:" . $err;
         } else {
           //echo $response."\n";
-          return json_decode($response);
+          return json_decode($response, true);
         }
     }
 
@@ -382,7 +382,8 @@ class SendWA extends Command
     {
        /* Users counter */
         $user = User::select('id')->get();
-        $wasenggerreminder = null;
+        $coupon = new ApiController;
+        $coupon_code = null;
         if($user->count() > 0)
         {
           foreach($user as $userow)
@@ -397,15 +398,15 @@ class SendWA extends Command
                 $current_time = Carbon::now();
                /* get days from reminder */
                 $reminder = ReminderCustomers::where([
-                                  ['reminder_customers.user_id','=',$id_user],
-                                  ['reminder_customers.status','=',0],
-                                  ['lists.is_event','=',0],
-                                  ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
-                                  ->join('lists','lists.id','=','reminders.list_id')
-                                  ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-                                  ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.days','reminders.message','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email')
-                                ->take($count)
-                                ->get();
+                            ['reminder_customers.user_id','=',$id_user],
+                            ['reminder_customers.status','=',0],
+                            ['lists.is_event','=',0],
+                            ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
+                            ->join('lists','lists.id','=','reminders.list_id')
+                            ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
+                            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.package','reminders.days','reminders.message','reminders.subject','reminders.mail','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email')
+                          ->take($count)
+                          ->get();
 
                 /* check date reminder customer and update if succesful sending */
                 foreach($reminder as $col) 
@@ -422,19 +423,28 @@ class SendWA extends Command
                     $message = $col->message;
                     $customerlistid = $col->clid;
                     $customeremail = $col->email;
+                    $package = $col->package;
+                    $subject = $col->subject;
+                    $mailmessage = $col->mail;
 
                     #DETERMINE WHICH LIST WHO WILL GET GENERATE COUPON
                     $run = true;
                     if($customerlistid == 17) //omnilinkz
                     {
-                      $url = 'https://omnilinkz.com/dashboard/generate-coupon';
+                      /*$url = 'https://omnilinkz.com/dashboard/generate-coupon';
+                      $url_mail = 'https://omnilinkz.com/dashboard/sendmailfromactivwa';*/
+                      $url = 'http://192.168.88.177/omnilinkz/generate-coupon';
+                      $url_mail = 'http://192.168.88.177/omnilinkz/sendmailfromactivwa';
                       $idmessage = 'TSL-'.$reminder_customers_id;
                       //$idmessage = 'OML-'.$reminder_customers_id;
                     }
                     elseif($customerlistid == 18) //omnifluencer
                     { 
-                      $url = 'https://omnifluencer.com/generate-coupon';
-                      $idmessage = 'TSF-'.$reminder_customers_id;
+                      /*$url = 'https://omnifluencer.com/generate-coupon';
+                      $url_mail = 'https://omnifluencer.com/sendmailfromactivwa'; */
+                      $url = 'http://192.168.88.177/omnifluencer-project/generate-coupon';
+                      $url_mail = 'http://192.168.88.177/omnifluencer-project/sendmailfromactivwa';
+                      $idmessage = 'TSF0-'.$reminder_customers_id;
                       //$idmessage = 'OMF-'.$reminder_customers_id;
                     }
                     else
@@ -450,20 +460,22 @@ class SendWA extends Command
                             ['status','=',0],
                         ])->update([
                             'id_wa'=>0,
-                            'status'=>3,
+                            'status'=>2,
                         ]);
                         return $this->handle();
                     }
-                    $uid = $sender->wa_number;
+                    $uid = str_replace("+","",$sender->wa_number);
                     $to = $wa_number;
 
-                    /*
-                    if($run == true)
+                    
+                    # IF LIST BOTH ARE OMNILINKZ OR OMNIFLUENCER
+                    if($run == true && $current_time >= $adding && $reminder_customer_status == 0)
                     {
-                        $coupon = new ApiController;
-                        $generatedcoupon = $coupon->generatecoupon($email,$url);
+                        $generatedcoupon = $coupon->generatecoupon($customeremail,$package,$url);
+                        $coupon_code = $generatedcoupon['coupon_code'];
+                        $message = str_replace('{coupon}',$coupon_code,$message);
+                        $mailmessage = str_replace('{coupon}',$coupon_code,$mailmessage);
                     }
-                    */
 
                     /* if the time has reach or pass added time */
                     if(($current_time >= $adding) && $reminder_customer_status == 0){
@@ -477,6 +489,7 @@ class SendWA extends Command
                     {
                         $status = 1;
                         $id_wa = $waboxreminder["custom_uid"];
+                        $coupon->callMailApi($url_mail,$customeremail,$mailmessage,$subject);
                     }
                     elseif(!empty($waboxreminder['error']))
                     {
@@ -498,16 +511,14 @@ class SendWA extends Command
 
                     /*
                     if($update_reminder_customer == true){
-                         // cut user's wa bandwith
-                        $deviceId = $wasenggerreminder->device;
-                        $count = $count - 1;
+                        #SEND COUPON TO USERS MAIL
+                       
+                        /*$count = $count - 1;
                         $sender_update = Sender::where([['user_id',$id_user],['device_id','=',$deviceId]])->update(['counter'=>$count]);
-                    } else {
+                    } 
+                    else 
+                    {
                         echo 'Error!! Unable to update reminder customer';
-                    }
-
-                    if($sender_update == false){
-                        echo 'Error!! Unable to update counter';
                     }
                     */
                 }
