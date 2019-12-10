@@ -9,6 +9,9 @@ use App\Reminder;
 use App\ReminderCustomers;
 use Carbon\Carbon;
 use App\Sender;
+use App\Mail\SendWAEmail;
+use App\Console\Commands\SendWA as wamessage;
+use Mail;
 
 class ApiController extends Controller
 {
@@ -267,6 +270,47 @@ class ApiController extends Controller
           echo $response;
           //return json_decode($response,true);
         }
+    }
+
+    public function testDirectSendWA(Request $request)
+    {
+        $uid = 6287852700229;
+        $to = $request->to;
+        $message = $request->wa_message;
+
+        $karakter= 'abcdefghjklmnpqrstuvwxyz123456789';
+        $string = 'testsendwaactivwa-';
+        for ($i = 0; $i < 7 ; $i++) {
+          $pos = rand(0, strlen($karakter)-1);
+          $string .= $karakter{$pos};
+        }
+        $idmessage = $string;
+
+        $wa = new wamessage;
+        $send = $wa->sendWA($uid,$to,$message,$idmessage);
+
+        if(!empty($send['success']))
+        {
+            $data['msg'] = 'Message sudah dikirim';
+        }
+        else
+        {
+            $data['msg'] = 'Message gagal dikirim';
+        }
+
+        return response()->json($data);
+    } 
+
+    public function testDirectSendMail(Request $request)
+    {
+        $to = $request->to;
+        $message = $request->message;
+        $subject = $request->subject;
+        
+        Mail::to($to)->queue(new SendWAEmail($message,$subject));
+
+        $data['msg'] = 'Message sudah dikirim';
+        return response()->json($data);
     }
 
 /* end class */    
