@@ -215,5 +215,59 @@ class ApiController extends Controller
         }
     }
 
+    public function customerPay(Request $request)
+    {
+        $data = json_decode($request->getContent(),true);
+        $sql = [
+            ['email','=',$data['email']],
+            ['list_id','=',$data['list_id']],
+        ];
+        $check_customer = Customer::where($sql)->first();
+
+        if($data['is_pay'] == 1 && !is_null($check_customer))
+        {
+            Customer::where($sql)->update(['is_pay'=>$data['is_pay']]);
+            $arr['response'] = 1;
+        }
+        else
+        {
+            $arr['response'] = 0;
+        }
+        return response()->json($arr);
+    }
+
+    public function testpay()
+    {
+        $curl = curl_init();
+        $data = array(
+            'email'=>'celebgramme.dev@gmail.com',
+            'list_id'=>17,
+            'is_pay'=>1
+        );
+        $url = 'http://localhost/waku/is_pay';
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTREDIR => 3,
+          CURLOPT_POSTFIELDS => json_encode($data),
+          CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if ($err) {
+          echo "cURL Error #:" . $err;
+        } else {
+          echo $response;
+          //return json_decode($response,true);
+        }
+    }
+
 /* end class */    
 }

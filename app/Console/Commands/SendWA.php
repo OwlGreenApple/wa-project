@@ -404,7 +404,7 @@ class SendWA extends Command
                             ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
                             ->join('lists','lists.id','=','reminders.list_id')
                             ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-                            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.package','reminders.days','reminders.message','reminders.subject','reminders.mail','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email')
+                            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.package','reminders.days','reminders.message','reminders.subject','reminders.mail','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email','customers.is_pay')
                           ->take($count)
                           ->get();
 
@@ -426,26 +426,33 @@ class SendWA extends Command
                     $package = $col->package;
                     $subject = $col->subject;
                     $mailmessage = $col->mail;
+                    $is_pay = $col->is_pay;
 
                     #DETERMINE WHICH LIST WHO WILL GET GENERATE COUPON
                     $run = true;
-                    if($customerlistid == 17) //omnilinkz
+                    if($customerlistid == 17 && env('APP_ENV') == 'local') //omnilinkz-local
                     {
-                      /*$url = 'https://omnilinkz.com/dashboard/generate-coupon';
-                      $url_mail = 'https://omnilinkz.com/dashboard/sendmailfromactivwa';*/
                       $url = 'http://192.168.88.177/omnilinkz/generate-coupon';
                       $url_mail = 'http://192.168.88.177/omnilinkz/sendmailfromactivwa';
                       $idmessage = 'TSL-'.$reminder_customers_id;
-                      //$idmessage = 'OML-'.$reminder_customers_id;
                     }
-                    elseif($customerlistid == 18) //omnifluencer
+                    elseif($customerlistid == 17 && env('APP_ENV') !== 'local') //omnilinkz-production
                     { 
-                      /*$url = 'https://omnifluencer.com/generate-coupon';
-                      $url_mail = 'https://omnifluencer.com/sendmailfromactivwa'; */
+                      $url = 'https://omnifluencer.com/generate-coupon';
+                      $url_mail = 'https://omnifluencer.com/sendmailfromactivwa'; 
+                      $idmessage = 'OML-'.$reminder_customers_id;
+                    }
+                    elseif($customerlistid == 18 && env('APP_ENV') == 'local') //omnifluencer-local
+                    { 
                       $url = 'http://192.168.88.177/omnifluencer-project/generate-coupon';
                       $url_mail = 'http://192.168.88.177/omnifluencer-project/sendmailfromactivwa';
                       $idmessage = 'TSF0-'.$reminder_customers_id;
-                      //$idmessage = 'OMF-'.$reminder_customers_id;
+                    } 
+                    elseif($customerlistid == 18 && env('APP_ENV') !== 'local') //omnifluencer-local
+                    { 
+                      $url = 'https://omnifluencer.com/generate-coupon';
+                      $url_mail = 'https://omnifluencer.com/sendmailfromactivwa'; 
+                      $idmessage = 'OMF-'.$reminder_customers_id;
                     }
                     else
                     {
@@ -467,21 +474,23 @@ class SendWA extends Command
                     $uid = str_replace("+","",$sender->wa_number);
                     $to = $wa_number;
 
-                    
                     # IF LIST BOTH ARE OMNILINKZ OR OMNIFLUENCER
-                    if($run == true && $current_time >= $adding && $reminder_customer_status == 0)
+                    if($is_pay == 0 && $run == true && $current_time >= $adding && $reminder_customer_status == 0)
                     {
-                        $generatedcoupon = $coupon->generatecoupon($customeremail,$package,$url);
-                        $coupon_code = $generatedcoupon['coupon_code'];
-                        $message = str_replace('{coupon}',$coupon_code,$message);
-                        $mailmessage = str_replace('{coupon}',$coupon_code,$mailmessage);
+                      $generatedcoupon = $coupon->generatecoupon($customeremail,$package,$url);
+                      $coupon_code = $generatedcoupon['coupon_code'];
+                      $message = str_replace('{coupon}',$coupon_code,$message);
+                      $mailmessage = str_replace('{coupon}',$coupon_code,$mailmessage);
                     }
-
+                   
                     /* if the time has reach or pass added time */
-                    if(($current_time >= $adding) && $reminder_customer_status == 0){
+                    if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
+                    {
                          /* wabox */
                          $waboxreminder = $this->sendWA($uid,$to,$message,$idmessage);
-                    } else {
+                    } 
+                    else 
+                    {
                          $waboxreminder = null;
                     }
 
@@ -496,7 +505,13 @@ class SendWA extends Command
                         $status = 2;
                         $id_wa = null;
                     }
-                    else{
+                    elseif($is_pay == 1)
+                    {
+                        $status = 4;
+                        $id_wa = null;
+                    }
+                    else
+                    {
                         $status = 0;
                         $id_wa = null;
                     }
