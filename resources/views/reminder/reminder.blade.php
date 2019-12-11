@@ -179,6 +179,12 @@
                     </div>
                 </form>
             </div>
+            <div class="form-group">
+                 <div>Tolong kolom diisi sesuai keperluan ya, kalau buat ngetest WA masukkan nomer WA dan click <b>Test Kirim WA</b>, kalau buat test kirim email masukkan email yang di tuju dan klik <b>Test Kirim Email</b></div>
+                <input class="to" class="form-control" placeholder="eg : 6281.. OR Email"/>
+                <a id="test_send_wa" class="btn btn-success btn-sm">Test Kirim WA</a>
+                <a id="test_send_mail" class="btn btn-warning btn-sm">Test Kirim Email</a>
+            </div>
         </div>
       </div>
       
@@ -243,7 +249,61 @@
         delDays();
         csvReminder();
         viewReminder();
+        testSendMessage();
+        testSendMail();
     });
+
+    function testSendMail()
+    {
+        $("#test_send_mail").click(function()
+        {
+            var email_message = $("textarea[name='mailtext']").val();
+            var subject = $("input[name='mailsubject']").val();
+            var to = $(".to").val();
+            var data = {
+                'subject':subject,
+                'to':to,
+                'message':email_message,
+            };
+            $(this).html('Loading.....');
+            $.ajax({
+                type : 'GET',
+                url : '{{route("testdirectsendmail")}}',
+                data : data,
+                dataType : 'json',
+                success : function(result)
+                {
+                   $("#test_send_mail").html('Test Kirim Email');
+                   alert(result.msg);
+                }
+            })
+        });
+    }
+
+    function testSendMessage()
+        {
+            $("#test_send_wa").click(function()
+            {
+                var wa_message = $(".message").val();
+                var to = $(".to").val();
+                var data = {
+                    'to':to,
+                    'wa_message':wa_message,
+                };
+                $(this).html('Loading.....');
+                $.ajax({
+                    type : 'GET',
+                    url : '{{route("testdirectsendwa")}}',
+                    data : data,
+                    dataType : 'json',
+                    success : function(result)
+                    {
+                       $("#test_send_wa").html('Test Kirim WA');
+                       alert(result.msg);
+                    }
+                })
+            });
+        }
 
     function viewReminder()
     {

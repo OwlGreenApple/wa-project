@@ -27,6 +27,8 @@ Route::get('testapi','ApiController@testapi');
 Route::get('testcoupon','ApiController@testcoupon');
 Route::get('testmail','ApiController@testmail');
 Route::get('testpay','ApiController@testpay');
+Route::get('testdirectsendwa','ApiController@testDirectSendWA')->name('testdirectsendwa');
+Route::get('testdirectsendmail','ApiController@testDirectSendMail')->name('testdirectsendmail');
 
 Route::post('is_pay','ApiController@customerPay');
 Route::post('private-list','ApiController@register_list');
