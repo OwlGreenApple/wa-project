@@ -419,8 +419,8 @@ class SendWA extends Command
                     $wa_number = $col->wa_number;
                     //$event_date = $col->event_date;
                     $senderid = $col->sender_id;
-                   //$message = str_replace('{name}',$col->name,$col->message);
-                    $message = $col->message;
+                    $message = str_replace('{name}',$col->name,$col->message);
+                    //$message = $col->message;
                     $customerlistid = $col->clid;
                     $customeremail = $col->email;
                     $package = $col->package;

@@ -22,7 +22,7 @@ class ApiController extends Controller
         $data = array(
             'list_id'=> 17,
             'wa_no'=>628123238793,
-            'name'=>'testomnilinkz',
+            'name'=>'rizky',
             'email'=>'celebgramme.dev@gmail.com',
         );
 
