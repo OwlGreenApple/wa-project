@@ -407,10 +407,11 @@ class SendWA extends Command
                             ['reminder_customers.status','=',0],
                             ['lists.is_event','=',0],
                             ['customers.created_at','<=',$current_time->toDateTimeString()],
+                            ['myDays','>=','reminders.days'],
                             ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
                             ->join('lists','lists.id','=','reminders.list_id')
                             ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-                            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.package','reminders.days','reminders.message','reminders.subject','reminders.mail','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email','customers.is_pay')
+                            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.package','reminders.days','reminders.message','reminders.subject','reminders.mail','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email','customers.is_pay',DB::raw("DATEDIFF(customers.created_at,now())AS myDays"))
                           //->take($count)
                           ->get();
 
