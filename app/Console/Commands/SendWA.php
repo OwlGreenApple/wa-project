@@ -414,8 +414,6 @@ class SendWA extends Command
                           //->take($count)
                           ->get();
 
-                print_r($reminder)."\n";
-
                 /* check date reminder customer and update if succesful sending */
                 foreach($reminder as $col) 
                 {
@@ -435,6 +433,8 @@ class SendWA extends Command
                     $subject = $col->subject;
                     $mailmessage = $col->mail;
                     $is_pay = $col->is_pay;
+
+                    print_r($customer_signup)."\n";
 
                     #DETERMINE WHICH LIST WHO WILL GET GENERATE COUPON
                     $run = true;
