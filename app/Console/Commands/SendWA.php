@@ -437,8 +437,6 @@ class SendWA extends Command
                     $mailmessage = $col->mail;
                     $is_pay = $col->is_pay;
 
-                    echo $customer_signup."\n";
-
                     #DETERMINE WHICH LIST WHO WILL GET GENERATE COUPON
                     $run = true;
                     if($customerlistid == 17 && env('APP_ENV') == 'local') //omnilinkz-local
@@ -449,8 +447,8 @@ class SendWA extends Command
                     }
                     elseif($customerlistid == 17 && env('APP_ENV') !== 'local') //omnilinkz-production
                     { 
-                      $url = 'https://omnifluencer.com/generate-coupon';
-                      $url_mail = 'https://omnifluencer.com/sendmailfromactivwa'; 
+                      $url = 'https://omnilinkz.com/dashboard/generate-coupon';
+                      $url_mail = 'https://omnilinkz.com/dashboard/sendmailfromactivwa'; 
                       $idmessage = 'OML-'.$reminder_customers_id;
                     }
                     elseif($customerlistid == 18 && env('APP_ENV') == 'local') //omnifluencer-local
