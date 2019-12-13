@@ -434,7 +434,7 @@ class SendWA extends Command
                     $mailmessage = $col->mail;
                     $is_pay = $col->is_pay;
 
-                    print_r($customer_signup)."\n";
+                    echo $customer_signup."\n";
 
                     #DETERMINE WHICH LIST WHO WILL GET GENERATE COUPON
                     $run = true;
@@ -482,8 +482,6 @@ class SendWA extends Command
                     $uid = str_replace("+","",$sender->wa_number);
                     $to = $wa_number;
 
-                    echo $to."\n";
-
                     # IF LIST BOTH ARE OMNILINKZ OR OMNIFLUENCER
                     if($is_pay == 0 && $run == true && $current_time >= $adding && $reminder_customer_status == 0)
                     {
@@ -493,8 +491,8 @@ class SendWA extends Command
                       $mailmessage = str_replace('{coupon}',$coupon_code,$mailmessage);
                     }
                    
-                   print_r($current_time);
-                   print_r($adding);
+                   //print_r($current_time);
+                   //print_r($adding);
                     /* if the time has reach or pass added time */
 //                    if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
                     if($is_pay == 0 && ($current_time->greaterThan($adding) ) && $reminder_customer_status == 0)
