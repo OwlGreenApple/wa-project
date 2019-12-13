@@ -170,8 +170,8 @@ class ApiController extends Controller
         if ($err) {
           echo "cURL Error #:" . $err;
         } else {
-          echo $response;
-          //return json_decode($response,true);
+          //echo $response;
+          return json_decode($response,true);
         }
     }
 
