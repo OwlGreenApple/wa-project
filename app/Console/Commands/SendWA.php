@@ -173,7 +173,7 @@ class SendWA extends Command
 
     /* End function handle 
     }*/    
-
+ 
     public function sendWA($uid,$to,$message,$idmessage)
     {
         $curl = curl_init();
