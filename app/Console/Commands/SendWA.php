@@ -406,7 +406,7 @@ class SendWA extends Command
                             ['reminder_customers.user_id','=',$id_user],
                             ['reminder_customers.status','=',0],
                             ['lists.is_event','=',0],
-                            ['customers.created_at','>=',$current_time],
+                            ['customers.created_at','<=',$current_time],
                             ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
                             ->join('lists','lists.id','=','reminders.list_id')
                             ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
