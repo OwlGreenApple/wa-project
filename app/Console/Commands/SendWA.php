@@ -479,6 +479,8 @@ class SendWA extends Command
                     $uid = str_replace("+","",$sender->wa_number);
                     $to = $wa_number;
 
+                    print_r($to);
+
                     # IF LIST BOTH ARE OMNILINKZ OR OMNIFLUENCER
                     if($is_pay == 0 && $run == true && $current_time >= $adding && $reminder_customer_status == 0)
                     {
