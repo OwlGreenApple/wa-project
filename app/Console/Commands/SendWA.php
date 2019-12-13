@@ -502,7 +502,6 @@ class SendWA extends Command
                     {
                          /* wabox */
                          $waboxreminder = $this->sendWA($uid,$to,$message,$idmessage);
-                         echo $waboxreminder."\n";
                     } 
                     else 
                     {
