@@ -10,6 +10,7 @@ use App\BroadCastCustomers;
 use App\Reminder;
 use App\ReminderCustomers;
 use App\Customer;
+use App\Helpers\Spintax;
 use Carbon\Carbon;
 use App\User;
 use App\Sender;
@@ -64,7 +65,9 @@ class SendWA extends Command
 
     public function handle()
     {
-       return $this->dateReminder();
+			$sleep = mt_rand(1, 65);
+			sleep($sleep);
+      return $this->dateReminder();
     }
 
     /* public function handle()
@@ -488,7 +491,13 @@ class SendWA extends Command
                     {
                       $generatedcoupon = $coupon->generatecoupon($customeremail,$package,$url);
                       $coupon_code = $generatedcoupon['coupon_code'];
+                      
                       $message = str_replace('{coupon}',$coupon_code,$message);
+                      
+                      //spin message
+                      $spintax = new Spintax;
+                      $message = $spintax->process($message);  
+                      
                       $mailmessage = str_replace('{coupon}',$coupon_code,$mailmessage);
                     }
                    
@@ -548,7 +557,8 @@ class SendWA extends Command
                         echo 'Error!! Unable to update reminder customer';
                     }
                     */
-                  sleep(10);
+                  // sleep(10);
+                  exit;
                 } #end reminder looping
           /* end user looping */
           }
