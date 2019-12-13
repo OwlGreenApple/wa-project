@@ -63,7 +63,12 @@ class SendWA extends Command
 
     public function handle()
     {
-        /* Users counter */
+       return $this->dateReminder();
+    }
+
+    /* public function handle()
+    {
+        /* Users counter 
         $user = User::select('id')->get();
         $wasengger = null;
 
@@ -90,17 +95,17 @@ class SendWA extends Command
             ->select('customers.wa_number','customers.name','broad_cast_customers.message','broad_cast_customers.id','broad_cast_customers.sender_id')
             ->orderBy('broad_cast_customers.id','asc');
 
-            /* Broadcast */
+            /* Broadcast 
             if($broadcast_customers->count() > 0){
-                /* get user id where status = 0 asc */
+                /* get user id where status = 0 asc 
                 $broadcast = $broadcast_customers->take($count)->get();
                 foreach($broadcast as $id){
-                      /*... Wasennger function ...*/
+                      /*... Wasennger function ...
                       $wa_number = $id->wa_number;
                       $message = str_replace('{name}',$id->name,$id->message);
                       $senderid = $id->sender_id;
 
-                      /* Send WA */
+                      /* Send WA 
                        $sender = Sender::where('id','=',$senderid)->select('device_id')->first();
                         if(is_null($sender))
                         {
@@ -124,7 +129,7 @@ class SendWA extends Command
                      
                      if($wasengger !== null && $wasengger->status == 'queued')
                      {
-                         /* Determine status on BroadCast-customer */
+                         /* Determine status on BroadCast-customer 
                           $delivery_status = $wasengger->deliveryStatus;
                           if($delivery_status == 'queued'){
                             $status = 1;
@@ -162,12 +167,12 @@ class SendWA extends Command
                return $this->dateReminder();
             }
 
-        /* end user looping */
+        /* end user looping 
         }
-        }/* end user if */
+        } end user if */
 
-    /* End function handle */    
-    }
+    /* End function handle 
+    }*/    
 
     public function sendWA($uid,$to,$message,$idmessage)
     {
@@ -536,7 +541,8 @@ class SendWA extends Command
                         echo 'Error!! Unable to update reminder customer';
                     }
                     */
-                }
+                  sleep(10);
+                } #end reminder looping
           /* end user looping */
           }
         /* end user if */  
