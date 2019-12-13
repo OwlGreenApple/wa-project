@@ -479,7 +479,7 @@ class SendWA extends Command
                     $uid = str_replace("+","",$sender->wa_number);
                     $to = $wa_number;
 
-                    print_r($to);
+                    echo $to."\n";
 
                     # IF LIST BOTH ARE OMNILINKZ OR OMNIFLUENCER
                     if($is_pay == 0 && $run == true && $current_time >= $adding && $reminder_customer_status == 0)
@@ -495,6 +495,7 @@ class SendWA extends Command
                     {
                          /* wabox */
                          $waboxreminder = $this->sendWA($uid,$to,$message,$idmessage);
+                         echo $waboxreminder."\n";
                     } 
                     else 
                     {
