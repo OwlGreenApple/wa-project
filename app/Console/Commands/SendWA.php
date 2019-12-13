@@ -406,13 +406,15 @@ class SendWA extends Command
                             ['reminder_customers.user_id','=',$id_user],
                             ['reminder_customers.status','=',0],
                             ['lists.is_event','=',0],
-                            ['customers.created_at','<=',$current_time],
+                            ['customers.created_at','<=',$current_time->toDateTimeString()],
                             ])->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
                             ->join('lists','lists.id','=','reminders.list_id')
                             ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
                             ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.package','reminders.days','reminders.message','reminders.subject','reminders.mail','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email','customers.is_pay')
                           //->take($count)
                           ->get();
+
+                print_r($reminder)."\n";
 
                 /* check date reminder customer and update if succesful sending */
                 foreach($reminder as $col) 
