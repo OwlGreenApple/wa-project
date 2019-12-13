@@ -409,7 +409,7 @@ class SendWA extends Command
                             ['lists.is_event','=',0],
                             ['customers.created_at','<=',$current_time->toDateTimeString()],
                             ])
-                            ->whereRaw('DATEDIFF(customers.created_at,now()) >= reminders.days')
+                            ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
                             ->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
                             ->join('lists','lists.id','=','reminders.list_id')
                             ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
