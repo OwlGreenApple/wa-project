@@ -21,9 +21,9 @@ class ApiController extends Controller
 
         $data = array(
             'list_id'=> 17,
-            'wa_no'=>628123238793,
-            'name'=>'rizky',
-            'email'=>'celebgramme.dev@gmail.com',
+            'wa_no'=>11111111111,
+            'name'=>'barokah77store',
+            'email'=>'barokah77store@gmail.com',
         );
 
         curl_setopt_array($curl, array(
@@ -60,7 +60,6 @@ class ApiController extends Controller
     	}
         $userid = $list->user_id;
          /**/
-
         $today = Carbon::now();
         $valid_customer = false;
         $is_event = $list->is_event;
@@ -68,7 +67,6 @@ class ApiController extends Controller
         $list_message = $list->message_text;
         $list_wa_number = $list->wa_number;
         $sender = Sender::where([['user_id',$list->user_id],['wa_number','=',$list->wa_number]])->first();
-
         $cust = new Customer;
         $cust->user_id = $userid;
         $cust->list_id = $data['list_id'];

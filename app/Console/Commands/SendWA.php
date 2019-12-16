@@ -498,21 +498,22 @@ class SendWA extends Command
                       
                       $mailmessage = str_replace('{coupon}',$coupon_code,$mailmessage);
                     }
-                   
-                   //print_r($current_time);
-                   //print_r($adding);
-                    /* if the time has reach or pass added time */
-                   if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
+
+                    if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
                     {
                          /* wabox */
                         // $waboxreminder = $this->sendWA($uid,$to,$message,$idmessage);
                         $status = 1;
                         $coupon->callMailApi($url_mail,$customeremail,$mailmessage,$subject);
+                    }
+                    elseif($is_pay == 1)
+                    {
+                        $status = 4;
+                        $coupon->callMailApi($url_mail,$customeremail,$mailmessage,$subject);
                     } 
                     else 
                     {
-                         $waboxreminder = null;
-                         $status = 0;
+                        $status = 0;
                     }
 
                     $update_reminder_customer = ReminderCustomers::where([
@@ -521,9 +522,7 @@ class SendWA extends Command
                     ])->update([
                         'id_wa'=>0,
                         'status'=>$status,
-                    ]);  
-
-                    exit;
+                    ]); 
                 } #end reminder looping
           /* end user looping */
           }
