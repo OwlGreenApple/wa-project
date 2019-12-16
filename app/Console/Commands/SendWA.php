@@ -523,7 +523,7 @@ class SendWA extends Command
                         'status'=>$status,
                     ]);  
 
-                    exit;
+                    // exit;
                 } #end reminder looping
           /* end user looping */
           }
