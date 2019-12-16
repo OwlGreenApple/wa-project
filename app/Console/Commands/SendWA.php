@@ -182,7 +182,7 @@ class SendWA extends Command
     {
         $curl = curl_init();
         $data = array(
-            'token'=> 'd4022732efc379b02d562d9addfbe2055df6e1f4d420f',
+            'token'=> '0648a365aec87be50745ab07230d7df55df6eda532b81',
             'uid'=>$uid, //number to send message
             'to'=>$to, // number to receive message
             'text'=>$message, //message
