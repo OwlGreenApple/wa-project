@@ -522,13 +522,8 @@ class SendWA extends Command
                     ])->update([
                         'id_wa'=>0,
                         'status'=>$status,
-<<<<<<< HEAD
-                    ]); 
-=======
-                    ]);  
 
-                    // exit;
->>>>>>> c54f1bc5ce3e33be6133f2f51731cc205d280141
+                    ]); 
                 } #end reminder looping
           /* end user looping */
           }
