@@ -65,8 +65,6 @@ class SendWA extends Command
 
     public function handle()
     {
-			$sleep = mt_rand(60, 115);
-			sleep($sleep);
       return $this->dateReminder();
     }
 
@@ -505,60 +503,27 @@ class SendWA extends Command
                    //print_r($adding);
                     /* if the time has reach or pass added time */
                    if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
-                    // if($is_pay == 0 && ($current_time->gt($adding) ) && $reminder_customer_status == 0)
                     {
                          /* wabox */
-                         $waboxreminder = $this->sendWA($uid,$to,$message,$idmessage);
+                        // $waboxreminder = $this->sendWA($uid,$to,$message,$idmessage);
+                        $status = 1;
+                        $coupon->callMailApi($url_mail,$customeremail,$mailmessage,$subject);
                     } 
                     else 
                     {
                          $waboxreminder = null;
-                    }
-
-                    if(!empty($waboxreminder['success']))
-                    {
-                        $status = 1;
-                        $id_wa = $waboxreminder["custom_uid"];
-                        $coupon->callMailApi($url_mail,$customeremail,$mailmessage,$subject);
-                    }
-                    elseif(!empty($waboxreminder['error']))
-                    {
-                        $status = 2;
-                        $id_wa = null;
-                    }
-                    elseif($is_pay == 1)
-                    {
-                        $status = 4;
-                        $id_wa = null;
-                    }
-                    else
-                    {
-                        $status = 0;
-                        $id_wa = null;
+                         $status = 0;
                     }
 
                     $update_reminder_customer = ReminderCustomers::where([
                         ['id',$reminder_customers_id],
                         ['status','=',0],
                     ])->update([
-                        'id_wa'=>$id_wa,
+                        'id_wa'=>0,
                         'status'=>$status,
                     ]);  
 
-                    /*
-                    if($update_reminder_customer == true){
-                        #SEND COUPON TO USERS MAIL
-                       
-                        /*$count = $count - 1;
-                        $sender_update = Sender::where([['user_id',$id_user],['device_id','=',$deviceId]])->update(['counter'=>$count]);
-                    } 
-                    else 
-                    {
-                        echo 'Error!! Unable to update reminder customer';
-                    }
-                    */
-                  // sleep(10);
-                  exit;
+                    exit;
                 } #end reminder looping
           /* end user looping */
           }
