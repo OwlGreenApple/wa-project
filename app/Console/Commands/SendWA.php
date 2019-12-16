@@ -65,7 +65,7 @@ class SendWA extends Command
 
     public function handle()
     {
-			$sleep = mt_rand(1, 115);
+			$sleep = mt_rand(60, 115);
 			sleep($sleep);
       return $this->dateReminder();
     }
