@@ -429,7 +429,7 @@ class SendWA extends Command
                     $wa_number = $col->wa_number;
                     //$event_date = $col->event_date;
                     $senderid = $col->sender_id;
-                    $message = str_replace('{name}',$col->name,$col->message);
+                    $message = $col->message;
                     //$message = $col->message;
                     $customerlistid = $col->clid;
                     $customeremail = $col->email;
@@ -497,6 +497,8 @@ class SendWA extends Command
                       $message = $spintax->process($message);  
                       
                       $mailmessage = str_replace('{coupon}',$coupon_code,$mailmessage);
+                      $mailmessage = str_replace('{name}',$col->name,$mailmessage);
+                      $mailmessage = str_replace('{link}',"<a href='https://omnilinkz.com/dashboard/checkout/".$coupon_code."'>https://omnilinkz.com/dashboard/checkout/".$coupon_code."</a>",$mailmessage);
                     }
 
                     if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
@@ -522,7 +524,6 @@ class SendWA extends Command
                     ])->update([
                         'id_wa'=>0,
                         'status'=>$status,
-
                     ]); 
                 } #end reminder looping
           /* end user looping */

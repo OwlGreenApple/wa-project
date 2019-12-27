@@ -22,8 +22,8 @@ class ApiController extends Controller
         $data = array(
             'list_id'=> 17,
             'wa_no'=>11111111111,
-            'name'=>'barokah77store',
-            'email'=>'barokah77store@gmail.com',
+            'name'=>'Rizky',
+            'email'=>'celebgramme.dev@gmail.com',
         );
 
         curl_setopt_array($curl, array(
@@ -52,7 +52,8 @@ class ApiController extends Controller
     public function register_list(Request $request)
     {
     	$data = json_decode($request->getContent(),true);
-        $list = UserList::where('id',$data['list_id'])->first();
+      $list = UserList::where('id',$data['list_id'])->first();
+
     	if(is_null($list))
     	{
     	 	$msg['is_error'] = 'Id not available, it may Deleted!!!';
@@ -67,6 +68,7 @@ class ApiController extends Controller
         $list_message = $list->message_text;
         $list_wa_number = $list->wa_number;
         $sender = Sender::where([['user_id',$list->user_id],['wa_number','=',$list->wa_number]])->first();
+        
         $cust = new Customer;
         $cust->user_id = $userid;
         $cust->list_id = $data['list_id'];
@@ -102,6 +104,8 @@ class ApiController extends Controller
                 $after_sum_day = Carbon::parse($customer_subscribe_date)->addDays($days);
                 $validday = $after_sum_day->toDateString();
                 $createdreminder = Carbon::parse($row->created_at)->toDateString();
+                $reminder_status = $row->status;
+                ($reminder_status == 1)?$reminder_response = 0 : $reminder_response = 3;
 
                  if($validday >= $createdreminder){
                     $reminder_customer = new ReminderCustomers;
@@ -110,6 +114,7 @@ class ApiController extends Controller
                     $reminder_customer->sender_id = $sender->id;
                     $reminder_customer->reminder_id = $row->id;
                     $reminder_customer->customer_id = $customerid;
+                    $reminder_customer->status = $reminder_response;
                     $reminder_customer->save(); 
                     $eligible = true; 
                  } else {
