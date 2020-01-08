@@ -22,7 +22,7 @@ class CheckUserLists
     public function handle($request, Closure $next)
     {
 
-        $wa_number = $request->wa_number;
+        $bot_api = $request->bot_api;
         $is_event = $request->category;
 
         if(isset($request->date_event)){
@@ -32,10 +32,6 @@ class CheckUserLists
         }
         
         $today = Carbon::now()->format('Y-m-d h:i');
-
-        if(!isset($request->wa_number)){
-            return redirect('createlist')->with('error_number','Please, register your WhatsApp Number first');
-        }
 
         if(empty($request->label_name)){
             return redirect('createlist')->with('error_number','Column name list cannot be empty');
@@ -53,9 +49,14 @@ class CheckUserLists
             return redirect('createlist')->with('isevent','Please do not change category value');
         } 
 
-        $checkwa = $this->checkWANumber($wa_number);
-        if($checkwa == false ){
-            return redirect('createlist')->with('wa_check_number','Sorry, this number is not yours');
+        if(empty($bot_api))
+        {
+          return redirect('createlist')->with('bot_check_number','Column bot api cannot be empty!');
+        }
+
+        $checkbot = $this->checkBotAPI($bot_api);
+        if($checkbot == false ){
+            return redirect('createlist')->with('bot_check_number','Sorry, this API used already');
         } 
 
         if($is_event == 1 && empty($date_event)){
@@ -79,11 +80,10 @@ class CheckUserLists
     }
 
     /* To prevent if user use another number */
-    private function checkWANumber($wa_number){
-        $userid = Auth::id();
-        $getlist = Sender::where([['user_id',$userid],['wa_number','=',$wa_number]])->first();
+    private function checkBotAPI($bot_api){
+        $getlist = UserList::where('bot_api','=',$bot_api)->first();
 
-        if(!is_null($getlist)){
+        if(is_null($getlist)){
             return true;
         } else {
             return false;

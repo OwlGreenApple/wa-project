@@ -44,24 +44,12 @@
                      <form name="event_form" method="POST" action="{{ route('addlist') }}">
                         @csrf
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label text-md-right">WA Number</label>
-
+                            <label class="col-md-3 col-form-label text-md-right">Bot API</label>
                             <div class="col-md-8">
-                               @if($data->count() > 0)
-                                    <select name="wa_number" class="form-control">
-                                        @foreach($data as $row)
-                                            <option value="{{$row->wa_number}}">{{$row->wa_number}}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                               @else
-                                No Numbers
-                               @endif
-
-
-                                @if(session('wa_check_number'))
+                                <input name="bot_api" class="form-control" />
+                                @if(session('bot_check_number'))
                                     <div class="error" role="alert">
-                                        {{ session('wa_check_number') }}
+                                        {{ session('bot_check_number') }}
                                     </div>
                                 @endif 
                             </div>

@@ -35,9 +35,7 @@ class ListController extends Controller
     }   
 
     public function listForm(){
-        $id_user = Auth::id();
-        $sender = Sender::where('user_id',$id_user)->get();
-        return view('list.list-form',['data'=>$sender]);
+        return view('list.list-form');
     }
 
     public function addList(Request $request)
@@ -82,8 +80,8 @@ class ListController extends Controller
                 }
 
                 # default name
-                if($ipt == 'name' || $ipt == 'wa_number'){
-                    return redirect('createlist')->with('error_number','Error! Sorry both of name and wa_number has set as default');
+                if($ipt == 'name' || $ipt == 'bot_api'){
+                    return redirect('createlist')->with('error_number','Error! Sorry both of name and bot_api has set as default');
                 }
             }
         }
@@ -110,8 +108,8 @@ class ListController extends Controller
                 }
 
                 # default name
-                if($ipt == 'name' || $ipt == 'wa_number'){
-                    return redirect('createlist')->with('error_number','Error! Sorry both of name and wa_number has set as default');
+                if($ipt == 'name' || $ipt == 'bot_api'){
+                    return redirect('createlist')->with('error_number','Error! Sorry both of name and bot_api has set as default');
                 }
             }
         }
@@ -142,21 +140,19 @@ class ListController extends Controller
     	$list = new UserList;
     	$list->user_id = Auth::id();
     	$list->name = $this->createRandomListName();
-        $list->wa_number = $request->wa_number;
-        $list->is_event = $request->category;
-        $list->label = $request->label_name;
-        $list->event_date = $request->date_event;
-        //$list->wa_number = $request->wa_number;
-        //$list->api_key = $request->api_key;
-        $list->content = $request->editor1;
-        $list->pixel_text = $request->pixel_txt;
-        $list->message_text = $request->message_txt;
-    	$list->save();
-        $listid = $list->id;
+      $list->bot_api = $request->bot_api;
+      $list->is_event = $request->category;
+      $list->label = $request->label_name;
+      $list->event_date = $request->date_event;
+      $list->content = $request->editor1;
+      $list->pixel_text = $request->pixel_txt;
+      $list->message_text = $request->message_txt;
+  	  $list->save();
+      $listid = $list->id;
 
     	if($list->save() == true){
-            $cfields = count($fields);
-            $cdropdown = count($dropdown);
+          $cfields = count($fields);
+          $cdropdown = count($dropdown);
     	} else {
     		return redirect('createlist')->with('status','Error!, failed to create list');
     	}
@@ -333,6 +329,7 @@ class ListController extends Controller
             $data = array(
                 'list_label'=>$list->label,
                 'list_name'=>$list->name,
+                'bot_api'=>$list->bot_api,
                 'content'=> $list->content,
                 'is_event'=>$list->is_event,
                 'event_date'=>$list->event_date,
@@ -539,6 +536,7 @@ class ListController extends Controller
         $userid = Auth::id();
         $id = $request->id;
         $list_label = $request->list_label;
+        $bot_api = $request->bot_api;
         $date_event = $request->date_event;
         $editor = $request->editor;
         $pixel = $request->pixel;
@@ -551,6 +549,7 @@ class ListController extends Controller
 
         $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
             'label'=>$list_label,
+            'bot_api'=>$bot_api,
             'event_date'=>$date_event,
             'content'=> $editor,
             'pixel_text'=> $pixel,

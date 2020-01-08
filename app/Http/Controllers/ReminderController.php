@@ -160,6 +160,7 @@ class ReminderController extends Controller
             return redirect('reminderform')->with('status_error','Error!! failed to set reminder');
         }
 
+        /*
         # Input eligible customer id
         $datacustomer = array();
         if($customer->count() > 0){
@@ -205,7 +206,7 @@ class ReminderController extends Controller
                 return redirect('reminderform')->with('status_error','Error!! failed to set reminder for customer');
             }
         }
-       
+        */
     }
 
     /* Create and insert data reminder and reminder customer into database 

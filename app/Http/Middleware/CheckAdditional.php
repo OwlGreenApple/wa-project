@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use App\UserList;
 
 class CheckAdditional
 {
@@ -18,6 +20,7 @@ class CheckAdditional
     {
 
         $label = $request->list_label;
+        $botapi = $request->bot_api;
         $date_event = $request->date_event;
         $fields = $request->fields;
         $dropfields = $request->dropfields;
@@ -31,6 +34,11 @@ class CheckAdditional
             $error['label'] = 'List name cannot be empty';
         } 
 
+        if(empty($botapi) || $botapi == null)
+        {
+            $error['botapi'] = 'Bot API cannot be empty';
+        } 
+
         if(strlen($label) > 50)
         {
             $error['label'] = 'List name cannot greater than 50 characters';
@@ -39,6 +47,11 @@ class CheckAdditional
         if($date_event !== null && $date_event < $today)
         {
             $error['date_event'] = 'Date and time event cannot be less than today';
+        }
+
+        if($this->checkBotAPI($botapi) == false)
+        {
+           $error['botapi'] = 'Sorry, Bot API had used by another account';
         }
 
         if(count($error) > 0)
@@ -147,6 +160,23 @@ class CheckAdditional
         return $next($request);
     }
 
+     /* To allow function if value equal wih user id */
+    private function checkBotAPI($bot_api){
+        $userid = Auth::id();
+        $getlist = UserList::where('bot_api','=',$bot_api)->first();
+
+        if(is_null($getlist))
+        {
+           return true;
+        }
+
+        $botuserid = $getlist->user_id;
+        if($botuserid == $userid){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 /* End check additional */
 }
