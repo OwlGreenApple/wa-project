@@ -163,8 +163,9 @@ class WABox extends Command
           //print(print_r($id,true))."\n";
           foreach(array_unique($id) as $row)
           {
-            print(print_r($idbot,true))."\n";
-            //$this->sendMessage($row,'testmulti',$idbot);
+            //print(print_r($idbot,true))."\n";
+            $this->sendMessage($row,'testmulti',$idbot);
+            sleep(2);
           }
           
         }
