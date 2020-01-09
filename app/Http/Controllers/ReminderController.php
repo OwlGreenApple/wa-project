@@ -133,10 +133,6 @@ class ReminderController extends Controller
         $validator = Validator::make($request->all(),$rules);
         $err = $validator->errors();
 
-        $listdata = UserList::where('id',$list_id)->select('wa_number')->first();
-        $devicenumber = $listdata->wa_number;
-        $sender = Sender::where([['user_id',$user_id],['wa_number','=',$devicenumber]])->first();
-
         if($validator->fails()){
             return redirect('reminderform')->with('error',$err);
         } else {
@@ -160,7 +156,6 @@ class ReminderController extends Controller
             return redirect('reminderform')->with('status_error','Error!! failed to set reminder');
         }
 
-        /*
         # Input eligible customer id
         $datacustomer = array();
         if($customer->count() > 0){
@@ -192,7 +187,6 @@ class ReminderController extends Controller
                 foreach($reminder_get_id as $id_reminder){
                     $remindercustomer->user_id = $user_id;
                     $remindercustomer->list_id = $col->list_id;
-                    $remindercustomer->sender_id = $sender->id;
                     $remindercustomer->reminder_id = $id_reminder->id;
                     $remindercustomer->customer_id = $col->id;
                     $remindercustomer->save();
@@ -206,112 +200,13 @@ class ReminderController extends Controller
                 return redirect('reminderform')->with('status_error','Error!! failed to set reminder for customer');
             }
         }
-        */
     }
-
-    /* Create and insert data reminder and reminder customer into database 
-    public function addReminder(Request $request){
-    	$user_id = Auth::id();
-    	$req = $request->all();
-    	$message = $req['message'];
-        $event = $req['is_event'];
-        $eventdate = $req['eventdate'];
-        
-        $sender = Sender::where('user_id',$user_id)->first();
-
-        if($event == 0){
-            $days = $req['day'];
-        } else {
-            $days = $req['eventday'];
-        }
-
-        $rules = array(
-            'id'=>['required'],
-            'message'=>['required','max:3000'],
-            'is_event'=>['required','numeric'],
-            'day'=>['required','numeric'],
-        );
-
-        $validator = Validator::make($request->all(),$rules);
-        $err = $validator->errors();
-
-        if($validator->fails()){
-            return redirect('reminderform')->with('error',$err);
-        } else {
-            foreach($req['id'] as $row=>$list_id){
-                $reminder = new Reminder;
-                $reminder->user_id = $user_id;
-                $reminder->list_id = $list_id;
-                $reminder->is_event = $event;
-                $reminder->event = $eventdate;
-                $reminder->days = $days;
-                $reminder->message = $message;
-                $reminder->save();
-            }
-        }
-
-    	/* If data successfully inserted into reminder 
-    	if($reminder->save() == true){
-    		foreach($req['id'] as $row=>$list_id){
-    			/* retrieve customer id 
-    			$customer = Customer::where([
-    				['list_id','=',$list_id],
-    				['status','=',1],
-    			]);
-    			
-                /* Input eligible customer id
-                $created_date = $reminder->created_at;
-                foreach($customer->get() as $rows){
-                    $customer_signup = Carbon::parse($rows->created_at);
-                    $adding_day = $customer_signup->addDays($days);
-                    if($adding_day >= $created_date){
-                        $datacustomer[] = $rows;
-                    }
-                }
-	    	}
-    	} else {
-    		return redirect('reminderform')->with('status_error','Error!! failed to set reminder');
-    	}
-
-        /* check whether user have customer 
-        if(empty($datacustomer)){
-            return redirect('reminderform')->with('status','Your reminder has been set!');
-        } else {
-            /* display data customer 
-            foreach($datacustomer as $col){
-                /* retrieve reminder id according on created at 
-                $reminder_get_id = Reminder::where([
-                    ['list_id','=',$col->list_id],
-                    ['created_at','=',$created_date],
-                    ['status','=',1],
-                ])->select('id')->get();
-
-                $remindercustomer = new ReminderCustomers;
-                foreach($reminder_get_id as $id_reminder){
-                    $remindercustomer->user_id = $user_id;
-                    $remindercustomer->list_id = $col->list_id;
-                    $remindercustomer->sender_id = $sender->id;
-                    $remindercustomer->reminder_id = $id_reminder->id;
-                    $remindercustomer->customer_id = $col->id;
-                    $remindercustomer->save();
-                }
-
-            } /* end loop 
-             /* If successful insert data into reminder customer 
-            if($remindercustomer->save() == true){
-                return redirect('reminderform')->with('status','Your reminder has been set!!');
-            } else {
-                return redirect('reminderform')->with('status_error','Error!! failed to set reminder for customer');
-            }
-        }
-       
-    }*/
 
     /* Display reminder customer */
     public function displayReminderCustomers()
     {
     	$id_user = Auth::id();
-    	$remindercustomer = ReminderCustomers::where([['reminder_customers.user_id','='                ,$id_user],
+    	$remindercustomer = ReminderCustomers::where([['reminder_customers.user_id','=',$id_user],
                             ['lists.is_event','=',0],
                             ['reminders.hour_time','=',null],
                             ])

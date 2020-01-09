@@ -55,6 +55,18 @@
                             </div>
                         </div>   
 
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label text-md-right">Bot Name</label>
+                            <div class="col-md-8">
+                                 <input type="text" class="form-control" name="bot_name" />
+                            </div>
+                             @if(session('bot_name'))
+                                <div class="error">
+                                    {{ session('bot_name') }}
+                                </div> 
+                            @endif
+                        </div> 
+
                          <div class="form-group row">
                             <label class="col-md-3 col-form-label text-md-right">Name List</label>
                             <div class="col-md-8">

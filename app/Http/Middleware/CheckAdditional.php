@@ -6,6 +6,7 @@ use Closure;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\UserList;
+use App\Http\Middleware\CheckUserLists;
 
 class CheckAdditional
 {
@@ -21,6 +22,7 @@ class CheckAdditional
 
         $label = $request->list_label;
         $botapi = $request->bot_api;
+        $botname = $request->bot_name;
         $date_event = $request->date_event;
         $fields = $request->fields;
         $dropfields = $request->dropfields;
@@ -28,6 +30,7 @@ class CheckAdditional
         $error = array();
         $data['error'] = true;
         $data['additionalerror'] = false;
+        $checkuserlist = new CheckUserLists;
 
         if(empty($label) || $label == null)
         {
@@ -37,6 +40,17 @@ class CheckAdditional
         if(empty($botapi) || $botapi == null)
         {
             $error['botapi'] = 'Bot API cannot be empty';
+        } 
+
+        if(empty($botname) || $botname == null)
+        {
+            $error['botname'] = 'Bot Name cannot be empty';
+        } 
+
+
+        if($checkuserlist->checkBotName($request->bot_name) == false)
+        {
+          $error['botname'] = 'Bot name available already!';
         } 
 
         if(strlen($label) > 50)

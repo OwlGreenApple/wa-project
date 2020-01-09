@@ -41,7 +41,8 @@ Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');//
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
 Route::group(['middleware'=>['auth','web','is_admin']],function(){
-	Route::get('superadmin', 'AdminController@index');//home.blade
+	Route::get('sendingrate', 'AdminController@SendingRate');
+  Route::get('superadmin', 'AdminController@index');//home.blade
 	Route::get('loginuser/{id_user}', 'AdminController@LoginUser');//home.blade
 	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');//home.blade
 	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');

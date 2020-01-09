@@ -54,6 +54,16 @@ class CheckUserLists
           return redirect('createlist')->with('bot_check_number','Column bot api cannot be empty!');
         }
 
+        if(empty($request->bot_name))
+        {
+          return redirect('createlist')->with('bot_name','Column bot name cannot be empty!');
+        }
+
+        if($this->checkBotName($request->bot_name) == false)
+        {
+          return redirect('createlist')->with('bot_name','Bot name available already!');
+        } 
+
         $checkbot = $this->checkBotAPI($bot_api);
         if($checkbot == false ){
             return redirect('createlist')->with('bot_check_number','Sorry, this API used already');
@@ -99,6 +109,17 @@ class CheckUserLists
         } else {
             return false;
         }
+    }
+
+    public function checkBotName($bot_name)
+    {
+       $checkbotname = UserList::where('bot_name','=',$bot_name)->first();
+       if(is_null($checkbotname))
+       {
+         return true;
+       } else {
+         return false;
+       }
     }
 
 }

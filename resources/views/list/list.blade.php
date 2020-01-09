@@ -105,6 +105,12 @@
                 <label class="col-form-label text-md-right"><b>Bot API</b></label>
                 <input type="text" class="form-control" name="bot_api" />
                 <span class="error bot_api"></span>
+            </div> 
+
+            <div class="form-group">
+                <label class="col-form-label text-md-right"><b>Bot Name</b></label>
+                <input type="text" class="form-control" name="bot_name" />
+                <span class="error bot_name"></span>
             </div>
 
             <div class="form-group dtev">
@@ -381,6 +387,7 @@
                    $("textarea[name='pixel_txt']").val(result.pixel);
                    $("textarea[name='message_txt']").val(result.message);
                    $("input[name='bot_api']").val(result.bot_api);
+                   $("input[name='bot_name']").val(result.bot_name);
 
                    var box_html = '';
                    var is_option = {};
@@ -508,6 +515,7 @@
                 id : $("input[name='idlist']").val(),
                 list_label : $("input[name='list_label']").val(),
                 bot_api : $("input[name='bot_api']").val(),
+                bot_name : $("input[name='bot_name']").val(),
                 date_event : $("input[name='date_event']").val(),
                 editor : CKEDITOR.instances.editor1.getData(),
                 pixel : $("textarea[name='pixel_txt']").val(),
@@ -543,6 +551,7 @@
                       $(".list_label").html(result.label);
                       $(".event_date").html(result.date_event);
                       $(".bot_api").html(result.botapi);
+                      $(".bot_name").html(result.botname);
                    }
                 }
             });

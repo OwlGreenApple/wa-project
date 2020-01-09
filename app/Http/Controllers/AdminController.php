@@ -32,4 +32,10 @@ class AdminController extends Controller
         $file = $request->file('csv_file');
         Excel::import(new UsersImport(1), $file);
     }
+
+    #TO CONTROL RATE OF SENDING MESSAGE
+    public function SendingRate()
+    {
+      return view('admin.sendingrate');
+    }
 }

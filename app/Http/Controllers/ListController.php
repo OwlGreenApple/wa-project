@@ -141,6 +141,7 @@ class ListController extends Controller
     	$list->user_id = Auth::id();
     	$list->name = $this->createRandomListName();
       $list->bot_api = $request->bot_api;
+      $list->bot_name = $request->bot_name;
       $list->is_event = $request->category;
       $list->label = $request->label_name;
       $list->event_date = $request->date_event;
@@ -330,6 +331,7 @@ class ListController extends Controller
                 'list_label'=>$list->label,
                 'list_name'=>$list->name,
                 'bot_api'=>$list->bot_api,
+                'bot_name'=>$list->bot_name,
                 'content'=> $list->content,
                 'is_event'=>$list->is_event,
                 'event_date'=>$list->event_date,
@@ -537,6 +539,7 @@ class ListController extends Controller
         $id = $request->id;
         $list_label = $request->list_label;
         $bot_api = $request->bot_api;
+        $bot_name = $request->bot_name;
         $date_event = $request->date_event;
         $editor = $request->editor;
         $pixel = $request->pixel;
@@ -550,6 +553,7 @@ class ListController extends Controller
         $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
             'label'=>$list_label,
             'bot_api'=>$bot_api,
+            'bot_name'=>$bot_name,
             'event_date'=>$date_event,
             'content'=> $editor,
             'pixel_text'=> $pixel,

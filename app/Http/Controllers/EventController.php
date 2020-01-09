@@ -133,16 +133,6 @@ class EventController extends Controller
         $validator = Validator::make($request->all(),$rules);
         $err = $validator->errors();
 
-        #Sender
-        $listdata = UserList::where('id',$request->list_id)->select('wa_number')->first();
-        $devicenumber = $listdata->wa_number;
-        $sender = Sender::where([['user_id',$user_id],['wa_number','=',$devicenumber]])->first();
-
-        if(is_null($sender))
-        {
-            return redirect('eventform')->with('errorsender','Sorry, this list phone number is not available');
-        }
-
         /* Validator */
         if($validator->fails()){
             return redirect('eventform')->with('error',$err);
@@ -178,7 +168,6 @@ class EventController extends Controller
                 $remindercustomer = new ReminderCustomers;
                 $remindercustomer->user_id = $user_id;
                 $remindercustomer->list_id = $col->list_id;
-                $remindercustomer->sender_id = $sender->id;
                 $remindercustomer->reminder_id = $col->id;
                 $remindercustomer->customer_id = $col->csid;
                 $remindercustomer->save();

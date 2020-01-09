@@ -167,10 +167,11 @@
                     $("#submit").html('<button type="submit" class="btn btn-primary">Register</button>');
                     if(result.success == true){
                         $(".modal-body > p").text(result.message);
-                        location.href= result.wa_link;
+                        alert('Your data has stored!');
+                        //location.href= result.wa_link;
                         //getModal();
                         //setTimeout(function(){location.href= result.wa_link} , 1000);   
-                        //clearField();
+                        clearField();
                     } else {
                         $(".name").text(result.name);
                         $(".wa_number").text(result.wa_number);
