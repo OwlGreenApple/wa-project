@@ -42,6 +42,7 @@ Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//hom
 
 Route::group(['middleware'=>['auth','web','is_admin']],function(){
 	Route::get('sendingrate', 'AdminController@SendingRate');
+  Route::post('savesettings', 'AdminController@SaveSettings');
   Route::get('superadmin', 'AdminController@index');//home.blade
 	Route::get('loginuser/{id_user}', 'AdminController@LoginUser');//home.blade
 	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');//home.blade

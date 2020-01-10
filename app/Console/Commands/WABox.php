@@ -5,9 +5,11 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\UserList;
 use App\BroadCast;
+use App\BroadCastCustomers;
 use App\Reminder;
 use App\ReminderCustomers;
 use App\Customer;
+use App\AdminSetting;
 use Carbon\Carbon;
 use DB;
 
@@ -44,9 +46,7 @@ class WABox extends Command
      */
     public function handle()
     {
-      //$this->testMessage();
         //die('');
-        $botlist = UserList::where('status','=',1)->get();
         $broadcast = BroadCast::where('status','=',0)->get();
 
         if($broadcast->count() > 0)
@@ -67,6 +67,7 @@ class WABox extends Command
                   ->select('lists.bot_api','broad_casts.id as bid','broad_casts.message')
                   ->get();
       $broadcastidlist = array();
+      $total_sending = 0;
 
       if($broadcast->count() > 0)
       {
@@ -77,23 +78,53 @@ class WABox extends Command
             $botapi = $rows->bot_api;
 
             $bcd = $this->getListBot($botapi,$broadcastmessage,$broadcastid);
-            $broadcastidlist[] = $bcd;
+            $broadcastidlist[$broadcastid][] = $bcd;
           }
       }
 
       if(count($broadcastidlist) > 0)
       {
-         foreach($broadcastidlist as $botid=>$broadcasts)
+         foreach($broadcastidlist as $broadcastid=>$broadcasts)
          {
             foreach($broadcasts as $col)
             {
-               //print(print_r($col['bot_id'],true))."\n";
-               $this->sendMessage($col['chat_id'],$col['message'],$col['bot_id']);
-               BroadCast::where('id','=',$col['idservice'])->update(['status'=>1]);
-               sleep(1);
+              foreach($col as $brc)
+              {
+                  $broadcastcustomer = new BroadCastCustomers;
+                  $broadcastcustomer->bot_api = $brc['bot_id'];
+                  $broadcastcustomer->broadcast_id = $brc['idservice'];
+                  $broadcastcustomer->message = $brc['message'];
+                  $broadcastcustomer->chat_id = $brc['chat_id'];
+                  $broadcastcustomer->save();
+              }
             }
+            BroadCast::where('id','=',$broadcastid)->update(['status'=>1]);
+            //print(print_r($broadcastid,true))."\n";
          }
       }
+
+      $broadcastcustomer = BroadCastCustomers::where('status','=',0)->get();
+      $broadcast_customer_count = $broadcastcustomer->count();
+      if($broadcastcustomer->count() > 0)
+      {
+         foreach($broadcastcustomer as $col)
+         {
+            $id = $col->id;
+            $this->sendMessage($col->chat_id,$col->message,$col->bot_api);
+            $broadcast_customer_count--;
+            $total_sending++;
+            BroadCastCustomers::where('id','=',$id)->update(['status'=>1]);
+            //print(print_r($broadcast_customer_count,true))."\n";
+
+            if($broadcast_customer_count == 0){
+                exit();
+            }
+            else{
+                $this->getRandomSendAndDelay($total_sending,1);
+            }
+            
+         }
+      } 
     }
 
     #REMINDER MESSAGE TELEGRAM
@@ -102,6 +133,7 @@ class WABox extends Command
       $current_time = Carbon::now();
       $reminder_list = null;
       $remindertel = array();
+      $total_sending = 0;
       #REMINDER
       $reminder = Reminder::where([
                   ['reminders.status','=',1],
@@ -142,14 +174,40 @@ class WABox extends Command
                 {
                   foreach($reminders as $col)
                   {
-                    //print(print_r($col,true))."\n";
-                    $this->sendMessage($col['chat_id'],$col['message'],$col['bot_id']);
-                    sleep(1);
+                      $remindercustomer = new ReminderCustomers;
+                      $remindercustomer->bot_api = $col['bot_id'];
+                      $remindercustomer->reminder_id = $col['idservice'];
+                      $remindercustomer->message = $col['message'];
+                      $remindercustomer->chat_id = $col['chat_id'];
+                      $remindercustomer->save();
                   }
                 }
                 Reminder::where('id','=',$idreminder)->update(['status'=>0]);
             }
-        }
+        } 
+
+          $reminder_customer = ReminderCustomers::where('status','=',0)->get();
+          $reminder_customer_count = $reminder_customer->count();
+          if($reminder_customer_count > 0)
+          {
+              foreach($reminder_customer as $col)
+              {
+                $id_reminder = $col->id;
+                $this->sendMessage($col->chat_id,$col->message,$col->bot_api);
+                $reminder_customer_count--;
+                $total_sending++;
+                ReminderCustomers::where('id','=',$id_reminder)->update(['status'=>1]);
+                print(print_r($reminder_customer_count,true))."\n";
+
+                 if($reminder_customer_count == 0){
+                      exit();
+                  }
+                  else{
+                      $this->getRandomSendAndDelay($total_sending,2);
+                  }
+              }
+                 
+          }
         #END REMINDER
       }
       else 
@@ -222,7 +280,7 @@ class WABox extends Command
                     {
                       //print(print_r($col,true))."\n";
                       $this->sendMessage($col['chat_id'],$col['message'],$col['bot_id']);
-                      sleep(1);
+                      sleep($delay);
                     }
                   }
                 Reminder::where('id','=',$idreminder)->update(['status'=>0]);
@@ -296,6 +354,42 @@ class WABox extends Command
       
     }
 
+    public function getRandomSendAndDelay($total_sending,$idservice)
+    {
+        $settings = AdminSetting::where('id','=',1)->first();
+
+        #IF IDSERVCE = 1 THEN BROADCAST, ELSE REMINDER
+        if($idservice == 1)
+        {
+            $commands = $this->broadcastMessage();
+        }
+        else
+        {
+            $commands = $this->reminderMessage();
+        }
+
+        #TO CONTROL HOW MANY MINUTES MESSAGE SENT, AND DELAY TO SEND MESSAGE
+        if(!is_null($settings))
+        {
+           $sending_start = $settings->total_message_start;
+           $sending_end = $settings->total_message_end;
+           $delay_start = $settings->delay_message_start;
+           $delay_end = $settings->delay_message_end;
+
+           $sending = mt_rand($sending_start,$sending_end);
+           $delay = mt_rand($delay_start,$delay_end);
+        }
+        else {
+           $sending = $delay = 1;
+        }
+
+        if($total_sending == $sending)
+        {
+            sleep($delay);
+            return $commands;
+        }
+    }
+
     public function sendMessage($userid,$message,$botapi)
     {
         //$botapi = '973247472:AAF0NSv1sLEPNxOdRgS7vOPzxEr2odqNhb0';
@@ -356,6 +450,7 @@ class WABox extends Command
         {
           echo "cURL Error #:" . $err;
         }
+
     }
 
 /* end console */    

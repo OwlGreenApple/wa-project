@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
+use App\AdminSetting;
 
 class AdminController extends Controller
 {
@@ -36,6 +37,105 @@ class AdminController extends Controller
     #TO CONTROL RATE OF SENDING MESSAGE
     public function SendingRate()
     {
-      return view('admin.sendingrate');
+      $check = AdminSetting::where('id','=',1)->first();
+      $data = array(
+          'sending_start'=>1,
+          'sending_end'=>1,
+          'delay_start'=>1,
+          'delay_end'=>1,
+      );
+
+      if(!is_null($check))
+      {
+        $data = array(
+          'sending_start'=>$check->total_message_start,
+          'sending_end'=>$check->total_message_end,
+          'delay_start'=>$check->delay_message_start,
+          'delay_end'=>$check->delay_message_end,
+        );
+      }
+     
+      return view('admin.sendingrate',['data'=>$data]);
     }
+
+    public function SaveSettings(Request $request)
+    {
+        $id_admin = Auth::id();
+        $adminsetting = null;
+        $check = AdminSetting::where('id','=',1)->first();
+
+        if(is_null($check))
+        {
+          $adminsetting = new AdminSetting;
+          $adminsetting->total_message_start = $request->total_sending_start;
+          $adminsetting->total_message_end = $request->total_sending_end;
+          $adminsetting->delay_message_start = $request->delay_sending_start;
+          $adminsetting->delay_message_end = $request->delay_sending_end;
+          $adminsetting->id_admin = $id_admin;
+          $adminsetting->save();
+
+          if($adminsetting <> null)
+          {
+            return redirect('sendingrate')->with('status','Admin settings saved successfully');
+          } else {
+            return redirect('sendingrate')->with('error','Admin settings failed to save');
+          }
+        }
+        else {
+            $data_update = array(
+              'total_message_start'=>$request->total_sending_start,
+              'total_message_end'=>$request->total_sending_end,
+              'delay_message_start'=>$request->delay_sending_start,
+              'delay_message_end'=>$request->delay_sending_end,
+              'id_admin'=>$id_admin
+            );
+            $update = AdminSetting::where('id','=',1)->update($data_update);
+        }   
+
+        if($update == true)
+        {
+          return redirect('sendingrate')->with('status','Admin settings updated successfully');
+        }
+        else
+        {
+          return redirect('sendingrate')->with('error','Admin settings failed to update');
+        }
+    }
+
+     public function SaveSettingsDelaySending(Request $request)
+    {
+        $id_admin = Auth::id();
+        $check = AdminSetting::where('id','=',1)->first();
+
+        if(isset($request->total_sending_start) && isset($request->$total_sending_end))
+        {
+            $start = $request->total_sending_start;
+            $end = $request->total_sending_end;
+            $update = AdminSetting::update(['total_message_start'=>$start,'total_message_end'=>$end,'is_admin'=>$id_admin]);
+        }
+        else {
+            $start = $request->delay_sending_start;
+            $end = $request->delay_sending_end;
+            $update = AdminSetting::update(['delay_message_start'=>$start,'delay_message_end'=>$end,'is_admin'=>$id_admin]);
+        }
+
+        if(is_null($check))
+        {
+          $adminsetting = new AdminSetting;
+          $adminsetting->total_message_start = $request->total_sending_start;
+          $adminsetting->total_message_end = $request->total_sending_end;
+          $adminsetting->delay_message_start = $request->total_sending_start;
+        }    
+
+        if($update == true)
+        {
+          return redirect('sendingrate')->with('status','<div class="alert alert-success" role="alert">Admin settings updated successfully</div>');
+        }
+        else
+        {
+          return redirect('sendingrate')->with('status','<div class="alert alert-danger" role="alert">Admin settings failed to update</div>');
+        }
+    }
+
+/* end class admincontroller */    
 }
