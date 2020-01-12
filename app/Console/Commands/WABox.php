@@ -46,7 +46,8 @@ class WABox extends Command
      */
     public function handle()
     {
-        //die('');
+		//$this->testMessage();
+		//die('');
         $broadcast = BroadCast::where('status','=',0)->get();
 
         if($broadcast->count() > 0)
@@ -73,15 +74,18 @@ class WABox extends Command
       {
           foreach($broadcast as $rows)
           {
-            $broadcastmessage = $rows->message;
-            $broadcastid = $rows->bid;
-            $botapi = $rows->bot_api;
+				$broadcastmessage = $rows->message;
+				$broadcastid = $rows->bid;
+				$botapi = $rows->bot_api;
+				$bcd = $this->getListBot($botapi,$broadcastmessage,$broadcastid);
 
-            $bcd = $this->getListBot($botapi,$broadcastmessage,$broadcastid);
-            $broadcastidlist[$broadcastid][] = $bcd;
+				if(is_array($bcd))
+				{
+					$broadcastidlist[$broadcastid][] = $bcd;
+				}
           }
       }
-
+	 
       if(count($broadcastidlist) > 0)
       {
          foreach($broadcastidlist as $broadcastid=>$broadcasts)
@@ -162,7 +166,10 @@ class WABox extends Command
            if($adding >= $current_time && $reminder_status == 1)
            {
               $reminder_list = $this->getListBot($botapi,$remindermessage,$reminder_id);
-              $remindertel[$reminder_id][] = $reminder_list;
+				if(is_array($reminder_list))
+				{
+					$remindertel[$reminder_id][] = $reminder_list;
+				}
            }
         }
 
@@ -197,7 +204,7 @@ class WABox extends Command
                 $reminder_customer_count--;
                 $total_sending++;
                 ReminderCustomers::where('id','=',$id_reminder)->update(['status'=>1]);
-                print(print_r($reminder_customer_count,true))."\n";
+                //print(print_r($reminder_customer_count,true))."\n";
 
                  if($reminder_customer_count == 0){
                       exit();
@@ -256,7 +263,7 @@ class WABox extends Command
               }
           }
 
-          #COLLECT ELIGIBLE USER FOR SENDING MESSAGE
+          #COLLECT ELIGIBLE USER TO GET MESSAGE
           if(count($eligible) > 0)
           {
               foreach($eligible as $tab)
@@ -266,7 +273,10 @@ class WABox extends Command
                  $id_reminder_customer = $tab['idservice'];
 
                  $idr = $this->getListBot($botapi,$event_message,$id_reminder_customer);
-                 $event_list[$id_reminder_customer][] = $idr;
+				 if(is_array($idr))
+				 {
+					$event_list[$id_reminder_customer][] = $idr;
+				 }
               }
           }
 
@@ -278,14 +288,41 @@ class WABox extends Command
                   {
                     foreach($wrap as $col)
                     {
-                      //print(print_r($col,true))."\n";
-                      $this->sendMessage($col['chat_id'],$col['message'],$col['bot_id']);
-                      sleep($delay);
+                        $remindercustomer = new ReminderCustomers;
+						$remindercustomer->bot_api = $col['bot_id'];
+						$remindercustomer->reminder_id = $col['idservice'];
+						$remindercustomer->message = $col['message'];
+						$remindercustomer->chat_id = $col['chat_id'];
+						$remindercustomer->save();
                     }
                   }
                 Reminder::where('id','=',$idreminder)->update(['status'=>0]);
               }
           }
+		  
+		  $reminder_customer = ReminderCustomers::where('status','=',0)->get();
+          $reminder_customer_count = $reminder_customer->count();
+          if($reminder_customer_count > 0)
+          {
+              foreach($reminder_customer as $col)
+              {
+                $id_reminder = $col->id;
+                $this->sendMessage($col->chat_id,$col->message,$col->bot_api);
+                $reminder_customer_count--;
+                $total_sending++;
+                ReminderCustomers::where('id','=',$id_reminder)->update(['status'=>1]);
+                print(print_r($reminder_customer_count,true))."\n";
+
+                 if($reminder_customer_count == 0){
+                      exit();
+                  }
+                  else{
+                      $this->getRandomSendAndDelay($total_sending,2);
+                  }
+              }
+		  }
+		  
+	  #END IF	  
       }
     
     #END REMINDERMESSAGE  
@@ -293,7 +330,6 @@ class WABox extends Command
 
     public function getListBot($botapi,$message,$mid)
     {
-
       #$mid could be broadcast id, event, reminder
       $curl = curl_init();
       $data = $temp = $target = array();
@@ -316,20 +352,21 @@ class WABox extends Command
         echo "cURL Error #:" . $err;
       } else {
         $response = json_decode($response,true);
+		
         if(count($response['result']) > 0)
         {
             foreach($response['result'] as $rows)
             {
-                $temp[] = $rows['message'];
+				$temp[] = $rows['message'];
             }
         }
       }
-
+	
       if(count($temp) > 0)
       {
         foreach($temp as $col)
         {
-          $data[$botapi][] = $col['from']['id'];
+           $data[$botapi][] = $col['from']['id'];
         }
       }
       
@@ -337,21 +374,22 @@ class WABox extends Command
       {
         foreach($data as $idbot=>$id)
         {
-          foreach(array_unique($id) as $row)
-          {
-            //print(print_r($idbot,true))."\n";
-            $target[] = array(
-              'bot_id'=>$idbot,
-              'idservice'=>$mid, #id broadcast or reminder
-              'message'=>$message,
-              'chat_id'=>$row #id from telegram
-            );
-          }
-          
+			  foreach(array_unique($id) as $row)
+			  {
+					//print(print_r($row,true))."\n";
+					if(!empty($row))
+					{
+						$target[] = array(
+						  'bot_id'=>$idbot,
+						  'idservice'=>$mid, #id broadcast or reminder
+						  'message'=>$message,
+						  'chat_id'=>$row #id from telegram
+						);
+					}	
+			  }
         }
-        return $target;
-      }
-      
+       return $target;
+      } 
     }
 
     public function getRandomSendAndDelay($total_sending,$idservice)
@@ -432,7 +470,7 @@ class WABox extends Command
         );
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://api.telegram.org/bot".$botapi."/sendMessage",
+          CURLOPT_URL => "https://api.telegram.org/bot".$botapi."/getUpdates?offset=0",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_MAXREDIRS => 10,
           CURLOPT_TIMEOUT => 30,
@@ -450,6 +488,9 @@ class WABox extends Command
         {
           echo "cURL Error #:" . $err;
         }
+		else{
+			dd($response);
+		}
 
     }
 
