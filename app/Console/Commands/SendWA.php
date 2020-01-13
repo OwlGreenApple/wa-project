@@ -485,7 +485,8 @@ class SendWA extends Command
                     $to = $wa_number;
 
                     # IF LIST BOTH ARE OMNILINKZ OR OMNIFLUENCER
-                    if($is_pay == 0 && $run == true && $current_time >= $adding && $reminder_customer_status == 0)
+                    // if($is_pay == 0 && $run == true && $current_time >= $adding && $reminder_customer_status == 0)
+                    if($is_pay == 0 && $run == true && $current_time->gt($adding) && $reminder_customer_status == 0)
                     {
                       $generatedcoupon = $coupon->generatecoupon($customeremail,$package,$url);
                       $coupon_code = $generatedcoupon['coupon_code'];
@@ -501,7 +502,8 @@ class SendWA extends Command
                       $mailmessage = str_replace('{link}',"<a href='https://omnilinkz.com/dashboard/checkout/".$coupon_code."'>https://omnilinkz.com/dashboard/checkout/".$coupon_code."</a>",$mailmessage);
                     }
 
-                    if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
+                    // if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
+                    if($is_pay == 0 && ($current_time->gt($adding)) && $reminder_customer_status == 0)
                     {
                          /* wabox */
                         // $waboxreminder = $this->sendWA($uid,$to,$message,$idmessage);
