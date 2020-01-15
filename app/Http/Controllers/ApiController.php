@@ -22,8 +22,9 @@ class ApiController extends Controller
         $data = array(
             'list_id'=> 17,
             'wa_no'=>11111111111,
-            'name'=>'Rizky',
-            'email'=>'celebgramme.dev@gmail.com',
+            'name'=>'test',
+            'email'=>'celebgramme.dev777777@gmail.com',
+            //'email'=>'celebgramme.dev@gmail.com',
         );
 
         curl_setopt_array($curl, array(
@@ -56,11 +57,10 @@ class ApiController extends Controller
 
     	if(is_null($list))
     	{
-    	 	$msg['is_error'] = 'Id not available, it may Deleted!!!';
+    	 	$msg['is_error'] = 'List Id not available!';
     	 	return $msg;
     	}
         $userid = $list->user_id;
-         /**/
         $today = Carbon::now();
         $valid_customer = false;
         $is_event = $list->is_event;
@@ -68,6 +68,15 @@ class ApiController extends Controller
         $list_message = $list->message_text;
         $list_wa_number = $list->wa_number;
         $sender = Sender::where([['user_id',$list->user_id],['wa_number','=',$list->wa_number]])->first();
+
+        if(env('APP_ENV') == 'local')
+        {
+            $sender_id = 0;
+        }
+        else
+        {
+            $sender_id = $sender->id;
+        }
         
         $cust = new Customer;
         $cust->user_id = $userid;
@@ -111,7 +120,7 @@ class ApiController extends Controller
                     $reminder_customer = new ReminderCustomers;
                     $reminder_customer->user_id = $row->user_id;
                     $reminder_customer->list_id = $row->list_id;
-                    $reminder_customer->sender_id = $sender->id;
+                    $reminder_customer->sender_id = $sender_id;
                     $reminder_customer->reminder_id = $row->id;
                     $reminder_customer->customer_id = $customerid;
                     $reminder_customer->status = $reminder_response;

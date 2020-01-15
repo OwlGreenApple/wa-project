@@ -396,11 +396,6 @@ class SendWA extends Command
           foreach($user as $userow)
           {
               $id_user = $userow->id;
-              $sender = Sender::where([['user_id','=',$id_user]])->select('counter')->first();
-              if(!is_null($sender)){
-                $count = $sender->counter;
-              }
-              
               /* Reminder */
                 $current_time = Carbon::now();
                /* get days from reminder */
@@ -414,9 +409,8 @@ class SendWA extends Command
                             ->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
                             ->join('lists','lists.id','=','reminders.list_id')
                             ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-                            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.package','reminders.days','reminders.message','reminders.subject','reminders.mail','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email','customers.is_pay')
-                          //->take($count)
-                          ->get();
+                            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminder_customers.sender_id','reminders.package','reminders.days','reminders.message','reminders.subject','reminders.mail','customers.created_at AS cstreg','customers.wa_number','customers.name','customers.list_id AS clid','customers.email','customers.is_pay','reminders.id AS rid','customers.id AS cid')
+                            ->get();
 
                 /* check date reminder customer and update if succesful sending */
                 foreach($reminder as $col) 
@@ -469,51 +463,29 @@ class SendWA extends Command
                       $run = false;
                     }
 
-                    $sender = Sender::where('id','=',$senderid)->select('wa_number')->first();
-                    if(is_null($sender))
-                    {
-                        ReminderCustomers::where([
-                            ['id',$reminder_customers_id],
-                            ['status','=',0],
-                        ])->update([
-                            'id_wa'=>0,
-                            'status'=>2,
-                        ]);
-                        return $this->handle();
-                    }
-                    $uid = str_replace("+","",$sender->wa_number);
-                    $to = $wa_number;
-
-                    # IF LIST BOTH ARE OMNILINKZ OR OMNIFLUENCER
-                    // if($is_pay == 0 && $run == true && $current_time >= $adding && $reminder_customer_status == 0)
                     if($is_pay == 0 && $run == true && $current_time->gt($adding) && $reminder_customer_status == 0)
                     {
-                      $generatedcoupon = $coupon->generatecoupon($customeremail,$package,$url);
-                      $coupon_code = $generatedcoupon['coupon_code'];
-                      
-                      $message = str_replace('{coupon}',$coupon_code,$message);
-                      
-                      //spin message
-                      $spintax = new Spintax;
-                      $message = $spintax->process($message);  
-                      
-                      $mailmessage = str_replace('{coupon}',$coupon_code,$mailmessage);
-                      $mailmessage = str_replace('{name}',$col->name,$mailmessage);
-                      $mailmessage = str_replace('{link}',"<a href='https://omnilinkz.com/dashboard/checkout/".$coupon_code."'>https://omnilinkz.com/dashboard/checkout/".$coupon_code."</a>",$mailmessage);
-                    }
+                       $message = str_replace('{coupon}',$coupon_code,$message);
+                        //spin message
+                       $spintax = new Spintax;
+                       $message = $spintax->process($message);  
+                        
+                       $mailmessage = str_replace('{coupon}',$coupon_code,$mailmessage);
+                       $mailmessage = str_replace('{name}',$col->name,$mailmessage);
+                       $mailmessage = str_replace('{link}',"<a href='https://omnilinkz.com/dashboard/checkout/".$coupon_code."'>https://omnilinkz.com/dashboard/checkout/".$coupon_code."</a>",$mailmessage);
+                        
+                       print(print_r($col->rid.'=='.$col->cid,true))."\n";
+                       $coupon->callMailApi($url_mail,$customeremail,$mailmessage,$subject);
+                       $status = 1;
 
-                    // if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
-                    if($is_pay == 0 && ($current_time->gt($adding)) && $reminder_customer_status == 0)
-                    {
-                         /* wabox */
-                        // $waboxreminder = $this->sendWA($uid,$to,$message,$idmessage);
-                        $status = 1;
-                        $coupon->callMailApi($url_mail,$customeremail,$mailmessage,$subject);
-                    }
+                       if(env('APP_ENV')=='local')
+                       {
+                          sleep(2);
+                       }
+                    } 
                     elseif($is_pay == 1)
                     {
                         $status = 4;
-                        $coupon->callMailApi($url_mail,$customeremail,$mailmessage,$subject);
                     } 
                     else 
                     {
@@ -527,7 +499,9 @@ class SendWA extends Command
                         'id_wa'=>0,
                         'status'=>$status,
                     ]); 
-                } #end reminder looping
+                   
+                  /*end reminder looping */
+                } 
           /* end user looping */
           }
         /* end user if */  
