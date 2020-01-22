@@ -389,8 +389,9 @@ class SendWA extends Command
     {
        /* Users counter */
         $user = User::select('id')->get();
-        $coupon = new ApiController;
         $coupon_code = null;
+        $coupon = new ApiController;
+        
         if($user->count() > 0)
         {
           foreach($user as $userow)
@@ -465,7 +466,11 @@ class SendWA extends Command
 
                     if($is_pay == 0 && $run == true && $current_time->gt($adding) && $reminder_customer_status == 0)
                     {
+                       #TO GENERATE COUPON
+                       $generate_code = $coupon->generatecoupon($customeremail,$package,$url);
+                       $coupon_code = $generate_code['coupon_code'];
                        $message = str_replace('{coupon}',$coupon_code,$message);
+                       //print(print_r($coupon_code,true))."\n";
                         //spin message
                        $spintax = new Spintax;
                        $message = $spintax->process($message);  
@@ -474,7 +479,6 @@ class SendWA extends Command
                        $mailmessage = str_replace('{name}',$col->name,$mailmessage);
                        $mailmessage = str_replace('{link}',"<a href='https://omnilinkz.com/dashboard/checkout/".$coupon_code."'>https://omnilinkz.com/dashboard/checkout/".$coupon_code."</a>",$mailmessage);
                         
-                       print(print_r($col->rid.'=='.$col->cid,true))."\n";
                        $coupon->callMailApi($url_mail,$customeremail,$mailmessage,$subject);
                        $status = 1;
 

@@ -190,7 +190,7 @@ class ApiController extends Controller
 
     public function testcoupon()
     {
-        $email = 'celebgramme.dev@gmail.com';
+        $email = 'rizkyredjo@gmail.com';
         $package = 'package-premium-6';
        // $url = 'http://192.168.88.177/omnifluencer-project/generate-coupon';
         $url = 'http://192.168.88.177/omnilinkz/generate-coupon';
