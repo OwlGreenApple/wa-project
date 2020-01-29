@@ -179,6 +179,13 @@
         </main>
     </div>
 
+    <!-- footer -->
+    <div class="col-md-12">
+      <div class="container footer">
+        Copyright &copy; 2020 <b>Activtele</b> All Rights Reserved.
+      </div>
+    </div>
+
     <script type="text/javascript">
         $(document).ready(function(){
             $(".alert-success,.alert-warning,.alert-danger").delay(5000).fadeOut(3000);
