@@ -38,6 +38,7 @@ Auth::routes();
 /* User Customer */
 
 Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');//home.blade
+Route::get('/lists', 'HomeController@createList');//home.blade
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
 Route::group(['middleware'=>['auth','web','is_admin']],function(){

@@ -70,5 +70,10 @@ class HomeController extends Controller
         }
     }
 
+    public function createList()
+    {
+      return view('list.list');
+    }
+
 /* end class HomeController */
 }

@@ -58,7 +58,9 @@
     <script type="text/javascript" src="{{ asset('/assets/clipboard.js-master/clipboard.min.js') }}"></script> 
 
     <!-- Main Styles -->
-    <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet">
+    <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet" />
+    <link href="{{ asset('/assets/css/dashboard.css') }}" rel="stylesheet" />
+    <link href="{{ asset('/assets/css/lists.css') }}" rel="stylesheet" />
 
 </head>
 <body>
@@ -93,23 +95,23 @@
                                 </li>
                             @endif
                         @else
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('home')) ? 'active' : '' }}" href="{{ route('home') }}">Create</a>
+                            <li class="nav-item dropdown">
+                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                     Create<span class="caret"></span>
+                                </a>
+                                
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="nav-link">Lists</a>
+                                    <a class="nav-link">Campaigns</a>
+                                </div>
                             </li> 
 
                             <li class="nav-item">
                                 <a class="nav-link">Audiences</a>
                             </li> 
 
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    Campaigns <span class="caret"></span>
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="nav-link">Audiences</a>
-                                    <a class="nav-link">Campaigns</a>
-                                </div>
+                            <li class="nav-item">
+                                <a class="nav-link">Campaigns</a>
                             </li> 
                             <!--
                             <li class="nav-item">
@@ -151,7 +153,6 @@
                                 </div>
                             </li>
                           -->
-                        @endguest
                     </ul>
                     <ul class="navbar-nav mr-auto"><!-- separator --></ul>
                      <!-- Right Side Of Navbar -->
@@ -168,7 +169,7 @@
                            <span class="icon-cog"></span>
                         </li>
                     </ul>
-
+                    @endguest
 
                 </div>
             </div>
