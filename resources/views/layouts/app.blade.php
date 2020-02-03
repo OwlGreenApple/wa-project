@@ -61,6 +61,12 @@
     <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/dashboard.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/lists.css') }}" rel="stylesheet" />
+    <link href="{{ asset('/assets/css/campaign.css') }}" rel="stylesheet" />
+
+    <!-- Jquery Tabs -->
+    <link href="{{ asset('/assets/css/jquery-tabs.css') }}" rel="stylesheet" />
+    <!-- Jquery Custom Select -->
+    <link href="{{ asset('/assets/css/custom-select.css') }}" rel="stylesheet" />
 
 </head>
 <body>
@@ -96,22 +102,23 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('createlists')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                      Create<span class="caret"></span>
                                 </a>
                                 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="nav-link">Lists</a>
+                                    <a href="{{url('createlists')}}" class="nav-link {{ (request()->is('createlists')) ? 'active' : '' }}">Lists</a>
+                                    <a href="{{url('lists-create')}}" class="nav-link {{ (request()->is('lists-create')) ? 'active' : '' }}">Lists 2</a>
                                     <a class="nav-link">Campaigns</a>
                                 </div>
                             </li> 
 
                             <li class="nav-item">
-                                <a class="nav-link">Audiences</a>
+                                <a class="nav-link {{ (request()->is('lists')) ? 'active' : '' }}" href="{{url('lists')}}">Lists</a>
                             </li> 
 
                             <li class="nav-item">
-                                <a class="nav-link">Campaigns</a>
+                                <a class="nav-link {{ (request()->is('campaign')) ? 'active' : '' }}" href="{{url('campaign')}}">Campaigns</a>
                             </li> 
                             <!--
                             <li class="nav-item">

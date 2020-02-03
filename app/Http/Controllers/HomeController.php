@@ -75,5 +75,20 @@ class HomeController extends Controller
       return view('list.list');
     }
 
+    public function userList()
+    {
+      return view('list.list-data');
+    }
+
+    public function testList()
+    {
+      return view('list.list-create');
+    }
+
+    public function Campaign()
+    {
+      return view('campaign.campaign');
+    }
+
 /* end class HomeController */
 }
