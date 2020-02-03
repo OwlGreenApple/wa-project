@@ -48,7 +48,7 @@
       <div class="col-lg-12">
         <!-- tab 1 -->
         <div class="bg-dashboard campaign row">
-          <div class="col-lg-3 pad-fix col-card">
+          <div class="col-lg-4 pad-fix col-card">
             <h5>Test Campaign</h5>
             <div class="notes">
               <div>Type Campaign : <color>Event</color></div>
@@ -60,7 +60,7 @@
             </div>
           </div>
 
-          <div class="col-lg-7 pad-fix mt-4">
+          <div class="col-lg-5 pad-fix mt-4">
             <div class="row">
                 <div class="col-lg-3 pad-fix cardnumber">
                   <div class="big-number">100</div>
@@ -81,18 +81,18 @@
             </div>  
           </div>
 
-          <div class="col-lg-2 pad-fix col-button">
+          <div class="col-lg-3 pad-fix col-button">
             <button type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
             <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
             <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
-            <button type="button" class="btn btn-custom">Add Message</button>
+            <div><button type="button" class="btn btn-custom">Add Message</button></div>
           </div>
         </div> 
 
         <!-- tab 2 -->
 
         <div class="bg-dashboard campaign row">
-          <div class="col-lg-3 pad-fix col-card">
+          <div class="col-lg-4 pad-fix col-card">
             <h5>Campaign 1</h5>
             <div class="notes">
               <div>Type Campaign : <color><span class="gr">Broadcast</span></color></div>
@@ -104,7 +104,7 @@
             </div>
           </div>
 
-          <div class="col-lg-7 pad-fix mt-4">
+          <div class="col-lg-5 pad-fix mt-4">
             <div class="row">
                 <div class="col-lg-3 pad-fix cardnumber">
                   <div class="big-number">10</div>
@@ -125,11 +125,11 @@
             </div>  
           </div>
 
-          <div class="col-lg-2 pad-fix col-button">
+          <div class="col-lg-3 pad-fix col-button">
             <button type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
             <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
             <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
-            <button type="button" class="btn btn-custom">Add Message</button>
+            <div><button type="button" class="btn btn-custom">Add Message</button></div>
           </div>
         </div> 
 
