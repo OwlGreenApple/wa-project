@@ -43,6 +43,9 @@ Route::get('lists', 'HomeController@userList');
 Route::get('lists-create', 'HomeController@testList');
 Route::get('create-campaign', 'HomeController@CreateCampaign');
 Route::get('campaign', 'HomeController@Campaign');
+Route::get('add-reminder', 'HomeController@addReminder');
+Route::get('report-reminder', 'HomeController@reportReminder');
+Route::get('settings', 'HomeController@Settings');
 
 /* User Customer */
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade

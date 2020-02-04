@@ -95,5 +95,20 @@ class HomeController extends Controller
       return view('campaign.campaign');
     }
 
+    public function addReminder()
+    {
+      return view('campaign.add-reminder');
+    } 
+
+    public function reportReminder()
+    {
+      return view('campaign.report-reminder');
+    }
+
+    public function Settings()
+    {
+      return view('auth.settings');
+    }
+
 /* end class HomeController */
 }

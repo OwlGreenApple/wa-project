@@ -62,6 +62,7 @@
     <link href="{{ asset('/assets/css/dashboard.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/lists.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/campaign.css') }}" rel="stylesheet" />
+    <link href="{{ asset('/assets/css/settings.css') }}" rel="stylesheet" />
 
     <!-- Jquery Tabs -->
     <link href="{{ asset('/assets/css/jquery-tabs.css') }}" rel="stylesheet" />
@@ -109,7 +110,9 @@
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     <a href="{{url('createlists')}}" class="nav-link {{ (request()->is('createlists')) ? 'active' : '' }}">Lists</a>
                                     <a href="{{url('lists-create')}}" class="nav-link {{ (request()->is('lists-create')) ? 'active' : '' }}">Lists 2</a>
-                                    <a class="nav-link">Campaigns</a>
+                                    <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">Campaigns</a> 
+                                    <a href="{{url('add-reminder')}}" class="nav-link {{ (request()->is('add-reminder')) ? 'active' : '' }}">Campaigns 2</a>
+                                    <a href="{{url('report-reminder')}}" class="nav-link {{ (request()->is('report-reminder')) ? 'active' : '' }}">View Report</a>
                                 </div>
                             </li> 
 
@@ -172,8 +175,14 @@
                              <option>08523193113</option>
                            </select>
                         </li>
-                         <li class="nav-item cog-pos">
-                           <span class="icon-cog"></span>
+                         <li class="nav-item cog-pos dropdown">
+                           <a id="cogDropdown" class="icon-cog" data-toggle="dropdown"></a>
+                           <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="cogDropdown">
+                                    <a href="{{url('settings')}}" class="nav-link {{ (request()->is('settings')) ? 'active' : '' }}">Settings</a>
+                                    <a href="{{url('lists-create')}}" class="nav-link {{ (request()->is('lists-create')) ? 'active' : '' }}">Buy More</a>
+                                    <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">History Order</a> 
+                                    <a href="{{url('add-reminder')}}" class="nav-link {{ (request()->is('add-reminder')) ? 'active' : '' }}">Log Out</a>
+                            </div>
                         </li>
                     </ul>
                     @endguest
