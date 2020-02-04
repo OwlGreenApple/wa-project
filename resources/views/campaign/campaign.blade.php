@@ -5,7 +5,7 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>LISTS</h2>
+    <h2 class="campaign">Campaigns</h2>
   </div>
 
   <div class="act-tel-dashboard-right">
@@ -18,7 +18,7 @@
   <div class="act-tel-tab">
     <div class="row">
       <div class="input-group col-lg-4">
-          <input type="text" class="form-control-lg col-lg-10 search-box" placeholder="Find a List By a name" >
+          <input type="text" class="form-control-lg col-lg-10 search-box" placeholder="Find a campaign by a name or a type" >
           <span class="input-group-append">
             <div class="btn search-icon">
                 <span class="icon-search"></span>
@@ -29,11 +29,11 @@
       <div class="col-lg-6"></div>
 
       <div class="input-group col-lg-2">
-         <select class="custom-select form-control col-lg-10 relativity">
+         <select class="custom-select-campaign form-control col-lg-10 relativity">
             <option>Event</option>
             <option>...</option>
          </select>
-         <span class="icon-carret-down-circle"></span>
+         <span class="icon-triangular"></span>
       </div>
 
       <div class="clearfix"></div>
@@ -135,7 +135,7 @@
 
         <!-- tab 3 -->
 
-        <div class="bg-dashboard campaign row">
+        <div class="bg-dashboard campaign row mb-0">
           <div class="col-lg-4 pad-fix col-card">
             <h5>Campaign 2</h5>
             <div class="notes">

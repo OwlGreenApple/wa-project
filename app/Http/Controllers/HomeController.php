@@ -85,6 +85,11 @@ class HomeController extends Controller
       return view('list.list-create');
     }
 
+    public function CreateCampaign() 
+    {
+      return view('campaign.create-campaign');
+    }
+
     public function Campaign()
     {
       return view('campaign.campaign');

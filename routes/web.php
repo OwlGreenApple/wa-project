@@ -41,6 +41,7 @@ Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');//
 Route::get('createlists', 'HomeController@createList');
 Route::get('lists', 'HomeController@userList');
 Route::get('lists-create', 'HomeController@testList');
+Route::get('create-campaign', 'HomeController@CreateCampaign');
 Route::get('campaign', 'HomeController@Campaign');
 
 /* User Customer */

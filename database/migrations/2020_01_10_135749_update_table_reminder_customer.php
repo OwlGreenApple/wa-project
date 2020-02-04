@@ -17,7 +17,7 @@ class UpdateTableReminderCustomer extends Migration
             $table->dropColumn('user_id');
             $table->dropColumn('list_id');
             $table->dropColumn('customer_id');
-            $table->dropColumn('sender_id');
+            /*$table->dropColumn('sender_id');*/
             $table->dropColumn('id_wa');
             $table->string('bot_api');
             $table->Biginteger('chat_id');
