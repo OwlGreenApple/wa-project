@@ -93,6 +93,7 @@
                     <ul class="navbar-nav">
                         <!-- Authentication Links -->
                         @guest
+                            <!--
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
@@ -101,6 +102,7 @@
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
+                          -->
                         @else
                             <li class="nav-item dropdown">
                                  <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('createlists')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -181,7 +183,16 @@
                                     <a href="{{url('settings')}}" class="nav-link {{ (request()->is('settings')) ? 'active' : '' }}">Settings</a>
                                     <a href="{{url('lists-create')}}" class="nav-link {{ (request()->is('lists-create')) ? 'active' : '' }}">Buy More</a>
                                     <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">History Order</a> 
-                                    <a href="{{url('add-reminder')}}" class="nav-link {{ (request()->is('add-reminder')) ? 'active' : '' }}">Log Out</a>
+
+                                    <a class="nav-link" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('Log Out') }}
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
                             </div>
                         </li>
                     </ul>

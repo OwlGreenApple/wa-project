@@ -19,192 +19,158 @@
 
     <!-- Styles -->
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet">
+    <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet" />
+    <link href="{{ asset('/assets/css/subscribe.css') }}" rel="stylesheet" />
 
-    {!! $pixel !!}
+    <!--!! $pixel !!-->
      
 </head>
-<body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                   <!-- config('app.name', 'Laravel') -->
-                </a>
+
+<body class="bg-dashboard">
+
+<div id="app">
+  <!--<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+      <div class="container">
+          <a class="navbar-brand" href="{{ url('/') }}">
+             <!-- config('app.name', 'Laravel') 
+          </a>
+      </div>
+  </nav>-->
+
+  <main class="py-4">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <!--!! $content !!-->
+
+           <div class="act-tel-subscribe col-lg-9">
+              <div class="wrapper">
+                <form class="add-contact">
+                    <div class="form-group">
+                      <label>Name*</label>
+                      <input type="text" class="form-control" placeholder="Input Your Name" >
+                    </div>
+
+                    <div class="form-group">
+                      <label>Handphone*</label>
+                      <input type="text" class="form-control" placeholder="6280000" />
+                      <i>*) format phone : 6280000</i>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Username Telegram*</label>
+                      <input type="text" class="form-control" placeholder="Input Your Telegram Username" />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Email*</label>
+                      <input type="text" class="form-control" placeholder="Input Your Email" />
+                    </div> 
+
+                    <div class="form-group">
+                      <label>Custom Field</label>
+                      <input type="text" class="form-control" placeholder="Input Your Custom Field" />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Please verify your request</label>
+                    </div>
+
+                    <div class="text-left">
+                      <button type="submit" class="btn btn-custom btn-lg">Submit</button>
+                    </div>
+                </form>
+
+              <div class="text-left marketing">
+                  <div>Marketing by</div>
+                  <div><img src="{{asset('assets/img/marketing-logo.png')}}"/></div>
+              </div>
             </div>
-        </nav>
+            <!-- end wrapper -->
+          </div>
 
-<main class="py-4">
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card">
-    
-                <div class="col-md-12">
-                    {!! $content !!}
-
-                </div>
-
-                <div class="card-body">
-                    <div class="error_message"></div>
-                    <form id="addcustomer">
-                        @csrf
-
-                        <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
-
-                            <div class="col-md-7">
-                                <input id="name" type="text" class="form-control" name="name" />
-                                <span class="error name"></span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('WA Number') }}</label>
-
-                            <div class="col-md-7">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <input name="code_country" class="form-control" data-countryCode="ID" value="+62" readonly/>
-                                        <span class="error code_country"></span>
-                                    </div>
-                                    <!-- end select -->    
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control" name="wa_number" />
-                                        <span class="error wa_number"></span>
-                                    </div>
-                                <!-- end row -->    
-                                </div>
-                                 <small>Tulis No HP dengan format: 8xxxxxxxx (tanpa angka 0 didepan), contoh: 812000333</small>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                        @foreach($additional as $row=>$val)
-                            <label for="name" class="mb-2 col-md-4 col-form-label text-md-right">{{$row}}</label>
-
-                            <div class="col-md-7 mb-2">
-                                @foreach($val as $key=>$col)
-                                    @if($key == 0)
-                                         <input type="text" class="form-control" name="data[{{$row}}]" />
-                                    @else
-                                        <select name="data[{{$row}}]" class="form-control">
-                                            @foreach($col as $opt)
-                                                <option value="{{$opt}}">{{$opt}}</option>
-                                            @endforeach
-                                        </select>
-                                    @endif
-                                @endforeach
-                            </div>
-                        @endforeach
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <input type="hidden" name="listname" value="{{$listname}}"/>
-                                <input type="hidden" name="listid" value="{{$id}}"/>
-                            </div>
-                            <div class="col-md-6">
-                                <span class="error error_list"></span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <div id="submit">
-                                    <button  type="submit" class="btn btn-primary">
-                                        {{ __('Register') }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </div>
     </div>
-</div>
 
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Thank You</h4>
-      </div>
-      <div class="modal-body">
-        <p><!-- message here --></p>
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Thank You</h4>
+          </div>
+          <div class="modal-body">
+            <p><!-- message here --></p>
+          </div>
+        </div>
+
       </div>
     </div>
 
-  </div>
-</div>
+    <script type="text/javascript">
 
-<script type="text/javascript">
-
-    $(document).ready(function() {
-         addCustomer();
-    });
-
-    function addCustomer(){
-        $("#addcustomer").submit(function(e){
-            e.preventDefault();
-            var data = $(this).serialize();
-            $("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
-             $.ajaxSetup({
-              headers: {
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-              }
-            });
-            $.ajax({
-                type : "POST",
-                url : "{{ route('addcustomer') }}",
-                data : data,
-                success : function(result){
-                    $("#submit").html('<button type="submit" class="btn btn-primary">Register</button>');
-                    if(result.success == true){
-                        $(".modal-body > p").text(result.message);
-                        alert('Your data has stored!');
-                        //location.href= result.wa_link;
-                        //getModal();
-                        //setTimeout(function(){location.href= result.wa_link} , 1000);   
-                        clearField();
-                    } else {
-                        $(".name").text(result.name);
-                        $(".wa_number").text(result.wa_number);
-                        $(".code_country").text(result.code_country);
-                        $(".error_list").text(result.list);
-
-                        if(result.message !== undefined){
-                             $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
-                        }
-                        $.each(result.data, function(key, value) {
-                            $("."+key).text(value);
-                        })
-                    }
-                }
-            });
-            /*end ajax*/
+        $(document).ready(function() {
+             addCustomer();
         });
-    }
 
-    /* Display modal when customer has finished registering */
-    function getModal(){
-        $("#myModal").modal()
-    }
+        function addCustomer(){
+            $("#addcustomer").submit(function(e){
+                e.preventDefault();
+                var data = $(this).serialize();
+                $("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
+                 $.ajaxSetup({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+                });
+                $.ajax({
+                    type : "POST",
+                    url : "{{ route('addcustomer') }}",
+                    data : data,
+                    success : function(result){
+                        $("#submit").html('<button type="submit" class="btn btn-primary">Register</button>');
+                        if(result.success == true){
+                            $(".modal-body > p").text(result.message);
+                            alert('Your data has stored!');
+                            //location.href= result.wa_link;
+                            //getModal();
+                            //setTimeout(function(){location.href= result.wa_link} , 1000);   
+                            clearField();
+                        } else {
+                            $(".name").text(result.name);
+                            $(".wa_number").text(result.wa_number);
+                            $(".code_country").text(result.code_country);
+                            $(".error_list").text(result.list);
 
-    /* Clear / Empty fields after ajax reach success */
-    function clearField(){
-        $("input[name='name'],input[name='wa_number']").val('');
-        $(".error").html('');
-    }
-</script>
+                            if(result.message !== undefined){
+                                 $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
+                            }
+                            $.each(result.data, function(key, value) {
+                                $("."+key).text(value);
+                            })
+                        }
+                    }
+                });
+                /*end ajax*/
+            });
+        }
+
+        /* Display modal when customer has finished registering */
+        function getModal(){
+            $("#myModal").modal()
+        }
+
+        /* Clear / Empty fields after ajax reach success */
+        function clearField(){
+            $("input[name='name'],input[name='wa_number']").val('');
+            $(".error").html('');
+        }
+    </script>
 
   </main>
-
  </div>
+
 </body>
 </html>

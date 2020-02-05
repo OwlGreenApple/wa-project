@@ -110,5 +110,9 @@ class HomeController extends Controller
       return view('auth.settings');
     }
 
+    public function subscriber(){
+      return view('register-customer');
+    }
+
 /* end class HomeController */
 }
