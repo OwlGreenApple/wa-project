@@ -72,11 +72,16 @@
 </head>
 <body>
 
-    <!-- Loading -->
+    <!-- Loading lama
     <div id="div-loading">
       <div class="loadmain"></div>
       <div class="background-load"></div>
     </div>
+    -->
+    <!--Loading Bar-->
+    <div class="div-loading">
+      <div id="loader" style="display: none;"></div>  
+    </div> 
 
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-telegram header-tel">

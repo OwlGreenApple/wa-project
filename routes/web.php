@@ -45,9 +45,13 @@ Route::get('create-campaign', 'HomeController@CreateCampaign');
 Route::get('campaign', 'HomeController@Campaign');
 Route::get('add-reminder', 'HomeController@addReminder');
 Route::get('report-reminder', 'HomeController@reportReminder');
-Route::get('settings', 'HomeController@Settings');
 Route::get('subscribe', 'HomeController@subscriber');
 Route::get('history-order', 'HomeController@historyOrder');
+
+/* SETTING */
+Route::get('settings', 'HomeController@Settings');
+Route::get('connect-phone', 'SettingController@connect_phone');
+
 
 /* User Customer */
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade

@@ -27,14 +27,14 @@
         </div>
 
         <div class="row col-fix">
-            <form class="wrapper add-contact col-lg-9 pad-fix">
+            <form class="wrapper add-contact col-lg-9 pad-fix" id="form-connect">
                 <div class="form-group row col-fix">
                   <label class="col-sm-3 col-form-label">Phone Telegram :</label>
                   <input type="text" class="form-control col-sm-9" />
                 </div>
 
                 <div class="text-right">
-                  <button type="submit" class="btn btn-custom">Connect</button>
+                  <button type="button" id="button-connect" class="btn btn-custom">Connect</button>
                 </div>
             </form>
 
@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <div class="wrapper verification">
+        <div class="wrapper verification" id="div-verify">
             <div class="form-group"><label class="col-sm-12 col-form-label">Input verification code from your <strong>Telegram Account</strong></label></div>
             <div class="form-group row col-fix">
               <label class="col-sm-3 col-form-label">Verification Code :</label>
@@ -53,7 +53,7 @@
             </div>
 
             <div class="text-right">
-              <button type="submit" class="btn btn-custom">Submit</button>
+              <button type="button" id="button-verify" class="btn btn-custom">Submit</button>
             </div>
         </div>
 
@@ -114,7 +114,51 @@
 
 <script type="text/javascript">
   $(document).ready(function() {    
-     tabs();
+    tabs();
+    $('#div-verify').hide();
+    $('#button-connect').click(function(){
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        url: "<?php echo url('/connect-phone');?>",
+        data: $("#form-connect").serialize(),
+        dataType: 'text',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          var data = jQuery.parseJSON(result);
+          $('#div-verify').show();
+        }
+      });
+      
+    });
+    $('#button-verify').click(function(){
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        url: "<?php echo url('/verify-phone');?>",
+        data: $("#form-connect").serialize(),
+        dataType: 'text',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          var data = jQuery.parseJSON(result);
+          $('#div-verify').show();
+        }
+      });
+    });
   });
 
   // Jquery Tabs
