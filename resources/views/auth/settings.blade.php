@@ -84,24 +84,54 @@
     <!-- TABS 2 -->
     <div class="tabs-container" id="tab2C">
       <div class="act-tel-settings">
-       
-        <div class="wrapper">
-          <form class="form-contact">
+
+      <form class="form-contact">
+        <div class="wrapper account mb-5">
+          <h5>Edit Your Personal Data</h5>   
               <div class="form-group row col-fix">
-                <label class="col-sm-3 col-form-label">Password :</label>
-                <input type="text" class="form-control col-sm-9" />
+                <label class="col-sm-4 col-form-label">Email</label>
+                <label class="col-sm-1 col-form-label">:</label>
+                <div class="form-control col-sm-7 text-left">mail@email.com</div>
               </div> 
 
               <div class="form-group row col-fix">
-                <label class="col-sm-3 col-form-label">Confirm Password :</label>
-                <input type="text" class="form-control col-sm-9" />
+                <label class="col-sm-4 col-form-label">Full Name</label>
+                <label class="col-sm-1 col-form-label">:</label>
+                <input type="text" class="form-control col-sm-7" />
+              </div> 
+
+              <div class="form-group row col-fix">
+                <label class="col-sm-4 col-form-label">Phone Number</label>
+                <label class="col-sm-1 col-form-label">:</label>
+                <input type="text" class="form-control col-sm-7" />
+              </div>
+        </div>
+       
+        <div class="wrapper account">
+          <h5>Edit Your Password</h5>
+              <div class="form-group row col-fix">
+                <label class="col-sm-4 col-form-label">Old Password</label>
+                <label class="col-sm-1 col-form-label">:</label>
+                <input type="text" class="form-control col-sm-7" />
+              </div> 
+
+              <div class="form-group row col-fix">
+                <label class="col-sm-4 col-form-label">New Password</label>
+                <label class="col-sm-1 col-form-label">:</label>
+                <input type="text" class="form-control col-sm-7" />
+              </div> 
+
+              <div class="form-group row col-fix">
+                <label class="col-sm-4 col-form-label">Confirm New Password</label>
+                <label class="col-sm-1 col-form-label">:</label>
+                <input type="text" class="form-control col-sm-7" />
               </div>
 
               <div class="text-right">
-                <button type="submit" class="btn btn-custom">Save</button>
+                <button type="submit" class="btn btn-custom">Update Account</button>
               </div>
-          </form>
         </div>
+        </form>
         <!-- end wrapper -->
 
       </div>
