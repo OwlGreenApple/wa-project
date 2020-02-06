@@ -54,6 +54,19 @@
               <input type="text" class="form-control" placeholder="Input Your Name" >
             </div>
 
+            <div class="input-group mt-4 mb-3">
+              <div class="input-group-prepend">
+                <button class="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telegram Contact</button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item">Phone</a>
+                  <a class="dropdown-item">Telegram Username</a>
+                </div>
+              </div>
+              <input type="text" name="phone" class="form-control cphone" placeholder="Input your phone" >
+              <input type="text" name="usertel" class="form-control ctel" placeholder="Input your Telegram username" >
+            </div>
+
+            <!--
             <div class="form-group prep1">
                 <div class="col-sm-9 pad-fix move_radio">
                   <div class="form-check form-check-inline">
@@ -71,10 +84,10 @@
                     </label>
                     <label class="form-check-label" for="inlineRadio2">Telegram Username</label>
                   </div>
-                  <!-- -->
+                  <!-- 
                 </div>
             </div>
-
+              -->
             <div class="form-group cphone">
               <label>No HP:</label>
               <input type="text" name="phone" class="form-control" placeholder="6280000" />
@@ -126,14 +139,6 @@
             <div class="input-group form-group text-left prep2">
                <!-- display radio button -->
             </div> 
-
-            <div class="input-group form-group cphone">
-                <input type="text" name="phone" class="form-control" placeholder="Input your phone" >
-            </div> 
-
-            <div class="input-group form-group ctel">
-                <input type="text" name="usertel" class="form-control" placeholder="Input your Telegram username" >
-            </div>
 
             <div class="input-group form-group">
                 <input type="text" class="form-control" placeholder="Email" >
