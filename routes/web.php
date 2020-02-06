@@ -38,15 +38,16 @@ Auth::routes();
 
 /* PROTOTYPE */
 Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');//home.blade
-Route::get('createlists', 'HomeController@createList');
-Route::get('lists', 'HomeController@userList');
-Route::get('lists-create', 'HomeController@testList');
+Route::get('createlists', 'HomeController@formList');
+Route::get('lists-create', 'HomeController@createList');
+Route::get('lists', 'HomeController@dataList');
 Route::get('create-campaign', 'HomeController@CreateCampaign');
 Route::get('campaign', 'HomeController@Campaign');
 Route::get('add-reminder', 'HomeController@addReminder');
 Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('settings', 'HomeController@Settings');
 Route::get('subscribe', 'HomeController@subscriber');
+Route::get('history-order', 'HomeController@historyOrder');
 
 /* User Customer */
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade

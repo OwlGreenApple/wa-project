@@ -36,7 +36,7 @@
 
                     <div class="form-group">
                       <label>Confirm Password *</label>
-                       <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                       <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="ReType Your Password" required autocomplete="new-password">
                     </div>
 
                     <div class="form-group">
@@ -82,7 +82,7 @@
 
                 <hr class="mt-5" />
 
-                <div class="mt-4 mb-3"><sb>Already Have An Account? <a>Log in Here</a></sb></div>
+                <div class="mt-4 mb-3"><sb>Already Have An Account? <a href="{{route('login')}}">Log in Here</a></sb></div>
             <!-- end wrapper -->
            </div>
 

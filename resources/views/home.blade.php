@@ -63,7 +63,7 @@
     <div class="clearfix"></div>
   </div>
 
-  <div class="act-tel-campaign bg-dashboard row col-fix">
+  <div class="act-tel-dashboard view-campaign bg-dashboard row col-fix">
    
       <div class="col-md-5 act-tel-list-left-col">
 

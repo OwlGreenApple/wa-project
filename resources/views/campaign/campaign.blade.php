@@ -9,7 +9,7 @@
   </div>
 
   <div class="act-tel-dashboard-right">
-     <a class="btn btn-custom">Create List</a>
+     <a href="{{url('create-campaign')}}" class="btn btn-custom">Create Campaign</a>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -31,7 +31,8 @@
       <div class="input-group col-lg-2">
          <select class="custom-select-campaign form-control col-lg-10 relativity">
             <option>Event</option>
-            <option>...</option>
+            <option>Broadcast</option>
+            <option>Auto Responder</option>
          </select>
          <span class="icon-triangular"></span>
       </div>
@@ -82,10 +83,10 @@
           </div>
 
           <div class="col-lg-3 pad-fix col-button">
-            <button type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
+            <a href="{{url('report-reminder')}}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></a>
             <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
             <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
-            <div><button type="button" class="btn btn-custom">Add Message</button></div>
+            <div><a href="{{url('add-reminder')}}" class="btn btn-custom">Add Message</a></div>
           </div>
         </div> 
 
@@ -129,7 +130,6 @@
             <button type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
             <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
             <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
-            <div><button type="button" class="btn btn-custom">Add Message</button></div>
           </div>
         </div> 
 

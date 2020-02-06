@@ -58,7 +58,8 @@
     <table class="table table-bordered mt-4">
       <thead class="bg-dashboard">
         <tr>
-          <th class="text-center" style="width : 200px">Reminder Time</th>
+          <th class="text-center" style="width : 100px">Reminder Time</th>
+          <th class="text-center" style="width : 100px">Time Sending</th>
           <th class="text-center">Reminder Messages</th>
           <th class="text-center" style="width : 60px">Edit</th>
           <th class="text-center" style="width : 60px">Delete</th>
@@ -68,6 +69,7 @@
       <tbody>
         <tr>
           <td class="text-center">H-1</td>
+          <td class="text-center">00:00</td>
           <td>Remindered Message H-1</td>
           <td class="text-center"><a class="icon icon-edit"></a></td>
           <td class="text-center"><a class="icon icon-delete"></a></td>

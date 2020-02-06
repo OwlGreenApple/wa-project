@@ -34,14 +34,6 @@
                        @enderror
                     </div>
 
-                    <div class="form-group mt-5">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" name="agreement"/>
-                            <span class="checkmark-check"></span>
-                        </label>
-                        <label class="checkbox-left"><sb>I Agree with <a>Terms and Condition</a></sb></label>
-                    </div>
-
                     <div class="text-left">
                       <button type="submit" class="btn btn-custom btn-lg">LOG IN</button>
                     </div>
@@ -49,7 +41,7 @@
 
                <hr class="mt-5" />
 
-              <div class="mt-4 mb-3"><sb>Need a Activtele account? <a>Register Here</a></sb></div>
+              <div class="mt-4 mb-3"><sb>Need a Activtele account? <a href="{{route('register')}}">Register Here</a></sb></div>
             <!-- end wrapper -->
             </div>
 

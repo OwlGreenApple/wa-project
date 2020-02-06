@@ -105,25 +105,29 @@
                           -->
                         @else
                             <li class="nav-item dropdown">
-                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('createlists')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('createlists') || request()->is('create-campaign')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                      Create<span class="caret"></span>
                                 </a>
                                 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     <a href="{{url('createlists')}}" class="nav-link {{ (request()->is('createlists')) ? 'active' : '' }}">Lists</a>
-                                    <a href="{{url('lists-create')}}" class="nav-link {{ (request()->is('lists-create')) ? 'active' : '' }}">Lists 2</a>
+                                    
                                     <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">Campaigns</a> 
-                                    <a href="{{url('add-reminder')}}" class="nav-link {{ (request()->is('add-reminder')) ? 'active' : '' }}">Campaigns 2</a>
-                                    <a href="{{url('report-reminder')}}" class="nav-link {{ (request()->is('report-reminder')) ? 'active' : '' }}">View Report</a>
                                 </div>
                             </li> 
 
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('lists')) ? 'active' : '' }}" href="{{url('lists')}}">Lists</a>
+                                <a href="{{url('lists')}}" class="nav-link {{ (request()->is('lists') || request()->is('lists-create')) ? 'active' : '' }}">Lists</a>
                             </li> 
 
+                            <!--
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('campaign')) ? 'active' : '' }}" href="{{url('campaign')}}">Campaigns</a>
+                                <a class="nav-link {{ (request()->is('lists')) ? 'active' : '' }}" href="{{url('lists')}}">Lists</a>
+                            </li> 
+                            -->
+
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('campaign') || request()->is('add-reminder')) ? 'active' : '' }}" href="{{url('campaign')}}">Campaigns</a>
                             </li> 
                             <!--
                             <li class="nav-item">
@@ -173,16 +177,19 @@
                            Hi,
                         </li>
                         <li class="nav-item mr-3">
+                            08523193113
+                            <!--
                            <select class="form-control-sm tel-color" name="">
                              <option>08523193113</option>
                            </select>
+                            -->
                         </li>
                          <li class="nav-item cog-pos dropdown">
                            <a id="cogDropdown" class="icon-cog" data-toggle="dropdown"></a>
                            <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="cogDropdown">
                                     <a href="{{url('settings')}}" class="nav-link {{ (request()->is('settings')) ? 'active' : '' }}">Settings</a>
                                     <a href="{{url('lists-create')}}" class="nav-link {{ (request()->is('lists-create')) ? 'active' : '' }}">Buy More</a>
-                                    <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">History Order</a> 
+                                    <a href="{{url('history-order')}}" class="nav-link {{ (request()->is('history-order')) ? 'active' : '' }}">History Order</a> 
 
                                     <a class="nav-link" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();

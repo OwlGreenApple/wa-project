@@ -70,19 +70,19 @@ class HomeController extends Controller
         }
     }
 
-    public function createList()
+    public function formList()
     {
       return view('list.list');
     }
 
-    public function userList()
-    {
-      return view('list.list-data');
-    }
-
-    public function testList()
+    public function createList()
     {
       return view('list.list-create');
+    }
+
+    public function dataList()
+    {
+      return view('list.list-data');
     }
 
     public function CreateCampaign() 
@@ -112,6 +112,11 @@ class HomeController extends Controller
 
     public function subscriber(){
       return view('register-customer');
+    }
+
+    public function historyOrder()
+    {
+      return view('auth.history-order');
     }
 
 /* end class HomeController */

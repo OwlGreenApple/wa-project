@@ -19,7 +19,8 @@
         <form>
           <input type="text" class="form-control custom-form" placeholder="Test List 1"/>
           <div class="text-right">
-            <button type="submit" class="btn btn-custom">Create List</button>
+            <!--<button type="submit" class="btn btn-custom">Create List</button>-->
+            <a class="btn btn-custom" href="{{url('lists-create')}}">Create List</a>
           </div>
         </form>
       </div>
