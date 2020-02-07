@@ -6,5 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class PhoneNumbers extends Model
 {
-    protected $table = 'phone_numbers';
+  /*
+  * Status 
+  * 0 -> Not Verified
+  * 1 -> Verified
+  */
+  protected $table = 'phone_numbers';
 }
