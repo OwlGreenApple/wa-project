@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
+use App\PhoneNumbers;
 
 class SettingController extends Controller
 {
@@ -24,6 +25,10 @@ class SettingController extends Controller
 
     public function connect_phone()
     {
+      //cek phone number uda ada didatabase ngga 
+      
+      //cek phone number valid or ngga 
+      
       $curl = curl_init();
       $data = array(
           'token'=> '0698a365aec87be50795ab07230d7df55df6eda532b81',
