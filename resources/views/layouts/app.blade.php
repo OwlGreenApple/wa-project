@@ -86,7 +86,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-telegram header-tel">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" href="{{ url('home') }}">
                     <img class="logo" src="{{asset('assets/img/logo.png')}}" />
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -182,7 +182,7 @@
                            Hi,
                         </li>
                         <li class="nav-item mr-3">
-                            08523193113
+                            User
                             <!--
                            <select class="form-control-sm tel-color" name="">
                              <option>08523193113</option>

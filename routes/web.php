@@ -34,6 +34,9 @@ Route::post('is_pay','ApiController@customerPay');
 Route::post('private-list','ApiController@register_list');
 
 
+/* Register 
+Route::post('reguser','Auth\RegisterController@register')->name('reguser');*/
+
 Auth::routes();
 
 /* PROTOTYPE */

@@ -227,6 +227,9 @@
                     <label>Import Contact</label>
                       <input class="form-control" name="import_file" type="file" />
                     <span><i>Please .csv only</i></span>
+
+                    <div><a>Download Example CSV</a></div>
+
                     <div class="text-right">
                       <button type="submit" class="btn btn-custom mr-1">Import</button>
                       <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>

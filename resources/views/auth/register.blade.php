@@ -7,9 +7,26 @@
           
            <div class="act-tel-register bg-dashboard wrapper">
 
+                @if(session('error_phone'))
+                    <div class="alert alert-danger" role="alert">
+                        {{ session('error_phone') }}
+                    </div>
+                @endif
+
                 <form class="add-contact" method="POST" action="{{ route('register') }}">
+                    @csrf
                     <div class="form-group text-center">
                       <big>Hello</big>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Name*</label>
+                      <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" placeholder="Input Your Name" />
+                      @error('username')
+                          <span class="invalid-feedback" role="alert">
+                              <strong>{{ $message }}</strong>
+                          </span>
+                      @enderror
                     </div>
 
                     <div class="form-group">
@@ -24,24 +41,13 @@
                     </div>
 
                     <div class="form-group">
-                      <label>Password *</label>
-                       <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="Input Your Password">
-
-                       @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                       @enderror
-                    </div>
-
-                    <div class="form-group">
-                      <label>Confirm Password *</label>
-                       <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="ReType Your Password" required autocomplete="new-password">
-                    </div>
-
-                    <div class="form-group">
                       <label>Handphone Telegram*</label>
-                      <input type="text" class="form-control" placeholder="Input Your Phone" />
+                      <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" placeholder="Input Your Phone" />
+                      @error('phone')
+                          <span class="invalid-feedback" role="alert">
+                              <strong>{{ $message }}</strong>
+                          </span>
+                      @enderror
                     </div>
 
                     <div class="form-group">
