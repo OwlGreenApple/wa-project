@@ -34,6 +34,14 @@
                        @enderror
                     </div>
 
+                    <div class="form-group">
+                      <label class="custom-checkbox">
+                          <input type="checkbox" name="remember"/>
+                          <span class="checkmark-check"></span>
+                      </label>
+                      <label class="checkbox-left"><sb>Remember Me</sb></label>
+                    </div>
+
                     <div class="text-left">
                       <button type="submit" class="btn btn-custom btn-lg">LOG IN</button>
                     </div>

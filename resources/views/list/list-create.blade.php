@@ -45,7 +45,7 @@
     <div class="tabs-container" id="tab2C">
       <div class="act-tel-tab">
         <div class="form-control wrapper message">
-          Click "<b>import contact</b>" <!--or "<b>take from group</b>" if you want -->
+          If you want add contact more than 1 please click : "<b><a class="open_import">import contact</a></b>" <!--or "<b>take from group</b>" if you want -->
         </div>
 
         <form class="wrapper add-contact">
@@ -54,49 +54,19 @@
               <input type="text" class="form-control" placeholder="Input Your Name" >
             </div>
 
-            <div class="input-group mt-4 mb-3">
-              <div class="input-group-prepend">
-                <button class="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telegram Contact</button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item">Phone</a>
-                  <a class="dropdown-item">Telegram Username</a>
-                </div>
-              </div>
-              <input type="text" name="phone" class="form-control cphone" placeholder="Input your phone" >
-              <input type="text" name="usertel" class="form-control ctel" placeholder="Input your Telegram username" >
-            </div>
-
-            <!--
-            <div class="form-group prep1">
-                <div class="col-sm-9 pad-fix move_radio">
-                  <div class="form-check form-check-inline">
-                    <label class="custom-radio">
-                      <input class="form-check-input" type="radio" name="options" id="inlineRadio1" value="phone" checked>
-                      <span class="checkmark"></span>
-                    </label>
-                    <label class="form-check-label" for="inlineRadio1">Phone</label>
+            <div class="prep1">
+            <div class="input-group mt-4 mb-3 move_radio">
+                <div class="input-group-prepend">
+                  <button class="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telegram Contact</button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" id="ph">Phone</a>
+                    <a class="dropdown-item" id="tl">Telegram Username</a>
                   </div>
-
-                  <div class="form-check form-check-inline">
-                    <label class="custom-radio">
-                      <input class="form-check-input" type="radio" name="options" id="inlineRadio2" value="telegram">
-                      <span class="checkmark"></span>
-                    </label>
-                    <label class="form-check-label" for="inlineRadio2">Telegram Username</label>
-                  </div>
-                  <!-- 
                 </div>
-            </div>
-              -->
-            <div class="form-group cphone">
-              <label>No HP:</label>
-              <input type="text" name="phone" class="form-control" placeholder="6280000" />
-              <i>*) format phone : 6280000</i>
-            </div>
 
-            <div class="form-group ctel">
-              <label>Telegram Username</label>
-              <input type="text" name="usertel" class="form-control" placeholder="Input Your Telegram Username" />
+                <input type="text" name="phone" class="form-control cphone" placeholder="Input your phone">
+                <input type="text" name="usertel" class="form-control ctel" placeholder="Input your Telegram username">
+            </div>
             </div>
 
             <div class="form-group">
@@ -244,11 +214,39 @@
   </div>
 </div>
 
+<!-- Modal Import Contact -->
+  <div class="modal fade child-modal" id="import-contact" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2">
+                  <form>
+                    <label>Import Contact</label>
+                      <input class="form-control" name="import_file" type="file" />
+                    <span><i>Please .csv only</i></span>
+                    <div class="text-right">
+                      <button type="submit" class="btn btn-custom mr-1">Import</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+               
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
 <script type="text/javascript">
   $(document).ready(function() {    
      tabs();
      Choose();
      radioCheck();
+     openImport();
   });
 
   // Jquery Tabs
@@ -299,9 +297,10 @@
     $("input[name=usertel]").prop('disabled',true);
     $(".ctel").hide();
 
-    $("input[name=options]").change(function(){
-        var val = $(this).val();
-        if(val == 'phone')
+    $(".dropdown-item").click(function(){
+       var val = $(this).attr('id');
+
+       if(val == 'ph')
         {
           $("input[name=phone]").prop('disabled',false);
           $("input[name=usertel]").prop('disabled',true);
@@ -314,6 +313,12 @@
           $(".cphone").hide();
           $(".ctel").show();
         }
+    });
+  }
+
+  function openImport() {
+    $(".open_import").click(function(){
+      $("#import-contact").modal();
     });
   }
 
