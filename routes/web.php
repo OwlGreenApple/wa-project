@@ -54,6 +54,7 @@ Route::get('history-order', 'HomeController@historyOrder');
 /* SETTING */
 Route::get('settings', 'HomeController@Settings');
 Route::get('connect-phone', 'SettingController@connect_phone');
+Route::get('verify-phone', 'SettingController@verify_phone');
 
 
 /* User Customer */

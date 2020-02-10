@@ -30,7 +30,7 @@
             <form class="wrapper add-contact col-lg-9 pad-fix" id="form-connect">
                 <div class="form-group row col-fix">
                   <label class="col-sm-3 col-form-label">Phone Telegram :</label>
-                  <input type="text" class="form-control col-sm-9" />
+                  <input type="text" name="phone_number" class="form-control col-sm-9" />
                 </div>
 
                 <div class="text-right">
@@ -106,7 +106,7 @@
                 <input type="text" class="form-control col-sm-7" />
               </div>
         </div>
-       
+        
         <div class="wrapper account">
           <h5>Edit Your Password</h5>
               <div class="form-group row col-fix">
@@ -146,6 +146,7 @@
   $(document).ready(function() {    
     tabs();
     $('#div-verify').hide();
+    $('.message').hide();
     $('#button-connect').click(function(){
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -163,7 +164,13 @@
           $('.div-loading').removeClass('background-load');
 
           var data = jQuery.parseJSON(result);
-          $('#div-verify').show();
+          $('.message').show();
+          $('.message').html(data.message);
+          if(data.status == "success") {
+            $('#div-verify').show();
+          }
+          if (data.status == "error") {
+          }
         }
       });
       

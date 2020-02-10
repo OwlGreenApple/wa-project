@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
-use App\PhoneNumbers;
+use App\PhoneNumber;
 
 class SettingController extends Controller
 {
@@ -22,23 +22,56 @@ class SettingController extends Controller
     {
         $this->middleware('auth');
     }
-
-    public function connect_phone()
+  
+    public function connect_phone(Request $request)
     {
+      $user = Auth::user();
       //cek phone number uda ada didatabase ngga 
-      
+      $phoneNumber = PhoneNumber::
+                      where("phone_number",$request->phone_number)
+                      // ->where("status",2)
+                      ->first();
+      if (!is_null($phoneNumber)){
+        if ($phoneNumber->status == 2) {
+          $arr['status'] = 'error';
+          $arr['message'] = "Phone Number Already Registered";
+          return $arr;
+        }
+      }
+
       //cek phone number valid or ngga 
+      $request->phone_number = "62".$request->phone_number;
+      $is_error = false;
+      $error_message = "";
+      if(!is_numeric($request->phone_number)){
+        $is_error = true;
+        $error_message = "Phone number must be a number";
+      }
+      if(!preg_match("/^628+[0-9]/i",$request->phone_number)){
+        $is_error = true;
+        $error_message = "Phone number is not valid";
+      }
+      if ($is_error) {
+        $arr['status'] = 'error';
+        $arr['message'] = $error_message;
+        return $arr;
+      }
+
+      
+      if (is_null($phoneNumber)){
+        $phoneNumber = new PhoneNumber();
+        $phoneNumber->user_id = $user->id;
+        $phoneNumber->phone_number = $request->phone_number;
+        $phoneNumber->counter = 0;
+        $phoneNumber->status = 0;
+        $phoneNumber->save();
+      }
       
       $curl = curl_init();
       $data = array(
           'token'=> '0698a365aec87be50795ab07230d7df55df6eda532b81',
-          'phone_number'=>'+628123238793',
-          'authcode'=>'68677',
-          // 'phone_number'=>'+6287723238793',
-          // 'phone_number'=>'+6287855915535',
-          
-          'listname'=>'tdlib',
-          // tdlib tdlib2 tdlib3 tdlib5
+          'phone_number' => $phoneNumber->phone_number,
+          'listname'=>'tdlib'.$phoneNumber->id,
       );
 
       curl_setopt_array($curl, array(
@@ -61,6 +94,20 @@ class SettingController extends Controller
         // print_r($response);
         // return json_decode($response, true);
       }
+      
+      $phoneNumber->status = 1;
+      $phoneNumber->save();
+
+      $arr['status'] = 'Success';
+      $arr['message'] = "Please Check your Telegram for Verification Code";
+      return $arr;
+    }
+    
+    public function verify_phone(Request $request)
+    {
+      $arr['status'] = 'Success';
+      $arr['message'] = "Telegram Phone number registered";
+      return $arr;
     }
 
 /* end class HomeController */
