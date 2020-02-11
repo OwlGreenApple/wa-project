@@ -1,6 +1,41 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Modal Delete Confirmation -->
+<div class="modal fade" id="confirm-delete" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content content-premiumid">
+      <div class="modal-header header-premiumid">
+        <h5 class="modal-title" id="modaltitle">
+          Confirmation Delete
+        </h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <input type="hidden" name="id_phone_number" id="id_phone_number">
+
+        <label>Are you sure want to <i>delete</i> this data ?</label>
+        <br><br>
+        <span class="txt-mode"></span>
+        <br>
+        
+        <div class="col-12 mb-4" style="margin-top: 30px">
+          <button class="btn btn-danger btn-block btn-delete-ok" data-dismiss="modal" id="button-delete-phone">
+            Yes, Delete Now
+          </button>
+        </div>
+        
+        <div class="col-12 text-center mb-4">
+          <button class="btn  btn-block btn-delete-ok" data-dismiss="modal">
+            Cancel
+          </button>  
+        </div>
+      </div>
+    </div>   
+  </div>
+</div>
+
 
   <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
@@ -30,7 +65,7 @@
             <form class="wrapper add-contact col-lg-9 pad-fix" id="form-connect">
                 <div class="form-group row col-fix">
                   <label class="col-sm-3 col-form-label">Phone Telegram :</label>
-                  <input type="text" name="phone_number" class="form-control col-sm-9" />
+                  <input type="text" id="phone_number" name="phone_number" class="form-control col-sm-9" />
                 </div>
 
                 <div class="text-right">
@@ -49,7 +84,7 @@
             <div class="form-group"><label class="col-sm-12 col-form-label">Input verification code from your <strong>Telegram Account</strong></label></div>
             <div class="form-group row col-fix">
               <label class="col-sm-3 col-form-label">Verification Code :</label>
-              <input type="text" class="form-control col-sm-9" />
+              <input type="text" class="form-control col-sm-9" id="verify_code"/>
             </div>
 
             <div class="text-right">
@@ -63,16 +98,12 @@
                 <tr>
                   <th class="text-center">No</th>
                   <th class="text-center">Phone Telegram</th>
+                  <th class="text-center">Status</th>
                   <th class="text-center">Delete</th>
                 </tr>
               </thead>
 
-              <tbody>
-                <tr>
-                  <td class="text-center">1</td>
-                  <td class="text-center">08177728428</td>
-                  <td class="text-center"><a class="icon icon-delete"></a></td>
-                </tr>
+              <tbody id="table-phone">
               </tbody>
             </table>
         </div>
@@ -143,8 +174,48 @@
 </div>
 
 <script type="text/javascript">
+  // Jquery Tabs
+  function tabs() {    
+      $('#tabs li a:not(:first)').addClass('inactive');
+      $('.tabs-container').hide();
+      $('.tabs-container:first').show();
+          
+      $('#tabs li a').click(function(){
+        var t = $(this).attr('id');
+        if($(this).hasClass('inactive')){ //this is the start of our condition 
+          $('#tabs li a').addClass('inactive');           
+          $(this).removeClass('inactive');
+          
+          $('.tabs-container').hide();
+          $('#'+ t + 'C').fadeIn('slow');
+        }
+      });
+  }
+  
+  function loadPhoneNumber(){
+    $.ajax({
+      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+      type: 'GET',
+      url: "<?php echo url('/load-phone-number');?>",
+      dataType: 'text',
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success: function(result) {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+
+        var data = jQuery.parseJSON(result);
+        $('#table-phone').html(data.view);
+      }
+    });
+  }
+
   $(document).ready(function() {    
     tabs();
+    loadPhoneNumber();
     $('#div-verify').hide();
     $('.message').hide();
     $('#button-connect').click(function(){
@@ -168,6 +239,7 @@
           $('.message').html(data.message);
           if(data.status == "success") {
             $('#div-verify').show();
+            loadPhoneNumber();
           }
           if (data.status == "error") {
           }
@@ -180,7 +252,10 @@
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         type: 'GET',
         url: "<?php echo url('/verify-phone');?>",
-        data: $("#form-connect").serialize(),
+        data: {
+          phone_number : $("#phone_number").val(),
+          verify_code : $("#verify_code").val(),
+        },
         dataType: 'text',
         beforeSend: function()
         {
@@ -192,29 +267,47 @@
           $('.div-loading').removeClass('background-load');
 
           var data = jQuery.parseJSON(result);
-          $('#div-verify').show();
+          $('.message').show();
+          $('.message').html(data.message);
+          loadPhoneNumber();
         }
       });
     });
-  });
+    $('#button-delete-phone').click(function(){
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        url: "<?php echo url('/delete-phone');?>",
+        data: {
+          id : $("#id_phone_number").val(),
+        },
+        dataType: 'text',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
 
-  // Jquery Tabs
-  function tabs() {    
-      $('#tabs li a:not(:first)').addClass('inactive');
-      $('.tabs-container').hide();
-      $('.tabs-container:first').show();
-          
-      $('#tabs li a').click(function(){
-          var t = $(this).attr('id');
-        if($(this).hasClass('inactive')){ //this is the start of our condition 
-          $('#tabs li a').addClass('inactive');           
-          $(this).removeClass('inactive');
-          
-          $('.tabs-container').hide();
-          $('#'+ t + 'C').fadeIn('slow');
-       }
+          var data = jQuery.parseJSON(result);
+          $('.message').show();
+          $('.message').html(data.message);
+          loadPhoneNumber();
+        }
       });
-  }
+    });
+    $("body").on("click", ".icon-delete", function() {
+      $('#id_phone_number').val($(this).attr('data-id'));
+      $('#confirm-delete').modal('show');
+    });
+    $("body").on("click", ".link-verify", function() {
+      $("#phone_number").val($(this).attr('data-phone'));
+      $('#div-verify').show();
+      $("#verify_code").focus();
+    });
+  });
 
 </script>
 

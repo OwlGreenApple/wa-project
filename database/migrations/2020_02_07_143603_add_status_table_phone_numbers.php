@@ -15,6 +15,7 @@ class AddStatusTablePhoneNumbers extends Migration
     {
       Schema::table('phone_numbers', function (Blueprint $table) {
           $table->boolean('status')->default(0);
+          $table->string('filename')->nullable();
       });
     }
 

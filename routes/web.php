@@ -52,9 +52,11 @@ Route::get('subscribe', 'HomeController@subscriber');
 Route::get('history-order', 'HomeController@historyOrder');
 
 /* SETTING */
-Route::get('settings', 'HomeController@Settings');
+Route::get('settings', 'SettingController@index');
+Route::get('load-phone-number', 'SettingController@load_phone_number');
 Route::get('connect-phone', 'SettingController@connect_phone');
 Route::get('verify-phone', 'SettingController@verify_phone');
+Route::get('delete-phone', 'SettingController@delete_phone');
 
 
 /* User Customer */
