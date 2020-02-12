@@ -51,7 +51,7 @@ Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('history-order', 'HomeController@historyOrder');
 
 /* SUBSCRIBE */
-Route::get('subscribe', 'HomeController@subscriber');
+Route::get('subscribe', 'CustomerController@subscriber');
 
 /* SETTING */
 Route::get('settings', 'SettingController@index');

@@ -124,7 +124,8 @@ class CustomerController extends Controller
         }
     }
 
-    public function addCustomer(Request $request){
+    public function addCustomer(Request $request)
+    {
         $listname = $request->listname;
         $req = $request->all();
 
@@ -288,7 +289,8 @@ class CustomerController extends Controller
 
     }    
          
-   public function autoReply($listid,$wa_number,$list_message,$list_wa_number,$customer_name){
+   public function autoReply($listid,$wa_number,$list_message,$list_wa_number,$customer_name)
+   {
         #send wa link to send message to list owner
         $list_wa_device = $list_wa_number;
         $list_wa_number = str_replace("+","",$list_wa_number);
@@ -348,6 +350,12 @@ class CustomerController extends Controller
             return response()->json($data);
         }
     }
+    
+    
+    public function subscriber(){
+      return view('register-customer');
+    }
+
 
 /* end of class */
 }
