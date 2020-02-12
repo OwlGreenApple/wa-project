@@ -48,8 +48,10 @@ Route::get('create-campaign', 'HomeController@CreateCampaign');
 Route::get('campaign', 'HomeController@Campaign');
 Route::get('add-reminder', 'HomeController@addReminder');
 Route::get('report-reminder', 'HomeController@reportReminder');
-Route::get('subscribe', 'HomeController@subscriber');
 Route::get('history-order', 'HomeController@historyOrder');
+
+/* SUBSCRIBE */
+Route::get('subscribe', 'HomeController@subscriber');
 
 /* SETTING */
 Route::get('settings', 'SettingController@index');
