@@ -23,7 +23,17 @@
     <link href="{{ asset('/assets/css/subscribe.css') }}" rel="stylesheet" />
 
     <!--!! $pixel !!-->
-     
+
+
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcUG9gUAAAAAL_-6_BLtSyunHnuPdlIijFdbeYP"></script>
+    <script>
+      grecaptcha.ready(function() {
+        grecaptcha.execute('6LcUG9gUAAAAAL_-6_BLtSyunHnuPdlIijFdbeYP', {action: 'homepage'}).then(function(token) {
+          
+        });
+      });
+    </script>
+    
 </head>
 
 <body class="bg-dashboard">
@@ -112,10 +122,6 @@
     <script type="text/javascript">
 
         $(document).ready(function() {
-             addCustomer();
-        });
-
-        function addCustomer(){
             $("#addcustomer").submit(function(e){
                 e.preventDefault();
                 var data = $(this).serialize();
@@ -155,7 +161,7 @@
                 });
                 /*end ajax*/
             });
-        }
+        });
 
         /* Display modal when customer has finished registering */
         function getModal(){
