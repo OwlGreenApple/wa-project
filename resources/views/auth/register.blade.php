@@ -21,7 +21,7 @@
 
                     <div class="form-group">
                       <label>Name*</label>
-                      <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" placeholder="Input Your Name" />
+                      <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" placeholder="Input Your Name" required />
                       @error('username')
                           <span class="invalid-feedback" role="alert">
                               <strong>{{ $message }}</strong>
@@ -42,7 +42,7 @@
 
                     <div class="form-group">
                       <label>Handphone Telegram*</label>
-                      <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" placeholder="Input Your Phone" />
+                      <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" placeholder="Input Your Phone" required/>
                       @error('phone')
                           <span class="invalid-feedback" role="alert">
                               <strong>{{ $message }}</strong>
@@ -55,18 +55,18 @@
                       <div>
                         <div class="form-check form-check-inline">
                           <label class="custom-radio">
-                            <input class="form-check-input" type="radio" name="campaign" id="inlineRadio1" value="event" checked>
+                            <input class="form-check-input" type="radio" name="gender" value="male" checked>
                             <span class="checkmark"></span>
                           </label>
-                          <label class="form-check-label" for="inlineRadio1">Male</label>
+                          <label class="form-check-label">Male</label>
                         </div>
 
                         <div class="form-check form-check-inline">
                           <label class="custom-radio">
-                            <input class="form-check-input" type="radio" name="campaign" id="inlineRadio2" value="auto">
+                            <input class="form-check-input" type="radio" name="gender" value="female">
                             <span class="checkmark"></span>
                           </label>
-                          <label class="form-check-label" for="inlineRadio2">Female</label>
+                          <label class="form-check-label">Female</label>
                         </div>
 
                       </div>
@@ -75,14 +75,14 @@
 
                     <div class="form-group">
                         <label class="custom-checkbox">
-                            <input type="checkbox" name="agreement"/>
+                            <input type="checkbox" name="agreement" required/>
                             <span class="checkmark-check"></span>
                         </label>
                         <label class="checkbox-left"><sb>I Agree with <a>Terms and Condition</a></sb></label>
                     </div>
 
                     <div class="text-left">
-                      <button type="submit" class="btn btn-custom btn-lg">REGISTER</button>
+                      <button id="btn-register" type="submit" class="btn btn-custom btn-lg">REGISTER</button>
                     </div>
                 </form>
 
@@ -95,4 +95,36 @@
         </div>
     </div>
 </div>
+
+<script>
+  $(document).ready(function(){
+      agreement();
+      checkCheckBox();
+  });
+
+  function agreement(){
+    $("input[name=agreement]").click(function(){
+      var val = $(this).val();
+
+      if(val == 1){
+        $(this).val('on');
+      }
+      else {
+        $(this).val(1);
+      }
+
+    });
+  }
+
+  function checkCheckBox()
+  {
+    $("#btn-register").click(function(){
+      var val= $("input[name=agreement]").val();
+
+      if(val == 'on'){
+        alert('Please Check Agreement Box');
+      }
+    });
+  }
+</script>
 @endsection

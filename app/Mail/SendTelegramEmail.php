@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendWAEmail extends Mailable
+class SendTelegramEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -33,10 +33,11 @@ class SendWAEmail extends Mailable
      */
     public function build()
     {
-          return $this
-        ->from('no-reply@activwa.com', 'ActivWA')
+        return $this
+        ->from('no-reply@activtele.com', 'ActivTele')
         ->subject($this->subject)
         ->view('emails.test-email')
+        ->with($this->emaildata)
         ->with($this->emaildata);
     }
 }

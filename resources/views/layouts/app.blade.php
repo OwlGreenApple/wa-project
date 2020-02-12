@@ -20,7 +20,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet"> 
+    <!--<link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet"> -->
     <link href="{{ asset('/assets/datetimepicker/jquery.datetimepicker.css') }}" rel="stylesheet">
 
     <!-- Font Awesome 4.7 -->
@@ -110,12 +110,12 @@
                           -->
                         @else
                             <li class="nav-item dropdown">
-                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('createlists') || request()->is('create-campaign')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('list-form') || request()->is('list-create') || request()->is('create-campaign')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                      Create<span class="caret"></span>
                                 </a>
                                 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a href="{{url('createlists')}}" class="nav-link {{ (request()->is('createlists')) ? 'active' : '' }}">Lists</a>
+                                    <a href="{{url('list-form')}}" class="nav-link {{ (request()->is('list-form') || request()->is('list-create')) ? 'active' : '' }}">Lists</a>
                                     
                                     <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">Campaigns</a> 
                                 </div>
@@ -124,12 +124,6 @@
                             <li class="nav-item">
                                 <a href="{{url('lists')}}" class="nav-link {{ (request()->is('lists') || request()->is('lists-create')) ? 'active' : '' }}">Lists</a>
                             </li> 
-
-                            <!--
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('lists')) ? 'active' : '' }}" href="{{url('lists')}}">Lists</a>
-                            </li> 
-                            -->
 
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('campaign') || request()->is('add-reminder')) ? 'active' : '' }}" href="{{url('campaign')}}">Campaigns</a>
@@ -182,7 +176,7 @@
                            Hi,
                         </li>
                         <li class="nav-item mr-3">
-                            User
+                            {{Auth()->user()->name}}
                             <!--
                            <select class="form-control-sm tel-color" name="">
                              <option>08523193113</option>
