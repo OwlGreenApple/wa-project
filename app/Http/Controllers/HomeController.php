@@ -105,6 +105,7 @@ class HomeController extends Controller
       return view('campaign.report-reminder');
     }
 
+    /* test */
     public function historyOrder()
     {
       return view('auth.history-order');
