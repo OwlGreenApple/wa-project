@@ -44,9 +44,12 @@
 
     <div class="container">
         <div class="row justify-content-center">
-            <!--!! $content !!-->
-
+          
            <div class="act-tel-subscribe col-lg-9">
+              <div class="wrapper">
+                  {!! $content !!}
+              </div>
+
               <div class="wrapper">
                 <form class="add-contact" id="addcustomer">
                     <div class="form-group">

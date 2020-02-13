@@ -50,9 +50,6 @@ Route::get('add-reminder', 'HomeController@addReminder');
 Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('history-order', 'HomeController@historyOrder');
 
-/* SUBSCRIBE */
-Route::get('subscribe', 'CustomerController@subscriber');
-
 /* SETTING */
 Route::get('settings', 'SettingController@index');
 Route::get('load-phone-number', 'SettingController@load_phone_number');
@@ -207,6 +204,8 @@ Route::group(['middleware'=>['auth','web']],function(){
 /* Customers */
 // Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
 Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
-/* Customer registration */
-Route::get('/ev/{list_name}','CustomerController@event'); //register-customer.blade
-Route::get('/{list_name}','CustomerController@index'); //register-customer.blade
+
+/* SUBSCRIBE */
+Route::get('/{list_name}', 'CustomerController@subscriber');
+//Route::get('/ev/{list_name}','CustomerController@event'); //register-customer.blade
+//Route::get('/{list_name}','CustomerController@index'); //register-customer.blade

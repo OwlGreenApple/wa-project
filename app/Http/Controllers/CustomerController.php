@@ -15,6 +15,63 @@ use App\Console\Commands\SendWA as SendMessage;
 
 class CustomerController extends Controller
 {
+
+    public function subscriber(Request $request, $link_list)
+    {
+      $check_link = UserList::where([
+          ['name','=',$link_list],
+          ['status','=',1],
+      ])->first();
+
+      if(empty($link_list)){
+        return redirect('/');
+      } elseif(is_null($check_link)) {
+        return redirect('/');
+      } else {
+            $list = UserList::where('name',$link_list)->first();
+            $additional = Additional::where('list_id',$list->id)->get();
+            $data = array();
+            $arr = array();
+            $data['fields'] = array();
+
+            if($additional->count() > 0)
+            {
+                foreach($additional as $row)
+                {
+                   if($row->id_parent == 0){
+                        $data['fields'][] = $row;
+                   } 
+                }
+            }
+
+            if(count($data['fields']) > 0)
+            {
+                foreach($data['fields'] as $col)
+                {
+                     # count if name has child or not
+                     $doption = Additional::where([['list_id',$list->id],['id_parent',$col->id]])->get();
+
+                     if($doption->count() > 0)
+                     {
+                         foreach($doption as $rows)
+                         {
+                            $arr[$col->name][$col->is_field][] = $rows->name;
+                         }
+                     } 
+                     else 
+                     {
+                            $arr[$col->name][$col->is_field] = $col;
+                     }
+                } 
+
+            }
+            
+        return view('register-customer',['id'=>encrypt($list->id),'content'=>$list->content,'listname'=>$link_list,'pixel'=>$list->pixel_text,'additional'=>$arr]);
+      }
+    }
+
+    /******* OLD CODES *******/
+
     //Reminder
     public function index(Request $request, $product_list){
     	$check_link = UserList::where([
@@ -363,12 +420,5 @@ class CustomerController extends Controller
         }
     }
     
-    
-    public function subscriber()
-    {
-      return view('register-customer');
-    }
-
-
-
+/* end of class */
 }
