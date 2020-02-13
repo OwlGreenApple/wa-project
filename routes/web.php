@@ -203,7 +203,8 @@ Route::group(['middleware'=>['auth','web']],function(){
 });
 
 /* Customers */
-Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
+// Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
+Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
 /* Customer registration */
 Route::get('/ev/{list_name}','CustomerController@event'); //register-customer.blade
 Route::get('/{list_name}','CustomerController@index'); //register-customer.blade

@@ -52,6 +52,23 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
+        $recaptcha_secret = env('GOOGLE_RECAPTCHA_SECRET_KEY');
+        $recaptcha_response = $data['recaptcha_response'];
+
+        // Make and decode POST request:
+        $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $recaptcha_response);
+        $recaptcha = json_decode($recaptcha);
+        
+        // Take action based on the score returned:
+        if ($recaptcha->score >= 0.5) {
+            // Verified - send email
+        } else {
+            // Not verified - show form error
+            $error['error_phone'] = 'Error Captcha';
+            return response()->json($error);
+        }
+      
         return Validator::make($data, [
             'username' => ['required','string','max:255'],
             'email' => ['required','string', 'email', 'max:255', 'unique:users'],
