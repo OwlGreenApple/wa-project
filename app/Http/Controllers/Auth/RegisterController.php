@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use App\Rules\TelegramNumber;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegisteredEmail;
 
 class RegisterController extends Controller
 {
@@ -66,13 +68,19 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $generated_password = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'),0,10);
+        $name = $data['username'];
+
         $user = User::create([
-          'name' => $data['name'],
+          'name' => $data['username'],
           'email' => $data['email'],
           'phone_number'=>$data['phone'],
-          //'password' => Hash::make($data['password']),
+          'password' => Hash::make($generated_password),
+          'gender'=>$data['gender']
         ]);
            
+        Mail::to($data['email'])->send(new RegisteredEmail($generated_password));
+         
         return $user;
     }
 }

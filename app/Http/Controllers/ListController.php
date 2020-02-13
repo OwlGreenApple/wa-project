@@ -34,6 +34,35 @@ class ListController extends Controller
         //mkdir($_SERVER['DOCUMENT_ROOT'].'/ckfinder/mdir', 0741);
     }   
 
+    public function index()
+    {
+       return view('list.list-data');
+    }
+
+    public function formList()
+    {
+      return view('list.list');
+    }
+
+    public function createList(Request $request)
+    {
+      $label = $request->listname;
+      $rules =  [
+            'listname' => 'required|min:4|max:190',
+      ];
+      $message = ['required'=> 'List Name required'];
+
+      $validator = Validator::make($request->all(),$rules,$message);
+
+      if ($validator->fails()) {
+          return redirect('list-form')
+                      ->withErrors($validator);
+      }
+
+      return view('list.list-create',['label'=>$label]);
+    }
+
+    /* ** OLD CODES ** */
     public function listForm(){
         return view('list.list-form');
     }

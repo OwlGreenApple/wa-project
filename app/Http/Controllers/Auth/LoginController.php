@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Cookie;
 
 class LoginController extends Controller
 {
@@ -41,6 +42,39 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    protected function authenticated(Request $request)
+    {
+        if($request->remember == 1)
+        {
+            $this->setCookie($request->email,$request->password);
+        }
+        else {
+            $this->delCookie($request->email,$request->password);
+        }
+    }
+
+    private function setCookie($email,$password)
+    {
+        if(!empty($email) && !empty($password))
+        {
+            Cookie::queue(Cookie::make('email', $email, 1440*7));
+            Cookie::queue(Cookie::make('password', $password, 1440*7));
+        } else {
+            return redirect()->route('login');
+        }
+    }
+
+    private function delCookie($cookie_email,$cookie_pass)
+    {
+        if(!empty($cookie_email) && !empty($cookie_pass))
+        {
+            Cookie::queue(Cookie::forget('email'));
+            Cookie::queue(Cookie::forget('password'));
+        } else {
+            return redirect()->route('login');
+        }
     }
 
     public function logout(Request $request)

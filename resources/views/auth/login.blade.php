@@ -14,7 +14,7 @@
 
                    <div class="form-group">
                       <label>Email*</label>
-                       <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Input Your Email">
+                       <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }} {{ Cookie::get('email') }}" required autocomplete="email" placeholder="Input Your Email">
 
                         @error('email')
                             <span class="invalid-feedback" role="alert">
@@ -25,7 +25,7 @@
 
                     <div class="form-group">
                       <label>Password *</label>
-                       <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="Input Your Password">
+                       <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" value="{{ Cookie::get('password') }}" placeholder="Input Your Password">
                       
                        @error('password')
                             <span class="invalid-feedback" role="alert">
@@ -56,4 +56,24 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    rememberMe();
+  });
+
+   function rememberMe(){
+    $("input[name=remember]").click(function(){
+      var val = $(this).val();
+
+      if(val == 1){
+        $(this).val('on');
+      }
+      else {
+        $(this).val(1);
+      }
+
+    });
+  }
+</script>
 @endsection

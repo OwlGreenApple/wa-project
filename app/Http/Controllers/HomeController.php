@@ -70,20 +70,6 @@ class HomeController extends Controller
         }
     }
 
-    public function formList()
-    {
-      return view('list.list');
-    }
-
-    public function createList()
-    {
-      return view('list.list-create');
-    }
-
-    public function dataList()
-    {
-      return view('list.list-data');
-    }
 
     public function CreateCampaign() 
     {

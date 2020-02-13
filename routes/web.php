@@ -41,9 +41,9 @@ Auth::routes();
 
 /* PROTOTYPE */
 Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');//home.blade
-Route::get('createlists', 'HomeController@formList');
-Route::get('lists-create', 'HomeController@createList');
-Route::get('lists', 'HomeController@dataList');
+//Route::get('createlists', 'HomeController@formList');
+//Route::get('lists-create', 'HomeController@createList');
+//Route::get('lists', 'HomeController@dataList');
 Route::get('create-campaign', 'HomeController@CreateCampaign');
 Route::get('campaign', 'HomeController@Campaign');
 Route::get('add-reminder', 'HomeController@addReminder');
@@ -64,6 +64,7 @@ Route::get('delete-phone', 'SettingController@delete_phone');
 /* User Customer */
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
+/* Admin */
 Route::group(['middleware'=>['auth','web','is_admin']],function(){
 	Route::get('sendingrate', 'AdminController@SendingRate');
   Route::post('savesettings', 'AdminController@SaveSettings');
@@ -73,6 +74,7 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');
 });
 
+/* User */
 Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('tesdevice','DeviceController@test')->name('tesdevice');
 
@@ -98,6 +100,11 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::post('updatenumber', 'DeviceController@updateNumber')->name('updatenumber');
 
 	/* Lists */
+  Route::get('lists', 'ListController@index');
+  Route::get('list-form', 'ListController@formList');
+  Route::get('list-create', 'ListController@createList');
+
+  /*old code*/
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
 	Route::get('createlist','ListController@listForm')->name('createlist');
 	Route::post('addlist','ListController@addList')->middleware('userlist')->name('addlist'); 

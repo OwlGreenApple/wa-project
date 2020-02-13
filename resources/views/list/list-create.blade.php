@@ -5,7 +5,7 @@
   <!-- TOP SECTION -->
 <div class="container act-tel-list-data">
   <div class="left">
-    <h2>TEST LIST 1</h2>
+    <h2>{{$label}}</h2>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -94,57 +94,39 @@
         <div class="wrapper">
           <form class="form-contact">
             <div class="input-group form-group">
-                <input type="text" class="form-control" placeholder="Click to add message" >
-                <span class="input-group-append">
-                  <div class="btn border-left-0 border edit-icon">
-                      <span class="icon-edit"></span>
-                  </div>
-                </span>
+              <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
             </div>
 
             <div class="input-group form-group">
-                <input type="text" class="form-control" placeholder="Input your name" >
+                <input type="text" class="form-control" value="{{ $label }}" placeholder="Input List name" >
             </div> 
-
-            <div class="input-group form-group text-left prep2">
-               <!-- display radio button -->
-            </div> 
-
-            <div class="input-group form-group">
-                <input type="text" class="form-control" placeholder="Email" >
-            </div>
         </div>
         <!-- end wrapper -->
 
          <!-- outer wrapper -->
         <div class="outer-wrapper">
           <div class="form-row">
-            <div class="form-group col-md-11">
-              <input type="text" class="form-control" placeholder="Custom fields"/>
+            <div class="form-group col-md-3 py-2">
+              <h6>Custom Fields</h6>
             </div>
-            <div class="form-group col-md-1">
-              <button type="button" class="btn btn-form"><span class="icon-delete"></span></button>
-            </div>
-          </div>
 
-          <div class="form-row">
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-8">
               <div class="relativity">
-               <select class="form-control custom-select">
-                  <option>Type</option>
-                  <option>...</option>
-               </select>
-               <span class="icon-carret-down-circle"></span>
+                 <select id="type_fields" class="form-control custom-select">
+                    <option value="1">Fields</option>
+                    <option value="2">Dropdown</option>
+                 </select>
+                 <span class="icon-carret-down-circle"></span>
               </div>
             </div>
-
-            <div class="form-group col-md-9">
-              <input type="text" class="form-control" placeholder="Field Names"/>
-            </div>
             <div class="form-group col-md-1">
-              <button type="button" class="btn btn-form"><span class="icon-add"></span></button>
+              <button type="button" class="btn btn-form add-field"><span class="icon-add"></span></button>
             </div>
           </div>
+
+          <div id="append" class="form-row">
+             <!-- display input here -->
+          </div> 
 
         </div>
         <!-- end outer wrapper -->
@@ -243,13 +225,68 @@
       
     </div>
   </div>
+  <!-- End Modal -->
+
+  <!-- Modal Dropdown -->
+  <div class="modal fade" id="openDropdown" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2">
+                    <input class="btn btn-default btn-sm add-option" type="button" value="Add Option" />
+                </div>
+                 <div class="form-group">
+                    <label>Dropdown name</label>
+                   <input id="dropdown_name" type="text" class="form-control" />
+                </div> 
+                <label>Option Value</label>
+                <div id="appendoption" class="form-group row">
+                   <!-- display input here -->
+                </div> 
+                <div class="form-group">
+                   <button id="cdp" class="btn btn-success btn-sm">Create Dropdown</button>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
 
 <script type="text/javascript">
+
+  /* CKEditor */
+  CKEDITOR.replace( 'editor1',{
+      allowedContent: true,
+      allowedContent: true,
+      filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
+      filebrowserUploadUrl: "{{ route('ckupload') }}",
+      extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
+      removePlugins : 'image',
+  });
+
+  CKEDITOR.editorConfig = function( config ) {
+      config.extraAllowedContent = true;
+      config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font','videoembed';
+      config.removePlugins = 'image';
+  };
+
   $(document).ready(function() {    
-     tabs();
-     Choose();
-     radioCheck();
-     openImport();
+    tabs();
+    Choose();
+    openImport();
+    //column -- edit
+    addCols();
+    delCols();
+    addDropdown();
+    delDrop();
+    addDropdownToField();
+    displayDropdownMenu();
+    delOption();
   });
 
   // Jquery Tabs
@@ -286,16 +323,6 @@
       });
   }
 
-  function radioCheck(){
-      $("#tab2, #tab-contact").click(function(){
-        $(".move_radio").prependTo($(".prep1"));
-      });
-
-      $("#tab3, #tab-form").click(function(){
-        $(".move_radio").prependTo($(".prep2"));
-      });
-  }
-
   function Choose(){
     $("input[name=usertel]").prop('disabled',true);
     $(".ctel").hide();
@@ -324,6 +351,131 @@
       $("#import-contact").modal();
     });
   }
+
+  /* Column Additional */
+
+
+
+  function addCols(){
+      $("body").on('click','.add-field',function(){
+        var len = $(".fields").length;
+        var type = $("#type_fields").val();
+        var box_html = '';
+
+        box_html += '<div class="form-group col-md-8 pos-'+len+'">';
+        box_html += '<input name="fields[]" class="form-control fields pos-'+len+'" />';
+        box_html += '</div>';
+        box_html += '<div class="form-group col-md-3 pos-'+len+'">';
+        box_html += '<select name="isoption[]" class="pos-'+len+' form-control"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+        box_html += '</div>';
+        box_html += '<div class="form-group col-md-1 pos-'+len+'">';
+        box_html += '<button type="button" id="'+len+'" class="del btn btn-form"><span class="icon-delete"></span></button>';
+        box_html += '</div>';
+
+         /*box_html = '<div class="col-md-3 col-form-label text-md-right pos-'+len+'"></div><div class="col-md-9 row pos-'+len+'"><input name="fields[]" class="form-control mb-2 col-md-6 fields pos-'+len+'" /><a id="'+len+'" class="del mb-2 col-md-2 btn btn-warning">Delete</a><select name="isoption[]" class="pos-'+len+' form-control col-md-3"><option value="0">Optional</option><option value="1">Require</option></select></div>'; */
+       
+        if(len < 5 && type == 1){
+            $("#append").append(box_html);
+        } else if(len < 5 && type == 2) {
+            $("#openDropdown").modal();
+        }
+        else {
+            alert('You only can create 5 inputs');
+        }
+      });
+    }
+
+   function delCols(){
+      $("body").on("click",".del",function(){
+        var len = $(".fields").length;
+        var pos = $(this).attr('id');
+        $(".pos-"+pos).remove();
+        $("#"+pos).remove();
+      });
+   }
+
+  function addDropdown()
+  {
+      $("body").on("click",".add-option",function(){
+          var flen = $(".fields").length;
+          var len = $(".doption").length;
+          var dropdown = '<input name="doption[]" class="form-control mb-2 col-sm-8 float-left doption dpos-'+len+'" /><a id="dpos-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
+
+          if(flen < 5){
+              $("#appendoption").append(dropdown);
+          } else {
+              alert('You only can create 5 inputs');
+          }
+      });
+  }
+
+  function delDrop(){
+      $("body").on("click",".deloption",function(){
+        var len = $(".doption").length;
+        var dpos = $(this).attr('id');
+        $("."+dpos).remove();
+        $("#"+dpos).remove();
+
+        if(len == 1){
+            $("#cip").hide();
+        } 
+
+      });
+  }
+
+  function addDropdownToField()
+  {
+       $("body").on("click","#cdp",function(){
+          var len = $(".fields").length;
+          var options = '';
+          var optionName = $("#dropdown_name").val();
+          $(".doption").each(function(){
+              value = $(this).val();
+              options += '<input name="dropfields['+len+'][]" class="form-control" value="'+value+'"/>';
+          });
+          var box_html = '<label class="col-md-3"></label> <div class="col-md-9 row"><input name="dropdown[]" pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+optionName+'" /><a id="'+len+'" class="del mb-2 col-sm-3 btn btn-warning">Delete</a><div style="padding : 0" id="togglepos-'+len+'" class="pos-'+len+' col-sm-9 hiddendropdown mb-2">'+options+'</div></div>';
+          
+          if(len < 5)
+          {
+              $("#append").append(box_html);
+              $(".doption, .deloption").remove();
+          }
+          else 
+          {
+              alert('You only can create 5 inputs');
+          }
+
+       });
+  }
+
+  function displayDropdownMenu()
+  {
+    $("body").on("click",".toggledropdown",function(){
+        var id = $(this).attr('pos');
+        $("#togglepos-"+id).slideToggle();
+    });
+  }   
+
+  function delOption()
+  {
+    $("body").on("click",".deloption",function(){
+        var opt = $(this).attr('id');
+        $('#'+opt).remove();
+        $('.'+opt).remove();
+    });
+  }
+
+  /*
+  function radioCheck(){
+      $("#tab2, #tab-contact").click(function(){
+        $(".move_radio").prependTo($(".prep1"));
+      });
+
+      $("#tab3, #tab-form").click(function(){
+        $(".move_radio").prependTo($(".prep2"));
+      });
+  }
+  */
 
 </script>
 
