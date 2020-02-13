@@ -103,11 +103,13 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('lists', 'ListController@index');
   Route::get('list-form', 'ListController@formList');
   Route::get('list-create', 'ListController@createList');
+  Route::post('list-save','ListController@saveList')->name('savelist'); 
 
   /*old code*/
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
-	Route::get('createlist','ListController@listForm')->name('createlist');
-	Route::post('addlist','ListController@addList')->middleware('userlist')->name('addlist'); 
+  Route::get('createlist','ListController@listForm')->name('createlist');
+	Route::post('addlist','ListController@addList')->name('addlist'); 
+	
 	Route::get('userlist','ListController@userList')->name('userlist');
 	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
 	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');

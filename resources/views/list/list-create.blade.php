@@ -91,14 +91,15 @@
           </div>
         </div>
 
+      <form class="form-contact" id="save-list">
         <div class="wrapper">
-          <form class="form-contact">
+          <div class="form-contact" id="save-list">
             <div class="input-group form-group">
               <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
             </div>
 
             <div class="input-group form-group">
-                <input type="text" class="form-control" value="{{ $label }}" placeholder="Input List name" >
+                <input type="text" name="labelname" class="form-control" value="{{ $label }}" placeholder="Input List name" >
             </div> 
         </div>
         <!-- end wrapper -->
@@ -135,7 +136,7 @@
         <div class="wrapper">
           <div class="form-group text-left">
              <label>Pixel</label>
-             <textarea class="form-control"></textarea>
+             <textarea name="pixel" class="form-control"></textarea>
           </div>
           
           <div class="text-right">
@@ -177,11 +178,11 @@
                   <input type="text" class="form-control" name="FNAME" placeholder="" value=""/>
                   </div>
 
-                     <div class="clearfix"><!-- --></div>
-                     <div class="actions">
-                     <button type="submit" class="btn btn-primary btn-flat">Subscribe</button>
-                     </div>
-                     <div class="clearfix"><!-- --></div>
+                   <div class="clearfix"><!-- --></div>
+                   <div class="actions">
+                   <button type="submit" class="btn btn-primary btn-flat">Subscribe</button>
+                   </div>
+                   <div class="clearfix"><!-- --></div>
 
                   </form>
               </textarea>
@@ -287,6 +288,7 @@
     addDropdownToField();
     displayDropdownMenu();
     delOption();
+    saveList();
   });
 
   // Jquery Tabs
@@ -354,8 +356,6 @@
 
   /* Column Additional */
 
-
-
   function addCols(){
       $("body").on('click','.add-field',function(){
         var len = $(".fields").length;
@@ -363,10 +363,10 @@
         var box_html = '';
 
         box_html += '<div class="form-group col-md-8 pos-'+len+'">';
-        box_html += '<input name="fields[]" class="form-control fields pos-'+len+'" />';
+        box_html += '<input name="fields[]" class="form-control fields inputs pos-'+len+'" />';
         box_html += '</div>';
         box_html += '<div class="form-group col-md-3 pos-'+len+'">';
-        box_html += '<select name="isoption[]" class="pos-'+len+' form-control"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+        box_html += '<select name="isoption[]" class="pos-'+len+' form-control is_option"><option value="0">Optional</option><option value="1">Require</option></select></div>';
         box_html += '</div>';
         box_html += '<div class="form-group col-md-1 pos-'+len+'">';
         box_html += '<button type="button" id="'+len+'" class="del btn btn-form"><span class="icon-delete"></span></button>';
@@ -429,11 +429,26 @@
           var len = $(".fields").length;
           var options = '';
           var optionName = $("#dropdown_name").val();
+          var box_html = '';
+
           $(".doption").each(function(){
               value = $(this).val();
-              options += '<input name="dropfields['+len+'][]" class="form-control" value="'+value+'"/>';
+              options += '<input name="dropfields['+len+'][]" class="form-control dropfields mb-2" value="'+value+'" maxlength="190"/>';
           });
-          var box_html = '<label class="col-md-3"></label> <div class="col-md-9 row"><input name="dropdown[]" pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+optionName+'" /><a id="'+len+'" class="del mb-2 col-sm-3 btn btn-warning">Delete</a><div style="padding : 0" id="togglepos-'+len+'" class="pos-'+len+' col-sm-9 hiddendropdown mb-2">'+options+'</div></div>';
+
+          box_html += '<div class="form-group col-md-11 pos-'+len+'">';
+          box_html += '<div class="relativity">';
+          box_html += '<input name="dropdown[]" pos="'+len+'" class="fields pos-'+len+' form-control toggledropdown" value="'+optionName+'" maxlength="190" />';
+          box_html += '<span class="icon-carret-down-circle"></span>';
+          box_html += '</div>';
+          box_html += '</div>';
+          box_html += '<div class="form-group col-md-1 pos-'+len+'">';
+          box_html += '<button type="button" id="'+len+'" class="del btn btn-form"><span class="icon-delete"></span></button>';
+          box_html += '</div>';
+          box_html += '<div id="togglepos-'+len+'" class="pos-'+len+' col-lg-10 hiddendropdown mb-2 py-0 px-0">'+options+'</div>';
+
+          /*box_html = '<label class="col-md-3"></label> <div class="col-md-9 row"><input name="dropdown[]" pos="'+len+'" class="fields pos-'+len+' form-control col-sm-6 toggledropdown" value="'+optionName+'" /><a id="'+len+'" class="del mb-2 col-sm-3 btn btn-warning">Delete</a><div style="padding : 0" id="togglepos-'+len+'" class="pos-'+len+' col-sm-9 hiddendropdown mb-2">'+options+'</div></div>';
+          */
           
           if(len < 5)
           {
@@ -462,6 +477,30 @@
         var opt = $(this).attr('id');
         $('#'+opt).remove();
         $('.'+opt).remove();
+    });
+  }
+
+  function saveList()
+  {
+    $("#save-list").submit(function(e){
+      e.preventDefault();
+
+      var editor_val = CKEDITOR.instances.editor1.getData();
+      var data = $(this).serialize()+ "&editor="+editor_val;
+
+      $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+      });
+      $.ajax({
+        type : 'POST',
+        url : '{{route("savelist")}}',
+        data : data,
+        success : function(result){
+          alert(result.status);
+        }
+      })
     });
   }
 
