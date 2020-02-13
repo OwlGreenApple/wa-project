@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+<script src="https://www.google.com/recaptcha/api.js?render=<?php echo env('GOOGLE_RECAPTCHA_SITE_KEY');?>"></script>
+<script>
+  grecaptcha.ready(function() {
+    grecaptcha.execute("<?php echo env('GOOGLE_RECAPTCHA_SITE_KEY');?>", {action: 'contact_form'}).then(function(token) {
+        $('#recaptchaResponse').val(token);
+    });
+  });
+</script>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -84,6 +93,7 @@
                     <div class="text-left">
                       <button id="btn-register" type="submit" class="btn btn-custom btn-lg">REGISTER</button>
                     </div>
+                    <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
                 </form>
 
                 <hr class="mt-5" />

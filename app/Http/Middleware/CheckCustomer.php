@@ -21,17 +21,34 @@ class CheckCustomer
      */
     public function handle($request, Closure $next)
     {
+        // Build POST request:
+        $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
+        $recaptcha_secret = env('GOOGLE_RECAPTCHA_SECRET_KEY');
+        $recaptcha_response = $request->recaptcha_response;
+
+        // Make and decode POST request:
+        $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $recaptcha_response);
+        $recaptcha = json_decode($recaptcha);
+        
+        // Take action based on the score returned:
+        if ($recaptcha->score >= 0.5) {
+            // Verified - send email
+        } else {
+            // Not verified - show form error
+            $error['wa_number'] = 'Error Captcha';
+            return response()->json($error);
+        }
+
     
         /* Get all data from request and then fetch it in array */
-         $req = $request->all();
-         $wa_number = $request->wa_number;
-         $id_list = $request->listid;
-
+        $req = $request->all();
+        $wa_number = $request->wa_number;
+        $id_list = $request->listid;
           try{
-             $id_list = decrypt($id_list);
+            $id_list = decrypt($id_list);
           }catch(DecryptException $e){
-              $error['wa_number'] = 'Please do not change default value';
-              return response()->json($error);
+            $error['wa_number'] = 'Please do not change default value';
+            return response()->json($error);
           }
        
 
@@ -100,7 +117,7 @@ class CheckCustomer
         }
     }
 
-     public function checkwanumbers($wa_number,$listname){
+    public function checkwanumbers($wa_number,$listname){
         $get_id_list = UserList::where('name','=',$listname)->first();
         $id_user_list = $get_id_list->id;
 

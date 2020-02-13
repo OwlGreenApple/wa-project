@@ -55,7 +55,7 @@
             </div>
 
             <div class="prep1">
-            <div class="input-group mt-4 mb-3 move_radio">
+              <div class="input-group mt-4 mb-3 move_radio">
                 <div class="input-group-prepend">
                   <button class="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telegram Contact</button>
                   <div class="dropdown-menu">
@@ -66,7 +66,7 @@
 
                 <input type="text" name="phone" class="form-control cphone" placeholder="Input your phone">
                 <input type="text" name="usertel" class="form-control ctel" placeholder="Input your Telegram username">
-            </div>
+              </div>
             </div>
 
             <div class="form-group">
@@ -296,24 +296,24 @@
       $('#tabs li a:not(:first)').addClass('inactive');
       $('.tabs-container').hide();
       $('.tabs-container:first').show();
-          
+
       $('#tabs li a').click(function(){
-          var t = $(this).attr('id');
+        var t = $(this).attr('id');
         if($(this).hasClass('inactive')){ //this is the start of our condition 
-          $('#tabs li a').addClass('inactive');           
+          $('#tabs li a').addClass('inactive');
           $(this).removeClass('inactive');
-          
+
           $('.tabs-container').hide();
           $('#'+ t + 'C').fadeIn('slow');
-       }
+        }
       });
 
       $("#tab-contact").click(function(){
-         $("#tab1").addClass('inactive');
-         $("#tab2").removeClass('inactive');
+        $("#tab1").addClass('inactive');
+        $("#tab2").removeClass('inactive');
 
-         $('.tabs-container').hide();
-         $('#tab2C').fadeIn('slow');
+        $('.tabs-container').hide();
+        $('#tab2C').fadeIn('slow');
       }); 
 
       $("#tab-form").click(function(){

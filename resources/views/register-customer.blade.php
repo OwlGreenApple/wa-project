@@ -25,14 +25,7 @@
     <!--!! $pixel !!-->
 
 
-    <script src="https://www.google.com/recaptcha/api.js?render=6LcUG9gUAAAAAL_-6_BLtSyunHnuPdlIijFdbeYP"></script>
-    <script>
-      grecaptcha.ready(function() {
-        grecaptcha.execute('6LcUG9gUAAAAAL_-6_BLtSyunHnuPdlIijFdbeYP', {action: 'homepage'}).then(function(token) {
-          
-        });
-      });
-    </script>
+    <script src="https://www.google.com/recaptcha/api.js?render=<?php echo env('GOOGLE_RECAPTCHA_SITE_KEY');?>"></script>
     
 </head>
 
@@ -55,21 +48,26 @@
 
            <div class="act-tel-subscribe col-lg-9">
               <div class="wrapper">
-                <form class="add-contact">
+                <form class="add-contact" id="addcustomer">
                     <div class="form-group">
                       <label>Name*</label>
                       <input type="text" class="form-control" placeholder="Input Your Name" >
                     </div>
 
-                    <div class="form-group">
-                      <label>Handphone*</label>
-                      <input type="text" class="form-control" placeholder="6280000" />
-                      <i>*) format phone : 6280000</i>
-                    </div>
+                    <div class="prep1">
+                      <div class="input-group mt-4 mb-3 move_radio">
+                        <div class="input-group-prepend">
+                          <button class="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telegram Contact</button>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" id="ph">Phone</a>
+                            <a class="dropdown-item" id="tl">Telegram Username</a>
+                          </div>
+                        </div>
 
-                    <div class="form-group">
-                      <label>Username Telegram*</label>
-                      <input type="text" class="form-control" placeholder="Input Your Telegram Username" />
+                        <input type="hidden" name="selectType" id="selectType">
+                        <input type="text" name="phone" class="form-control cphone" placeholder="Input your phone">
+                        <input type="text" name="usertel" class="form-control ctel" placeholder="Input your Telegram username">
+                      </div>
                     </div>
 
                     <div class="form-group">
@@ -82,13 +80,10 @@
                       <input type="text" class="form-control" placeholder="Input Your Custom Field" />
                     </div>
 
-                    <div class="form-group">
-                      <label>Please verify your request</label>
-                    </div>
-
                     <div class="text-left">
-                      <button type="submit" class="btn btn-custom btn-lg">Submit</button>
+                      <input type="submit" class="btn btn-custom btn-lg" value="Submit">
                     </div>
+                    <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
                 </form>
 
               <div class="text-left marketing">
@@ -122,11 +117,20 @@
     <script type="text/javascript">
 
         $(document).ready(function() {
+            choose();
+            grecaptcha.ready(function() {
+              grecaptcha.execute("<?php echo env('GOOGLE_RECAPTCHA_SITE_KEY');?>", {action: 'contact_form'}).then(function(token) {
+                  $('#recaptchaResponse').val(token);
+                  console.log(token);
+              });
+            });
+          
             $("#addcustomer").submit(function(e){
+              console.log("test");
                 e.preventDefault();
                 var data = $(this).serialize();
                 $("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
-                 $.ajaxSetup({
+                  $.ajaxSetup({
                   headers: {
                       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                   }
@@ -136,6 +140,8 @@
                     url : "{{ route('addcustomer') }}",
                     data : data,
                     success : function(result){
+                        console.log(result);
+                        return false;
                         $("#submit").html('<button type="submit" class="btn btn-primary">Register</button>');
                         if(result.success == true){
                             $(".modal-body > p").text(result.message);
@@ -165,7 +171,7 @@
 
         /* Display modal when customer has finished registering */
         function getModal(){
-            $("#myModal").modal()
+            $("#myModal").modal();
         }
 
         /* Clear / Empty fields after ajax reach success */
@@ -173,6 +179,32 @@
             $("input[name='name'],input[name='wa_number']").val('');
             $(".error").html('');
         }
+        
+        function choose(){
+          $("input[name=usertel]").prop('disabled',true);
+          $(".ctel").hide();
+
+          $(".dropdown-item").click(function(){
+             var val = $(this).attr('id');
+
+             if(val == 'ph')
+              {
+                $("input[name=phone]").prop('disabled',false);
+                $("input[name=usertel]").prop('disabled',true);
+                $(".cphone").show();
+                $(".ctel").hide();
+                $("#selectType").val("ph");
+              }
+              else {
+                $("input[name=phone]").prop('disabled',true);
+                $("input[name=usertel]").prop('disabled',false);
+                $(".cphone").hide();
+                $(".ctel").show();
+                $("#selectType").val("tl");
+              }
+          });
+        }
+        
     </script>
 
   </main>

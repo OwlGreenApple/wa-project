@@ -136,21 +136,23 @@ class CustomerController extends Controller
         $evautoreply = false;
         $valid_customer = false;
         $is_event = $get_id_list->is_event;
-        #message & pixel
+        //message & pixel
         $list_message = $get_id_list->message_text;
         $list_wa_number = $get_id_list->wa_number;
-      
+
         if(isset($req['data']))
         {
             $addt = json_encode($req['data']);
-        } else {
+        } 
+        else {
             $addt = null;
         }
 
-        # Filter to avoid unavailable link 
+        // Filter to avoid unavailable link 
         if(is_null($get_id_list)){
             return redirect('/');
-        } else {
+        } 
+        else {
             $customer = new Customer;
             $customer->user_id = $get_id_list->user_id;
             $customer->list_id = $get_id_list->id;
@@ -162,10 +164,11 @@ class CustomerController extends Controller
             $customerid = $customer->id;
         }
 
-        # if customer successful sign up 
+        // if customer successful sign up 
       	if($customer->save() == true){
-               $valid_customer = true;
-      	} else {
+          $valid_customer = true;
+      	} 
+        else {
       		$data['success'] = false;
       		$data['message'] = 'Error-000! Sorry there is something wrong with our system';
           return response()->json($data);
@@ -202,18 +205,19 @@ class CustomerController extends Controller
            //Event
             foreach($reminder as $row)
             {
-               $today_event = Carbon::now()->toDateString();
-               $days = (int)$row->days;
-               $event_date = Carbon::parse($row->event_date);
+              $today_event = Carbon::now()->toDateString();
+              $days = (int)$row->days;
+              $event_date = Carbon::parse($row->event_date);
 
-               if($days < 0){
-                 $days = abs($days);
-                 $event_date->subDays($days);
-               } else {
-                 $event_date->addDays($days);
-               }
+              if($days < 0){
+                $days = abs($days);
+                $event_date->subDays($days);
+              } 
+              else {
+                $event_date->addDays($days);
+              }
 
-               if($event_date >= $today_event){
+              if($event_date >= $today_event){
                   $reminder_customer = new ReminderCustomers;
                   $reminder_customer->user_id = $row->user_id;
                   $reminder_customer->list_id = $row->list_id;
@@ -221,26 +225,30 @@ class CustomerController extends Controller
                   $reminder_customer->customer_id = $customerid;
                   $reminder_customer->save();
                   $eligible = true;
-               } else {
-                  $eligible = null;
-               }
-                
+              } 
+              else {
+                $eligible = null;
+              }
+
             }
 
-             if($eligible == true){
+            if($eligible == true){
                 //return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
                 $data['success'] = true;
                 $data['message'] = 'Thank you for join us';
                 return response()->json($data);
-             } else if($eligible == null) {
-                 $data['message'] = 'Sorry this event has expired';
-                 return response()->json($data);
-             } else {
-                 $data['success'] = false;
-                 $data['message'] = 'Error-001! Sorry there is something wrong with our system';
-                 return response()->json($data);
-             }
-        } else if($reminder->count() > 0 && $is_event == 0) 
+            } 
+            else if($eligible == null) {
+                $data['message'] = 'Sorry this event has expired';
+                return response()->json($data);
+            } 
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Error-001! Sorry there is something wrong with our system';
+                return response()->json($data);
+            }
+        } 
+        else if($reminder->count() > 0 && $is_event == 0) 
         {
             // Reminder
             foreach($reminder as $row)
@@ -250,7 +258,7 @@ class CustomerController extends Controller
                 $validday = $after_sum_day->toDateString();
                 $createdreminder = Carbon::parse($row->created_at)->toDateString();
 
-                 if($validday >= $createdreminder){
+                if($validday >= $createdreminder){
                     $reminder_customer = new ReminderCustomers;
                     $reminder_customer->user_id = $row->user_id;
                     $reminder_customer->list_id = $row->list_id;
@@ -258,18 +266,19 @@ class CustomerController extends Controller
                     $reminder_customer->customer_id = $customerid;
                     $reminder_customer->save(); 
                     $eligible = true; 
-                 } else {
+                } else {
                     $eligible = null;
-                 }
+                }
             }
 
             if($is_event == 1){
                 $msg = 'event';
-            } else {
+            } 
+            else {
                 $msg = 'reminder';
             }
 
-             # if reminder has been set up into reminder-customer 
+              // if reminder has been set up into reminder-customer 
             if($eligible == true){
                 //return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
                 $data['success'] = true;
@@ -286,18 +295,17 @@ class CustomerController extends Controller
             $data['success'] = true;
             $data['message'] = 'Thank you for join us';
         }
+    }
 
-    }    
-         
-   public function autoReply($listid,$wa_number,$list_message,$list_wa_number,$customer_name)
-   {
-        #send wa link to send message to list owner
+    public function autoReply($listid,$wa_number,$list_message,$list_wa_number,$customer_name)
+    {
+        // send wa link to send message to list owner
         $list_wa_device = $list_wa_number;
         $list_wa_number = str_replace("+","",$list_wa_number);
         $data['wa_link'] = 'whatsapp://send?phone='.$list_wa_number.'&text='.$list_message.'';
-        #$data['wa_link'] = 'https://api.whatsapp.com/send?phone='.$list_wa_number.'&text='.$list_message.'';
+        // $data['wa_link'] = 'https://api.whatsapp.com/send?phone='.$list_wa_number.'&text='.$list_message.'';
 
-        # Sending event auto reply for customer, return true if user has not set auto reply yet
+         // Sending event auto reply for customer, return true if user has not set auto reply yet
         $autoreply = Reminder::where([
                 ['reminders.list_id','=',$listid],
                 ['reminders.days','=',0],
@@ -309,8 +317,9 @@ class CustomerController extends Controller
             $data['success'] = true;
             $data['message'] = 'Thank You For Join Us';
             return response()->json($data);
-        } else {
-             # wassenger
+        } 
+        else {
+             // wassenger
             $user_id = $autoreply->user_id;
             $getsender = Sender::where([['user_id',$user_id],['wa_number','=',$list_wa_device]])->first();
         }
@@ -331,20 +340,23 @@ class CustomerController extends Controller
         if($status == 1){
             $sendmessage = new SendMessage;
             $wasengger = $sendmessage->sendWA($wa_number,$message,$deviceid);
-        } else {
+        } 
+        else {
             $wasengger = null;
         }
 
-        # if status from reminder has set to 0 or disabled
+        // if status from reminder has set to 0 or disabled
         if($wasengger == null && $status > 1){
             $data['success'] = true;
             $data['message'] = 'Thank You For Join Us';
             return response()->json($data);
-        } else if($wasengger !== null && $status == 1){
+        } 
+        else if($wasengger !== null && $status == 1){
             $data['success'] = true;
             $data['message'] = 'Thank You For Join Us';
             return response()->json($data);
-        } else {
+        } 
+        else {
             $data['success'] = false;
             $data['message'] = 'Error-WAS! Sorry there is something wrong with our system';
             return response()->json($data);
@@ -352,10 +364,11 @@ class CustomerController extends Controller
     }
     
     
-    public function subscriber(){
+    public function subscriber()
+    {
       return view('register-customer');
     }
 
 
-/* end of class */
+
 }
