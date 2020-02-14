@@ -94,6 +94,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 	/* Lists */
   Route::get('lists', 'ListController@index');
+  Route::get('lists-table', 'ListController@dataList');
   Route::get('list-form', 'ListController@formList');
   Route::get('list-create', 'ListController@createList');
   Route::post('list-save','ListController@saveList')->name('savelist'); 

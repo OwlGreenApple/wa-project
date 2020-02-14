@@ -18,6 +18,7 @@ use App\Customer;
 use App\Sender;
 use App\Additional;
 use App\Reminder;
+use Carbon\Carbon;
 use DB;
 
 class ListController extends Controller
@@ -37,6 +38,29 @@ class ListController extends Controller
     public function index()
     {
        return view('list.list-data');
+    }
+
+    public function dataList(Request $request){
+       $userid = Auth::id();
+       $today = Carbon::now();
+       $date = $today->toDateString();
+       $data = array();
+
+       $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->get();
+
+       foreach($lists as $rows){
+          $data['lists'][] = $rows;
+
+          $newcontact = Customer::where([['status','=',1],['list_id','=',$rows->id],['created_at','=',$date]])->get();
+          $data['newcontact'] = $newcontact->count();
+
+          $contacts = UserList::where([['lists.status','=',1],['lists.id','=',$rows->id],['customers.status','=',1]])->join('customers','customers.list_id','lists.id')->get();
+          $data['contacts'] = $contacts->count();
+       }
+
+       dd($data);
+
+       return view('list.list-table',['lists'=>$lists,'newcontact'=>$newcontact,'contact'=>$contacts]);
     }
 
     public function formList()

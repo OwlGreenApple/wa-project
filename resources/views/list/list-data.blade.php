@@ -30,57 +30,27 @@
 <!-- NUMBER -->
 <div class="container">
   <div class="act-tel-tab">
-      <div class="col-lg-12">
-        <!-- tab 1 -->
-        <div class="bg-dashboard cardlist row">
-          <div class="col-lg-4 pad-fix col-card">
-            <h5>TEST LIST 1</h5>
-            <div>Link From : activele.com/xyz&nbsp;&nbsp;<span class="icon-copy"></span></div>
-            <div>Create On : Jan 23, 2020</div>
-          </div>
-
-          <div class="col-lg-3 pad-fix cardnumber">
-            <div class="big-number">+100</div>
-            <div class="contact">New Contacts</div>
-          </div> 
-
-          <div class="col-lg-3 pad-fix cardnumber">
-            <div class="big-number">50</div>
-            <div class="contact">Contacts</div>
-          </div>
-
-          <div class="col-lg-2 pad-fix col-button">
-            <button type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
-            <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
-            <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
-          </div>
-        </div> 
-        <!-- tab 2 -->
-        <div class="bg-dashboard cardlist row">
-          <div class="col-lg-4 pad-fix col-card">
-            <h5>TEST LIST 2</h5>
-            <div>Link From : activele.com/xyz&nbsp;&nbsp;<span class="icon-copy"></span></div>
-            <div>Create On : Jan 23, 2020</div>
-          </div>
-
-          <div class="col-lg-3 pad-fix cardnumber">
-            <div class="big-number">+15</div>
-            <div class="contact">New Contacts</div>
-          </div> 
-
-          <div class="col-lg-3 pad-fix cardnumber">
-            <div class="big-number">100</div>
-            <div class="contact">Contacts</div>
-          </div>
-
-          <div class="col-lg-2 pad-fix col-button">
-            <button type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
-            <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
-            <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
-          </div>
-        </div> 
+      <div class="col-lg-12" id="display_list">
+        <!-- display data -->
       </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    displayData();
+  });
+
+  function displayData(){
+    $.ajax({
+      type : 'GET',
+      url : '{{url("lists-table")}}',
+      dataType : 'html',
+      success : function(result){
+        $("#display_list").html(result);
+      }
+    });
+  }
+</script>
 @endsection
 

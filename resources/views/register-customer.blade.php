@@ -30,6 +30,11 @@
 
 <body class="bg-dashboard">
 
+<!--Loading Bar-->
+<div class="div-loading">
+  <div id="loader" style="display: none;"></div>  
+</div> 
+
 <div id="app">
   <!--<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
       <div class="container">
@@ -50,6 +55,8 @@
               </div>
 
               <div class="wrapper">
+                <span class="error main"></span>
+
                 <form class="add-contact" id="addcustomer">
                     <div class="form-group">
                       <label>Name*</label>
@@ -171,32 +178,40 @@
                     type : "POST",
                     url : "{{ route('savesubscriber') }}",
                     data : data,
+                    beforeSend: function()
+                    {
+                      $('#loader').show();
+                      $('.div-loading').addClass('background-load');
+                    },
                     success : function(result){
-                        //$("#submit").html('<button type="submit" class="btn btn-primary">Register</button>');
-                        if(result.success == true){
-                            $(".modal-body > p").text(result.message);
-                            alert('Your data has stored!');
-                            //getModal();
-                            //setTimeout(function(){location.href= result.wa_link} , 1000);   
-                            clearField();
-                        } else {
-                            $(".error").fadeIn('fast');
-                            $(".name").text(result.name);
-                            $(".email").text(result.email);
-                            $(".phone").text(result.phone);
-                            $(".phone").text(result.usertel);
-                            $(".captcha").text(result.captcha);
-                            $(".error_list").text(result.list);
+                      $('#loader').hide();
+                      $('.div-loading').removeClass('background-load');
 
-                            if(result.message !== undefined){
-                                 $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
-                            }
-                            $.each(result.data, function(key, value) {
-                                $("."+key).text(value);
-                            })
+                      if(result.success == true){
+                          $(".modal-body > p").text(result.message);
+                          alert('Your data has stored!');
+                          //getModal();
+                          //setTimeout(function(){location.href= result.wa_link} , 1000);   
+                          clearField();
+                      } else {
+                          $(".error").fadeIn('fast');
+                          $(".name").text(result.name);
+                          $(".main").text(result.main);
+                          $(".email").text(result.email);
+                          $(".phone").text(result.phone);
+                          $(".phone").text(result.usertel);
+                          $(".captcha").text(result.captcha);
+                          $(".error_list").text(result.list);
 
-                            $(".error").delay(2000).fadeOut(5000);
-                        }
+                          if(result.message !== undefined){
+                               $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
+                          }
+                          $.each(result.data, function(key, value) {
+                              $("."+key).text(value);
+                          })
+
+                          $(".error").delay(2000).fadeOut(5000);
+                      }
                     }
                 });
                 /*end ajax*/
