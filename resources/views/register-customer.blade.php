@@ -22,8 +22,7 @@
     <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/subscribe.css') }}" rel="stylesheet" />
 
-    <!--!! $pixel !!-->
-
+    {!! $pixel !!}
 
     <script src="https://www.google.com/recaptcha/api.js?render=<?php echo env('GOOGLE_RECAPTCHA_SITE_KEY');?>"></script>
     
@@ -54,7 +53,8 @@
                 <form class="add-contact" id="addcustomer">
                     <div class="form-group">
                       <label>Name*</label>
-                      <input type="text" class="form-control" placeholder="Input Your Name" >
+                      <input type="text" name="subscribername" class="form-control" placeholder="Input Your Name" >
+                      <span class="error name"></span>
                     </div>
 
                     <div class="prep1">
@@ -67,26 +67,53 @@
                           </div>
                         </div>
 
-                        <input type="hidden" name="selectType" id="selectType">
+                        <input type="hidden" name="selectType" id="selectType" value="ph">
                         <input type="text" name="phone" class="form-control cphone" placeholder="Input your phone">
                         <input type="text" name="usertel" class="form-control ctel" placeholder="Input your Telegram username">
                       </div>
+                       <span class="error phone"></span>
                     </div>
 
                     <div class="form-group">
                       <label>Email*</label>
-                      <input type="text" class="form-control" placeholder="Input Your Email" />
+                      <input type="email" name="email" class="form-control" placeholder="Input Your Email" />
+                      <span class="error email"></span>
                     </div> 
 
-                    <div class="form-group">
+                    <!--<div class="form-group">
                       <label>Custom Field</label>
                       <input type="text" class="form-control" placeholder="Input Your Custom Field" />
-                    </div>
+                    </div>-->
+
+                    @if(count($additional) > 0)
+                      @foreach($additional as $row=>$val)
+                        <div class="form-group">
+                            <label>{{$row}}</label>
+
+                            @foreach($val as $key=>$col)
+                                @if($key == 0)
+                                     <input type="text" class="form-control" name="data[{{$row}}]" />
+                                @else
+                                    <select name="data[{{$row}}]" class="form-control">
+                                        @foreach($col as $opt)
+                                            <option value="{{$opt}}">{{$opt}}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            @endforeach
+                            <span class="error {{$row}}"></span>
+                       </div>
+                      @endforeach
+                    @endif
 
                     <div class="text-left">
-                      <input type="submit" class="btn btn-custom btn-lg" value="Submit">
+                      <button type="submit" class="btn btn-custom btn-lg">Submit</button>
                     </div>
                     <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
+                    <input type="hidden" name="listname" value="{{$listname}}">
+                    <input type="hidden" name="listid" value="{{$id}}">
+
+                    <span class="error captcha"></span>
                 </form>
 
               <div class="text-left marketing">
@@ -127,36 +154,38 @@
                   console.log(token);
               });
             });
-          
+            saveSubscriber();
+        });
+
+        function saveSubscriber(){
             $("#addcustomer").submit(function(e){
-              console.log("test");
                 e.preventDefault();
                 var data = $(this).serialize();
-                $("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
-                  $.ajaxSetup({
+                //$("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
+                $.ajaxSetup({
                   headers: {
                       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                   }
                 });
                 $.ajax({
                     type : "POST",
-                    url : "{{ route('addcustomer') }}",
+                    url : "{{ route('savesubscriber') }}",
                     data : data,
                     success : function(result){
-                        console.log(result);
-                        return false;
-                        $("#submit").html('<button type="submit" class="btn btn-primary">Register</button>');
+                        //$("#submit").html('<button type="submit" class="btn btn-primary">Register</button>');
                         if(result.success == true){
                             $(".modal-body > p").text(result.message);
                             alert('Your data has stored!');
-                            //location.href= result.wa_link;
                             //getModal();
                             //setTimeout(function(){location.href= result.wa_link} , 1000);   
                             clearField();
                         } else {
+                            $(".error").fadeIn('fast');
                             $(".name").text(result.name);
-                            $(".wa_number").text(result.wa_number);
-                            $(".code_country").text(result.code_country);
+                            $(".email").text(result.email);
+                            $(".phone").text(result.phone);
+                            $(".phone").text(result.usertel);
+                            $(".captcha").text(result.captcha);
                             $(".error_list").text(result.list);
 
                             if(result.message !== undefined){
@@ -165,12 +194,14 @@
                             $.each(result.data, function(key, value) {
                                 $("."+key).text(value);
                             })
+
+                            $(".error").delay(2000).fadeOut(5000);
                         }
                     }
                 });
                 /*end ajax*/
             });
-        });
+        }
 
         /* Display modal when customer has finished registering */
         function getModal(){
@@ -179,7 +210,7 @@
 
         /* Clear / Empty fields after ajax reach success */
         function clearField(){
-            $("input[name='name'],input[name='wa_number']").val('');
+            $("input").val('');
             $(".error").html('');
         }
         
@@ -207,7 +238,6 @@
               }
           });
         }
-        
     </script>
 
   </main>

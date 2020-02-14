@@ -33,10 +33,6 @@ Route::get('testdirectsendmail','ApiController@testDirectSendMail')->name('testd
 Route::post('is_pay','ApiController@customerPay');
 Route::post('private-list','ApiController@register_list');
 
-
-/* Register 
-Route::post('reguser','Auth\RegisterController@register')->name('reguser');*/
-
 Auth::routes();
 
 /* PROTOTYPE */
@@ -203,7 +199,8 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 /* Customers */
 // Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
-Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
+//Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
+Route::post('subscriber/save','CustomerController@saveSubscriber')->middleware('customer')->name('savesubscriber');
 
 /* SUBSCRIBE */
 Route::get('/{list_name}', 'CustomerController@subscriber');

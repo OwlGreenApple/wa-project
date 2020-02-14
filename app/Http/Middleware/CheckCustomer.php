@@ -9,6 +9,10 @@ use App\Rules\CheckWANumbers;
 use App\Customer;
 use App\UserList;
 use App\Additional;
+use App\Rules\TelegramNumber;
+use App\Rules\SubscriberEmail;
+use App\Rules\SubscriberUsername;
+use App\Rules\SubscriberPhone;
 
 class CheckCustomer
 {
@@ -22,85 +26,59 @@ class CheckCustomer
     public function handle($request, Closure $next)
     {
         // Build POST request:
-        $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
-        $recaptcha_secret = env('GOOGLE_RECAPTCHA_SECRET_KEY');
-        $recaptcha_response = $request->recaptcha_response;
 
-        // Make and decode POST request:
-        $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $recaptcha_response);
-        $recaptcha = json_decode($recaptcha);
-        
-        // Take action based on the score returned:
-        if ($recaptcha->score >= 0.5) {
-            // Verified - send email
-        } else {
-            // Not verified - show form error
-            $error['wa_number'] = 'Error Captcha';
-            return response()->json($error);
+        if(env('APP_ENV') == 'production')
+        { 
+            $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
+            $recaptcha_secret = env('GOOGLE_RECAPTCHA_SECRET_KEY');
+            $recaptcha_response = $request->recaptcha_response;
+
+            // Make and decode POST request:
+            $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $recaptcha_response);
+            $recaptcha = json_decode($recaptcha);
+            
+            // Take action based on the score returned:
+            if ($recaptcha->score >= 0.5) {
+                // Verified - send email
+            } else {
+                // Not verified - show form error
+                $error['captcha'] = 'Error Captcha';
+                return response()->json($error);
+            }
         }
-
     
         /* Get all data from request and then fetch it in array */
         $req = $request->all();
-        $wa_number = $request->wa_number;
+        $telegram_number = $request->phone;
         $id_list = $request->listid;
-          try{
-            $id_list = decrypt($id_list);
-          }catch(DecryptException $e){
-            $error['wa_number'] = 'Please do not change default value';
-            return response()->json($error);
-          }
-       
 
-         if(!is_numeric($wa_number)){
-            $error['wa_number'] = 'Please use valid numbers';
-            return response()->json($error);
-         }
+        try{
+          $id_list = decrypt($id_list);
+        }catch(DecryptException $e){
+          $error['main'] = 'Please do not change default value';
+          return response()->json($error);
+        }
 
-         $wa_number = '+62'.$request->wa_number;
-
-         if($this->checkList($req['listname']) == false){
-            $error['list'] = 'Please do not modify list name';
-            return response()->json($error);
-         }
-
-
-         if(isset($req['data']) && $this->checkAdditional($req['data'],$id_list) !== true)
-         {
-            $result = $this->checkAdditional($req['data'],$id_list);
-            $error['data'] = json_decode($result,true);
-             return response()->json($error);
-         }
-
-         /* Avoid customer fill 0 as a leading number on wa number */
-         if(!preg_match('/^[1-9][0-9]*$/',$req['wa_number'])){
-            $error['wa_number'] = 'Please do not use 0 or +';
-            return response()->json($error);
-         } 
-
-         if(preg_match('/^62[0-9]/',$req['wa_number'])){
-            $error['wa_number'] = 'Please do not use 62 as first number';
-            return response()->json($error);
-         }
-
-        if($this->checkwanumbers($wa_number,$req['listname']) == false){
-            $error['wa_number'] = 'Sorry, this number has already been taken..';
-            return response()->json($error);
-         }
-        
-         /* concat wa number so that get the correct number */
-         //$wa_number = $req['code_country'].$req['wa_number'];
+          /* concat wa number so that get the correct number */
          $data = array(
-            'name'=>$req['name'],
-            'code_country'=>$req['code_country'],
-            'wa_number'=>$wa_number,
+            'name'=>$req['subscribername'],
+            'email'=>$req['email'],
          );
 
          $rules = [
             'name'=> ['required','min:4','max:190'],
-            'code_country'=>['required'],
-            'wa_number'=> ['required','between:5,16'],
-        ];
+            'email'=> ['required','email','max:190',new SubscriberEmail($id_list)],
+         ];
+
+        if($request->selectType == 'ph') {
+           $data['phone'] = $req['phone'];
+           $rules['phone'] = ['required','numeric','digits_between:9,18',new TelegramNumber, new SubscriberPhone($id_list)];
+        }
+
+        if($request->selectType == 'tl') {
+           $data['usertel'] = $req['usertel'];
+           $rules['usertel'] = ['required','max:190',new SubscriberUsername($id_list)];
+        }
 
         $validator = Validator::make($data,$rules);
 
@@ -108,29 +86,33 @@ class CheckCustomer
             $error = $validator->errors();
             $data = array(
                 'name'=>$error->first('name'),
-                'wa_number'=>$error->first('wa_number'),
-                'code_country'=>$error->first('code_country'),
+                'email'=>$error->first('email'),
             );
+
+            if($request->selectType == 'ph') {
+               $data['phone'] = $error->first('phone');
+            }
+
+            if($request->selectType == 'tl') {
+               $data['usertel'] = $error->first('usertel');
+            }
+
             return response()->json($data);
-        } else {
-            return $next($request);
         }
-    }
 
-    public function checkwanumbers($wa_number,$listname){
-        $get_id_list = UserList::where('name','=',$listname)->first();
-        $id_user_list = $get_id_list->id;
+         if($this->checkList($req['listname']) == false){
+            $error['list'] = 'Please do not modify list name';
+            return response()->json($error);
+         }
 
-        $checkwa = Customer::where([
-                    ['wa_number','=',$wa_number],
-                    ['list_id','=',$id_user_list]
-                    ])->first();
-
-        if(is_null($checkwa)){
-            return true;
-        } else {
-            return false;
-        }
+         if(isset($req['data']) && $this->checkAdditional($req['data'],$id_list) !== true)
+         {
+            $result = $this->checkAdditional($req['data'],$id_list);
+            $error['data'] = json_decode($result,true);
+            return response()->json($error);
+         }
+        
+        return $next($request);
     }
 
     public function checkList($listname){

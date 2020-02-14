@@ -70,6 +70,58 @@ class CustomerController extends Controller
       }
     }
 
+    public function saveSubscriber(Request $request)
+    {
+        $listname = $request->listname;
+        $req = $request->all();
+
+        $lists = UserList::where('name','=',$listname)->first();
+        $today = Carbon::now();
+        $valid_customer = false;
+
+        if(isset($req['data']))
+        {
+            $addt = json_encode($req['data']);
+        } 
+        else {
+            $addt = null;
+        }
+
+        // Filter to avoid unavailable link 
+        if(is_null($lists)){
+            return redirect('/');
+        } 
+        else {
+            $customer = new Customer;
+            $customer->user_id = $lists->user_id;
+            $customer->list_id = $lists->id;
+            $customer->name = $request->subscribername;
+            $customer->email = $request->email;
+
+            if($request->selectType == 'ph'){
+              $customer->telegram_number = $request->phone;
+            } 
+
+            if($request->selectType == 'tl'){
+              $customer->username = $request->usertel;
+            }
+
+            $customer->additional = $addt;
+            $customer->save();
+        }
+
+        // if customer successful sign up 
+        if($customer->save()){
+          $data['success'] = true;
+          $data['message'] = 'Thank You For Subscribe';
+        } 
+        else {
+          $data['success'] = false;
+          $data['message'] = 'Error-000! Sorry there is something wrong with our system';
+        }
+        return response()->json($data);
+    }
+
     /******* OLD CODES *******/
 
     //Reminder
@@ -186,7 +238,7 @@ class CustomerController extends Controller
         $listname = $request->listname;
         $req = $request->all();
 
-    	  $get_id_list = UserList::where('name','=',$listname)->first();
+        $get_id_list = UserList::where('name','=',$listname)->first();
         $wa_number = '+62'.$request->wa_number;
         $today = Carbon::now();
         $wassenger = null;
@@ -222,14 +274,14 @@ class CustomerController extends Controller
         }
 
         // if customer successful sign up 
-      	if($customer->save() == true){
+        if($customer->save() == true){
           $valid_customer = true;
-      	} 
+        } 
         else {
-      		$data['success'] = false;
-      		$data['message'] = 'Error-000! Sorry there is something wrong with our system';
+          $data['success'] = false;
+          $data['message'] = 'Error-000! Sorry there is something wrong with our system';
           return response()->json($data);
-      	}
+        }
 
         if($is_event == 1 && $valid_customer == true){
             // Event
