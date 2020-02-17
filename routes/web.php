@@ -98,6 +98,8 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('list-form', 'ListController@formList');
   Route::get('list-create', 'ListController@createList');
   Route::post('list-save','ListController@saveList')->name('savelist'); 
+  Route::get('list-delete','ListController@delListContent')->name('deletelist');
+  Route::get('list-search','ListController@searchList')->name('searchlist');
 
   /*old code*/
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
@@ -108,7 +110,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
 	Route::get('displaylistcontent','ListController@displayListContent')->name('displaylistcontent');
 	Route::post('updatelistcontent','ListController@updateListContent')->middleware('checkadditional')->name('updatelistcontent');
-	Route::get('deletelistcontent','ListController@delListContent')->name('deletelistcontent');
+
 	Route::get('editdropfields','ListController@editDropfields')->name('editdropfields');
 	Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
 	Route::post('insertfields','ListController@insertFields')->name('insertfields');

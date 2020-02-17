@@ -42,25 +42,23 @@ class ListController extends Controller
 
     public function dataList(Request $request){
        $userid = Auth::id();
-       $today = Carbon::now();
-       $date = $today->toDateString();
-       $data = array();
-
+      
        $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->get();
+       return view('list.list-table',['lists'=>$lists]);
+    }
 
-       foreach($lists as $rows){
-          $data['lists'][] = $rows;
+    public function newContact($listid){
+      $userid = Auth::id();
+      $newcontact = Customer::whereRaw('DATE(created_at) = DATE(CURDATE()) AND list_id = "'.$listid.'" AND user_id = '.$userid.' AND status = 1')->get();
 
-          $newcontact = Customer::where([['status','=',1],['list_id','=',$rows->id],['created_at','=',$date]])->get();
-          $data['newcontact'] = $newcontact->count();
+      return $newcontact->count();
+    }
 
-          $contacts = UserList::where([['lists.status','=',1],['lists.id','=',$rows->id],['customers.status','=',1]])->join('customers','customers.list_id','lists.id')->get();
-          $data['contacts'] = $contacts->count();
-       }
-
-       dd($data);
-
-       return view('list.list-table',['lists'=>$lists,'newcontact'=>$newcontact,'contact'=>$contacts]);
+    public function contactList($listid){
+      $userid = Auth::id();
+      $contacts = Customer::where([['status','=',1],['list_id','=',$listid],['user_id','=',$userid]])->get();
+       
+      return $contacts->count();
     }
 
     public function formList()
@@ -258,7 +256,61 @@ class ListController extends Controller
         return response()->json($response);
     }
 
+    #DELETE LIST
+    public function delListContent(Request $request)
+    {
+        $id = $request->id;
+        $userid = Auth::id();
+        $check_userlist = UserList::where([['id',$id],['user_id',$userid]])->first();
 
+        if(is_null($check_userlist))
+        {
+            $data['message'] = 'Cannot delete list, because list not available';
+            return response()->json($data);
+        }
+
+        $delete_userlist = UserList::where([['id',$id],['user_id',$userid]])->delete();
+        $checkafterdelete = UserList::where([['id',$id],['user_id',$userid]])->first();
+
+        #if success delete list then delete customer / subscriber
+        if(is_null($checkafterdelete)){
+            $delete = Customer::where('list_id','=',$id)->delete();
+            $checkdeletecustomer = Customer::where('list_id','=',$id)->get()->count();
+        } else {
+            $data['message'] = 'Error, Sorry, cannot delete list';
+            return response()->json($data);
+        }
+
+        #if success delete customer / subscriber
+        if($checkdeletecustomer == 0){
+            $deladditional = Additional::where('list_id','=',$id)->delete();
+            $checkdeladditional = Additional::where('list_id','=',$id)->get()->count();
+        } else {
+            $data['message'] = 'Error, Sorry, cannot delete customer';
+            return response()->json($data);
+        } 
+
+        #if success delete list additional
+        if($checkdeladditional == 0){
+            $data['message'] = 'Data deleted successfully';
+        } else {
+            $data['message'] = 'Error, Sorry, cannot delete list addtional';
+        }
+        return response()->json($data);
+    }
+
+    public function searchList(Request $request){
+        $listname = $request->listname;
+        $userid = Auth::id();
+
+        if(empty($listname)){
+          $lists = Userlist::where('user_id',$userid)->get();
+        }
+
+        $lists = Userlist::where('label','like','%'.$listname.'%')->get();
+
+        return view('list.list-table',['lists'=>$lists]);
+    }
 
     /* ** OLD CODES ** */
     public function listForm(){
@@ -820,49 +872,6 @@ class ListController extends Controller
         {
             $data['additionalerror'] = true;
             $data['message'] = 'Error! Data failed to update';
-        }
-        return response()->json($data);
-    }
-
-    #DELETE LIST
-    public function delListContent(Request $request)
-    {
-        $id = $request->id;
-        $userid = Auth::id();
-        $check_userlist = UserList::where([['id',$id],['user_id',$userid]])->first();
-
-        if(is_null($check_userlist))
-        {
-            $data['message'] = 'Cannot delete list, because list not available';
-            return response()->json($data);
-        }
-
-        $delete_userlist = UserList::where([['id',$id],['user_id',$userid]])->delete();
-        $checkafterdelete = UserList::where([['id',$id],['user_id',$userid]])->first();
-
-        #if success delete list then delete customer / subscriber
-        if(is_null($checkafterdelete)){
-            $delete = Customer::where('list_id','=',$id)->delete();
-            $checkdeletecustomer = Customer::where('list_id','=',$id)->get()->count();
-        } else {
-            $data['message'] = 'Error, Sorry, cannot delete list';
-            return response()->json($data);
-        }
-
-        #if success delete customer / subscriber
-        if($checkdeletecustomer == 0){
-            $deladditional = Additional::where('list_id','=',$id)->delete();
-            $checkdeladditional = Additional::where('list_id','=',$id)->get()->count();
-        } else {
-            $data['message'] = 'Error, Sorry, cannot delete customer';
-            return response()->json($data);
-        } 
-
-        #if success delete list additional
-        if($checkdeladditional == 0){
-            $data['message'] = 'Data deleted successfully';
-        } else {
-            $data['message'] = 'Error, Sorry, cannot delete list addtional';
         }
         return response()->json($data);
     }

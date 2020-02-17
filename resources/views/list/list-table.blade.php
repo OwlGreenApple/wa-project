@@ -1,3 +1,8 @@
+<?php
+  use App\Http\Controllers\ListController;
+  $listcontroller = new ListController; 
+?>
+
 <!-- tab -->
 @if($lists->count() > 0)
   @foreach($lists as $rows)
@@ -9,23 +14,32 @@
       </div>
 
       <div class="col-lg-3 pad-fix cardnumber">
-        <div class="big-number">+100</div>
+        <div class="big-number">
+          +<?php 
+            echo $listcontroller->newContact($rows->id);
+          ?>
+        </div>
         <div class="contact">New Contacts</div>
       </div> 
 
       <div class="col-lg-3 pad-fix cardnumber">
-        <div class="big-number">50</div>
+        <div class="big-number"><?php 
+            echo $listcontroller->contactList($rows->id);
+          ?></div>
         <div class="contact">Contacts</div>
       </div>
 
       <div class="col-lg-2 pad-fix col-button">
-        <button type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
-        <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
-        <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
+        <button type="button" id="{{$rows->id}}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
+        <a type="button" id="{{$rows->id}}" class="btn btn-edit btn-sm"><span class="icon-edit"></span></a>
+        <button id="{{$rows->id}}" type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
+        <a type="button" id="{{$rows->id}}" class="btn btn-danger btn-sm del"><span class="icon-delete"></span></a>
       </div>
     </div> 
   @endforeach
+  @else
+  <div class="bg-dashboard cardlist row">
+    Sorry, the page you're looking not available.
+  </div>
 @endif
 <!-- end tab -->
-        
-
