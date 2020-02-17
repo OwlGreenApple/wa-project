@@ -486,7 +486,9 @@
       e.preventDefault();
 
       var editor_val = CKEDITOR.instances.editor1.getData();
-      var data = $(this).serialize()+ "&editor="+editor_val;
+      //var data = $(this).serialize()+ "&editor="+{'editor' : editor_val};
+       var data = $(this).serializeArray();
+       data.push({name: 'editor', value: editor_val});
 
       $.ajaxSetup({
           headers: {

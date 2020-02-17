@@ -312,6 +312,72 @@ class ListController extends Controller
         return view('list.list-table',['lists'=>$lists]);
     }
 
+    public function editList($listid){
+        $list = UserList::where('id',$listid)->first();
+
+        if(is_null($list)){
+            $data = null;
+        } else {
+            $data = array(
+                'list_label'=>$list->label,
+                'list_name'=>$list->name,
+                'content'=> $list->content,
+                'pixel'=>$list->pixel_text,
+                'listid'=>$listid
+            );
+        }
+       return view('list.list-edit',['data'=>$data]);
+    }
+
+    //DISPLAY ADDITIONAL ON EDIT PAGE
+    public function additionalList(Request $request){
+        $listid = $request->id;
+        $additional = Additional::where('list_id',$listid)->get();
+        $data['additional'] = $additional;
+
+        return response()->json($data);
+    }
+
+    //INSERT ADDITIONAL ON EDIT PAGE
+    public function insertFields(Request $request)
+    {
+        $fields = $request->fields;
+        $is_option = $request->is_option;
+        $list_id = $request->field_list;
+
+        if($fields !== null && $is_option !== null)
+        {
+            $data = array_combine($fields,$is_option);
+            foreach($data as $name => $isoption)
+            {
+                $additional = new Additional;
+                $additional->list_id = $list_id;
+                $additional->name = $name;
+                $additional->is_optional = $isoption;
+                $additional->save();
+            }
+
+            if($additional->save() == true)
+            {
+                $data['error'] = false;
+                $data['msg'] = 'Your field has been added!';
+                $data['listid'] = $list_id;
+            }
+            else
+            {
+                $data['error'] = true;
+                $data['msg'] = 'There is error, unable to add field!';
+            }
+        }
+        else
+        {
+             $data['msg'] = 'Please create at least 1 field';
+        }
+        return response()->json($data);
+    }
+
+
+
     /* ** OLD CODES ** */
     public function listForm(){
         return view('list.list-form');
@@ -592,30 +658,6 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    public function displayListContent(Request $request){
-        $id = $request->id;
-        $list = UserList::where('id',$id)->first();
-
-        if(is_null($list)){
-            $data = null;
-        } else {
-            $additional = Additional::where('list_id',$id)->get();
-            $data = array(
-                'list_label'=>$list->label,
-                'list_name'=>$list->name,
-                'bot_api'=>$list->bot_api,
-                'bot_name'=>$list->bot_name,
-                'content'=> $list->content,
-                'is_event'=>$list->is_event,
-                'event_date'=>$list->event_date,
-                'pixel'=>$list->pixel_text,
-                'message'=>$list->message_text,
-                'additional'=>$additional
-            );
-        }
-        return response()->json($data);
-    }
-
     #display field after update
     public function displayAjaxAdditional(Request $request){
         $id = $request->id;
@@ -641,43 +683,6 @@ class ListController extends Controller
             $data['dropfields'] = array();
         }
 
-        return response()->json($data);
-    }
-
-    public function insertFields(Request $request)
-    {
-        $fields = $request->fields;
-        $is_option = $request->is_option;
-        $list_id = $request->field_list;
-
-        if($fields !== null && $is_option !== null)
-        {
-            $data = array_combine($fields,$is_option);
-            foreach($data as $name => $isoption)
-            {
-                $additional = new Additional;
-                $additional->list_id = $list_id;
-                $additional->name = $name;
-                $additional->is_optional = $isoption;
-                $additional->save();
-            }
-
-            if($additional->save() == true)
-            {
-                $data['error'] = false;
-                $data['msg'] = 'Your field has been added!';
-                $data['listid'] = $list_id;
-            }
-            else
-            {
-                $data['error'] = true;
-                $data['msg'] = 'There is error, unable to add field!';
-            }
-        }
-        else
-        {
-             $data['msg'] = 'Please create at least 1 field';
-        }
         return response()->json($data);
     }
 

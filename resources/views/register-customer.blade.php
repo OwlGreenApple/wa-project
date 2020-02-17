@@ -225,7 +225,7 @@
 
         /* Clear / Empty fields after ajax reach success */
         function clearField(){
-            $("input").val('');
+            $("input:not([name='listid'],[name='listname'])").val('');
             $(".error").html('');
         }
         
