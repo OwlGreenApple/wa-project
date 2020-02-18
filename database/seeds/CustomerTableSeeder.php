@@ -17,7 +17,7 @@ class CustomerTableSeeder extends Seeder
         	'user_id' => 1,
         	'list_id' => 1,
             'name' => 'gunardi',
-            'wa_number' => '+62895342472008',
+            'telegram_number' => '+62895342472008',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);  
@@ -26,7 +26,7 @@ class CustomerTableSeeder extends Seeder
         	'user_id' => 1,
         	'list_id' => 1,
             'name' => 'rizky',
-            'wa_number' => '+628123238793',
+            'telegram_number' => '+628123238793',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);  
@@ -35,7 +35,7 @@ class CustomerTableSeeder extends Seeder
         	'user_id' => 1,
         	'list_id' => 2,
             'name' => 'gunardi',
-            'wa_number' => '+62895342472008',
+            'telegram_number' => '+62895342472008',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);  
@@ -44,7 +44,7 @@ class CustomerTableSeeder extends Seeder
         	'user_id' => 1,
         	'list_id' => 2,
             'name' => 'rizky',
-            'wa_number' => '+628123238793',
+            'telegram_number' => '+628123238793',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]); 
@@ -53,7 +53,7 @@ class CustomerTableSeeder extends Seeder
         	'user_id' => 1,
         	'list_id' => 3,
             'name' => 'gunardi',
-            'wa_number' => '+62895342472008',
+            'telegram_number' => '+62895342472008',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);  
@@ -62,7 +62,7 @@ class CustomerTableSeeder extends Seeder
         	'user_id' => 1,
         	'list_id' => 3,
             'name' => 'rizky',
-            'wa_number' => '+628123238793',
+            'telegram_number' => '+628123238793',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]); 
