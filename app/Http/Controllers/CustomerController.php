@@ -99,7 +99,7 @@ class CustomerController extends Controller
             $customer->email = $request->email;
 
             if($request->selectType == 'ph'){
-              $customer->telegram_number = $request->phone;
+              $customer->telegram_number = '+'.$request->phone;
             } 
 
             if($request->selectType == 'tl'){

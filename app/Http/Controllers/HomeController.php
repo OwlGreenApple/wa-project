@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
+use App\PhoneNumber;
 
 class HomeController extends Controller
 {
@@ -70,6 +71,20 @@ class HomeController extends Controller
         }
     }
 
+    public function checkPhone(){
+      $userid = Auth::id();
+      $phone = PhoneNumber::where('user_id',$userid)->get();
+
+      if($phone->count() < 1)
+      {
+        $data['status'] = 1;
+      }
+      else {
+        $data['status'] = 0;
+      }
+
+      return response()->json($data);
+    }
 
     public function CreateCampaign() 
     {

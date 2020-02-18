@@ -28,7 +28,7 @@
     
 </head>
 
-<body>
+<body class="act-tel-subscribe-page">
 
 <!--Loading Bar-->
 <div class="div-loading">

@@ -114,7 +114,7 @@ class SettingController extends Controller
       if ($err) {
         // echo "cURL Error #:" . $err;
         $arr['status'] = 'error';
-        $arr['message'] = "Please try to connect again";
+        $arr['message'] = "Please try to connect again". $err;
         return $arr;
       } else {
         // echo $response."\n";

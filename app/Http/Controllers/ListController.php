@@ -18,6 +18,7 @@ use App\Customer;
 use App\Sender;
 use App\Additional;
 use App\Reminder;
+use App\PhoneNumber;
 use Carbon\Carbon;
 use DB;
 
@@ -68,6 +69,7 @@ class ListController extends Controller
 
     public function createList(Request $request)
     {
+      $userid = Auth::id();
       $label = $request->listname;
       $rules =  [
             'listname' => 'required|min:4|max:190',
@@ -81,7 +83,9 @@ class ListController extends Controller
                       ->withErrors($validator);
       }
 
-      return view('list.list-create',['label'=>$label]);
+      $phonenumber = PhoneNumber::where('user_id',$userid)->get();
+
+      return view('list.list-create',['label'=>$label,'phonenumber'=>$phonenumber]);
     }
 
     public function saveList(Request $request)
@@ -187,6 +191,7 @@ class ListController extends Controller
         $list->user_id = Auth::id();
         $list->name = $this->createRandomListName();
         $list->label = $req['labelname'];
+        $list->phone_number_id = $req['phoneid'];
         $list->content = $req['editor'];
         $list->pixel_text = $req['pixel'];
         $list->save();
@@ -196,7 +201,8 @@ class ListController extends Controller
             $cfields = count($fields);
             $cdropdown = count($dropdown);
         } else {
-          return redirect('createlist')->with('status','Error!, failed to create list');
+            $response['status'] = 'Error!, failed to create list';
+            return response()->json($response);
         }
 
         $success = false;
@@ -444,8 +450,176 @@ class ListController extends Controller
     }
 
 
+    //DUPLICATE LIST
+    public function duplicateList(Request $request)
+    {
 
-    /* ** OLD CODES ** */
+        $idlist = $request->id;
+        $userid = Auth::id();
+        $record = Userlist::where([['id',$idlist],['user_id',$userid]])->first();
+
+        if(is_null($record))
+        {
+            $response['error'] = true;
+            $response['message'] = 'Invalid id, please provide valid id!';
+            return response()->json($response);
+        }
+
+        //make copyname
+        $copy = Userlist::where('label','like','%'.$record->label.'%')->get()->count();
+
+        if($copy <= 1)
+        {
+            $embed = '-copy';
+        }
+        else
+        {
+            $copy = $copy-1;
+            $embed = '-copy-'.$copy;
+        }
+
+        $checknewlabellength = strlen($record->label.$embed);
+
+        if($checknewlabellength > 50)
+        {
+            $response['error'] = true;
+            $response['message'] = 'List name characters cannot more than 50 characters';
+            return response()->json($response); 
+        }
+
+        $list = new UserList;
+        $list->user_id = Auth::id();
+        $list->name = $this->createRandomListName();
+        $list->label = $record->label.$embed;
+        $list->content = $record->content;
+        $list->pixel_text = $record->pixel_text;
+        $list->save();
+        $newIdList = $list->id; //new list id
+        $opt = array();
+
+        //IF LIST DUPLICATED SUCCESSFULLY
+        if($list->save() == true)
+        {
+            $checkadditional = Additional::where('list_id',$idlist)->get();
+            //SORT ADDITIONAL BASED ON ID PARENT
+            $recordadditional = Additional::where('list_id',$idlist)->orderByRaw('CASE WHEN id_parent = 0 THEN id ELSE id_parent END ASC, CASE WHEN id_parent = 0 THEN 0 ELSE id END ASC')->get();
+        }
+        else
+        {
+            $response['error'] = true;
+            $response['message'] = 'Error, Sorry unable to duplicate list record';
+            return response()->json($response);
+        } 
+
+        //IF ADDITIONAL AVAILABLE
+        if($checkadditional->count() > 0)
+        {
+            foreach($recordadditional as $rows)
+            {
+                if($rows->id_parent == 0)
+                {
+                    $additional = new Additional;
+                    $additional->id_parent = $rows->id_parent;
+                    $additional->list_id = $newIdList;
+                    $additional->is_field = $rows->is_field;
+                    $additional->name = $rows->name;
+                    $additional->is_optional = $rows->is_optional;
+                    $additional->save();
+                }
+                else
+                {
+                    $newparentid = $additional->id;
+                    $opt[$newparentid][] = $rows->name;
+                }
+            } 
+        }
+        else
+        {
+            $response['error'] = false;
+            $response['message'] = 'List successfully duplicated!';
+            return response()->json($response);
+        }
+        
+      
+        //IF DROPDOWN HAS OPTIONS
+        if(count($opt) > 0)
+        {
+            foreach($opt as $newparentid=>$cols)
+            {
+                foreach($cols as $name)
+                {
+                    $additional = new Additional;
+                    $additional->id_parent = $newparentid;
+                    $additional->list_id = $newIdList;
+                    $additional->is_field = 0;
+                    $additional->name = $name;
+                    $additional->is_optional = 0;
+                    $additional->save();
+                }
+            }
+        }
+        else
+        {
+            $response['error'] = false;
+            $response['message'] = 'List successfully duplicated!';
+            return response()->json($response);
+        }
+
+        //IF ADDITIONAL SAVED SUCCESSFULLY
+        if($additional->save() == true)
+        {
+            //$reminderList = Reminder::where([['list_id',$idlist],['user_id',$userid]])->get();
+            $response['error'] = false;
+            $response['message'] = 'List successfully duplicated!';
+        }
+        else
+        {
+            $response['error'] = true;
+            $response['message'] = 'Error, Sorry unable to duplicate list record';
+        }
+
+        return response()->json($response);
+
+        /* DUPLICATE ENTIRE LIST REMINDER
+        if($reminderList->count() > 0)
+        {
+            foreach($reminderList as $cols)
+            {
+                $reminder = new Reminder;
+                $reminder->user_id = Auth::id();
+                $reminder->list_id = $newIdList;
+                $reminder->days = $cols->days;
+                $reminder->hour_time = $cols->hour_time;
+                $reminder->message = $cols->message;
+                $reminder->save();
+            }
+        }
+        else
+        {
+            $response['error'] = false;
+            $response['message'] = 'List successfully duplicated!';
+            return response()->json($response);
+        }
+
+        //IF DUPLICATE REMINDER SUCCESSFULLY
+        if($reminder->save() == true)
+        {
+            $response['error'] = false;
+            $response['message'] = 'List successfully duplicated!';
+        }
+        else
+        {
+            $response['error'] = true;
+            $response['message'] = 'Error, Sorry unable to duplicate list record';
+        }
+        return response()->json($response);
+        */
+    }
+
+
+    /* *************************************** 
+        OLD CODES
+     *************************************** */
     public function listForm(){
         return view('list.list-form');
     }
@@ -904,171 +1078,7 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    #DUPLICATE LIST
-    public function duplicateList(Request $request)
-    {
-
-        $idlist = $request->id;
-        $userid = Auth::id();
-        $record = Userlist::where([['id',$idlist],['user_id',$userid]])->first();
-
-        if(is_null($record))
-        {
-            $response['error'] = true;
-            $response['message'] = 'Invalid id, please provide valid id!';
-            return response()->json($response);
-        }
-
-        #make copyname
-        $copy = Userlist::where('label','like','%'.$record->label.'%')->get()->count();
-
-        if($copy <= 1)
-        {
-            $embed = '-copy';
-        }
-        else
-        {
-            $copy = $copy-1;
-            $embed = '-copy-'.$copy;
-        }
-
-        $checknewlabellength = strlen($record->label.$embed);
-
-        if($checknewlabellength > 50)
-        {
-            $response['error'] = true;
-            $response['message'] = 'List name characters cannot more than 50 characters';
-            return response()->json($response); 
-        }
-
-        $list = new UserList;
-        $list->user_id = Auth::id();
-        $list->name = $this->createRandomListName();
-        $list->wa_number = $record->wa_number;
-        $list->is_event = $record->is_event;
-        $list->label = $record->label.$embed;
-        $list->event_date = $record->event_date;
-        $list->content = $record->content;
-        $list->pixel_text = $record->pixel_text;
-        $list->message_text = $record->message_text;
-        $list->save();
-        $newIdList = $list->id; //new list id
-        $opt = array();
-
-        #IF LIST DUPLICATED SUCCESSFULLY
-        if($list->save() == true)
-        {
-            $checkadditional = Additional::where('list_id',$idlist)->get();
-            #SORT ADDITIONAL BASED ON ID PARENT
-            $recordadditional = Additional::where('list_id',$idlist)->orderByRaw('CASE WHEN id_parent = 0 THEN id ELSE id_parent END ASC, CASE WHEN id_parent = 0 THEN 0 ELSE id END ASC')->get();
-        }
-        else
-        {
-            $response['error'] = true;
-            $response['message'] = 'Error, Sorry unable to duplicate list record';
-            return response()->json($response);
-        } 
-
-        #IF ADDITIONAL AVAILABLE
-        if($checkadditional->count() > 0)
-        {
-            foreach($recordadditional as $rows)
-            {
-                if($rows->id_parent == 0)
-                {
-                    $additional = new Additional;
-                    $additional->id_parent = $rows->id_parent;
-                    $additional->list_id = $newIdList;
-                    $additional->is_field = $rows->is_field;
-                    $additional->name = $rows->name;
-                    $additional->is_optional = $rows->is_optional;
-                    $additional->save();
-                }
-                else
-                {
-                    $newparentid = $additional->id;
-                    $opt[$newparentid][] = $rows->name;
-                }
-            } 
-        }
-        else
-        {
-            $response['error'] = false;
-            $response['message'] = 'List successfully duplicated!';
-            return response()->json($response);
-        }
-        
-      
-        #IF DROPDOWN HAS OPTIONS
-        if(count($opt) > 0)
-        {
-            foreach($opt as $newparentid=>$cols)
-            {
-                foreach($cols as $name)
-                {
-                    $additional = new Additional;
-                    $additional->id_parent = $newparentid;
-                    $additional->list_id = $newIdList;
-                    $additional->is_field = 0;
-                    $additional->name = $name;
-                    $additional->is_optional = 0;
-                    $additional->save();
-                }
-            }
-        }
-        else
-        {
-            $response['error'] = false;
-            $response['message'] = 'List successfully duplicated!';
-            return response()->json($response);
-        }
-
-        #IF ADDITIONAL SAVED SUCCESSFULLY
-        if($additional->save() == true)
-        {
-            $reminderList = Reminder::where([['list_id',$idlist],['user_id',$userid]])->get();
-        }
-        else
-        {
-            $response['error'] = true;
-            $response['message'] = 'Error, Sorry unable to duplicate list record';
-        }
-
-        # DUPLICATE ENTIRE LIST REMINDER
-        if($reminderList->count() > 0)
-        {
-            foreach($reminderList as $cols)
-            {
-                $reminder = new Reminder;
-                $reminder->user_id = Auth::id();
-                $reminder->list_id = $newIdList;
-                $reminder->days = $cols->days;
-                $reminder->hour_time = $cols->hour_time;
-                $reminder->message = $cols->message;
-                $reminder->save();
-            }
-        }
-        else
-        {
-            $response['error'] = false;
-            $response['message'] = 'List successfully duplicated!';
-            return response()->json($response);
-        }
-
-        #IF DUPLICATE REMINDER SUCCESSFULLY
-        if($reminder->save() == true)
-        {
-            $response['error'] = false;
-            $response['message'] = 'List successfully duplicated!';
-        }
-        else
-        {
-            $response['error'] = true;
-            $response['message'] = 'Error, Sorry unable to duplicate list record';
-        }
-        return response()->json($response);
-    }
-
+    
     /* NOT USED ANYMORE */
     public function updateField(Request $request)
     {

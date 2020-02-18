@@ -89,6 +89,29 @@
 
 </div>
 
+<!-- Modal Import Contact -->
+  <div class="modal fade child-modal" id="leadsettings" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title text-center">
+            Please connect your phone at here :
+          </h5>
+        </div>
+
+        <div class="modal-body text-center">
+            <a href="{{url('settings')}}" class="btn btn-primary btn-lg">Settings</a>
+        </div>
+
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
 <!-- navbar 
 <div class="container mb-2">
     <div class="row justify-content-center">
@@ -253,4 +276,27 @@
     </div>
 <!-- end container
 </div>  -->
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    checkPhone();
+  });
+
+  function checkPhone() {
+      $.ajax({
+        type : 'GET',
+        url : '{{url("checkphone")}}',
+        success : function(result){
+
+          if(result.status == 1){
+            $("#leadsettings").modal({
+              show: true,
+              keyboard: false,
+              backdrop: 'static'
+            });
+          }
+        }
+      });
+  }
+</script>
 @endsection

@@ -101,6 +101,17 @@
             <div class="input-group form-group">
                 <input type="text" name="labelname" class="form-control" value="{{ $label }}" placeholder="Input List name" >
             </div> 
+
+            <div class="input-group form-group">
+               <select id="phoneid" name="phoneid" class="form-control custom-select">
+                  @if($phonenumber->count() > 0)
+                    @foreach($phonenumber as $rows)
+                      <option value="{{$rows->id}}">{{$rows->phone_number}}</option>
+                    @endforeach
+                  @endif
+               </select>
+            </div> 
+
         </div>
         <!-- end wrapper -->
 
@@ -258,6 +269,31 @@
   </div>
   <!-- End Modal -->
 
+  <!-- Modal Copy Link -->
+<div class="modal fade" id="copy-link" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modaltitle">
+          Copy Link
+        </h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        You have copied the link!
+      </div>
+      <div class="modal-footer" id="foot">
+        <button class="btn btn-primary" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+      
+  </div>
+</div>
+
 <script type="text/javascript">
 
   /* CKEditor */
@@ -289,6 +325,7 @@
     displayDropdownMenu();
     delOption();
     saveList();
+    copyLink();
   });
 
   // Jquery Tabs
@@ -500,11 +537,32 @@
         url : '{{route("savelist")}}',
         data : data,
         success : function(result){
+          $(".act-tel-tab .message").show();
+          $(".icon-copy").attr('data-link',result.link);
           alert(result.status);
         }
       })
     });
   }
+
+   function copyLink(){
+      $( "body" ).on("click",".btn-copy",function(e) 
+      {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var link = $(this).attr("data-link");
+
+        var tempInput = document.createElement("input");
+        tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+        tempInput.value = link;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        $('#copy-link').modal('show');
+      });
+    }
 
   /*
   function radioCheck(){

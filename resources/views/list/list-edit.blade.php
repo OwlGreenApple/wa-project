@@ -221,7 +221,6 @@
         delOption();
         insertFields();
         openAdditional();
-        duplicateList();
         copyLink();
     });
 
@@ -369,39 +368,6 @@
                    else
                    {
                       $(".list_label").html(result.label);
-                   }
-                }
-            });
-
-        });
-    }
-
-    function duplicateList(){
-        $("body").on("click",".duplicate",function(){
-            var id = $(this).attr('id');
-            $("#div-loading").show();
-            $.ajaxSetup({
-                  headers: {
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                  }
-            });
-             $.ajax({
-                type : 'POST',
-                url : '{{route("duplicatelist")}}',
-                data : {'id' : id},
-                dataType : "json",
-                success : function(result)
-                {
-                   $("#div-loading").hide();
-
-                   if(result.error == true)
-                   {
-                      alert(result.message);
-                   }
-                   else
-                   {
-                      alert(result.message);
-                      location.href = '{{route("userlist")}}';
                    }
                 }
             });
@@ -561,11 +527,19 @@
             url : '{{route("insertoptions")}}',
             data : dataedit,
             dataType : 'json',
+            beforeSend: function()
+            {
+              $('#loader').show();
+              $('.div-loading').addClass('background-load');
+            },
             success : function(response)
             {
-                alert(response.msg);
-                //displayAjaxCols(response.listid);
-                displayAdditional();
+              $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
+
+              alert(response.msg);
+              //displayAjaxCols(response.listid);
+              displayAdditional();
             }
           });
 
@@ -836,7 +810,15 @@
                 type : 'GET',
                 url : '{{route("delfield")}}',
                 data : {'id':id_attribute, 'list_id':listid},
+                beforeSend: function()
+                {
+                  $('#loader').show();
+                  $('.div-loading').addClass('background-load');
+                },
                 success : function(response){
+                  $('#loader').hide();
+                  $('.div-loading').removeClass('background-load');
+
                   alert(response.msg);
                   //displayAjaxCols(response.listid);
                   displayAdditional();

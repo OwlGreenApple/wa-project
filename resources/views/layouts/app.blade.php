@@ -110,12 +110,12 @@
                           -->
                         @else
                             <li class="nav-item dropdown">
-                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('list-form') || request()->is('list-create') || request()->is('create-campaign')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('list-form') || request()->is('list-create') || request()->is('create-campaign') || request()->is('userlist')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                      Create<span class="caret"></span>
                                 </a>
                                 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a href="{{url('list-form')}}" class="nav-link {{ (request()->is('list-form') || request()->is('list-create')) ? 'active' : '' }}">Lists</a>
+                                    <a href="{{url('list-form')}}" class="nav-link {{ (request()->is('list-form') || request()->is('list-create')|| request()->is('userlist')) ? 'active' : '' }}">Lists</a>
                                     
                                     <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">Campaigns</a> 
                                 </div>

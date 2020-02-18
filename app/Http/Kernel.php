@@ -68,6 +68,7 @@ class Kernel extends HttpKernel
         'checkadditional' => \App\Http\Middleware\CheckAdditional::class,
         'cors' => \App\Http\Middleware\Cors::class,
         'checkdevicename' => \App\Http\Middleware\CheckDeviceName::class,
+        'authsettings' => \App\Http\Middleware\AuthSettings::class,
     ];
 
     /**

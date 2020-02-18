@@ -36,7 +36,6 @@ Route::post('private-list','ApiController@register_list');
 Auth::routes();
 
 /* PROTOTYPE */
-Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');//home.blade
 //Route::get('createlists', 'HomeController@formList');
 //Route::get('lists-create', 'HomeController@createList');
 //Route::get('lists', 'HomeController@dataList');
@@ -45,13 +44,6 @@ Route::get('campaign', 'HomeController@Campaign');
 Route::get('add-reminder', 'HomeController@addReminder');
 Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('history-order', 'HomeController@historyOrder');
-
-/* SETTING */
-Route::get('settings', 'SettingController@index');
-Route::get('load-phone-number', 'SettingController@load_phone_number');
-Route::get('connect-phone', 'SettingController@connect_phone');
-Route::get('verify-phone', 'SettingController@verify_phone');
-Route::get('delete-phone', 'SettingController@delete_phone');
 
 
 /* User Customer */
@@ -67,9 +59,22 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');
 });
 
-/* User */
+/* SETTING */
 Route::group(['middleware'=>['auth','web']],function(){
-	Route::get('tesdevice','DeviceController@test')->name('tesdevice');
+  Route::get('settings', 'SettingController@index');
+  Route::get('load-phone-number', 'SettingController@load_phone_number');
+  Route::get('connect-phone', 'SettingController@connect_phone');
+  Route::get('verify-phone', 'SettingController@verify_phone');
+  Route::get('delete-phone', 'SettingController@delete_phone');
+});
+
+/* HOME */
+Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');
+Route::get('checkphone', 'HomeController@checkPhone');
+
+/* User */
+Route::group(['middleware'=>['auth','web','authsettings']],function(){
+	//Route::get('tesdevice','DeviceController@test')->name('tesdevice');
 
 	/* Create Device */
 	Route::get('registerdevice','CreateDeviceController@index')->name('registerdevice');
@@ -103,6 +108,7 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('list-edit/{list_id}','ListController@editList');
   Route::get('list-additional','ListController@additionalList')->name('additionalList');
   Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');
+  Route::post('list-duplicate','ListController@duplicateList')->name('duplicatelist');
 
   /* Additional */
   Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
@@ -119,7 +125,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	
 	Route::post('insertfields','ListController@insertFields')->name('insertfields');
 	Route::post('insertdropdown','ListController@insertDropdown')->name('insertdropdown');
-	Route::post('duplicatelist','ListController@duplicateList')->name('duplicatelist');
+	
 	Route::post('exportlistsubscriber','ListController@exportListSubscriber')->name('exportlistsubscriber');
 	Route::get('export_csv_list_subscriber/{id_list}','ListController@exportListCSVSubscriber');
 	Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers');
