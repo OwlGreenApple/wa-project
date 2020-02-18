@@ -98,12 +98,80 @@ class CustomerController extends Controller
             $customer->name = $request->subscribername;
             $customer->email = $request->email;
 
+            $phoneNumber = PhoneNumber::find($lists->phone_number_id);
             if($request->selectType == 'ph'){
+
               $customer->telegram_number = '+'.$request->phone;
+
+              /*
+              * Write to PHPTDLIB API Server 
+              * (Phone number)
+              */
+              $curl = curl_init();
+              $data = array(
+                  'token'=> env('TOKEN_API'),
+                  'phone_number' => $phoneNumber->phone_number,
+                  'username'=>"activtelgroup", 
+                  'filename'=>env('FILENAME_API').$phoneNumber->id,
+              );
+
+              curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/getChatId-phone.php",
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => http_build_query($data),
+                CURLOPT_POST => 1,
+              ));
+
+              $response = curl_exec($curl);
+              $err = curl_error($curl);
+
+              curl_close($curl);
+
+              if ($err) {
+                echo "cURL Error #:" . $err;
+              } else {
+                // echo $response."\n";
+                $result = json_decode($response,true);
+                $customer->chat_id = $response;
+              }
+
             } 
 
             if($request->selectType == 'tl'){
               $customer->username = $request->usertel;
+
+              /*
+              * Write to PHPTDLIB API Server 
+              * (Username Telegram)
+              */
+              $curl = curl_init();
+              $data = array(
+                  'token'=> env('TOKEN_API'),
+                  'phone_number' => $phoneNumber->phone_number,
+                  'username'=>"activtelgroup", 
+                  'filename'=>env('FILENAME_API').$phoneNumber->id,
+              );
+
+              curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/getChatId-username.php",
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => http_build_query($data),
+                CURLOPT_POST => 1,
+              ));
+
+              $response = curl_exec($curl);
+              $err = curl_error($curl);
+
+              curl_close($curl);
+
+              if ($err) {
+                // echo "cURL Error #:" . $err;
+              } else {
+                // echo $response."\n";
+                $customer->chat_id = $response;
+              }
             }
 
             $customer->additional = $addt;
