@@ -121,8 +121,8 @@
                                 </div>
                             </li> 
 
-                            <li class="nav-item">
-                                <a href="{{url('lists')}}" class="nav-link {{ (request()->is('lists') || request()->is('lists-create')) ? 'active' : '' }}">Lists</a>
+                            <li class="nav-item">   
+                                <a href="{{url('lists')}}" class="nav-link {{ (request()->is('lists') || request()->is('lists-create') || Request::segment(1) == 'list-edit') ? 'active' : '' }}">Lists</a>
                             </li> 
 
                             <li class="nav-item">

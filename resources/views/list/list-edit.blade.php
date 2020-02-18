@@ -4,16 +4,21 @@
 
 <div class="container">
   <div class="act-tel-tab">
-      <h4>Edit : {{$data['list_label']}}</h4>
-      <form class="form-contact" id="save-list">
+      <div class="text-left wrapper">
+        <h6><strong>List Name</strong> : {{$data['list_label']}}</h6>
+        <h6><strong>Link</strong> : {{ env('APP_URL')}}{{$data['list_name']}}&nbsp;&nbsp;<a class="btn-copy" data-link="{{ env('APP_URL')}}{{$data['list_name']}}"><span class="icon-copy"></span></a></h6> 
+      </div>
+      <form class="form-contact" id="edit_list">
+
         <div class="wrapper">
-          <div class="form-contact" id="save-list">
+          <div class="form-contact">
             <div class="input-group form-group">
               <textarea name="editor1" id="editor1" rows="10" cols="80">{{$data['content']}}</textarea>
             </div>
 
             <div class="input-group form-group">
                 <input type="text" name="list_label" class="form-control" placeholder="Input List name" value="{{$data['list_label']}}">
+                <div class="error list_label col-lg-12 text-left"></div>
             </div> 
         </div>
         <!-- end wrapper -->
@@ -57,7 +62,7 @@
             <button type="submit" class="btn btn-custom">Update Data</button>
           </div>
 
-        </form>
+      </form>
 
   </div>
 </div>
@@ -81,6 +86,7 @@
                     <input type="hidden" value="{{$data['listid']}}" name="field_list"/>
                     <div class="form-group">
                        <button id="cfd" class="btn btn-success btn-sm">Create Fields</button>
+                       <button type="button" data-dismiss="modal" class="btn btn-default btn-sm">Close</button>
                     </div>
                 </form>
             </div>
@@ -109,12 +115,13 @@
                        <input name="dropdowname" type="text" class="form-control" />
                      </div> 
                      <label>Option Value</label>
-                      <div id="appendoption" class="form-group row">
+                      <div id="appendoption" class="form-group">
                          <!-- display input here -->
                       </div> 
                       <input type="hidden" name="dropdownlist"/>
                       <div class="form-group">
                          <button id="cdp" class="btn btn-success btn-sm">Create Dropdown</button>
+                         <button type="button" data-dismiss="modal" class="btn btn-default btn-sm">Close</button>
                       </div>
 
                  </form>
@@ -134,12 +141,12 @@
         <div class="modal-body">
             <div class="form-group">
                  <div class="mb-2">
-                    <input class="btn btn-warning btn-sm add-edit-option" type="button" value="Add Option" />
+                    <input class="btn btn-primary btn-sm add-edit-option" type="button" value="Add Option" />
                 </div>
                
                 <label>Option List</label>
                 <form id="optionform">
-                    <div id="editoptions" class="form-group row">
+                    <div id="editoptions" class="form-group">
                        <!-- display input here -->
                     </div> 
 
@@ -147,6 +154,7 @@
                     <input type="hidden" name="list_id"/>
                     <div class="form-group">
                        <button id="edp" class="btn btn-success btn-sm">Edit Dropdown</button>
+                       <button type="button" data-dismiss="modal" class="btn btn-default btn-sm">Close</button>
                     </div>
                 </form>
             </div>
@@ -155,6 +163,31 @@
       
     </div>
   </div>
+
+<!-- Modal Copy Link -->
+<div class="modal fade" id="copy-link" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modaltitle">
+          Copy Link
+        </h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        You have copied the link!
+      </div>
+      <div class="modal-footer" id="foot">
+        <button class="btn btn-primary" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+      
+  </div>
+</div>
 
   <script type="text/javascript">
     
@@ -176,7 +209,7 @@
     $(document).ready(function(){
         //fixModal();
         displayAdditional();
-        updateEditor();
+        updateList();
         delCols();
         addCols();
         addFields();
@@ -189,7 +222,10 @@
         insertFields();
         openAdditional();
         duplicateList();
+        copyLink();
     });
+
+    var limit = 'You only can create 5 fields only';
 
     function displayAdditional(){
         $.ajax({
@@ -256,6 +292,87 @@
                   $("#cid").show();
                 }
             }
+        });
+    }
+
+    /* EDIT OR UPDATE LIST */
+    function updateList(){
+        $("#edit_list").submit(function(e){
+            e.preventDefault();
+             var databutton = $("input[name='page_position']").val(); // get data button position
+             databutton = parseInt(databutton) -1;
+            
+             var fields = $(".fields");
+             var isoption = $(".is_option");
+             var dropfields = $(".dropfields");
+             var datafields = {};
+             var datadropfields = {};
+
+             //fields
+             for(i=0;i<fields.length;i++)
+             {  
+                var values = fields.eq(i).val();
+                var idfields = fields.eq(i).attr('id');
+                var fieldoption = isoption.eq(i).val();
+                datafields[i] = {field:values, idfield : idfields, isoption : fieldoption};
+             }
+
+             //dropfields
+             for(j=0;j<dropfields.length;j++)
+             {  
+                var dropvalues = dropfields.eq(j).val();
+                var dropid = dropfields.eq(j).attr('id');
+                datadropfields[j] = {field:dropvalues, idfield : dropid};
+             }
+
+             // all data
+             var data = {
+                id : {!! $data['listid'] !!},
+                list_label : $("input[name='list_label']").val(),
+                editor : CKEDITOR.instances.editor1.getData(),
+                pixel : $("textarea[name='pixel']").val(),
+                fields : datafields,
+                dropfields : datadropfields,
+             };
+
+            $.ajaxSetup({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+            });
+             $.ajax({
+                type : 'POST',
+                url : '{{route("listupdate")}}',
+                data : data,
+                dataType : "json",
+                beforeSend: function()
+                {
+                  $('#loader').show();
+                  $('.div-loading').addClass('background-load');
+                },
+                success : function(result){
+                   $('#loader').hide();
+                   $('.div-loading').removeClass('background-load');
+
+
+                   if(result.error == undefined)
+                   {
+                      $(".list_label").html('');
+                      alert(result.message);
+                      //displayAjaxCols(result.listid);
+                      displayAdditional();
+                   }
+                   else if(result.additionalerror == true)
+                   {
+                      alert(result.message);
+                   }
+                   else
+                   {
+                      $(".list_label").html(result.label);
+                   }
+                }
+            });
+
         });
     }
 
@@ -363,82 +480,6 @@
      
     }
 
-    /* EDIT OR UPDATE LIST */
-    function updateEditor(){
-        $("#edit_list").submit(function(e){
-            e.preventDefault();
-             var databutton = $("input[name='page_position']").val(); // get data button position
-             databutton = parseInt(databutton) -1;
-             $("#div-loading").show();
-
-             var fields = $(".fields");
-             var isoption = $(".is_option");
-             var dropfields = $(".dropfields");
-             var datafields = {};
-             var datadropfields = {};
-
-             //fields
-             for(i=0;i<fields.length;i++)
-             {  
-                var values = fields.eq(i).val();
-                var idfields = fields.eq(i).attr('id');
-                var fieldoption = isoption.eq(i).val();
-                datafields[i] = {field:values, idfield : idfields, isoption : fieldoption};
-             }
-
-             //dropfields
-             for(j=0;j<dropfields.length;j++)
-             {  
-                var dropvalues = dropfields.eq(j).val();
-                var dropid = dropfields.eq(j).attr('id');
-                datadropfields[j] = {field:dropvalues, idfield : dropid};
-             }
-
-             // all data
-             var data = {
-                id : $("input[name='idlist']").val(),
-                list_label : $("input[name='list_label']").val(),
-                date_event : $("input[name='date_event']").val(),
-                editor : CKEDITOR.instances.editor1.getData(),
-                pixel : $("textarea[name='pixel_txt']").val(),
-                message : $("textarea[name='message_txt']").val(),
-                fields : datafields,
-                dropfields : datadropfields,
-             };
-
-            $.ajaxSetup({
-                  headers: {
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                  }
-            });
-             $.ajax({
-                type : 'POST',
-                url : '{{route("updatelistcontent")}}',
-                data : data,
-                dataType : "json",
-                success : function(result){
-                   $("#div-loading").hide();
-                   if(result.error == undefined)
-                   {
-                      $(".list_label, .event_date").html('');
-                      alert(result.message);
-                      displayAjaxCols(result.listid);
-                   }
-                   else if(result.additionalerror == true)
-                   {
-                      alert(result.message);
-                   }
-                   else
-                   {
-                      $(".list_label").html(result.label);
-                      $(".event_date").html(result.date_event);
-                   }
-                }
-            });
-
-        });
-    }
-
     /* EDIT DROPDOWN OPTIONS */
     function editOption()
     {
@@ -459,7 +500,11 @@
             {
                $.each(result.dropfields,function(key, value){
                   var len = key;
+                  box_html += '<input id='+value.id+' class="dropdownopt form-control mb-2 col-sm-9 float-left doption opt-'+len+'" value="'+value.name+'" />';
+                  box_html += '<a id="opt-'+len+'" class="del_fields mb-2 col-sm-2 btn btn-danger deloption" idbase = '+value.id+' listid = '+value.list_id+'><span class="icon-delete"></span></a>';
+                  /*
                   box_html += '<input id='+value.id+' class="dropdownopt form-control mb-2 col-sm-8 float-left doption opt-'+len+'" value="'+value.name+'" /><a id="opt-'+len+'" class="del_fields mb-2 col-sm-3 btn btn-warning deloption" idbase = '+value.id+' listid = '+value.list_id+'>Delete</a>';
+                  */
                 });
                 $("#editoptions").html(box_html);
             }
@@ -473,7 +518,7 @@
     {
         $("body").on("click",".add-edit-option",function(){
             var len = $(".doption").length;
-            var dropdownOptions = '<input class="newoption form-control mb-2 col-sm-8 float-left doption opt-'+len+'" /><a id="opt-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
+            var dropdownOptions = '<input class="newoption form-control mb-2 col-sm-9 float-left doption opt-'+len+'" /><a id="opt-'+len+'" class="deloption mb-2 col-sm-2 btn btn-danger"><span class="icon-delete"></span></a>';
 
             $("#editoptions").append(dropdownOptions);
         });
@@ -519,7 +564,8 @@
             success : function(response)
             {
                 alert(response.msg);
-                displayAjaxCols(response.listid);
+                //displayAjaxCols(response.listid);
+                displayAdditional();
             }
           });
 
@@ -543,6 +589,16 @@
         var len = $(".colfields").length;
         $("input[name='field_list'], input[name='dropdownlist']").val({!! $data['listid'] !!});
        
+        if(type == 1)
+        {
+            //$("#cid").show();
+            $("#openFields").modal();
+        } 
+        else {
+             $("#openDropdown").modal();
+        }
+
+        /*
         if(len < 5 && type == 1)
         {
             //$("#cid").show();
@@ -555,7 +611,7 @@
         {
             alert(limit);
         }
-
+        */
       });
     } 
 
@@ -564,8 +620,16 @@
     {
        $("body").on('click','.add-field-column',function(){
            var len = $(".colfields").length;
-           var box_html;
+           var box_html = '';
+
+           box_html += '<div class="col-md-12 row field-pos-'+len+' field-col">';
+           box_html += '<input name="fields[]" class="cidlen form-control mb-2 col-md-6 colfields fieldinput field-pos-'+len+'" />';
+           box_html += '<select class="field-pos-'+len+' form-control col-md-3 field-col" name="is_option[]"><option value="0">Optional</option><option value="1">Require</option></select>';
+           box_html += '<a id="field-pos-'+len+'" class="del_fields field-col mb-2 col-md-2 btn btn-danger field-pos-'+len+'"><span class="icon-delete"></span></a>';
+           box_html += '</div>';
+           /*
            box_html = '<div class="col-md-12 row field-pos-'+len+' field-col"><input name="fields[]" class="cidlen form-control mb-2 col-md-6 colfields fieldinput field-pos-'+len+'" /><a id="field-pos-'+len+'" class="del_fields field-col mb-2 col-md-2 btn btn-warning field-pos-'+len+'">Delete</a><select class="field-pos-'+len+' form-control col-md-3 field-col" name="is_option[]"><option value="0">Optional</option><option value="1">Require</option></select></div>';
+           */
 
           if(len < 5)
           {
@@ -624,18 +688,26 @@
                           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                       }
                 });
-                 $.ajax({
+                $.ajax({
                     type : 'POST',
                     url : '{{route("insertfields")}}',
                     data : data,
                     dataType : "json",
+                    beforeSend: function()
+                    {
+                      $('#loader').show();
+                      $('.div-loading').addClass('background-load');
+                    },
                     success : function(result){
                       $("#cfd").html("Create New Fields");
+                      $('#loader').hide();
+                      $('.div-loading').removeClass('background-load');
                       if(result.error == false)
                       {
                            if(result.listid.length > 0)
                             {
-                               displayAjaxCols(result.listid);
+                               //displayAjaxCols(result.listid);
+                               displayAdditional();
                             }
                       }
                      
@@ -671,7 +743,7 @@
                 //console.log($(result).val());
             });
 
-            var dropdown = '<input name="doptions[]" class="form-control mb-2 col-sm-8 float-left doption opt-'+len+'" /><a id="opt-'+len+'" class="deloption mb-2 col-sm-3 btn btn-warning">Delete</a>';
+            var dropdown = '<input name="doptions[]" class="form-control mb-2 col-sm-9 float-left doption opt-'+len+'" /><a id="opt-'+len+'" class="deloption mb-2 col-sm-2 btn btn-warning"><span class="icon-delete"></span></a>';
 
             if(flen < 5 && valid == 1 && checkdropdown.length > 0)
             {
@@ -729,7 +801,8 @@
 
                       if(response.listid.length > 0)
                       {
-                         displayAjaxCols(response.listid);
+                         //displayAjaxCols(response.listid);
+                         displayAdditional();
                       }
                   }
                 });
@@ -765,7 +838,8 @@
                 data : {'id':id_attribute, 'list_id':listid},
                 success : function(response){
                   alert(response.msg);
-                  displayAjaxCols(response.listid);
+                  //displayAjaxCols(response.listid);
+                  displayAdditional();
                 }
               });
             } 
@@ -781,6 +855,25 @@
 
       });
     }  
+
+    function copyLink(){
+      $( ".btn-copy" ).click(function(e) 
+      {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var link = $(this).attr("data-link");
+
+        var tempInput = document.createElement("input");
+        tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+        tempInput.value = link;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        $('#copy-link').modal('show');
+      });
+    }
   </script>
 
 @endsection

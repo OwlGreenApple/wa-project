@@ -102,7 +102,10 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('list-search','ListController@searchList')->name('searchlist');
   Route::get('list-edit/{list_id}','ListController@editList');
   Route::get('list-additional','ListController@additionalList')->name('additionalList');
- // Route::get('list-display','ListController@displayListContent')->name('displaylist');
+  Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');
+
+  /* Additional */
+  Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
 
   /*old code*/
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
@@ -111,10 +114,9 @@ Route::group(['middleware'=>['auth','web']],function(){
 	
 	Route::get('userlist','ListController@userList')->name('userlist');
 	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
-	Route::post('updatelistcontent','ListController@updateListContent')->middleware('checkadditional')->name('updatelistcontent');
 
 	Route::get('editdropfields','ListController@editDropfields')->name('editdropfields');
-	Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
+	
 	Route::post('insertfields','ListController@insertFields')->name('insertfields');
 	Route::post('insertdropdown','ListController@insertDropdown')->name('insertdropdown');
 	Route::post('duplicatelist','ListController@duplicateList')->name('duplicatelist');
