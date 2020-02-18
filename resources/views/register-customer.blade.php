@@ -28,7 +28,7 @@
     
 </head>
 
-<body class="bg-dashboard">
+<body>
 
 <!--Loading Bar-->
 <div class="div-loading">
@@ -50,7 +50,7 @@
         <div class="row justify-content-center">
           
            <div class="act-tel-subscribe col-lg-9">
-              <div class="wrapper">
+              <div class="wrapper act-tel-subscribe-img">
                   {!! $content !!}
               </div>
 
@@ -151,7 +151,10 @@
       </div>
     </div>
 
-    <script type="text/javascript">
+  </main>
+ </div>
+
+  <script type="text/javascript">
 
         $(document).ready(function() {
             choose();
@@ -254,9 +257,6 @@
           });
         }
     </script>
-
-  </main>
- </div>
 
 </body>
 </html>

@@ -376,6 +376,73 @@ class ListController extends Controller
         return response()->json($data);
     }
 
+    /* Insert option for additional */
+    public function insertOptions(Request $request)
+    {
+        $parent_id = $request->parent_id;
+        $list_id = $request->list_id;
+        $success = false;
+
+        //combine id and value from existing option
+        if($request->editid !== null && $request->values !== null)
+        {
+            $dataedit = array_combine($request->editid,$request->values);
+        }
+        else 
+        {
+            $dataedit = null;
+        }
+
+        //insert new option
+        if($request->data !== null && count($request->data) > 0)
+        {
+            foreach($request->data as $row)
+            {
+                $additional = new Additional;
+                $additional->id_parent = $parent_id;
+                $additional->list_id = $list_id;
+                $additional->name = $row;
+                $additional->save();
+            }
+
+            if($additional->save() == true)
+            {
+                $success = true;
+            }
+        }
+        
+        //data edit
+        else if($dataedit !== null && count($dataedit) > 0)
+        {
+            foreach($dataedit as $id=>$values)
+            {
+                $additionaldropdown = Additional::where([['id',$id]])->update(['name'=>$values]);
+            }
+
+            if($additionaldropdown == true)
+            {
+                $success = true;
+            }
+        }
+        else
+        {
+            $data['msg'] = 'Please create option first!';
+            return response()->json($data);
+        }
+
+        if($success == true)
+        {
+            $data['msg'] = 'Your option menu has been added!';
+            $data['listid'] = $list_id;
+        } 
+        else
+        {
+            $data['msg'] = 'Error! Sorry there is trouble with our system';
+        }
+
+        return response()->json($data);
+    }
+
 
 
     /* ** OLD CODES ** */
@@ -746,82 +813,13 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    public function insertOptions(Request $request)
-    {
-        $parent_id = $request->parent_id;
-        $list_id = $request->list_id;
-        $success = false;
-
-        #combine id and value from existing option
-        if($request->editid !== null && $request->values !== null)
-        {
-            $dataedit = array_combine($request->editid,$request->values);
-        }
-        else 
-        {
-            $dataedit = null;
-        }
-
-        #insert new option
-        if($request->data !== null && count($request->data) > 0)
-        {
-            foreach($request->data as $row)
-            {
-                $additional = new Additional;
-                $additional->id_parent = $parent_id;
-                $additional->list_id = $list_id;
-                $additional->name = $row;
-                $additional->save();
-            }
-
-            if($additional->save() == true)
-            {
-                $success = true;
-            }
-        }
-        #data edit
-        else if($dataedit !== null && count($dataedit) > 0)
-        {
-            foreach($dataedit as $id=>$values)
-            {
-                $additionaldropdown = Additional::where([['id',$id]])->update(['name'=>$values]);
-            }
-
-            if($additionaldropdown == true)
-            {
-                $success = true;
-            }
-        }
-        else
-        {
-            $data['msg'] = 'Please create option first!';
-            return response()->json($data);
-        }
-
-        if($success == true)
-        {
-            $data['msg'] = 'Your option menu has been added!';
-            $data['listid'] = $list_id;
-        } 
-        else
-        {
-            $data['msg'] = 'Error! Sorry there is trouble with our system';
-        }
-
-        return response()->json($data);
-    }
-
     /* Update List content */
     public function updateListContent(Request $request){
         $userid = Auth::id();
         $id = $request->id;
         $list_label = $request->list_label;
-        $bot_api = $request->bot_api;
-        $bot_name = $request->bot_name;
-        $date_event = $request->date_event;
         $editor = $request->editor;
         $pixel = $request->pixel;
-        $message = $request->message;
         $fields = $request->fields;
         $dropfields = $request->dropfields;
         $additional = null;
@@ -830,14 +828,9 @@ class ListController extends Controller
 
         $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
             'label'=>$list_label,
-            'bot_api'=>$bot_api,
-            'bot_name'=>$bot_name,
-            'event_date'=>$date_event,
             'content'=> $editor,
             'pixel_text'=> $pixel,
-            'message_text'=> $message,
         ]);
-
 
         if($fields !== null)
         {
@@ -855,7 +848,7 @@ class ListController extends Controller
             }
         }
 
-        ##
+        //ADDITIONAL UPDATE
 
         $data['listid'] = $id;
         

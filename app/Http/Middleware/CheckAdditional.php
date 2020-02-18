@@ -21,51 +21,21 @@ class CheckAdditional
     {
 
         $label = $request->list_label;
-        $botapi = $request->bot_api;
-        $botname = $request->bot_name;
-        $date_event = $request->date_event;
         $fields = $request->fields;
         $dropfields = $request->dropfields;
-        $today = Carbon::now()->format('Y-m-d h:i');
-        $error = array();
         $data['error'] = true;
         $data['additionalerror'] = false;
         $checkuserlist = new CheckUserLists;
+        $error = array();
 
         if(empty($label) || $label == null)
         {
             $error['label'] = 'List name cannot be empty';
         } 
 
-        if(empty($botapi) || $botapi == null)
-        {
-            $error['botapi'] = 'Bot API cannot be empty';
-        } 
-
-        if(empty($botname) || $botname == null)
-        {
-            $error['botname'] = 'Bot Name cannot be empty';
-        } 
-
-
-        if($checkuserlist->checkBotName($request->bot_name) == false)
-        {
-          $error['botname'] = 'Bot name available already!';
-        } 
-
         if(strlen($label) > 50)
         {
             $error['label'] = 'List name cannot greater than 50 characters';
-        }
-
-        if($date_event !== null && $date_event < $today)
-        {
-            $error['date_event'] = 'Date and time event cannot be less than today';
-        }
-
-        if($this->checkBotAPI($botapi) == false)
-        {
-           $error['botapi'] = 'Sorry, Bot API had used by another account';
         }
 
         if(count($error) > 0)
@@ -79,27 +49,27 @@ class CheckAdditional
             $fields_array = array_column($fields, 'field');
             $fields_filter = array_unique($fields_array);
                
-            #field
+            //field
             foreach($fields as $row)
             {
                 if(empty($row['field']))
                 {
                     $data['additionalerror'] = true;
-                    $data['message'] = 'Field cannot be empty';
+                    $data['message'] = 'Additional field cannot be empty';
                     return response()->json($data);
                 }
 
-                # maximum character length
+                // maximum character length
                 if(strlen($row['field']) > 20){
                     $data['additionalerror'] = true;
                     $data['message'] = 'Maximum character length is 20';
                     return response()->json($data);
                 }
 
-                # default value
-                if($row['field'] == 'name' || $row['field'] == 'wa_number'){
+                // default value
+                if($row['field'] == 'subscribername' || $row['field'] == 'email' || $row['field'] == 'phone' || $row['field'] == 'usertel'){
                     $data['additionalerror'] = true;
-                    $data['message'] = 'Sorry, name and wa_number has set as default';
+                    $data['message'] = 'Sorry, subscribername, email, phone, usertel has set as default';
                     return response()->json($data);
                 }
             }
@@ -107,12 +77,12 @@ class CheckAdditional
             if(count($fields_array) !== count($fields_filter))
             {
                 $data['additionalerror'] = true;
-                $data['message'] = 'Field value cannot be same';
+                $data['message'] = 'Additional field value cannot be same';
                 return response()->json($data);
             }
         }
 
-            #dropdown
+        //dropdown
         if($dropfields!== null)
         {
             $dropdown_array = array_column($dropfields,'field');
@@ -123,21 +93,21 @@ class CheckAdditional
                 if(empty($rows['field']))
                 {
                     $data['additionalerror'] = true;
-                    $data['message'] = 'Field cannot be empty';
+                    $data['message'] = 'Additional dropdown field cannot be empty';
                     return response()->json($data);
                 }
 
-                 # maximum character length
+                // maximum character length
                 if(strlen($rows['field']) > 20){
                     $data['additionalerror'] = true;
-                    $data['message'] = 'Maximum character length is 20';
+                    $data['message'] = 'Additional dropdown maximum character length is 20';
                     return response()->json($data);
                 }
 
-                 # default value
-                if($rows['field'] == 'name' || $rows['field'] == 'wa_number'){
+                // default value
+                 if($row['field'] == 'subscribername' || $row['field'] == 'email' || $row['field'] == 'phone' || $row['field'] == 'usertel'){
                     $data['additionalerror'] = true;
-                    $data['message'] = 'Sorry both of name and wa_number has set as default';
+                    $data['message'] = 'Sorry, subscribername, email, phone, usertel has set as default';
                     return response()->json($data);
                 }
             }
@@ -146,13 +116,13 @@ class CheckAdditional
             if(count($dropdown_array) !== count($dropdown_filter))
             {
                 $data['additionalerror'] = true;
-                $data['message'] = 'Field value cannot be same';
+                $data['message'] = 'Additional dropdown field value cannot be same';
                 return response()->json($data);
             }
 
         }
 
-        #both dropdown and field
+        //both dropdown and field
         if($fields!== null && $dropfields!== null)
         {
             $fields_array = array_column($fields, 'field');
@@ -167,14 +137,14 @@ class CheckAdditional
             if((count($fields_array) !== count($fields_filter)) || (count($dropdown_array) !== count($dropdown_filter)) || (count($merge_array) !== count($filter_array)) )
             {
                 $data['additionalerror'] = true;
-                $data['message'] = 'Field value cannot be same';
+                $data['message'] = 'Additional field value cannot be same';
                 return response()->json($data);
             }
         }
         return $next($request);
     }
 
-     /* To allow function if value equal wih user id */
+     /* To allow function if value equal wih user id 
     private function checkBotAPI($bot_api){
         $userid = Auth::id();
         $getlist = UserList::where('bot_api','=',$bot_api)->first();
@@ -191,6 +161,7 @@ class CheckAdditional
             return false;
         }
     }
+    */
 
 /* End check additional */
 }
