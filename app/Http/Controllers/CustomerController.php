@@ -11,6 +11,7 @@ use App\Reminder;
 use App\ReminderCustomers;
 use App\Sender;
 use App\Additional;
+use App\PhoneNumber;
 use App\Console\Commands\SendWA as SendMessage;
 
 class CustomerController extends Controller
@@ -99,6 +100,10 @@ class CustomerController extends Controller
             $customer->email = $request->email;
 
             $phoneNumber = PhoneNumber::find($lists->phone_number_id);
+            // dd($lists);
+            // dd($phoneNumber);
+
+            // $phoneNumber = PhoneNumber::find(88);
             if($request->selectType == 'ph'){
 
               $customer->telegram_number = '+'.$request->phone;
@@ -133,7 +138,20 @@ class CustomerController extends Controller
               } else {
                 // echo $response."\n";
                 $result = json_decode($response,true);
-                $customer->chat_id = $response;
+                dd($result);
+                $chat_id = 0;
+                foreach($result as $res){
+                  if ($res["phone_number"]==$request->phone) {
+                    $chat_id = $res["id"];
+                  }
+                }
+                if ($chat_id == 0){
+                  $data['success'] = false;
+                  $data['message'] = 'Error-000! Sorry there is something wrong with our system';
+                  return response()->json($data);
+                }
+
+                $customer->chat_id = $chat_id;
               }
 
             } 

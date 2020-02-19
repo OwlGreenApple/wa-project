@@ -23,8 +23,6 @@ class ListsTableSeeder extends Seeder
          DB::table('lists')->insert([
         	'user_id' => 1,
             'name' => 'Omnifluencer',
-            'is_event'=>1,
-            'event_date'=> Carbon::now(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
