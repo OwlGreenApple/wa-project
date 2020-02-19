@@ -234,9 +234,10 @@
         <div class="modal-body">
             <div class="form-group">
                  <div class="mb-2">
-                  <form>
+                  <form id="importform">
                     <label>Import Contact</label>
                       <input class="form-control" name="csv_file" type="file" />
+                      <input type="hidden" name="list_id_import" value="{{ $id }}" />
                     <span><i>Please .csv only</i></span>
 
                     <div><a>Download Example CSV</a></div>
@@ -400,6 +401,7 @@
     table();
     Choose();
     openImport();
+    csvImport();
     addContact();
     //column -- edit
     displayAdditional();
@@ -486,6 +488,41 @@
   function openImport() {
     $(".open_import").click(function(){
       $("#import-contact").modal();
+    });
+  }
+
+  function csvImport()
+  {
+    $("body").on('submit','#importform',function(e){
+        e.preventDefault();
+        var data = new FormData($(this)[0]);
+        $.ajaxSetup({
+              headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+        });
+        $.ajax({
+            type : 'POST',
+            url : "{{ url('import_csv_list_subscriber') }}",
+            data : data,
+            contentType: false,
+            processData: false,
+            beforeSend: function()
+            {
+              $('#loader').show();
+              $('.div-loading').addClass('background-load');
+            },
+            success : function(result){
+              $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
+              $('input[name="csv_file"]').val('');
+
+              alert(result.message);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+            }
+        });/* end ajax */
     });
   }
 
