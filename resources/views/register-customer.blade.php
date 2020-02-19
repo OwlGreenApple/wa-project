@@ -87,11 +87,6 @@
                       <span class="error email"></span>
                     </div> 
 
-                    <!--<div class="form-group">
-                      <label>Custom Field</label>
-                      <input type="text" class="form-control" placeholder="Input Your Custom Field" />
-                    </div>-->
-
                     @if(count($additional) > 0)
                       @foreach($additional as $row=>$val)
                         <div class="form-group">
@@ -113,12 +108,13 @@
                       @endforeach
                     @endif
 
-                    <div class="text-left">
-                      <button type="submit" class="btn btn-custom btn-lg">Submit</button>
-                    </div>
                     <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
                     <input type="hidden" name="listname" value="{{$listname}}">
                     <input type="hidden" name="listid" value="{{$id}}">
+
+                    <div class="text-left">
+                      <button type="submit" class="btn btn-custom btn-lg">Submit</button>
+                    </div>
 
                     <span class="error captcha"></span>
                 </form>

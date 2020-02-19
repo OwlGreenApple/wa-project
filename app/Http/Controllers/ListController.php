@@ -21,6 +21,7 @@ use App\Reminder;
 use App\PhoneNumber;
 use Carbon\Carbon;
 use DB;
+use Session;
 
 class ListController extends Controller
 {
@@ -64,6 +65,9 @@ class ListController extends Controller
 
     public function formList()
     {
+      $userid = Auth::id();
+      //USE THIS CODE LATER ON VERSION 2
+      $phonenumber = PhoneNumber::where('user_id',$userid)->get();
       return view('list.list');
     }
 
@@ -71,6 +75,7 @@ class ListController extends Controller
     {
       $userid = Auth::id();
       $label = $request->listname;
+      $autoreply = $request->autoreply;
       $rules =  [
             'listname' => 'required|min:4|max:190',
       ];
@@ -83,9 +88,60 @@ class ListController extends Controller
                       ->withErrors($validator);
       }
 
-      $phonenumber = PhoneNumber::where('user_id',$userid)->get();
+      $phone = PhoneNumber::where('user_id',$userid)->first();
 
-      return view('list.list-create',['label'=>$label,'phonenumber'=>$phonenumber]);
+      $list = new UserList;
+      $list->user_id = Auth::id();
+      $list->name = $this->createRandomListName();
+      $list->label = $label;
+      $list->phone_number_id = $phone->id;
+      $list->save();
+      $listid = $list->id;
+      $listname = $list->name;
+
+      $data = array(
+        'userid'=>$userid,
+        'label'=>$label,
+        'listid'=>$listid,
+        'listname'=>$listname,
+      );
+
+      $check = UserList::where('id',$listid)->first();
+
+      if(is_null($check)){
+        return redirect('list-form')->with('error_number','Error! list failed to created, please contact administrator');
+      }
+
+      //AUTO REPLY
+      if(!empty($autoreply)){
+        $reminder = new Reminder;
+        $reminder->user_id = $userid;
+        $reminder->list_id = $listid;
+        $reminder->message = $autoreply;
+        $reminder->save();
+      }
+
+      Session::flash('data',$data);
+      return redirect('list-created');
+    }
+
+    public function createdList(Request $request)
+    {
+      if(Session::get('data') == null)
+      {
+          return redirect('list-form');
+      }
+      else {
+          Session::reflash();
+      }
+      $userid = Session::get('data')['userid'];
+      $label = Session::get('data')['label'];
+      $listname = Session::get('data')['listname'];
+      $id = Session::get('data')['listid'];
+      $listid = encrypt($id);
+      $url = env('APP_URL').$listname;
+
+      return view('list.list-create',['label'=>$label,'listid'=>$listid,'url'=>$url,'listname'=>$listname,'id'=>$id]);
     }
 
     public function saveList(Request $request)
@@ -120,25 +176,30 @@ class ListController extends Controller
                 //empty fields
                 if(empty($ipt))
                 {
-                    return redirect('createlist')->with('error_number','Error! name of fields cannot be empty');
+                    $response['status'] = 'Error! name of fields cannot be empty';
+                    return response()->json($response);
                 }
 
                 //maximum characters
                 if(strlen($ipt) > 20)
                 {
-                    return redirect('createlist')->with('error_number','Error! Maximum character length is 20');
+                    $response['status'] = 'Error! Maximum character length is 20';
+                    return response()->json($response);
                 }
 
-                // default name
-                if($ipt == 'name' || $ipt == 'bot_api'){
-                    return redirect('createlist')->with('error_number','Error! Sorry both of name and bot_api has set as default');
+                 // default name
+                if($ipt == 'subscribername' || $ipt == 'email' || $ipt == 'phone' || $$ipt == 'usertel'){
+                   $response['status'] = 'Sorry, subscribername, email, phone, usertel has set as default';
+                    return response()->json($response);
                 }
+
             }
         }
 
         // fields that have same value
         if(isset($req['fields']) && isset($req['isoption']) && (count($fields) <> count($filter_fields))){
-            return redirect('createlist')->with('error_number','Error! name of fields cannot be same');
+            $response['status'] = 'Error! name of fields cannot be same';
+            return response()->json($response);
         }
 
         // validation dropdown
@@ -148,30 +209,35 @@ class ListController extends Controller
                 //empty fields
                 if(empty($ipt))
                 {
-                    return redirect('createlist')->with('error_number','Error! name of fields cannot be empty');
+                    $response['status'] = 'Error! name of fields cannot be empty';
+                    return response()->json($response);
                 }
 
                 //maximum characters
                 if(strlen($ipt) > 20)
                 {
-                    return redirect('createlist')->with('error_number','Error! Maximum character length is 20');
+                    $response['status'] = 'Error! Maximum character length is 20';
+                    return response()->json($response);
                 }
 
                 // default name
-                if($ipt == 'name' || $ipt == 'bot_api'){
-                    return redirect('createlist')->with('error_number','Error! Sorry both of name and bot_api has set as default');
+                if($ipt == 'subscribername' || $ipt == 'email' || $ipt == 'phone' || $$ipt == 'usertel'){
+                   $response['status'] = 'Sorry, subscribername, email, phone, usertel has set as default';
+                    return response()->json($response);
                 }
             }
         }
 
         if(isset($req['dropdown']) && $filter_dropdown == null)
         {
-             return redirect('createlist')->with('error_number','Error! you must create option if create dropdown');
+            $response['status'] = 'Error! you must create option if create dropdown';
+            return response()->json($response);
         }
 
         // fields that have same value
         if(isset($req['dropdown']) && (count($dropdown) <> count($filter_dropdown))){
-            return redirect('createlist')->with('error_number','Error! name of fields cannot be same');
+            $response['status'] = 'Error! name of fields cannot be same';
+            return response()->json($response);
         }
 
         // Filter to avoid same name both of field and dropdown
@@ -183,10 +249,11 @@ class ListController extends Controller
 
         if(isset($req['fields']) && isset($req['dropdown']) && count($merge) <> count($array_filter))
         {
-            return redirect('createlist')->with('error_number','Error! name of fields cannot be same');
+            $response['status'] = 'Error! name of fields cannot be same';
+            return response()->json($response);
         } 
         
-        //Insert list to database
+        //Update list to database
         $list = new UserList;
         $list->user_id = Auth::id();
         $list->name = $this->createRandomListName();
@@ -196,6 +263,7 @@ class ListController extends Controller
         $list->pixel_text = $req['pixel'];
         $list->save();
         $listid = $list->id;
+        $listname = $list->name;
 
         if($list->save() == true){
             $cfields = count($fields);
@@ -253,8 +321,10 @@ class ListController extends Controller
 
         // if success insert all additonal
         if($success == true){
+            $response['link'] = env('APP_URL').$listname;
             $response['status'] = 'Your list has been created';
         } else if($success == null) {
+            $response['link'] = env('APP_URL').$listname;
             $response['status'] = 'Your list has been created';
         } else {
             $response['status'] = 'Error!, failed to create list';
@@ -318,25 +388,14 @@ class ListController extends Controller
         return view('list.list-table',['lists'=>$lists]);
     }
 
-    public function editList($listid){
-        $list = UserList::where('id',$listid)->first();
-
-        if(is_null($list)){
-            $data = null;
-        } else {
-            $data = array(
-                'list_label'=>$list->label,
-                'list_name'=>$list->name,
-                'content'=> $list->content,
-                'pixel'=>$list->pixel_text,
-                'listid'=>$listid
-            );
-        }
-       return view('list.list-edit',['data'=>$data]);
-    }
 
     //DISPLAY ADDITIONAL ON EDIT PAGE
     public function additionalList(Request $request){
+        if(!empty(Session::get('data')))
+        {
+            Session::reflash();
+        }
+
         $listid = $request->id;
         $additional = Additional::where('list_id',$listid)->get();
         $data['additional'] = $additional;
@@ -449,6 +508,130 @@ class ListController extends Controller
         return response()->json($data);
     }
 
+    /* Update List content */
+    public function updateListContent(Request $request){
+        if(Session::get('data') <> null)
+        {
+            Session::reflash();
+        }
+       
+        $userid = Auth::id();
+        $id = $request->id;
+        $list_label = $request->list_label;
+        $editor = $request->editor;
+        $pixel = $request->pixel;
+        $fields = $request->fields;
+        $dropfields = $request->dropfields;
+        $additional = null;
+        $additionaldropdown = null;
+        $data['additionalerror'] = false;
+
+        $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
+            'label'=>$list_label,
+            'content'=> $editor,
+            'pixel_text'=> $pixel,
+        ]);
+
+        if($fields !== null)
+        {
+            foreach($fields as $row)
+            {
+                $additional = Additional::where([['list_id',$id],['id',$row['idfield']]])->update(['name'=>$row['field'], 'is_optional'=>$row['isoption']]);
+            }
+        } 
+
+        if($dropfields !== null)
+        {
+            foreach($dropfields as $col)
+            {
+                $additionaldropdown = Additional::where([['list_id',$id],['id',$col['idfield']]])->update(['name'=>$col['field']]);
+            }
+        }
+
+        //ADDITIONAL UPDATE
+
+        $data['listid'] = $id;
+        
+        if($lists == true || $additional == true || $additionaldropdown == true || $additional == null || $additionaldropdown == null)
+        {
+            $data['message'] = 'Data updated successfully';
+        } 
+        else if($additional == false)
+        {
+            $data['additionalerror'] = true;
+            $data['message'] = 'Error! Unable to update field';
+        } 
+        else if($additionaldropdown == false)
+        {
+            $data['additionalerror'] = true;
+            $data['message'] = 'Error! Unable to update dropdown field';
+        }
+        else 
+        {
+            $data['additionalerror'] = true;
+            $data['message'] = 'Error! Data failed to update';
+        }
+        return response()->json($data);
+    }
+
+    #DELETE FIELD ADDITIONAL
+    public function delField(Request $request)
+    {
+        $id = $request->id;
+        $list_id = $request->list_id;
+        $deladditional = false;
+
+        $additional = Additional::where([['id',$id],['list_id',$list_id]]);
+
+        $addtional_dropdown = Additional::where([['list_id',$list_id],['id_parent',$id]]);
+
+        if(!is_null($additional->first()))
+        {
+            $deladditional = $additional->delete();
+        } 
+
+        if($addtional_dropdown->count() > 0)
+        {
+            $deladditionaldropdown = $addtional_dropdown->delete();
+        } 
+
+        if($deladditional == true){
+            $data['listid'] = $list_id;
+            $data['msg'] = 'Field successfully deleted';
+        } else {
+            $data['msg'] = 'ID not available to delete';
+        }
+        return response()->json($data);
+    }
+
+    //EDIT LIST
+    public function editList($listid){
+        if(empty($listid) || $listid == null){
+            return redirect('lists');
+        } 
+
+        $userid = Auth::id();
+        $list = UserList::where('id',$listid)->first();
+        $customer = Customer::where('user_id',$userid)->get();
+
+        if(is_null($list)){
+            return redirect('lists');
+        } 
+
+        $data = array(
+            'list_label'=>$list->label,
+            'list_name'=>$list->name,
+            'content'=> $list->content,
+            'pixel'=>$list->pixel_text,
+            'listid'=>$listid
+        );
+
+        $url = env('APP_URL').$list->name;
+        $id = $listid;
+        $list_id = encrypt($id);
+      
+       return view('list.list-edit',['data'=>$data, 'contact'=>$customer,'label'=>$list->label,'listid'=>$list_id,'url'=>$url,'listname'=>$list->name,'id'=>$id]);
+    }
 
     //DUPLICATE LIST
     public function duplicateList(Request $request)
@@ -614,6 +797,34 @@ class ListController extends Controller
         }
         return response()->json($response);
         */
+    }
+
+    //IMPORT SUBSCRIBER / CUSTOMER INTO CSV
+    function importCSVListSubscribers(Request $request)
+    {
+        $id_list = $request->list_id_import;
+        $userid = Auth::id();
+
+        $check = UserList::where([['id',$id_list],['user_id',$userid]])->first();
+        if(is_null($check))
+        {
+            $msg['message'] = 'Invalid List!';
+            return response()->json($msg);
+        }
+
+        $file = $request->file('csv_file');
+        $import = new ListSubscribersImport($id_list);
+        Excel::import($import, $file);
+        
+        if($import->getRowCount() > 0)
+        {
+            $msg['message'] = 'Import Successful';
+        }
+        else
+        {
+            $msg['message'] = 'Import Failed';
+        }
+        return response()->json($msg);
     }
 
 
@@ -856,34 +1067,6 @@ class ListController extends Controller
         return (new ListSubscribersExport($id_list))->download($filename);
     }
 
-    #IMPORT SUBSCRIBER / CUSTOMER INTO CSV
-    function importCSVListSubscribers(Request $request)
-    {
-        $id_list = $request->list_id_import;
-        $userid = Auth::id();
-
-        $check = UserList::where([['id',$id_list],['user_id',$userid]])->first();
-        if(is_null($check))
-        {
-            $msg['message'] = 'Invalid List!';
-            return response()->json($msg);
-        }
-
-        $file = $request->file('csv_file');
-        $import = new ListSubscribersImport($id_list);
-        Excel::import($import, $file);
-        
-        if($import->getRowCount() > 0)
-        {
-            $msg['message'] = 'Import Successful';
-        }
-        else
-        {
-            $msg['message'] = 'Import Failed';
-        }
-        return response()->json($msg);
-    }
-
     #CUSTOMER ADDITIONAL INPUT
     public function customerAdditional(Request $request){
         $id = $request->id;
@@ -984,97 +1167,6 @@ class ListController extends Controller
             $data['msg'] = 'Error 001 - Unable to make option';
         }
         $data['listid'] = $list_id;
-        return response()->json($data);
-    }
-
-    /* Update List content */
-    public function updateListContent(Request $request){
-        $userid = Auth::id();
-        $id = $request->id;
-        $list_label = $request->list_label;
-        $editor = $request->editor;
-        $pixel = $request->pixel;
-        $fields = $request->fields;
-        $dropfields = $request->dropfields;
-        $additional = null;
-        $additionaldropdown = null;
-        $data['additionalerror'] = false;
-
-        $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
-            'label'=>$list_label,
-            'content'=> $editor,
-            'pixel_text'=> $pixel,
-        ]);
-
-        if($fields !== null)
-        {
-            foreach($fields as $row)
-            {
-                $additional = Additional::where([['list_id',$id],['id',$row['idfield']]])->update(['name'=>$row['field'], 'is_optional'=>$row['isoption']]);
-            }
-        } 
-
-        if($dropfields !== null)
-        {
-            foreach($dropfields as $col)
-            {
-                $additionaldropdown = Additional::where([['list_id',$id],['id',$col['idfield']]])->update(['name'=>$col['field']]);
-            }
-        }
-
-        //ADDITIONAL UPDATE
-
-        $data['listid'] = $id;
-        
-        if($lists == true || $additional == true || $additionaldropdown == true || $additional == null || $additionaldropdown == null)
-        {
-            $data['message'] = 'Data updated successfully';
-        } 
-        else if($additional == false)
-        {
-            $data['additionalerror'] = true;
-            $data['message'] = 'Error! Unable to update field';
-        } 
-        else if($additionaldropdown == false)
-        {
-            $data['additionalerror'] = true;
-            $data['message'] = 'Error! Unable to update dropdown field';
-        }
-        else 
-        {
-            $data['additionalerror'] = true;
-            $data['message'] = 'Error! Data failed to update';
-        }
-        return response()->json($data);
-    }
-
-    #DELETE FIELD ADDITIONAL
-    public function delField(Request $request)
-    {
-        $id = $request->id;
-        $list_id = $request->list_id;
-        $deladditional = false;
-
-        $additional = Additional::where([['id',$id],['list_id',$list_id]]);
-
-        $addtional_dropdown = Additional::where([['list_id',$list_id],['id_parent',$id]]);
-
-        if(!is_null($additional->first()))
-        {
-            $deladditional = $additional->delete();
-        } 
-
-        if($addtional_dropdown->count() > 0)
-        {
-            $deladditionaldropdown = $addtional_dropdown->delete();
-        } 
-
-        if($deladditional == true){
-            $data['listid'] = $list_id;
-            $data['msg'] = 'Field successfully deleted';
-        } else {
-            $data['msg'] = 'ID not available to delete';
-        }
         return response()->json($data);
     }
 

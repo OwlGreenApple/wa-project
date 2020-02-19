@@ -105,7 +105,7 @@ class CheckAdditional
                 }
 
                 // default value
-                 if($row['field'] == 'subscribername' || $row['field'] == 'email' || $row['field'] == 'phone' || $row['field'] == 'usertel'){
+                 if($rows['field'] == 'subscribername' || $rows['field'] == 'email' || $rows['field'] == 'phone' || $rows['field'] == 'usertel'){
                     $data['additionalerror'] = true;
                     $data['message'] = 'Sorry, subscribername, email, phone, usertel has set as default';
                     return response()->json($data);

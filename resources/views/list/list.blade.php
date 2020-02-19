@@ -24,7 +24,26 @@
 
         <form method="GET" action="{{url('list-create')}}">
           @csrf
-          <input name="listname" type="text" class="form-control custom-form" placeholder="Your List Name"/>
+          <div class="form-group">
+            <input name="listname" type="text" class="form-control custom-form" placeholder="Your List Name"/>
+          </div>
+
+          <div class="form-group">
+            <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text"></textarea>
+          </div>
+
+          <!-- open this on version 2 later
+           <div class="input-group form-group">
+               <select id="phoneid" name="phoneid" class="form-control custom-select">
+                  if(phonenumber->count() > 0)
+                    foreach(phonenumber as rows)
+                      <option value="rows->id">rows->phone_number</option>
+                    endforeach
+                  endif
+               </select>
+            </div> 
+          -->
+
           <div class="text-right">
             <button class="btn btn-custom" href="{{url('lists-create')}}">Create List</button>
           </div>
@@ -35,4 +54,10 @@
   </div>
 </div>
 
+<script type="text/javascript">
+  $("#divInput-description-post").emojioneArea({
+        pickerPosition: "right",
+        mainPathFolder : "{{url('')}}",
+  });
+</script>
 @endsection

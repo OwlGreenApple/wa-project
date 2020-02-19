@@ -102,6 +102,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('lists-table', 'ListController@dataList');
   Route::get('list-form', 'ListController@formList');
   Route::get('list-create', 'ListController@createList');
+  Route::get('list-created', 'ListController@createdList');
   Route::post('list-save','ListController@saveList')->name('savelist'); 
   Route::get('list-delete','ListController@delListContent')->name('deletelist');
   Route::get('list-search','ListController@searchList')->name('searchlist');
@@ -109,9 +110,18 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('list-additional','ListController@additionalList')->name('additionalList');
   Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');
   Route::post('list-duplicate','ListController@duplicateList')->name('duplicatelist');
+  Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers');
 
   /* Additional */
   Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
+  Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
+  Route::get('editdropfields','ListController@editDropfields')->name('editdropfields');
+  Route::post('insertfields','ListController@insertFields')->name('insertfields');
+  Route::post('insertdropdown','ListController@insertDropdown')->name('insertdropdown');
+  Route::get('delfield','ListController@delField')->name('delfield');
+  Route::post('updateadditional','ListController@updateField')->name('updateadditional');
+  Route::get('displayajaxfield','ListController@displayAjaxAdditional')->name('displayajaxfield');
+  Route::get('customeradditional','ListController@customerAdditional')->name('customeradditional');
 
   /*old code*/
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
@@ -119,23 +129,10 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	Route::post('addlist','ListController@addList')->name('addlist'); 
 	
 	Route::get('userlist','ListController@userList')->name('userlist');
-	Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
-
-	Route::get('editdropfields','ListController@editDropfields')->name('editdropfields');
-	
-	Route::post('insertfields','ListController@insertFields')->name('insertfields');
-	Route::post('insertdropdown','ListController@insertDropdown')->name('insertdropdown');
 	
 	Route::post('exportlistsubscriber','ListController@exportListSubscriber')->name('exportlistsubscriber');
 	Route::get('export_csv_list_subscriber/{id_list}','ListController@exportListCSVSubscriber');
-	Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers');
-
-	/* Additional */
-	Route::get('delfield','ListController@delField')->name('delfield');
-	Route::post('updateadditional','ListController@updateField')->name('updateadditional');
-	Route::get('displayajaxfield','ListController@displayAjaxAdditional')->name('displayajaxfield');
-	Route::get('customeradditional','ListController@customerAdditional')->name('customeradditional');
-
+	
 	/* BroadCast */
 	Route::get('broadcast','BroadCastController@index')->name('broadcast');
 	// form to create broadcast reminder

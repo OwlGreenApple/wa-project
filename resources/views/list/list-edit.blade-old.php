@@ -2,156 +2,74 @@
 
 @section('content')
 
-  <!-- TOP SECTION -->
-<div class="container act-tel-list-data">
-  <div class="left">
-    <h2>{{$label}}</h2>
-    <h4 class="form-control">{{$url}}</h4>
-  </div>
-  <div class="clearfix"></div>
-</div>
-
 <div class="container">
-  <ul id="tabs" class="row">
-      <li class="col-lg-4"><a id="tab1">Contact</a></li>
-      <li class="col-lg-4"><a id="tab2">Add Contact</a></li>
-      <li class="col-lg-4"><a id="tab3">Form</a></li>
-  </ul>
-
-  <!-- TABS CONTAINER -->
-  <div class="tabs-content">
-    <!-- TABS 1 -->
-    <div class="tabs-container" id="tab1C">
-      <div class="act-tel-tab">
-          <h2>Add Your Contact</h2>
-          <h6 class="mt-3">From <a id="tab-contact">Add Contact</a> or <a id="tab-form">Form</a></h6>
+  <div class="act-tel-tab">
+      <div class="text-left wrapper">
+        <h5><strong>List Name</strong> : {{$data['list_label']}}</h5>
       </div>
-    <!-- end tabs -->  
-    </div>
+      <form class="form-contact" id="edit_list">
 
-    <!-- TABS 2 -->
-    <div class="tabs-container" id="tab2C">
-      <div class="act-tel-tab">
-        <div class="form-control wrapper message mimport">
-          If you want add contact more than 1 please click : "<b><a class="open_import">import contact</a></b>" <!--or "<b>take from group</b>" if you want -->
-        </div>
-
-        <div class="error_message"><!-- error --></div>
-        <div class="main"><!-- error --></div>
-        <form class="wrapper add-contact">
-            <div class="form-group">
-              <label>Name:</label>
-              <input type="text" name="subscribername" class="form-control" placeholder="Input Your Name" >
-              <span class="error name"></span>
-            </div>
-
-            <div class="prep1">
-              <div class="input-group mt-4 mb-3 move_radio">
-                <div class="input-group-prepend">
-                  <button class="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telegram Contact</button>
-                  <div class="dropdown-menu">
-                    <a class="dropdown-item" id="ph">Phone</a>
-                    <a class="dropdown-item" id="tl">Telegram Username</a>
-                  </div>
-                </div>
-
-                <input type="hidden" name="selectType" id="selectType" value="ph">
-                <input type="text" name="phone" class="form-control cphone" placeholder="Input your phone">
-                <input type="text" name="usertel" class="form-control ctel" placeholder="Input your Telegram username">
-              </div>
-              <span class="error phone"></span>
-            </div>
-
-            <div class="form-group">
-              <label>Email</label>
-              <input type="email" name="email" class="form-control" placeholder="Input Your Email" />
-              <span class="error email"></span>
-            </div>
-
-            <input type="hidden" name="listname" value="{{$listname}}">
-            <input type="hidden" name="listid" value="{{ $listid }}">
-
-            <div class="text-right">
-              <button type="submit" class="btn btn-custom">Add Contact</button>
-            </div>
-        </form>
-      </div>
-    <!-- end tabs -->  
-    </div>
-
-    <!-- TABS 3 -->
-    <div class="tabs-container" id="tab3C">
-      <div class="act-tel-tab">
         <div class="wrapper">
-          <div class="form-control col-lg-6 message">
-            <sb>Saved, click to copy link from</sb> <a class="icon-copy"></a>
-          </div>
+          <div class="form-contact">
+            <div class="input-group form-group">
+              <textarea name="editor1" id="editor1" rows="10" cols="80">{{$data['content']}}</textarea>
+            </div>
+
+            <div class="input-group form-group">
+                <input type="text" name="list_label" class="form-control" placeholder="Input List name" value="{{$data['list_label']}}">
+                <div class="error list_label col-lg-12 text-left"></div>
+            </div> 
         </div>
+        <!-- end wrapper -->
 
-        <form class="form-contact" id="edit_list">
+         <!-- outer wrapper -->
+        <div class="outer-wrapper">
+          <div class="form-row">
+            <div class="form-group col-md-3 py-2">
+              <h6>Custom Fields</h6>
+            </div>
 
-          <div class="wrapper">
-            <div class="form-contact">
-              <div class="input-group form-group">
-                <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
+            <div class="form-group col-md-8">
+              <div class="relativity">
+                 <select id="type_fields" class="form-control custom-select">
+                    <option value="1">Fields</option>
+                    <option value="2">Dropdown</option>
+                 </select>
+                 <span class="icon-carret-down-circle"></span>
               </div>
-
-              <div class="input-group form-group">
-                  <input type="text" name="list_label" class="form-control" placeholder="Input List name" value="{{$label}}"/>
-                  <div class="error list_label col-lg-12 text-left"></div>
-              </div> 
+            </div>
+            <div class="form-group col-md-1">
+              <button type="button" class="btn btn-form add-field"><span class="icon-add"></span></button>
+            </div>
           </div>
-          <!-- end wrapper -->
 
-           <!-- outer wrapper -->
-          <div class="outer-wrapper">
-            <div class="form-row">
-              <div class="form-group col-md-3 py-2">
-                <h6>Custom Fields</h6>
-              </div>
-
-              <div class="form-group col-md-8">
-                <div class="relativity">
-                   <select id="type_fields" class="form-control custom-select">
-                      <option value="1">Fields</option>
-                      <option value="2">Dropdown</option>
-                   </select>
-                   <span class="icon-carret-down-circle"></span>
-                </div>
-              </div>
-              <div class="form-group col-md-1">
-                <button type="button" class="btn btn-form add-field"><span class="icon-add"></span></button>
-              </div>
-            </div>
-
-            <div id="additional" class="form-row">
-                <!-- additional -->
-            </div>
-
+          <div id="additional" class="form-row">
+              <!-- additional -->
           </div>
-          <!-- end outer wrapper -->
 
-          <!-- middle wrapper -->
-          <div class="wrapper">
-            <div class="form-group text-left">
-               <label>Pixel</label>
-               <textarea name="pixel" class="form-control"></textarea>
-            </div>
-            
-            <div class="text-right">
-              <button type="submit" class="btn btn-custom">Add Data</button>
-            </div>
-
-        </form>
-          
         </div>
-        <!-- end middle wrapper -->
+        <!-- end outer wrapper -->
 
-        <!-- last wrapper -->
+        <!-- middle wrapper -->
         <div class="wrapper">
           <div class="form-group text-left">
-             <label class="col-md-12 row">FORM URL&nbsp;&nbsp;<a data-link="{{$url}}" class="icon-copy btn-copy"></a></label>
-             <input id="linkcopy" value="{{$url}}" type="text" class="form-control-lg" />
+             <label>Pixel</label>
+             <textarea name="pixel" class="form-control">{{$data['pixel']}}</textarea>
+          </div>
+          
+          <div class="text-right">
+            <button type="submit" class="btn btn-custom">Update Data</button>
+          </div>
+
+      </form>
+
+      <!-- copy code -->
+
+        <div class="wrapper">
+          <div class="form-group text-left">
+             <label class="col-md-12 row">FORM URL&nbsp;&nbsp;<a class="btn-copy" data-link="{{ env('APP_URL')}}{{$data['list_name']}}"><span class="icon-copy"></span></a></label>
+
+             <input value="{{ env('APP_URL')}}{{$data['list_name']}}" type="text" class="form-control-lg" />
           </div>
           
           <div class="form-group text-left">
@@ -190,43 +108,9 @@
         </div>
         <!-- end last wrapper -->
 
-      </div>
-    <!-- end tabs -->    
-    </div>
-
+  </div>
   </div>
 </div>
-
-<!-- Modal Import Contact -->
-  <div class="modal fade child-modal" id="import-contact" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content -->
-      <div class="modal-content">
-        <div class="modal-body">
-            <div class="form-group">
-                 <div class="mb-2">
-                  <form>
-                    <label>Import Contact</label>
-                      <input class="form-control" name="import_file" type="file" />
-                    <span><i>Please .csv only</i></span>
-
-                    <div><a>Download Example CSV</a></div>
-
-                    <div class="text-right">
-                      <button type="submit" class="btn btn-custom mr-1">Import</button>
-                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                    </div>
-                  </form>
-                </div>
-               
-            </div>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  <!-- End Modal -->
 
   <!-- Modal Add Fields -->
   <div class="modal fade child-modal" id="openFields" role="dialog">
@@ -243,7 +127,7 @@
                 <label>Field List</label>
                 <form id="addFieldsForm">
                     <span id="append_fields"></span>
-                    <input type="hidden" value="{{$id}}" name="field_list"/>
+                    <input type="hidden" value="{{$data['listid']}}" name="field_list"/>
                     <div class="form-group">
                        <button id="cfd" class="btn btn-success btn-sm">Create Fields</button>
                        <button type="button" data-dismiss="modal" class="btn btn-default btn-sm">Close</button>
@@ -324,7 +208,7 @@
     </div>
   </div>
 
-  <!-- Modal Copy Link -->
+<!-- Modal Copy Link -->
 <div class="modal fade" id="copy-link" role="dialog">
   <div class="modal-dialog">
     
@@ -349,173 +233,48 @@
   </div>
 </div>
 
-<script type="text/javascript">
-
-  /* CKEditor */
-  CKEDITOR.replace( 'editor1',{
-      allowedContent: true,
-      allowedContent: true,
-      filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
-      filebrowserUploadUrl: "{{ route('ckupload') }}",
-      extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
-      removePlugins : 'image',
-  });
-
-  CKEDITOR.editorConfig = function( config ) {
-      config.extraAllowedContent = true;
-      config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font','videoembed';
-      config.removePlugins = 'image';
-  };
-
-  $(document).ready(function() {    
-    tabs();
-    table();
-    Choose();
-    openImport();
-    addContact();
-    //column -- edit
-    displayAdditional();
-    updateList();
-    delCols();
-    addCols();
-    addFields();
-    insertDropdown();
-    addDropdown();
-    editOption();
-    addOption();
-    insertOption();
-    delOption();
-    insertFields();
-    openAdditional();
-    copyLink();
-  });
-
-  // Jquery Tabs
-  function tabs() {    
-      $('#tabs li a:not(:first)').addClass('inactive');
-      $('.tabs-container').hide();
-      $('.tabs-container:first').show();
-
-      $('#tabs li a').click(function(){
-        var t = $(this).attr('id');
-        if($(this).hasClass('inactive')){ //this is the start of our condition 
-          $('#tabs li a').addClass('inactive');
-          $(this).removeClass('inactive');
-
-          $('.tabs-container').hide();
-          $('#'+ t + 'C').fadeIn('slow');
-        }
-      });
-
-      $("#tab-contact").click(function(){
-        $("#tab1").addClass('inactive');
-        $("#tab2").removeClass('inactive');
-
-        $('.tabs-container').hide();
-        $('#tab2C').fadeIn('slow');
-      }); 
-
-      $("#tab-form").click(function(){
-         $("#tab1").addClass('inactive');
-         $("#tab3").removeClass('inactive');
-
-         $('.tabs-container').hide();
-         $('#tab3C').fadeIn('slow');
-      });
-  }
-
-  function table(){
-      $("#datasubscriber").DataTable({
-          "pageLength": 5
-      });
-  }
-
-  function Choose(){
-    $("input[name=usertel]").prop('disabled',true);
-    $(".ctel").hide();
-
-    $(".dropdown-item").click(function(){
-       var val = $(this).attr('id');
-
-       if(val == 'ph')
-        {
-          $("input[name=phone]").prop('disabled',false);
-          $("input[name=usertel]").prop('disabled',true);
-          $(".cphone").show();
-          $(".ctel").hide();
-          $("#selectType").val("ph");
-        }
-        else {
-          $("input[name=phone]").prop('disabled',true);
-          $("input[name=usertel]").prop('disabled',false);
-          $(".cphone").hide();
-          $(".ctel").show();
-          $("#selectType").val("tl");
-        }
+  <script type="text/javascript">
+    
+   /* CKEditor */
+    CKEDITOR.replace( 'editor1',{
+        allowedContent: true,
+        filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
+        filebrowserUploadUrl: "{{ route('ckupload') }}",
+        extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
+        removePlugins : 'image',
     });
-  }
 
-  function openImport() {
-    $(".open_import").click(function(){
-      $("#import-contact").modal();
+    CKEDITOR.editorConfig = function( config ) {
+        config.extraAllowedContent = true;
+        config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font','videoembed';
+        config.removePlugins = 'image';
+    };
+
+    $(document).ready(function(){
+        //fixModal();
+        displayAdditional();
+        updateList();
+        delCols();
+        addCols();
+        addFields();
+        insertDropdown();
+        addDropdown();
+        editOption();
+        addOption();
+        insertOption();
+        delOption();
+        insertFields();
+        openAdditional();
+        copyLink();
+        bgdashboard();
     });
-  }
 
-  function addContact(){
-    $(".add-contact").submit(function(e){
-        e.preventDefault();
-        var data = $(this).serialize();
-        //$("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
-        $.ajaxSetup({
-          headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-        });
-        $.ajax({
-            type : "POST",
-            url : "{{ route('savesubscriber') }}",
-            data : data,
-            beforeSend: function()
-            {
-              $('#loader').show();
-              $('.div-loading').addClass('background-load');
-            },
-            success : function(result){
-              $('#loader').hide();
-              $('.div-loading').removeClass('background-load');
-
-              if(result.success == true){
-                  alert(result.message);
-                  clearField();
-              } else {
-                  $(".error").fadeIn('fast');
-                  $(".name").text(result.name);
-                  $(".main").text(result.main);
-                  $(".main").text(result.list);
-                  $(".email").text(result.email);
-                  $(".phone").text(result.phone);
-                  $(".phone").text(result.usertel);
-
-                  if(result.message !== undefined){
-                       $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
-                  }
-
-                  $(".error").delay(2000).fadeOut(5000);
-              }
-            }
-        });
-        /*end ajax*/
-      });
-  }
-
-  /*** Column Additional ***/
-
-  var limit = 'You only can create 5 fields only';
+    var limit = 'You only can create 5 fields only';
 
     function displayAdditional(){
         $.ajax({
             type : 'GET',
-            data : {'id': {!! $id !!}},
+            data : {'id': {!! $data['listid'] !!}},
             url : "{{route('additionalList')}}",
             dataType : "json",
             success : function(result){
@@ -612,7 +371,7 @@
 
              // all data
              var data = {
-                id : {!! $id !!},
+                id : {!! $data['listid'] !!},
                 list_label : $("input[name='list_label']").val(),
                 editor : CKEDITOR.instances.editor1.getData(),
                 pixel : $("textarea[name='pixel']").val(),
@@ -741,7 +500,7 @@
 
          $("#editDropdown").modal();
          $("input[name='parent_id']").val(id);
-         $("input[name='list_id']").val({!! $id !!});
+         $("input[name='list_id']").val({!! $data['listid'] !!});
 
          $.ajax({
             type : 'GET',
@@ -847,7 +606,7 @@
       $("body").on('click','.add-field',function(){
         var type = $("#type_fields").val();
         var len = $(".colfields").length;
-        $("input[name='field_list'], input[name='dropdownlist']").val({!! $id !!});
+        $("input[name='field_list'], input[name='dropdownlist']").val({!! $data['listid'] !!});
        
         if(type == 1)
         {
@@ -1143,18 +902,10 @@
       });
     }
 
-  /*
-  function radioCheck(){
-      $("#tab2, #tab-contact").click(function(){
-        $(".move_radio").prependTo($(".prep1"));
-      });
+    function bgdashboard(){
+      $("body").attr('class','bg-dashboard');
+    }
 
-      $("#tab3, #tab-form").click(function(){
-        $(".move_radio").prependTo($(".prep2"));
-      });
-  }
-  */
-
-</script>
+  </script>
 
 @endsection
