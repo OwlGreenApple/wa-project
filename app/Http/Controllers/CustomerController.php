@@ -11,6 +11,7 @@ use App\Reminder;
 use App\ReminderCustomers;
 use App\Sender;
 use App\Additional;
+use App\PhoneNumber;
 use App\Console\Commands\SendWA as SendMessage;
 
 class CustomerController extends Controller

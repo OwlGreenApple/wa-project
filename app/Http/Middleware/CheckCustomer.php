@@ -13,6 +13,7 @@ use App\Rules\TelegramNumber;
 use App\Rules\SubscriberEmail;
 use App\Rules\SubscriberUsername;
 use App\Rules\SubscriberPhone;
+use Session;
 
 class CheckCustomer
 {
@@ -26,7 +27,7 @@ class CheckCustomer
     public function handle($request, Closure $next)
     {
         // Build POST request:
-
+        Session::reflash();
         if(env('APP_ENV') == 'production')
         { 
             $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
