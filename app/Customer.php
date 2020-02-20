@@ -8,7 +8,7 @@ class Customer extends Model
 {
 
 	protected $table = 'customers';
-	protected $fillable = ['user_id','list_id','name','email','username','telegram_number'];
+	protected $fillable = ['user_id','list_id','name','email','username','telegram_number','chat_id'];
     /*
 		status : 
 		0 = inactive / banned

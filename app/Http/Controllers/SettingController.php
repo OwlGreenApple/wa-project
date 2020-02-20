@@ -43,10 +43,80 @@ class SettingController extends Controller
 
       return $arr;
     }
+
+    public function editPhone(Request $request)
+    {
+      $user = Auth::id();
+      $phone_number = $request->edit_phone;
+
+      try{
+        PhoneNumber::where('user_id',$user)->update(['phone_number'=>$phone_number,'status'=>0]);
+        $update = true;
+      }catch(Exception $e){
+        $data['message'] = 'Error! Sorry cannot edit your phone, please contact admin';
+        return response()->json($data);
+      }
+
+      if($update == true)
+      {
+         $phone_number_id = PhoneNumber::where('user_id',$user)->first();
+         $this->ChatTelegramNumber($phone_number,$phone_number_id->id);
+          try{
+            PhoneNumber::where('user_id',$user)->update(['status'=>1]);
+            $data['status'] = 'success';
+            $data['message'] = "Your phone number has been edited, please Check your Telegram for Verification Code";
+          }catch(Exception $e){
+            $data['status'] = 'error';
+            $data['message'] = 'Error! Sorry cannot edit your phone, please contact admin';
+          }
+      }
+      return response()->json($data);
+    }
+
+    public function ChatTelegramNumber($phone_number,$phonenumberid)
+    {
+      $curl = curl_init();
+      $data = array(
+          'token'=> env('TOKEN_API'),
+          'phone_number' => $phone_number,
+          'filename'=>env('FILENAME_API').$phonenumberid,
+      );
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/auth-set-phone.php",
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => http_build_query($data),
+        CURLOPT_POST => 1,
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+
+      if ($err) {
+        // echo "cURL Error #:" . $err;
+        $arr['status'] = 'error';
+        $arr['message'] = "Please try to connect again". $err;
+        return $arr;
+      } else {
+        // echo $response."\n";
+      }
+    }
     
     public function connect_phone(Request $request)
     {
       $user = Auth::user();
+
+      //pastikan phone number hanya 1 phone number
+      $countphoneNumber = PhoneNumber::where("user_id",$user->id)->first();
+      if(!is_null($countphoneNumber)){
+          $arr['status'] = 'error';
+          $arr['message'] = "Sorry, you can create 1 phone number only";
+          return $arr;
+      }
+
       //cek phone number uda ada didatabase ngga 
       $phoneNumber = PhoneNumber::
                       where("phone_number",$request->phone_number)

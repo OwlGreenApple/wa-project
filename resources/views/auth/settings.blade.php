@@ -99,7 +99,7 @@
                   <th class="text-center">No</th>
                   <th class="text-center">Phone Telegram</th>
                   <th class="text-center">Status</th>
-                  <th class="text-center">Delete</th>
+                  <th class="text-center">Edit</th>
                 </tr>
               </thead>
 
@@ -173,6 +173,36 @@
 <!-- end container -->    
 </div>
 
+<!-- Modal Edit Phone -->
+  <div class="modal fade child-modal" id="edit-phone" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2">
+                  <form id="edit_phone_number">
+                    <label>Edit Phone Number</label>
+                    <div class="form-group">
+                      <input type="text" class="form-control" name="edit_phone" />
+                    </div>
+                 
+                    <div class="text-right">
+                      <button type="submit" class="btn btn-custom mr-1">Save</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+               
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
 <script type="text/javascript">
   // Jquery Tabs
   function tabs() {    
@@ -216,6 +246,9 @@
   $(document).ready(function() {    
     tabs();
     loadPhoneNumber();
+    editPhoneNumber();
+    openEditModal();
+
     $('#div-verify').hide();
     $('.message').hide();
     $('#button-connect').click(function(){
@@ -308,6 +341,47 @@
       $("#verify_code").focus();
     });
   });
+
+  function openEditModal(){
+    $("body").on("click",".btn-edit",function(){
+      var number = $(this).attr('data-number');
+      $("input[name='edit_phone']").val(number);
+      $("#edit-phone").modal();
+    });
+  }
+
+  function editPhoneNumber()
+  {
+     $("#edit_phone_number").submit(function(e){
+        e.preventDefault();
+        var values = $(this).serialize();
+
+        $.ajax({
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          type : 'POST',
+          url : '{{url("edit-phone")}}',
+          data : values,
+          dataType : 'json',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+
+            $('.message').show();
+            $('.message').html(result.message);
+
+            if(result.status == "success") {
+              $('#div-verify').show();
+              loadPhoneNumber();
+            }
+          }
+        });
+     });
+  }
 
 </script>
 

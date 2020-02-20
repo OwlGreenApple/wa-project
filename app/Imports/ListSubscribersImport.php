@@ -15,6 +15,8 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\ListController;
+
 class ListSubscribersImport implements ToCollection,WithStartRow 
 {
     /**
@@ -49,13 +51,22 @@ class ListSubscribersImport implements ToCollection,WithStartRow
                 continue;
             }
 
+            $list = new ListController;
+
+            if(!empty($row[1])){
+              $chat_id = $list->getPhoneTelegramChatID($this->id_list,$row[1]);
+            } else {
+              $chat_id = $list->getChatIDByUsername($this->id_list,$row[3]);
+            }
+
             Customer::create([
                'user_id'  => Auth::id(),
                'list_id'  => $this->id_list,
                'name'     => $row[0],
                'telegram_number'=> $row[1],
                'email'=> $row[2],
-               'username' => $row[3]
+               'username' => $row[3],
+               'chat_id' => $chat_id,
             ]);
         }
     } 

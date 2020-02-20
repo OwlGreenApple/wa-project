@@ -66,6 +66,7 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('connect-phone', 'SettingController@connect_phone');
   Route::get('verify-phone', 'SettingController@verify_phone');
   Route::get('delete-phone', 'SettingController@delete_phone');
+  Route::post('edit-phone', 'SettingController@editPhone');
 });
 
 /* HOME */
@@ -211,7 +212,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 // Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
 //Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
 Route::post('subscriber/save','CustomerController@saveSubscriber')->middleware('customer')->name('savesubscriber');
-Route::get('test-send-message','CustomerController@testSendMessage')->name('savesubscriber');
+Route::get('test-send-message','CustomerController@testSendMessage');
 
 /* SUBSCRIBE */
 Route::get('/{list_name}', 'CustomerController@subscriber');
