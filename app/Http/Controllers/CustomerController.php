@@ -116,7 +116,7 @@ class CustomerController extends Controller
               $data = array(
                   'token'=> env('TOKEN_API'),
                   'phone_number' => $phoneNumber->phone_number,
-                  'username'=>"activtelgroup", 
+                  'groupname'=>$lists->group_name, 
                   'filename'=>env('FILENAME_API').$phoneNumber->id,
               );
 
@@ -167,7 +167,7 @@ class CustomerController extends Controller
               $data = array(
                   'token'=> env('TOKEN_API'),
                   'phone_number' => $phoneNumber->phone_number,
-                  'username'=>"activtelgroup", 
+                  'username'=>$request->usertel, 
                   'filename'=>env('FILENAME_API').$phoneNumber->id,
               );
 
@@ -558,5 +558,41 @@ class CustomerController extends Controller
         }
     }
     
+    public function testSendMessage()
+    {
+      $phoneNumber = PhoneNumber::find(88);
+
+      $curl = curl_init();
+      $data = array(
+          'token'=> env('TOKEN_API'),
+          'phone_number' => $phoneNumber->phone_number,
+          'username'=>"gungunomni", 
+          'message'=>"123 test", 
+          'filename'=>env('FILENAME_API').$phoneNumber->id,
+          
+      );
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/sendMessage.php",
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => http_build_query($data),
+        CURLOPT_POST => 1,
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+
+      if ($err) {
+        echo "cURL Error #:" . $err;
+      } else {
+        echo $response."\n";
+        // print_r($response);
+        // return json_decode($response, true);
+      }
+
+    }
 /* end of class */
 }

@@ -211,6 +211,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 // Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
 //Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
 Route::post('subscriber/save','CustomerController@saveSubscriber')->middleware('customer')->name('savesubscriber');
+Route::get('test-send-message','CustomerController@testSendMessage')->name('savesubscriber');
 
 /* SUBSCRIBE */
 Route::get('/{list_name}', 'CustomerController@subscriber');
