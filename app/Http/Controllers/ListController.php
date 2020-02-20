@@ -78,8 +78,11 @@ class ListController extends Controller
       $autoreply = $request->autoreply;
       $rules =  [
             'listname' => 'required|min:4|max:190',
+            'groupname' => 'required|min:4|max:190',
       ];
-      $message = ['required'=> 'List Name required'];
+      $message = [
+        'required'=> 'Field required'
+      ];
 
       $validator = Validator::make($request->all(),$rules,$message);
 
@@ -94,6 +97,7 @@ class ListController extends Controller
       $list->user_id = Auth::id();
       $list->name = $this->createRandomListName();
       $list->label = $label;
+      $list->group_name = $request->groupname;
       $list->phone_number_id = $phone->id;
       $list->save();
       $listid = $list->id;
@@ -815,7 +819,7 @@ class ListController extends Controller
         $file = $request->file('csv_file');
         $import = new ListSubscribersImport($id_list);
         Excel::import($import, $file);
-        
+
         if($import->getRowCount() > 0)
         {
             $msg['message'] = 'Import Successful';

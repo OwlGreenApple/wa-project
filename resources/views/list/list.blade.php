@@ -16,20 +16,25 @@
       <h3>Create Your List</h3>
 
       <div align="center">
-         @error('listname')
-            <div class="alert alert-danger col-md-6" role="alert">
-                {{ $message }}
-            </div>
-         @enderror
 
         <form method="GET" action="{{url('list-create')}}">
           @csrf
           <div class="form-group">
             <input name="listname" type="text" class="form-control custom-form" placeholder="Your List Name"/>
+             @error('listname')
+                <span class="error">{{ $message }}</span>
+             @enderror
           </div>
 
           <div class="form-group">
             <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <input name="groupname" type="text" class="form-control custom-form" placeholder="Telegram Group Name"/>
+             @error('groupname')
+                <span class="error">{{ $message }}</span>
+             @enderror
           </div>
 
           <!-- open this on version 2 later

@@ -516,11 +516,14 @@
               $('#loader').hide();
               $('.div-loading').removeClass('background-load');
               $('input[name="csv_file"]').val('');
-
               alert(result.message);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
+              $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
+              var err = eval("(" + xhr.responseText + ")");
+              alert(err.errors);
+              //alert(xhr.status);
             }
         });/* end ajax */
     });
