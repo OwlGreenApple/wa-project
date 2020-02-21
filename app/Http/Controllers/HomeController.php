@@ -86,26 +86,6 @@ class HomeController extends Controller
       return response()->json($data);
     }
 
-    public function CreateCampaign() 
-    {
-      return view('campaign.create-campaign');
-    }
-
-    public function Campaign()
-    {
-      return view('campaign.campaign');
-    }
-
-    public function addReminder()
-    {
-      return view('campaign.add-reminder');
-    } 
-
-    public function reportReminder()
-    {
-      return view('campaign.report-reminder');
-    }
-
     /* test */
     public function historyOrder()
     {

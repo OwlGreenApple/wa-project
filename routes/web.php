@@ -39,8 +39,6 @@ Auth::routes();
 //Route::get('createlists', 'HomeController@formList');
 //Route::get('lists-create', 'HomeController@createList');
 //Route::get('lists', 'HomeController@dataList');
-Route::get('create-campaign', 'HomeController@CreateCampaign');
-Route::get('campaign', 'HomeController@Campaign');
 Route::get('add-reminder', 'HomeController@addReminder');
 Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('history-order', 'HomeController@historyOrder');
@@ -76,30 +74,8 @@ Route::get('checkphone', 'HomeController@checkPhone');
 
 /* User */
 Route::group(['middleware'=>['auth','web','authsettings']],function(){
-	//Route::get('tesdevice','DeviceController@test')->name('tesdevice');
 
-	/* Create Device */
-	Route::get('registerdevice','CreateDeviceController@index')->name('registerdevice');
-	Route::post('createdevice', 'CreateDeviceController@createDevice')->middleware('checkdevicename')->name('createdevice');
-	Route::get('deviceauthorize', 'CreateDeviceController@deviceAuthorize');
-
-	Route::get('devicepackage','CreateDeviceController@devicePackage')->name('devicepackage');
-	Route::get('devicecheckout','CreateDeviceController@checkout')->name('devicecheckout');
-	Route::get('thanks','CreateDeviceController@thankYou')->name('thanks');
-	#delete if not needed anymore
-	Route::get('temporary','CreateDeviceController@temporary')->name('temporary');
-	//Route::get('testcurl','CreateDeviceController@testcurl')->name('testcurl');
-	#delete if not needed anymore
-
-	/* Device status and profile */
-	Route::get('devices','DeviceController@deviceList')->name('devices');
-	Route::get('authorize/{device_id}', 'DeviceController@getScanBarcodeAuthorize');
-	Route::get('scan', 'DeviceController@getScanBarcodeChangePhone')->name('scan');
-	Route::get('devicedetail/{device_id}', 'DeviceController@getDetailDevice')->name('devicedetail');
-	Route::get('devicestatus/{device_id}', 'DeviceController@getStatusDevice');
-	Route::post('updatenumber', 'DeviceController@updateNumber')->name('updatenumber');
-
-	/* Lists */
+	/* LIST */
   Route::get('lists', 'ListController@index');
   Route::get('lists-table', 'ListController@dataList');
   Route::get('list-form', 'ListController@formList');
@@ -114,7 +90,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('list-duplicate','ListController@duplicateList')->name('duplicatelist');
   Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers');
 
-  /* Additional */
+  /* ADDITIONAL */
   Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
   Route::get('browseupload','ListController@browserUploadedImage')->name('browseupload');
   Route::get('editdropfields','ListController@editDropfields')->name('editdropfields');
@@ -124,6 +100,31 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('updateadditional','ListController@updateField')->name('updateadditional');
   Route::get('displayajaxfield','ListController@displayAjaxAdditional')->name('displayajaxfield');
   Route::get('customeradditional','ListController@customerAdditional')->name('customeradditional');
+
+  /* CAMPAIGN */
+  Route::get('campaign', 'CampaignController@index');
+  Route::get('create-campaign', 'CampaignController@CreateCampaign');
+  Route::get('save-campaign', 'CampaignController@SaveCampaign');
+
+  /* Event */
+  # scheduled event
+  Route::post('addevent','EventController@addEvent')->name('addevent');
+  Route::get('eventform','EventController@eventForm')->name('eventform');
+  Route::get('eventcustomer','EventController@displayEventCustomers')->name('eventcustomer');
+  Route::get('displayeventschedule','EventController@displayEventSchedule')->name('displayeventschedule');
+  Route::post('updatevent','EventController@updateEvent')->name('updatevent');
+  Route::get('deletevents','EventController@delEvent')->name('deletevents');
+  Route::get('exportsubscriber','EventController@exportSubscriber')->name('exportsubscriber');
+  Route::get('export_csv/{id_list}','EventController@exportEventSubscriber');
+  Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');
+
+  Route::get('event','EventController@index')->name('event');
+  Route::get('eventlist','EventController@displayEventList')->name('eventlist');
+  # auto reply event
+  Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
+  Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');
+  Route::get('eventautoreplyturn/{id}/{status}','EventController@turnEventAutoReply');
+  Route::get('eventstatus/{id}/{status}','EventController@setEventStatus');
 
   /*old code*/
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
@@ -167,26 +168,6 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	Route::get('reminderautoreply','ReminderController@reminderAutoReply')->name('reminderautoreply');
 	Route::post('addreminderautoreply','ReminderController@addReminderAutoReply')->name('addreminderautoreply');
 
-	/* Event */
-	Route::get('event','EventController@index')->name('event');
-	Route::get('eventlist','EventController@displayEventList')->name('eventlist');
-	# auto reply event
-	Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
-	Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');
-	Route::get('eventautoreplyturn/{id}/{status}','EventController@turnEventAutoReply');
-	Route::get('eventstatus/{id}/{status}','EventController@setEventStatus');
-
-	# scheduled event
-	Route::get('eventform','EventController@eventForm')->name('eventform');
-	Route::post('addevent','EventController@addEvent')->name('addevent');
-	Route::get('eventcustomer','EventController@displayEventCustomers')->name('eventcustomer');
-	Route::get('displayeventschedule','EventController@displayEventSchedule')->name('displayeventschedule');
-	Route::post('updatevent','EventController@updateEvent')->name('updatevent');
-	Route::get('deletevents','EventController@delEvent')->name('deletevents');
-	Route::get('exportsubscriber','EventController@exportSubscriber')->name('exportsubscriber');
-	Route::get('export_csv/{id_list}','EventController@exportEventSubscriber');
-	Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');
-
 	/* Templates */
 	Route::get('templates','TemplatesController@templateForm')->name('templates');
 	//insert into database broadcast template
@@ -207,6 +188,29 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	Route::get('ckbrowse', 'CKController@ck_browse')->name('ckbrowse');
 	Route::get('ckdelete', 'CKController@ck_delete_image')->name('ckdelete');
 	Route::post('ckupload', 'CKController@ck_upload_image')->name('ckupload');
+
+  //Route::get('tesdevice','DeviceController@test')->name('tesdevice');
+
+  /* Create Device */
+  Route::get('registerdevice','CreateDeviceController@index')->name('registerdevice');
+  Route::post('createdevice', 'CreateDeviceController@createDevice')->middleware('checkdevicename')->name('createdevice');
+  Route::get('deviceauthorize', 'CreateDeviceController@deviceAuthorize');
+
+  Route::get('devicepackage','CreateDeviceController@devicePackage')->name('devicepackage');
+  Route::get('devicecheckout','CreateDeviceController@checkout')->name('devicecheckout');
+  Route::get('thanks','CreateDeviceController@thankYou')->name('thanks');
+  #delete if not needed anymore
+  Route::get('temporary','CreateDeviceController@temporary')->name('temporary');
+  //Route::get('testcurl','CreateDeviceController@testcurl')->name('testcurl');
+  #delete if not needed anymore
+
+  /* Device status and profile */
+  Route::get('devices','DeviceController@deviceList')->name('devices');
+  Route::get('authorize/{device_id}', 'DeviceController@getScanBarcodeAuthorize');
+  Route::get('scan', 'DeviceController@getScanBarcodeChangePhone')->name('scan');
+  Route::get('devicedetail/{device_id}', 'DeviceController@getDetailDevice')->name('devicedetail');
+  Route::get('devicestatus/{device_id}', 'DeviceController@getStatusDevice');
+  Route::post('updatenumber', 'DeviceController@updateNumber')->name('updatenumber');
 });
 
 /* Customers */
