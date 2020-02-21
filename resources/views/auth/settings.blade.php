@@ -57,7 +57,7 @@
     <!-- TABS 1 -->
     <div class="tabs-container" id="tab1C">
       <div class="act-tel-settings">
-        <div class="form-control message col-lg-6">
+        <div class="form-control message col-lg-9">
           Your Telegram Account Connected!
         </div>
 
@@ -116,25 +116,34 @@
     <div class="tabs-container" id="tab2C">
       <div class="act-tel-settings">
 
-      <form class="form-contact">
+      <div class="form-control message-settings col-lg-9 mb-4"><!-- --></div>
+
+      <form id="user_contact" class="form-contact">
         <div class="wrapper account mb-5">
           <h5>Edit Your Personal Data</h5>   
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Email</label>
                 <label class="col-sm-1 col-form-label">:</label>
-                <div class="form-control col-sm-7 text-left">mail@email.com</div>
+                <div class="form-control col-sm-7 text-left">{{$user->email}}</div>
               </div> 
 
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Full Name</label>
                 <label class="col-sm-1 col-form-label">:</label>
-                <input type="text" class="form-control col-sm-7" />
+                <div class="col-sm-7 text-left row">
+                  <input name="user_name" type="text" class="form-control" value="{{$user->name}}" />
+                  <span class="error user_name"></span>
+                </div>
+                
               </div> 
 
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Phone Number</label>
                 <label class="col-sm-1 col-form-label">:</label>
-                <input type="text" class="form-control col-sm-7" />
+                <div class="col-sm-7 text-left row">
+                  <input name="user_phone" type="text" class="form-control" value="{{$user->phone_number}}" />
+                  <span class="error user_phone"></span>
+                </div>
               </div>
         </div>
         
@@ -143,19 +152,28 @@
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Old Password</label>
                 <label class="col-sm-1 col-form-label">:</label>
-                <input type="text" class="form-control col-sm-7" />
+                <div class="col-sm-7 text-left row">
+                  <input type="password" name="oldpass" class="form-control" />
+                  <span class="error oldpass"></span>
+                </div>
               </div> 
 
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">New Password</label>
                 <label class="col-sm-1 col-form-label">:</label>
-                <input type="text" class="form-control col-sm-7" />
+                <div class="col-sm-7 text-left row">
+                  <input type="password" name="newpass" class="form-control" />
+                  <span class="error newpass"></span>
+                </div>
               </div> 
 
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Confirm New Password</label>
                 <label class="col-sm-1 col-form-label">:</label>
-                <input type="text" class="form-control col-sm-7" />
+                <div class="col-sm-7 text-left row">
+                  <input type="password" name="confpass" class="form-control" />
+                  <span class="error confpass"></span>
+                </div>
               </div>
 
               <div class="text-right">
@@ -180,6 +198,7 @@
       <!-- Modal content -->
       <div class="modal-content">
         <div class="modal-body">
+            <div class="alert alert-danger"><!-- error --></div>
             <div class="form-group">
                  <div class="mb-2">
                   <form id="edit_phone_number">
@@ -248,6 +267,7 @@
     loadPhoneNumber();
     editPhoneNumber();
     openEditModal();
+    settingUser();
 
     $('#div-verify').hide();
     $('.message').hide();
@@ -342,6 +362,53 @@
     });
   });
 
+  function settingUser(){
+    $(".message-settings").hide();
+    $("#user_contact").submit(function(e){
+      e.preventDefault();
+      var data = $(this).serialize();
+
+      $.ajax({
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          type : 'POST',
+          url : '{{url("save-settings")}}',
+          data : data,
+          dataType : 'json',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+
+            if(result.status == 'success'){
+              $(".error").hide();
+              $('.message-settings').show();
+              $('.message-settings').html(result.message);
+            }
+            else if(result.status == 'error')
+            {
+              $(".error").show();
+              $(".user_name").html(result.user_name);
+              $(".user_phone").html(result.user_phone);
+              $(".oldpass").html(result.oldpass);
+              $(".confpass").html(result.confpass);
+              $(".newpass").html(result.newpass);
+            }
+            else {
+              $('.message-settings').show();
+              $('.message-settings').html(result.message);
+            }
+          },error: function(xhr,attribute,throwable){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+          }
+        });
+     });
+  }
+
   function openEditModal(){
     $("body").on("click",".btn-edit",function(){
       var number = $(this).attr('data-number');
@@ -352,6 +419,7 @@
 
   function editPhoneNumber()
   {
+     $(".alert").hide();
      $("#edit_phone_number").submit(function(e){
         e.preventDefault();
         var values = $(this).serialize();
@@ -374,10 +442,22 @@
             $('.message').show();
             $('.message').html(result.message);
 
+            if(result.error == 'true'){
+              $(".alert").show();
+              $(".alert").html(result.message);
+            }
+
             if(result.status == "success") {
               $('#div-verify').show();
               loadPhoneNumber();
+
+              $("#phone_number").val(result.phone);
+              $("#edit-phone").modal('hide');
+              $(".alert").hide();
             }
+          },error: function(xhr,attribute,throwable){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
           }
         });
      });

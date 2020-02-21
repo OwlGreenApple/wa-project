@@ -69,6 +69,7 @@ class Kernel extends HttpKernel
         'cors' => \App\Http\Middleware\Cors::class,
         'checkdevicename' => \App\Http\Middleware\CheckDeviceName::class,
         'authsettings' => \App\Http\Middleware\AuthSettings::class,
+        'usersettings'=>\App\Http\Middleware\CheckSettings::class,
     ];
 
     /**

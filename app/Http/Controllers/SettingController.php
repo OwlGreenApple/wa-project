@@ -6,10 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
 use App\PhoneNumber;
+use App\Rules\TelNumber;
+use App\Rules\AvailablePhoneNumber;
 
 use DB;
 
@@ -27,7 +30,34 @@ class SettingController extends Controller
   
     public function index()
     {
-      return view('auth.settings');
+      $id = Auth::id();
+      $user = User::where('id',$id)->first();
+      return view('auth.settings',['user'=>$user]);
+    }
+
+    public function settingsUser(Request $request)
+    {
+        $id = Auth::id();
+        $data = array(
+            'name'=> $request->user_name,
+            'phone_number'=>$request->user_phone,
+        );
+
+        if(!empty($request->oldpass) && !empty($request->confpass) && !empty($request->newpass))
+        {
+            $data['password']= Hash::make($request->newpass);
+        }
+
+        try{
+          User::where('id',$id)->update($data);
+          $error['status'] = 'success';
+          $error['message'] = 'Your data has been updated successfully';
+        }catch(Exception $e){
+          $error['status'] = 'failed';
+          $error['message'] = 'Sorry, failed to update data, please contact admin';
+        }
+
+        return response()->json($error);
     }
     
     public function load_phone_number()
@@ -49,6 +79,20 @@ class SettingController extends Controller
       $user = Auth::id();
       $phone_number = $request->edit_phone;
 
+      $rules = [
+        'edit_phone' =>['required','min:9','max:18',new TelNumber, new AvailablePhoneNumber]
+      ];
+
+      $validator = Validator::make($request->all(),$rules);
+
+      if($validator->fails())
+      {
+        $error = $validator->errors();
+        $err['error'] = 'true';
+        $err['message'] = $error->first('edit_phone');
+        return response()->json($err);
+      }
+
       try{
         PhoneNumber::where('user_id',$user)->update(['phone_number'=>$phone_number,'status'=>0]);
         $update = true;
@@ -59,27 +103,41 @@ class SettingController extends Controller
 
       if($update == true)
       {
-         $phone_number_id = PhoneNumber::where('user_id',$user)->first();
-         $this->ChatTelegramNumber($phone_number,$phone_number_id->id);
-          try{
-            PhoneNumber::where('user_id',$user)->update(['status'=>1]);
-            $data['status'] = 'success';
-            $data['message'] = "Your phone number has been edited, please Check your Telegram for Verification Code";
-          }catch(Exception $e){
-            $data['status'] = 'error';
-            $data['message'] = 'Error! Sorry cannot edit your phone, please contact admin';
-          }
+         $server = DB::table('phone_numbers')->select(DB::raw('SUBSTRING(server_id, -1) AS serverid'))->where('user_id',$user)->first();
+         $idserver = $server->serverid;
+
+         if($idserver == '')
+         {
+            $filename = env('FILENAME_API').'0';
+         }
+         else {
+            $serverint = (int)$server->serverid + 1;
+            $filename = env('FILENAME_API').$serverint;
+         }
+         
+        //CONNECT PHONE NUMBERS
+        $this->ChatTelegramNumber($phone_number,$filename);
+
+        try{
+          PhoneNumber::where('user_id',$user)->update(['filename'=>$filename,'status'=>1]);
+          $data['status'] = 'success';
+          $data['message'] = "Your phone number has been edited, please Check your Telegram for Verification Code";
+        }catch(Exception $e){
+          $data['status'] = 'error';
+          $data['message'] = 'Error! Sorry cannot edit your phone, please contact admin';
+        }
       }
+      $data['phone'] = $phone_number;
       return response()->json($data);
     }
 
-    public function ChatTelegramNumber($phone_number,$phonenumberid)
+    public function ChatTelegramNumber($phone_number,$filename)
     {
       $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phone_number,
-          'filename'=>env('FILENAME_API').$phonenumberid,
+          'filename'=>$filename,
       );
 
       curl_setopt_array($curl, array(
@@ -237,7 +295,7 @@ class SettingController extends Controller
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
-          'filename'=>env('FILENAME_API').$phoneNumber->id,
+          'filename'=>$phoneNumber->filename,
           'authcode'=>$request->verify_code,
       );
 
