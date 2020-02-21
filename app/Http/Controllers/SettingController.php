@@ -103,15 +103,15 @@ class SettingController extends Controller
 
       if($update == true)
       {
-         $server = DB::table('phone_numbers')->select(DB::raw('SUBSTRING(server_id, -1) AS serverid'))->where('user_id',$user)->first();
-         $idserver = $server->serverid;
+         $server = DB::table('phone_numbers')->select(DB::raw('SUBSTRING(filename, -1) AS filename'))->where('user_id',$user)->first();
+         $idserver = $server->filename;
 
          if($idserver == '')
          {
             $filename = env('FILENAME_API').'0';
          }
          else {
-            $serverint = (int)$server->serverid + 1;
+            $serverint = (int)$server->filename + 1;
             $filename = env('FILENAME_API').$serverint;
          }
          
@@ -219,11 +219,23 @@ class SettingController extends Controller
         $phoneNumber->save();
       }
 
+      $server = DB::table('phone_numbers')->select(DB::raw('SUBSTRING(filename, -1) AS filename'))->where('user_id',Auth::id())->first();
+         $idserver = $server->filename;
+
+       if($idserver == '')
+       {
+          $filename = env('FILENAME_API').'0';
+       }
+       else {
+          $serverint = (int)$server->filename + 1;
+          $filename = env('FILENAME_API').$serverint;
+       }
+
       $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
-          'filename'=>env('FILENAME_API').$phoneNumber->id,
+          'filename'=>$filename,
       );
 
       curl_setopt_array($curl, array(
