@@ -21,6 +21,90 @@ use App\Sender;
 class EventController extends Controller
 {
 
+    public function saveEvent(Request $request){
+        $user_id = Auth::id();
+
+        if($request->schedule == 0){
+            $request->day = 0;
+        }
+
+        /* Validator 
+        if($request->schedule > 0 &&  $request->day == 0){
+           $error['message'] = 'Please do not modify event days, if you want to use 0 days please use The Day instead';
+           return response()->json($error);
+        }
+
+        $rules = array(
+            'list_id'=>['required'],
+            'message'=>['required','max:3000'],
+            'schedule'=>['required','numeric'],
+            'day'=>['numeric'],
+        );
+
+        $validator = Validator::make($request->all(),$rules);
+        $err = $validator->errors();
+
+        
+        if($validator->fails()){
+            $error['message'] = $err;
+            return response()->json($error);
+        } else {
+           
+        }
+        */
+         $reminder = new Reminder;
+            $reminder->user_id = $user_id;
+            $reminder->list_id = $request->list_id;
+            $reminder->is_event = 1;
+            $reminder->days = $request->day;
+            $reminder->hour_time = $request->hour;
+            $reminder->event_time = $request->event_time;
+            $reminder->package = $request->campaign_name;
+            $reminder->message = $request->message;
+            $reminder->save();
+
+        // if reminder stored / save successfully 
+        if($reminder->save()){
+            // retrieve customer id 
+            $event = Reminder::where([
+                    ['reminders.id','=',$reminder->id],
+                    ['reminders.status','=',1],
+                    ['reminders.is_event','=',1],
+                    ['customers.status','=',1],
+                    ['customers.list_id','=',$request->list_id],
+                    ['customers.user_id','=',$user_id],
+                    ])->join('customers','customers.list_id','=','reminders.list_id')->select('reminders.*','customers.id AS csid')->get();
+        } else {
+            return 'Error!! failed to set event';
+        }
+
+        // check whether user have customer 
+        if($event->count() == 0){
+            return 'Your event has been set!!';
+        } else {
+             foreach($event as $col){
+                $remindercustomer = new ReminderCustomers;
+                $remindercustomer->user_id = $user_id;
+                $remindercustomer->list_id = $col->list_id;
+                $remindercustomer->reminder_id = $col->id;
+                $remindercustomer->customer_id = $col->csid;
+                $remindercustomer->save();
+             }  
+        }
+
+        // If successful insert data into event customer
+        if($remindercustomer->save()){
+            $data = 'Your event has been set!!';
+        } else {
+            $data = 'Error!! failed to set event for customer';
+        }
+        return $data;
+    }
+
+    /***************************************************************************** 
+                                    OLD CODES
+    /*****************************************************************************/
+
 	PUBLIC FUNCTION JUSTCARBON() {
 		//echo carbon::parse('2019-09-10 16:58:00')->subDays(5);
 		echo carbon::parse('2019-09-10 16:58:00')->addDays(15);

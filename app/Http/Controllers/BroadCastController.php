@@ -19,6 +19,98 @@ use Session;
 class BroadCastController extends Controller
 {
 
+    /* Create broadcast list */
+    public function saveBroadCast(Request $request){
+        $user_id = Auth::id();
+        $list_id = $request->list_id;
+        $message = $request->message;
+        $time_sending = $request->hour;
+        $campaign = $request->campaign_name;
+        
+        /*
+        #prevent user to change value is_event
+        try{
+            $is_event = decrypt($request->is_event);
+        }catch(DecryptException $e){
+            return redirect('broadcast');
+        }
+
+        #determine redirect link
+        if($is_event == 1){
+            $link = 'broadcasteventform';
+        } else {
+            $link = 'broadcastform';
+        }
+
+        #prevent user to change value list id
+        $checklist = UserList::where('is_event',$is_event)->whereIn('id',$req['id'])->select('is_event')->count();
+
+        $total_list = count($req['id']);
+
+        if($total_list !== $checklist){
+            return redirect('broadcast');
+        } 
+        //print('<pre>'.print_r($checklist,true).'</pre>');
+     
+        /* Validator to limit max message character 
+          $rules = array(
+            'id'=>['required'],
+            'message'=>['required','max:3000'],
+        );
+
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->fails()){
+            $error = $validator->errors();
+            return redirect($link)->with('error',$error);
+        } else {
+            
+        }
+        */
+        $broadcast = new BroadCast;
+        $broadcast->user_id = $user_id;
+        $broadcast->list_id = $list_id;
+        $broadcast->campaign = $campaign;
+        $broadcast->hour_time = $time_sending;
+        $broadcast->message = $message;
+        $broadcast->save();
+        $broadcast_id = $broadcast->id;
+
+        /* if successful inserted data broadcast into database then this run */
+        if($broadcast->save()){         
+            // retrieve customer id 
+            $customer = Customer::where([
+                ['user_id','=',$user_id],
+                ['list_id','=',$list_id],
+                ['status','=',1],
+            ])->get();
+
+        } else {
+            return 'Error! Unable to create broadcast';
+        }
+
+        if($customer->count() > 0)
+        {
+            foreach($customer as $col){
+                $broadcastcustomer = new BroadCastCustomers;
+                $broadcastcustomer->broadcast_id = $broadcast_id;
+                $broadcastcustomer->save();
+            }
+        } else {
+            return 'Broadcast created, but will not send anything because you do not have subscriber';
+        }
+
+        if($broadcastcustomer->save()){
+            return 'Your broadcast has been created';
+        } else {
+            return 'Error!!Your broadcast failed to create';
+        }
+    }
+
+    /****************************************************************************************
+                                            OLD CODES
+    ****************************************************************************************/
+
     public function index(){
     	$id = Auth::id();
 

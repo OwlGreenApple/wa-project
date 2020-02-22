@@ -72,7 +72,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');
 Route::get('checkphone', 'HomeController@checkPhone');
 
-/* User */
+/*** USER ***/
 Route::group(['middleware'=>['auth','web','authsettings']],function(){
 
 	/* LIST */
@@ -104,9 +104,10 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   /* CAMPAIGN */
   Route::get('campaign', 'CampaignController@index');
   Route::get('create-campaign', 'CampaignController@CreateCampaign');
-  Route::get('save-campaign', 'CampaignController@SaveCampaign');
+  Route::post('save-campaign', 'CampaignController@SaveCampaign');
 
-  /* Event */
+  /* EVENT */
+
   # scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');
   Route::get('eventform','EventController@eventForm')->name('eventform');

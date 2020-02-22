@@ -12,7 +12,7 @@ class Reminder extends Model
 		1 = active
 
 		IS_EVENT :
-		0 = reminder
+		0 = auto responder
 		1 = event
     */
 }

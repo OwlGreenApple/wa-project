@@ -54,7 +54,7 @@
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Select List :</label>
         <div class="col-sm-9 relativity">
-           <select name="list" class="custom-select-campaign form-control">
+           <select name="list_id" class="custom-select-campaign form-control">
               @if($lists->count() > 0)
                 @foreach($lists as $row)
                   <option value="{{$row->id}}">{{$row->label}}</option>
@@ -125,14 +125,15 @@
 
   function saveCampaign()
   {
-    $("#save_campaign").submit(function(){
+    $("#save_campaign").submit(function(e){
+      e.preventDefault();
       var data = $(this).serialize();
 
       $.ajax({
-         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
           type : 'POST',
-          url : '{{url("edit-phone")}}',
-          data : values,
+          url : '{{url("save-campaign")}}',
+          data : data,
           dataType : 'json',
           beforeSend: function()
           {
@@ -142,8 +143,15 @@
           success : function(result){
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
+            alert(result.message);
+          },
+          error : function(xhr,attribute,throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
           }
       });
+      //ajax
     });
   }
 
