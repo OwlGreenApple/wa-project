@@ -202,7 +202,7 @@ class SendTelegram extends Command
       $user = User::select('id')->get();
 
       if($user->count() > 0){
-      foreach($user as $rowuser){
+        foreach($user as $rowuser){
           $id_user = $rowuser->id;
           $idr = null;
           $wasenggerevent = null;
@@ -279,8 +279,8 @@ class SendTelegram extends Command
           
           /* update according on reminder customer */
           if(!empty($event) || $event !== null){
-             foreach($event as $col)
-              {
+            foreach($event as $col)
+            {
                 $message = str_replace('{name}',$col->name,$col->message);
                 $id_reminder = $col->id_reminder;
                 $chat_id = $col->chat_id;
@@ -340,11 +340,11 @@ class SendTelegram extends Command
                 }
 
                 //echo $col->rc_id."--".$wa_number."\n";
-              }
+            }
           } 
   
           
-      } /* end foreach user */
+        } /* end foreach user */
 
       } /* end if */
 
