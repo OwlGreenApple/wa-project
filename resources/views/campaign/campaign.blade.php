@@ -18,7 +18,7 @@
   <div class="act-tel-tab">
     <div class="row">
       <div class="input-group col-lg-4">
-          <input type="text" class="form-control-lg col-lg-10 search-box" placeholder="Find a campaign by a name or a type" >
+          <input type="text" class="form-control-lg col-lg-10 search-box" placeholder="Find a campaign by a name" >
           <span class="input-group-append">
             <div class="btn search-icon">
                 <span class="icon-search"></span>
@@ -29,10 +29,10 @@
       <div class="col-lg-6"></div>
 
       <div class="input-group col-lg-2">
-         <select class="custom-select-campaign form-control col-lg-10 relativity">
-            <option>Event</option>
-            <option>Broadcast</option>
-            <option>Auto Responder</option>
+         <select id="campaign_option" class="custom-select-campaign form-control col-lg-10 relativity">
+            <option value="0">Event</option>
+            <option value="1">Auto Responder</option>
+            <option value="2">Broadcast</option>
          </select>
          <span class="icon-triangular"></span>
       </div>
@@ -46,140 +46,274 @@
 <!-- NUMBER -->
 <div class="container">
   <div class="act-tel-tab">
-      <div class="col-lg-12">
-        <!-- tab 1 -->
-        <div class="bg-dashboard campaign row">
-          <div class="col-lg-4 pad-fix col-card">
-            <h5>Test Campaign</h5>
-            <div class="notes">
-              <div>Type Campaign : <color>Event</color></div>
-              <div>Date Send : <b>Jan 28, 2020</b></div>
-              <div>List : Test List 1</div>
-            </div>
-            <div class="created">
-              Create On : Jan 23, 2020
-            </div>
-          </div>
-
-          <div class="col-lg-5 pad-fix mt-4">
-            <div class="row">
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">100</div>
-                  <div class="contact">Message</div>
-                </div>  
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">100</div>
-                  <div class="contact">Send</div>
-                </div> 
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">100</div>
-                  <div class="contact">Opened</div>
-                </div>
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">100%</div>
-                  <div class="contact">Open Rate</div>
-                </div>
-            </div>  
-          </div>
-
-          <div class="col-lg-3 pad-fix col-button">
-            <a href="{{url('report-reminder')}}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></a>
-            <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
-            <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
-            <div><a href="{{url('add-reminder')}}" class="btn btn-custom">Add Message</a></div>
-          </div>
-        </div> 
-
-        <!-- tab 2 -->
-
-        <div class="bg-dashboard campaign row">
-          <div class="col-lg-4 pad-fix col-card">
-            <h5>Campaign 1</h5>
-            <div class="notes">
-              <div>Type Campaign : <color><span class="gr">Broadcast</span></color></div>
-              <div>Date Send : <b>Jan 28, 2020</b></div>
-              <div>List : Test List 1</div>
-            </div>
-            <div class="created">
-              Create On : Jan 23, 2020
-            </div>
-          </div>
-
-          <div class="col-lg-5 pad-fix mt-4">
-            <div class="row">
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">10</div>
-                  <div class="contact">Message</div>
-                </div>  
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">10</div>
-                  <div class="contact">Send</div>
-                </div> 
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">9</div>
-                  <div class="contact">Opened</div>
-                </div>
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">9%</div>
-                  <div class="contact">Open Rate</div>
-                </div>
-            </div>  
-          </div>
-
-          <div class="col-lg-3 pad-fix col-button">
-            <button type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
-            <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
-            <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
-          </div>
-        </div> 
-
-        <!-- tab 3 -->
-
-        <div class="bg-dashboard campaign row mb-0">
-          <div class="col-lg-4 pad-fix col-card">
-            <h5>Campaign 2</h5>
-            <div class="notes">
-              <div>Type Campaign : <color><span class="og">Auto Responder</span></color></div>
-              <div>Date Send : <b>Jan 28, 2020</b></div>
-              <div>List : Test List 1</div>
-            </div>
-            <div class="created">
-              Create On : Jan 23, 2020
-            </div>
-          </div>
-
-          <div class="col-lg-5 pad-fix mt-4">
-            <div class="row">
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">100</div>
-                  <div class="contact">Message</div>
-                </div>  
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">100</div>
-                  <div class="contact">Send</div>
-                </div> 
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">90</div>
-                  <div class="contact">Opened</div>
-                </div>
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">90%</div>
-                  <div class="contact">Open Rate</div>
-                </div>
-            </div>  
-          </div>
-
-          <div class="col-lg-3 pad-fix col-button">
-              <button type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
-              <button type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
-              <button type="button" class="btn btn-danger btn-sm"><span class="icon-delete"></span></button>
-              <div>
-                <button type="button" class="btn btn-custom">Add Message</button>
-              </div>
-          </div>
-        </div> 
-        
-        <!-- end tab -->
+      <div id="display_campaign" class="col-lg-12">
+        <!-- display campaign -->
+      </div>
+      <div id="search-event" class="col-lg-12">
+        <!-- display search event -->
+      </div>
+      <div id="search-responder" class="col-lg-12">
+        <!-- display search auto responder -->
+      </div>
+      <div id="search-broadcast" class="col-lg-12">
+        <!-- display search campaign -->
+      </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+      displayCampaign();
+      displayEvent();
+      delBroadcast();
+      delAutoResponder();
+      delEvent();
+      searchCampaign();
+  });
+
+  function displayCampaign() {
+      $("#campaign_option").change(function(){
+          var val = $(this).val();
+
+          if(val == 0){
+            displayEvent();
+          }
+          else if(val == 1)
+          {
+            displayAutoResponder();
+          }
+          else 
+          {
+            displayBroadcast();
+          }
+          
+      });
+  }
+
+  function displayEvent(search)
+  {
+     $.ajax({
+        type : 'GET',
+        url : '{{ route("eventlist") }}',
+        data : {search : search},
+        dataType : 'html',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success : function(result){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          if(search == null){
+            $("#search-event").html('');
+            $("#search-responder").html('');
+            $("#search-broadcast").html('');
+            $("#display_campaign").html(result);
+          }
+          else {
+            $("#display_campaign").html('');
+            $("#search-event").html(result);
+          }
+        },
+        error : function(xhr,attributes,throwable){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+        }
+     });
+  }
+
+  function displayBroadcast(search)
+  {
+    $.ajax({
+        type : 'GET',
+        url : '{{ route("broadcastlist") }}',
+        data : {search : search},
+        dataType : 'html',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success : function(result){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          
+          if(search == null){
+            $("#search-event").html('');
+            $("#search-responder").html('');
+            $("#search-broadcast").html('');
+            $("#display_campaign").html(result);
+          }
+          else {
+            $("#display_campaign").html('');
+            $("#search-broadcast").html(result);
+          }
+        },
+        error : function(xhr,attributes,throwable){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert(xhr.responseText());
+        }
+    });
+  }
+
+  function displayAutoResponder(search)
+  {
+    $.ajax({
+        type : 'GET',
+        url : '{{ route("reminderlist") }}',
+        data : {search : search},
+        dataType : 'html',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success : function(result){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          
+          if(search == null){
+            $("#search-event").html('');
+            $("#search-responder").html('');
+            $("#search-broadcast").html('');
+            $("#display_campaign").html(result);
+          }
+          else {
+            $("#display_campaign").html('');
+            $("#search-responder").html(result);
+          }
+        },
+        error : function(xhr,attributes,throwable){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
+        }
+    });
+  }
+
+  function delBroadcast()
+  {
+    $("body").on("click",".broadcast-del",function(){
+      var id = $(this).attr('id');
+      var conf = confirm("Are you sure to delete this broadcast?"+"\n"+"WARNING : This cannot be undone");
+
+      if(conf == true)
+      {
+        $.ajax({
+          type : 'GET',
+          url : '{{ url("broadcast-del") }}',
+          data : {id : id},
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result)
+          {
+            alert(result.message);
+            displayBroadcast();
+          },
+          error : function(xhr, attr, throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
+          }
+        });
+      }
+      else 
+      {
+        return false;
+      }
+    });
+  }
+
+  function delAutoResponder()
+  {
+    $("body").on("click",".responder-del",function(){
+      var id = $(this).attr('id');
+      var conf = confirm("Are you sure to delete this auto responder?"+"\n"+"WARNING : This cannot be undone");
+
+      if(conf == true)
+      {
+        $.ajax({
+          type : 'GET',
+          url : '{{ url("reminder-del") }}',
+          data : {id : id},
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result)
+          {
+            alert(result.message);
+            displayAutoResponder();
+          },
+          error : function(xhr, attr, throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
+          }
+        });
+      }
+      else 
+      {
+        return false;
+      }
+    });
+  }
+
+  function delEvent()
+  {
+    $("body").on("click",".event-del",function(){
+      var id = $(this).attr('id');
+      var conf = confirm("Are you sure to delete this event?"+"\n"+"WARNING : This cannot be undone");
+
+      if(conf == true)
+      {
+        $.ajax({
+          type : 'GET',
+          url : '{{ url("event-del") }}',
+          data : {id : id},
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result)
+          {
+            alert(result.message);
+            displayEvent();
+          },
+          error : function(xhr, attr, throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
+          }
+        });
+      }
+      else 
+      {
+        return false;
+      }
+    });
+  }
+
+  function searchCampaign()
+  {
+      $(".search-icon").click(function(){
+        var search = $(".search-box").val();
+        displayBroadcast(search);
+        displayAutoResponder(search);
+        displayEvent(search);
+      });
+  }
+
+</script>
 @endsection

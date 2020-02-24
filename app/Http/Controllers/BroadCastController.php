@@ -14,7 +14,9 @@ use App\Customer;
 use Carbon\Carbon;
 use App\User;
 use App\Sender;
+use App\ReminderCustomers;
 use Session;
+use DB;
 
 class BroadCastController extends Controller
 {
@@ -22,10 +24,33 @@ class BroadCastController extends Controller
     /* Create broadcast list */
     public function saveBroadCast(Request $request){
         $user_id = Auth::id();
-        $list_id = $request->list_id;
         $message = $request->message;
         $time_sending = $request->hour;
         $campaign = $request->campaign_name;
+        $broadcast_schedule = $request->broadcast_schedule;
+        $date_send = $request->date_send;
+
+        if($broadcast_schedule == 0)
+        {
+            $list_id = $request->list_id;
+            $group_name = null;
+            $channel = null;
+        }
+        else if($broadcast_schedule == 1)
+        {
+            $list_id = 0;
+            $group_name = $request->group_name;
+            $channel = null;
+        }
+        else if($broadcast_schedule == 2)
+        {
+            $list_id = 0;
+            $group_name = null;
+            $channel = $request->channel_name;
+        }
+        else {
+            return 'Please reload your browser and then try again without modify default value';
+        }
         
         /*
         #prevent user to change value is_event
@@ -71,6 +96,9 @@ class BroadCastController extends Controller
         $broadcast->user_id = $user_id;
         $broadcast->list_id = $list_id;
         $broadcast->campaign = $campaign;
+        $broadcast->group_name = $group_name;
+        $broadcast->channel = $channel;
+        $broadcast->day_send = $date_send;
         $broadcast->hour_time = $time_sending;
         $broadcast->message = $message;
         $broadcast->save();
@@ -96,8 +124,10 @@ class BroadCastController extends Controller
                 $broadcastcustomer->broadcast_id = $broadcast_id;
                 $broadcastcustomer->save();
             }
-        } else {
+        } else if($broadcast_schedule == 0) {
             return 'Broadcast created, but will not send anything because you do not have subscriber';
+        } else {
+            return 'Your broadcast has been created';
         }
 
         if($broadcastcustomer->save()){
@@ -105,6 +135,84 @@ class BroadCastController extends Controller
         } else {
             return 'Error!!Your broadcast failed to create';
         }
+    }
+
+    /* Display broadcast */
+    public function displayBroadCast(Request $request){
+      $id_user = Auth::id();
+      $data = array();
+      $search = $request->search;
+
+      if(empty($search))
+      {
+        $broadcasts = BroadCast::where([['broad_casts.user_id','=',$id_user]])->get();
+      }
+      else
+      {
+        $broadcasts = BroadCast::where([['broad_casts.user_id','=',$id_user]])->orWhere('campaign','like','%'.$search.'%')->get();
+      }
+
+      if($broadcasts->count() > 0)
+      {
+          foreach($broadcasts as $row)
+          {
+              $lists = UserList::where([['id',$row->list_id],['user_id','=',$id_user]])->first();
+
+              if(!is_null($lists))
+              {
+                  $label = $lists->label;
+              }
+              else 
+              {
+                  $label = null;
+              }
+
+              $reminder_customer = ReminderCustomers::where('reminder_id','=',$row->id_reminder)->select(DB::raw('COUNT("id") AS total_message'))->first();
+
+              $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$row->id_reminder],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+
+              $data[] = array(
+                  'id'=>$row->id,
+                  'campaign' => $row->campaign,
+                  'group_name' => $row->group_name,
+                  'channel' => $row->channel,
+                  'day_send' => Date('M d, Y',strtotime($row->day_send)),
+                  'sending' => Date('h:i',strtotime($row->hour_time)),
+                  'label' => $label,
+                  'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                  'total_message' => $reminder_customer->total_message,
+                  'sent_message' => $reminder_customer_open->total_sending_message,
+              );
+          }
+      }
+
+      return view('broadcast.broadcast',['broadcast'=>$data]);
+    }
+
+    public function delBroadcast(Request $request)
+    {
+        $user_id = Auth::id();
+        $id = $request->id;
+
+        try {
+          BroadCast::where([['id',$id],['user_id',$user_id]])->delete();
+          $success = true;
+        }
+        catch(Exception $e)
+        {
+           return response()->json(['message'=>'Sorry, unable to delete broadcast, contact administrator']);
+        }
+
+        if($success == true)
+        {
+          $broadcastcustomer = BroadCastCustomers::where('broadcast_id','=',$id)->get();
+        }
+
+        if($broadcastcustomer->count() > 0)
+        {
+             BroadCastCustomers::where('broadcast_id','=',$id)->delete();
+        }
+        return response()->json(['message'=>'Your broadcast has been deleted successfully']);
     }
 
     /****************************************************************************************
@@ -262,26 +370,6 @@ class BroadCastController extends Controller
     	} else {
             return redirect($link)->with('status_error','Error!!Your message failed to create');
         }
-    }
-
-    /* Display broadcast customer page */
-    public function displayBroadCastCustomer(){
-    	$id_user = Auth::id();
-
-        #broadcast reminder
-    	$broadcastreminder = BroadCastCustomers::where([['broad_cast_customers.user_id','=',$id_user],['lists.is_event','=',0]])
-    						->join('lists','lists.id','=','broad_cast_customers.list_id')
-    						->rightJoin('customers','customers.id','=','broad_cast_customers.customer_id')
-    						->select('lists.name','broad_cast_customers.*','customers.wa_number')
-    						->get();
-
-        #broadcast event
-        $broadcastevent = BroadCastCustomers::where([['broad_cast_customers.user_id','=',$id_user],['lists.is_event','=',1]])
-                            ->join('lists','lists.id','=','broad_cast_customers.list_id')
-                            ->rightJoin('customers','customers.id','=','broad_cast_customers.customer_id')
-                            ->select('lists.name','broad_cast_customers.*','customers.wa_number')
-                            ->get();
-    	return view('broadcast.broadcast-customer',['data'=>$broadcastreminder, 'event'=>$broadcastevent]);
     }
 
 /* end class broadcast controller */    	

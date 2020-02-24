@@ -9,9 +9,9 @@ class ReminderCustomers extends Model
      /*
 		status : 
 		0 = pending
-		1 = sent
-		2 = failed / error / no sender number
-		3 = disabled
-		4 = pay
+		1 = sent (belum dibaca)
+		2 = sent (sudah dibaca)
+		3 = error / no-number
+		4 = disable or deleted list
     */
 }

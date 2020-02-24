@@ -39,7 +39,7 @@ Auth::routes();
 //Route::get('createlists', 'HomeController@formList');
 //Route::get('lists-create', 'HomeController@createList');
 //Route::get('lists', 'HomeController@dataList');
-Route::get('add-reminder', 'HomeController@addReminder');
+Route::get('add-reminder', 'CampaignController@addReminder');
 Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('history-order', 'HomeController@historyOrder');
 
@@ -107,6 +107,16 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('save-campaign', 'CampaignController@SaveCampaign');
 
   /* EVENT */
+  Route::get('event-list','EventController@displayEventList')->name('eventlist');
+  Route::get('event-del','EventController@delEvent');
+
+  /* REMINDER */
+  Route::get('reminder-list','ReminderController@displayReminderList')->name('reminderlist');
+  Route::get('reminder-del','ReminderController@delReminder');
+
+  /* BROADCAST */
+  Route::get('broadcast-list','BroadCastController@displayBroadCast')->name('broadcastlist'); 
+  Route::get('broadcast-del','BroadCastController@delBroadcast'); 
 
   # scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');
@@ -120,7 +130,6 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');
 
   Route::get('event','EventController@index')->name('event');
-  Route::get('eventlist','EventController@displayEventList')->name('eventlist');
   # auto reply event
   Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
   Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');
@@ -137,7 +146,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	Route::post('exportlistsubscriber','ListController@exportListSubscriber')->name('exportlistsubscriber');
 	Route::get('export_csv_list_subscriber/{id_list}','ListController@exportListCSVSubscriber');
 	
-	/* BroadCast */
+	/* old BroadCast */
 	Route::get('broadcast','BroadCastController@index')->name('broadcast');
 	// form to create broadcast reminder
 	Route::get('broadcastform','BroadCastController@FormBroadCast')->name('broadcastform');
@@ -146,11 +155,10 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	//insert broadcast and broadcast-customer data
 	Route::post('createbroadcast','BroadCastController@createBroadCast')->name('createbroadcast');
 	//see broadcast customer
-	Route::get('broadcast_customer','BroadCastController@displayBroadCastCustomer')->name('broadcast_customer');
 
-	/* Reminder */
+	//old reminder
 	Route::get('reminder','ReminderController@index')->name('reminder'); 
-	Route::get('reminderlist','ReminderController@displayReminderList')->name('reminderlist'); 
+	
 	// form to create reminder
 	Route::get('reminderform','ReminderController@reminderForm')->name('reminderform'); 
 	// set reminder into database

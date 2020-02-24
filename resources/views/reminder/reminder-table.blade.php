@@ -1,65 +1,54 @@
-<div class="table-responsive">
-<table class="table table-striped table-responsive" id="reminder-message">
-    <thead>
-        <th>lists name</th>
-        <th>lists url</th>
-        <th>Days</th>
-        <th>Message</th>
-        <th>Subject</th>
-        <th>Mail</th>
-        <th>Created At</th>
-        <th>Updated At</th>
-        <th>Action</th>
-    </thead>
-    <tbody>
-        @php $deleteremove = true; @endphp
-        @if($data->count() > 0)
-        @foreach($data as $row)
-            <tr>
-                <td>{{$row->label}}</td>
-                <td>{{$row->name}}</td>
-                <td> 
-                    <span class="get-day-{{$row->id}}">{{$row->days}}
-                    </span>
-                    <!--<div class="mt-1"><small><a class="display_days" id="{{$row->id}}">Edit</a></small></div>-->
-                </td>
-                <td class="wraptext">
-                    <span class="get-text-{{$row->id}}">{{$row->message}}</span>
-                    <div><small><a id="{{$row->id}}" class="display_popup">Read More</a></small></div>
-                </td>
-                <td class="subject-{{$row->id}}">{{$row->subject}}</td>
-                <td class="wraptext">
-                    <span class="get-mailtext-{{$row->id}}">{{$row->mail}}</span>
-                    <div><small><a id="{{$row->id}}" class="display_popup">Read More</a></small></div>
-                </td>
-                <td>{{$row->created_at}}</td>
-                <td>{{$row->updated_at}}</td>
-                <td>
-                    <a href="{{url('reminder-status/'.$row->id.'/'.$row->status.'')}}" class="btn btn-primary btn-sm"> @if($row->status == 0)
-                        Run
-                    @else
-                        Pause
-                    @endif</a>
+<!-- tab 2 -->
+@if(count($reminder) > 0)
+  @foreach($reminder as $index => $row)
+  <div class="bg-dashboard campaign row">
+    <div class="col-lg-4 pad-fix col-card">
+      <h5>{{ $row['package'] }}</h5>
+      <div class="notes">
+        <div>Type Campaign : <color><span class="og">Auto Responder</span></color></div>
+        <div>Date Send : <b>{{ $row['sending'] }}</b></div>
+        <div>List : {{ $row['label'] }}</div>
+      </div>
+      <div class="created">
+        Create On : {{ $row['created_at'] }}
+      </div>
+    </div>
 
-                    <?php
-                        if($row->list_id == 17 || $row->list_id == 18)
-                        {
-                            $deleteremove = true;
-                        }
-                        else
-                        {
-                            $deleteremove = false;
-                        }
-                    ?>
+    <div class="col-lg-5 pad-fix mt-4">
+      <div class="row">
+          <div class="col-lg-3 pad-fix cardnumber">
+            <div class="big-number">{{ $row['total_message'] }}</div>
+            <div class="contact">Message</div>
+          </div>  
+          <div class="col-lg-3 pad-fix cardnumber">
+            <div class="big-number">{{ $row['sent_message'] }}</div>
+            <div class="contact">Send</div>
+          </div> 
+          <!--
+          <div class="col-lg-3 pad-fix cardnumber">
+            <div class="big-number">90</div>
+            <div class="contact">Opened</div>
+          </div>
+          <div class="col-lg-3 pad-fix cardnumber">
+            <div class="big-number">90%</div>
+            <div class="contact">Open Rate</div>
+          </div>
+         -->
+      </div>  
+    </div>
 
-                    @if($deleteremove == false)
-                    <a id="{{$row->id}}" class="btn btn-danger btn-sm del-col">Delete</a>
-                    @endif
-
-                     <a id="{{encrypt($row->list_id)}}" class="btn btn-info btn-sm download-col">Download CSV</a>
-                </td>
-            </tr>
-        @endforeach
-        @endif
-    </tbody>
-</table>
+    <div class="col-lg-3 pad-fix col-button">
+        <button id="{{ $row['id'] }}" type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
+        <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
+        <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm responder-del"><span class="icon-delete"></span></button>
+        <div>
+          <a href="{{url('add-reminder')}}" class="btn btn-custom">Add Message</a>
+        </div>
+    </div>
+  </div> 
+  @endforeach
+  @else
+  <div class="bg-dashboard campaign row text-center">
+     Currently data not available
+  </div>
+@endif

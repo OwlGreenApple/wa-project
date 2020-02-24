@@ -1,46 +1,52 @@
-<div class="table-responsive">
-    <h4>Event Schedule</h4>
-    <table class="table table-striped table-responsive" id="event-list">
-        <thead>
-            <th>Event Label</th>
-            <th>Event URL</th>
-            <th>Event Date</th>
-            <th>Amount Days to Send</th>
-            <th>Sending Hour</th>
-            <th>Message</th>
-            <th>Created At</th>
-            <th>Updated At</th>
-            <th>Action</th>
-        </thead>
-        <tbody>
-            @if($event->count() > 0)
-            @foreach($event as $rows)
-                <tr>
-                    <td>{{$rows->label}}</td>
-                    <td>{{$rows->name}}</td>
-                    <td>{{$rows->event_date}}</td>
-                    <td>{{$rows->days}}</td>
-                    <td>{{$rows->hour_time}}</td>
-                    <td class="wraptext">
-                        <span class="get-text-{{$rows->id}}">{{$rows->message}}</span>
-                        <div><small><a id="{{$rows->id}}" class="display_popup">Read More | Edit</a></small></div>
-                    </td>
-                    <td>{{$rows->created_at}}</td>
-                    <td>{{$rows->updated_at}}</td>
-                    <td>
-                        <a href="{{url('eventstatus/'.$rows->id.'/'.$rows->status.'')}}" class="btn btn-primary btn-sm"> @if($rows->status == 0)
-                            Run
-                        @else
-                            Pause
-                        @endif</a>
-                        <!-- edit button -->
-                        <div class="mt-1"><a class="btn btn-warning btn-sm edit-col @if($rows->status == 1) disabled @endif" @if($rows->status == 0) id="{{$rows->id}}" @endif >Edit</a></div>
-                        <div class="mt-1"><a class="btn btn-danger btn-sm del-col" id="{{$rows->id}}">Delete</a></div>
-                        <div class="mt-1"><a class="btn btn-success btn-sm download-col" id="{{encrypt($rows->list_id)}}">Download CSV</a></div> 
-                    </td>
-                </tr>
-            @endforeach
-            @endif
-        </tbody>
-    </table>
-</div>
+<!-- tab 1 -->
+@if(count($event) > 0)
+  @foreach($event as $index => $row)
+  <div class="bg-dashboard campaign row">
+      <div class="col-lg-4 pad-fix col-card">
+        <h5>{{ $row['package'] }}</h5>                                                
+        <div class="notes">
+          <div>Type Campaign : <color>Event</color></div>
+          <div>Date Send : <b>{{ $row['sending'] }}</b></div>
+          <div>List : {{ $row['label'] }}</div>
+        </div>
+        <div class="created">
+          Create On : {{ $row['created_at'] }}
+        </div>
+      </div>
+
+      <div class="col-lg-5 pad-fix mt-4">
+        <div class="row">
+            <div class="col-lg-3 pad-fix cardnumber">
+              <div class="big-number">{{ $row['total_message'] }}</div>
+              <div class="contact">Message</div>
+            </div>  
+            <div class="col-lg-3 pad-fix cardnumber">
+              <div class="big-number">{{ $row['sent_message'] }}</div>
+              <div class="contact">Send</div>
+            </div> 
+            <!--<div class="col-lg-3 pad-fix cardnumber">
+              <div class="big-number">100</div>
+              <div class="contact">Opened</div>
+            </div>
+            <div class="col-lg-3 pad-fix cardnumber">
+              <div class="big-number">100%</div>
+              <div class="contact">Open Rate</div>
+            </div>-->
+        </div>  
+      </div>
+
+      <div class="col-lg-3 pad-fix col-button">
+        <a href="{{url('report-reminder')}}" id="{{ $row['id'] }}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></a>
+        <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
+        <button type="button" id="{{ $row['id'] }}" class="btn btn-danger btn-sm event-del"><span class="icon-delete"></span></button>
+        <div>
+          <a href="{{url('add-reminder')}}" class="btn btn-custom">Add Message</a>
+        </div>
+      </div>
+  </div> 
+  @endforeach
+  @else
+    <div class="bg-dashboard campaign row text-center">
+       Currently data not available
+    </div>
+  @endif

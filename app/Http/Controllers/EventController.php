@@ -17,6 +17,7 @@ use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
 use App\Sender;
+use DB;
 
 class EventController extends Controller
 {
@@ -101,6 +102,83 @@ class EventController extends Controller
         return $data;
     }
 
+    public function displayEventList(Request $request)
+    {
+        $data = array();
+        $id = Auth::id();
+        $search = $request->search;
+
+        if(empty($search)){
+          $event = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',1]])
+                ->join('lists','reminders.list_id','=','lists.id')
+                ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
+                ->get();
+        } else {
+          $event = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',1],['package','like','%'.$search.'%']])
+              ->join('lists','reminders.list_id','=','lists.id')
+              ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
+              ->get();
+        }
+
+          if($event->count() > 0)
+          {
+              foreach($event as $row)
+              {
+                  $days = (int)$row->days;
+                  if($days < 0){
+                    $abs = abs($days);
+                    $event_time = Carbon::parse($row->event_time)->subDays($abs);
+                  }
+                  else
+                  {
+                    $event_time = Carbon::parse($row->event_time)->addDays($days);
+                  }
+
+                  $reminder_customer = ReminderCustomers::where('reminder_id','=',$row->id_reminder)->select(DB::raw('COUNT("id") AS total_message'))->first();
+
+                  $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$row->id_reminder],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+
+                  $data[] = array(
+                    'id'=>$row->id,
+                    'package' => $row->package,
+                    'sending' => Date('M d, Y',strtotime($event_time)),
+                    'label' => $row->label,
+                    'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                    'total_message' => $reminder_customer->total_message,
+                    'sent_message' => $reminder_customer_open->total_sending_message,
+                  );
+              }
+          }
+    
+          return view('event.event-table',['event' => $data]);
+    }
+
+    public function delEvent(Request $request){
+        $id = $request->id;
+        $user_id = Auth::id();
+        
+        try {
+          Reminder::where([['user_id','=',$user_id],['id',$id]])->delete();
+          $success = true;
+        }
+        catch(Exception $e)
+        {
+          return response()->json(['message'=>'Sorry, unable to delete auto responder, contact administrator']);
+        }
+
+        if($success == true)
+        {
+          $remindercustomer = ReminderCustomers::where('reminder_id','=',$id)->get();
+        }
+
+        if($remindercustomer->count() > 0)
+        {
+             ReminderCustomers::where('reminder_id','=',$id)->delete();
+        }
+        return response()->json(['message'=>'Your event has been deleted successfully']);
+    }
+
+
     /***************************************************************************** 
                                     OLD CODES
     /*****************************************************************************/
@@ -124,19 +202,6 @@ class EventController extends Controller
                 ->get();
 
     	return view('event.event',['data'=>$eventautoreply,'event'=>$event]);
-    }
-
-     public function displayEventList(Request $request)
-    {
-        $data = array();
-        $id = Auth::id();
-        $listid = $request->listid;
-        $event = Reminder::where([['reminders.list_id','=',$listid],['reminders.user_id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])
-                ->join('lists','reminders.list_id','=','lists.id')
-                ->select('lists.name','lists.event_date','lists.label','reminders.*')
-                ->get();
-
-        return view('event.event-table',['event' => $event]);
     }
 
     public function eventAutoReply(){
@@ -562,33 +627,6 @@ class EventController extends Controller
             /* if there is no status = 0 */
             return redirect('event')->with('warning','Warning! Your reminder status just changed, but nothing reminder for customer');
         }
-    }
-
-    public function delEvent(Request $request){
-        $id = $request->id;
-        $id_user = Auth::id();
-        $del_event = Reminder::where([['id','=',$id],['user_id','=',$id_user]])->delete();
-
-        if($del_event == true){
-            $event = ReminderCustomers::where([['reminder_id','=',$id],['user_id','=',$id_user]])->get();
-        } else {
-            $data['message'] = 'Sorry, cannot delete this event, there is error';
-            return response()->json($data);
-        }
-
-        if($event->count() > 0){
-            $event = ReminderCustomers::where([['reminder_id','=',$id],['user_id','=',$id_user]])->delete();
-        } else {
-            $data['message'] = 'Event has been deleted';
-            return response()->json($data);
-        }
-
-        if($event == true){
-            $data['message'] = 'Event has been deleted';
-        } else {
-            $data['message'] = 'Sorry, cannot delete this event, there is error';
-        }
-         return response()->json($data);
     }
 
     public function exportSubscriber(Request $request){

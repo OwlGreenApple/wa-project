@@ -12,6 +12,7 @@ use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
 use App\Sender;
+use DB;
 
 class ReminderController extends Controller
 {
@@ -113,6 +114,84 @@ class ReminderController extends Controller
         }
     }
 
+    public function displayReminderList(Request $request)
+    {
+        $data = array();
+        $id = Auth::id();
+        $search = $request->search;
+
+        if(empty($search))
+        {
+           $reminder = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',0]])->join('lists','reminders.list_id','=','lists.id')
+              ->select('lists.label','reminders.*')
+              ->get();
+        }
+        else 
+        {
+           $reminder = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',0]])->orWhere('package','like','%'.$search.'%')
+              ->join('lists','reminders.list_id','=','lists.id')
+              ->select('lists.label','reminders.*')
+              ->get();
+        }
+
+        if($reminder->count() > 0)
+        {
+           foreach($reminder as $row)
+           {
+
+              $sending = Carbon::parse($row->event_time)->subDays(abs($row->days));
+
+              $reminder_customer = ReminderCustomers::where('reminder_id','=',$row->id_reminder)->select(DB::raw('COUNT("id") AS total_message'))->first();
+
+              $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$row->id_reminder],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+
+              $data[] = array(
+                  'id'=>$row->id,
+                  'package' => $row->package,
+                  'sending' => Date('M d, Y',strtotime($sending)),
+                  'label' => $row->label,
+                  'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                  'total_message' => $reminder_customer->total_message,
+                  'sent_message' => $reminder_customer_open->total_sending_message,
+              );
+           }
+        }
+
+        /*$reminder = Reminder::where([['reminders.list_id','=',$listid],['reminders.user_id',$id],['lists.is_event','=',0],['reminders.days','>',0]])
+                ->join('lists','reminders.list_id','=','lists.id')
+                ->select('lists.name','lists.label','reminders.*')
+                ->get();
+        */
+
+        return view('reminder.reminder-table',['reminder' => $data]);
+    }
+
+    public function delReminder(Request $request)
+    {
+        $id = $request->id;
+        $user_id = Auth::id();
+
+        try {
+          Reminder::where([['user_id','=',$user_id],['id',$id]])->delete();
+          $success = true;
+        }
+        catch(Exception $e)
+        {
+          return response()->json(['message'=>'Sorry, unable to delete auto responder, contact administrator']);
+        }
+
+        if($success == true)
+        {
+          $remindercustomer = ReminderCustomers::where('reminder_id','=',$id)->get();
+        }
+
+        if($remindercustomer->count() > 0)
+        {
+             ReminderCustomers::where('reminder_id','=',$id)->delete();
+        }
+        return response()->json(['message'=>'Your auto responder has been deleted successfully']);
+    }
+
     /****************************************************************************************
                                             OLD CODES
     ****************************************************************************************/
@@ -131,19 +210,6 @@ class ReminderController extends Controller
                 ->select('lists.name','lists.event_date','lists.label','reminders.*')
                 ->get();
     	return view('reminder.reminder',['data'=>$list,'autoreply'=>$listautoreply]);
-    }
-
-    public function displayReminderList(Request $request)
-    {
-        $data = array();
-        $id = Auth::id();
-        $listid = $request->listid;
-        $reminder = Reminder::where([['reminders.list_id','=',$listid],['reminders.user_id',$id],['lists.is_event','=',0],['reminders.days','>',0]])
-                ->join('lists','reminders.list_id','=','lists.id')
-                ->select('lists.name','lists.label','reminders.*')
-                ->get();
-
-        return view('reminder.reminder-table',['data' => $reminder]);
     }
 
     /* Display form to create reminder auto reply */
@@ -397,6 +463,7 @@ class ReminderController extends Controller
         return response()->json($data);
     }
 
+    /*
     public function delReminder(Request $request){
         $id = $request->id;
         $id_user = Auth::id();
@@ -423,6 +490,7 @@ class ReminderController extends Controller
         }
          return response()->json($data);
     }
+    */
 
     public function exportSubscriber(Request $request){
         $iduser = Auth::id();

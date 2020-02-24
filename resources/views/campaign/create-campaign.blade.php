@@ -51,7 +51,19 @@
         </div>
       </div>
 
-      <div class="form-group row">
+      <div class="form-group row broadcast-type">
+        <label class="col-sm-3 col-form-label">Broadcast Type :</label>
+        <div class="col-sm-9 relativity">
+           <select name="broadcast_schedule" id="broadcast-schedule" class="custom-select-campaign form-control">
+              <option value="0">Schedule Broadcast</option>
+              <option value="1">Schedule Group</option>
+              <option value="2">Schedule Channel</option>
+           </select>
+           <span class="icon-carret-down-circle"></span>
+        </div>
+      </div>
+
+      <div class="form-group row lists">
         <label class="col-sm-3 col-form-label">Select List :</label>
         <div class="col-sm-9 relativity">
            <select name="list_id" class="custom-select-campaign form-control">
@@ -62,6 +74,16 @@
               @endif
            </select>
            <span class="icon-carret-down-circle"></span>
+        </div>
+      </div>
+
+      <div class="box-schedule"></div>
+
+      <div class="form-group row date-send">
+        <label class="col-sm-3 col-form-label">Date Send :</label>
+        <div class="col-sm-9 relativity">
+          <input id="datetimepicker-date" type="text" name="date_send" class="form-control custom-select-campaign" />
+          <span class="icon-calendar"></span>
         </div>
       </div>
 
@@ -85,7 +107,7 @@
         </div>
       </div>
 
-       <div class="form-group row">
+      <div class="form-group row">
         <label class="col-sm-3 col-form-label">Time to send Message :</label>
         <div class="col-sm-9 relativity inputh">
           <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
@@ -112,6 +134,10 @@
    $(function () {
         $('#datetimepicker').datetimepicker({
           format : 'YYYY-MM-DD HH:mm',
+        }); 
+
+        $('#datetimepicker-date').datetimepicker({
+          format : 'YYYY-MM-DD',
         });
     });
 
@@ -121,6 +147,7 @@
     MDTimepicker();
     neutralizeClock();
     saveCampaign();
+    broadcastSchedule();
   });
 
   function saveCampaign()
@@ -171,6 +198,8 @@
           $("input[name=day_reminder]").prop('disabled',false);
           $(".event-time").show();
           $(".reminder").show();
+          $(".broadcast-type").hide();
+          $(".date-send").hide();
         }
         else if(val == 'auto'){
           $("input[name=event_time]").prop('disabled',true);
@@ -178,6 +207,8 @@
           $("input[name=day_reminder]").prop('disabled',false);
           $(".reminder").hide();
           $(".inputh").html(hplus);
+          $(".broadcast-type").hide();
+          $(".date-send").hide();
         }
         else {
           $("input[name=event_time]").prop('disabled',true);
@@ -185,9 +216,54 @@
           $(".event-time").hide();
           $(".reminder").hide();
           $(".inputh").html(hday);
+          $(".broadcast-type").show();
+          $(".date-send").show();
         }
 
     });
+  }
+
+  function broadcastSchedule()
+  {
+      $(".broadcast-type").hide();
+      $(".date-send").hide();
+
+      $("#broadcast-schedule").change(function(){
+        var val = $(this).val();
+        var box = '';
+
+        if(val == 0)
+        {
+            $(".lists").show();
+            $("select[name='list_id']").prop('disabled',false);
+            $(".box-schedule").html('');
+        }
+        else if(val == 1)
+        {
+            $(".lists").hide();
+            $("select[name='list_id']").prop('disabled',true);
+
+            box += '<div class="form-group row">';
+            box += '<label class="col-sm-3 col-form-label">Telegram Group Name :</label>';
+            box += '<div class="col-sm-9 relativity">';
+            box += '<input type="text" name="group_name" class="form-control" />';
+            box += '</div>';
+            box += '</div>';
+            $(".box-schedule").html(box);
+        }
+        else {
+            $(".lists").hide();
+            $("select[name='list_id']").prop('disabled',true);
+
+            box += '<div class="form-group row">';
+            box += '<label class="col-sm-3 col-form-label">Telegram Channel Name :</label>';
+            box += '<div class="col-sm-9 relativity">';
+            box += '<input type="text" name="channel_name" class="form-control" />';
+            box += '</div>';
+            box += '</div>';
+            $(".box-schedule").html(box);
+        }
+      });
   }
 
    function displayAddDaysBtn()
