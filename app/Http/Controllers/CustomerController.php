@@ -566,7 +566,7 @@ class CustomerController extends Controller
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
-          'username'=>"gungunomni", 
+          // 'username'=>"gungunomni", 
           'chat_id'=>"955127354", 
           'message'=>"test kirim telegram", 
           'filename'=>$phoneNumber->filename,

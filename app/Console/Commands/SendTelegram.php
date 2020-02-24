@@ -42,31 +42,6 @@ class SendTelegram extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    
-    /* To test send wassenger
-
-    public function handle()
-    {
-
-      $wa_number = '+628123238793';
-      $api_key = '5fe578b72c10a69fdcbd5d629a183af1799610cef975338a865480a7e7ad29c5361eb07beaf80f16';
-       for($x=1;$x<=10;$x++){
-          $message = $x.'--- Test message sending 1 - 10';
-          $this->sendWA($wa_number,$api_key,$message);
-       }
-     End function handle     
-    }*/
-
-    /*public function handle()
-    {
-      return $this->dateReminder();
-    }*/
-
     public function handle()
     {
         /* Users counter */
@@ -76,12 +51,16 @@ class SendTelegram extends Command
         if($user->count() > 0){
           foreach($user as $userow){
             $id_user = $userow->id;
-            $phoneNumber = PhoneNumber::where([['user_id','=',$id_user]])->select('counter')->first();
+            $phoneNumber = PhoneNumber::
+                            where([['user_id','=',$id_user]])
+                            ->select('counter')
+                            ->first();
             if(!is_null($phoneNumber)){
               $count = $phoneNumber->counter;
             }
             
-            $check_event = ReminderCustomers::where([
+            $check_event = ReminderCustomers::
+            where([
               ['reminder_customers.user_id',$id_user],
               ['reminder_customers.status',0],
               ['lists.is_event','=',1],
@@ -146,13 +125,14 @@ class SendTelegram extends Command
                             echo 'Error!! Unable to update broadcast customer';
                       }
                 }
-            } else if($check_event->count() > 0){
+            } 
+            else if($check_event->count() > 0){
               //Event 
-              return $this->dateEvent();
+              return $this->dateEvent($id_user);
             } 
             else 
             {
-               return $this->dateReminder();
+               return $this->dateReminder($id_user);
             }
 
           /* end user looping */
@@ -198,27 +178,23 @@ class SendTelegram extends Command
     }
 
     /* EVENT */
-    public function dateEvent(){
-      $user = User::select('id')->get();
-
-      if($user->count() > 0){
-        foreach($user as $rowuser){
-          $id_user = $rowuser->id;
+    public function dateEvent($user_id){
           $idr = null;
           $wasenggerevent = null;
           $event = null;
 
           $reminder = Reminder::where([
-                  ['reminders.user_id',$id_user],
-                  ['reminders.status',1],
-                  ['lists.is_event',1],
-          ])->join('lists','reminders.list_id','=','lists.id')
-          ->select('reminders.*','lists.event_date')->get();
+                  ['reminders.user_id',$user_id],
+                  ['reminders.status',1], //1 => active
+                  ['lists.is_event',1], //1 => active
+          ])
+          ->join('lists','reminders.list_id','=','lists.id')
+          ->select('reminders.*','lists.event_date')
+          ->get();
 
           /* event */
           if($reminder->count() > 0){
-               foreach($reminder as $rows){
-                $device_number = $rows->device_number;
+              foreach($reminder as $rows){
                 $id_reminder = $rows->id;
                 $today = Carbon::now();
                 $event_date = Carbon::parse($rows->event_date);
@@ -226,12 +202,12 @@ class SendTelegram extends Command
                 //hour according user set it to send WA
                 $hour = $rows->hour_time.':00';
                 //$hour = date('H:m:s',strtotime($rows->hour_time));
-                $phoneNumber = PhoneNumber::where([['user_id','=',$id_user]])->select('counter')->first();
+                $phoneNumber = PhoneNumber::where([['user_id','=',$user_id]])->select('counter')->first();
                 if(!is_null($phoneNumber)){
                   $count = $phoneNumber->counter;
                 }
 
-               
+
                 /* if the day before / substract */
                 if($days < 0){
                   $days = abs($days);
@@ -256,7 +232,7 @@ class SendTelegram extends Command
                //echo $id_reminder."\n";
                 // to ge customer wa number and message 
                 $remindercustomer = ReminderCustomers::where([
-                      ['reminder_customers.user_id','=',$id_user],
+                      ['reminder_customers.user_id','=',$user_id],
                       ['reminder_customers.reminder_id','=',$id_reminder],
                       ['reminder_customers.status','=',0],
                 ])->join('customers','customers.id','=','reminder_customers.customer_id')->join('reminders','reminders.id','=','reminder_customers.reminder_id')->select('customers.chat_id','customers.name','reminders.message','reminder_customers.id AS rc_id','customers.id AS cs_id','reminder_customers.reminder_id AS id_reminder')->get();
@@ -264,7 +240,7 @@ class SendTelegram extends Command
                 foreach($remindercustomer as $col){
                     $event[] = $col;
                 }
-              } # end foreach reminder 
+              } // end foreach reminder 
           }
 
           
@@ -285,7 +261,7 @@ class SendTelegram extends Command
                 $id_reminder = $col->id_reminder;
                 $chat_id = $col->chat_id;
                 
-                $phoneNumber = PhoneNumber::where([['user_id','=',$id_user]])->select('counter')->first();
+                $phoneNumber = PhoneNumber::where([['user_id','=',$user_id]])->select('counter')->first();
                 if(!is_null($phoneNumber)){
                   $count = $phoneNumber->counter;
                 }
@@ -312,7 +288,7 @@ class SendTelegram extends Command
                     } 
                     
                     $update = ReminderCustomers::where([
-                      ['user_id','=',$id_user],
+                      ['user_id','=',$user_id],
                       ['id','=',$col->rc_id],
                       ['status','=',0],
                     ])->update([
@@ -324,13 +300,13 @@ class SendTelegram extends Command
                     break;
                 }
 
-                $checkuser = ReminderCustomers::where('user_id',$id_user)->get();
+                $checkuser = ReminderCustomers::where('user_id',$user_id)->get();
                
                 if($update == true && $checkuser->count() > 0){
                    $deviceId = $wasenggerevent->device;
                    $count = $count - 1;
-                   // $user_update = Sender::where([['user_id',$id_user],['device_id','=',$deviceId]])->update(['counter'=>$count]);
-                   PhoneNumber::where(['user_id',$id_user])->update(['counter'=>$count]);
+                   // $user_update = Sender::where([['user_id',$user_id],['device_id','=',$deviceId]])->update(['counter'=>$count]);
+                   PhoneNumber::where(['user_id',$user_id])->update(['counter'=>$count]);
                 } else if($update == false && $checkuser->count() > 0) {
                    echo 'Error!! unable to update';
                    break;
@@ -343,94 +319,66 @@ class SendTelegram extends Command
             }
           } 
   
-          
-        } /* end foreach user */
-
-      } /* end if */
-
     }
 
     /* REMINDER */
-    public function dateReminder()
+    public function dateReminder($user_id)
     {
-       /* Users counter */
-        $user = User::select('id')->get();
         $coupon_code = null;
-        if($user->count() > 0)
-        {
-          foreach($user as $userow)
-          {
-              $id_user = $userow->id;
-              $phoneNumber = PhoneNumber::where([['user_id','=',$id_user]])->select('counter')->first();
-              if(!is_null($phoneNumber)){
-                $count = $phoneNumber->counter;
-              }
-             
-              /* Reminder */
-                $current_time = Carbon::now();
-               /* get days from reminder */
-                $reminder = ReminderCustomers::where([
-                            ['reminder_customers.user_id','=',$id_user],
-                            ['reminder_customers.status','=',0],
-                            ['lists.is_event','=',0],
-                            ['customers.created_at','<=',$current_time->toDateTimeString()],
-                            ])
-                            ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
-                            ->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
-                            ->join('lists','lists.id','=','reminders.list_id')
-                            ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-                            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.package','reminders.days','reminders.message','reminders.subject','reminders.mail','customers.created_at AS cstreg','customers.chat_id','customers.name','customers.email','customers.is_pay')
-                          //->take($count)
-                          ->get();
-
-                /* check date reminder customer and update if succesful sending */
-                foreach($reminder as $col) 
-                {
-                    $day_reminder = $col->days; // how many days
-                    $customer_signup = Carbon::parse($col->cstreg);
-                    $adding = $customer_signup->addDays($day_reminder);
-                    $reminder_customer_status = $col->rc_st;
-                    $reminder_customers_id = $col->rcs_id;
-                    //$event_date = $col->event_date;
-                    $message = $col->message;
-                    $chat_id = $col->chat_id;
-                    //$message = $col->message;
-                    $customeremail = $col->email;
-                    $package = $col->package;
-                    $subject = $col->subject;
-                    $mailmessage = $col->mail;
-                    $is_pay = $col->is_pay;
-
-                    // ??
-                    $run = true;
-
-
-                    if($is_pay == 0 && ($current_time >= $adding) && $reminder_customer_status == 0)
-                    {
-                        $wareminder = $this->sendTelegram($phoneNumber,$chat_id,$message);
-                        $status = 1;
-                    }
-                    elseif($is_pay == 1)
-                    {
-                        $status = 4;
-                    } 
-                    else 
-                    {
-                        $status = 0;
-                    }
-
-                    $update_reminder_customer = ReminderCustomers::where([
-                        ['id',$reminder_customers_id],
-                        ['status','=',0],
-                    ])->update([
-                        'id_wa'=>0,
-                        'status'=>$status,
-                    ]); 
-                } #end reminder looping
-          /* end user looping */
-          }
-        /* end user if */  
+        $phoneNumber = PhoneNumber::where([['user_id','=',$user_id]])->select('counter')->first();
+        if(!is_null($phoneNumber)){
+          $count = $phoneNumber->counter;
         }
+
+        /* Reminder */
+        $current_time = Carbon::now();
+        /* get days from reminder */
+        $reminder = ReminderCustomers::where([
+                      ['reminder_customers.user_id','=',$user_id],
+                      ['reminder_customers.status','=',0],
+                      ['lists.is_event','=',0],
+                      ['customers.created_at','<=',$current_time->toDateTimeString()],
+                      ])
+                      ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
+                      ->rightJoin('reminders','reminder_customers.reminder_id','=','reminders.id')
+                      ->join('lists','lists.id','=','reminders.list_id')
+                      ->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
+                      ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.package','reminders.days','reminders.message','customers.created_at AS cstreg','customers.chat_id','customers.name')
+                    //->take($count)
+                    ->get();
+
+        /* check date reminder customer and update if succesful sending */
+        foreach($reminder as $col) 
+        {
+            $day_reminder = $col->days; // how many days
+            $customer_signup = Carbon::parse($col->cstreg);
+            $adding = $customer_signup->addDays($day_reminder);
+            $reminder_customer_status = $col->rc_st;
+            $reminder_customers_id = $col->rcs_id;
+            //$event_date = $col->event_date;
+            $message = $col->message;
+            $chat_id = $col->chat_id;
+            //$message = $col->message;
+            $package = $col->package;
+
+            if(($current_time >= $adding) && $reminder_customer_status == 0)
+            {
+                $wareminder = $this->sendTelegram($phoneNumber,$chat_id,$message);
+                $status = 1;
+            }
+            else 
+            {
+                $status = 0;
+            }
+
+            $update_reminder_customer = ReminderCustomers::where([
+                ['id',$reminder_customers_id],
+                ['status','=',0],
+            ])->update([
+                'id_wa'=>0,
+                'status'=>$status,
+            ]); 
+        } #end reminder looping
     }
 
 /* End command class */    
