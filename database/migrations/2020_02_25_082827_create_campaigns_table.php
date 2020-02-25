@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCampaignTable extends Migration
+class CreateCampaignsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -17,12 +17,8 @@ class CreateCampaignTable extends Migration
             $table->BigIncrements('id');
             $table->string('name');
             $table->boolean('type')->default(0);
-            $table->integer('list_id');
-            $table->integer('days')->default(0);
-            $table->DateTime('deliver_time')->nullable();
-            $table->string('hour_time')->nullable();
-            $table->text('message')->nullable();
-            $table->boolean('status')->default(0);
+            $table->bigInteger('list_id');
+            $table->bigInteger('user_id');
             $table->timestamps();
         });
     }
