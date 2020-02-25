@@ -67,7 +67,6 @@ class ReminderController extends Controller
             return 'Error!! failed to set reminder';
         }
 
-        # Input eligible customer id
         $datacustomer = array();
         if($customer->count() > 0){
             foreach($customer as $rows){

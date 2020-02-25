@@ -71,7 +71,12 @@ class CampaignController extends Controller
       }
     }
 
-    public function addReminder()
+    public function addAutoResponder()
+    {
+      return view('campaign.add-reminder');
+    } 
+
+    public function addEvent()
     {
       return view('campaign.add-reminder');
     } 

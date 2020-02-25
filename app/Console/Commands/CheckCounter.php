@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Sender;
+use App\PhoneNumber;
 
 class CheckCounter extends Command
 {
@@ -19,7 +19,7 @@ class CheckCounter extends Command
      *
      * @var string
      */
-    protected $description = 'To check counter on table user if sufficient or not to run WA, currently maximum counter is : 6, so if counter below 6 it will refresh or update column into 6';
+    protected $description = 'To check counter on table user if sufficient or not to run WA,  maximum counter is depends on .env';
 
     /**
      * Create a new command instance.
@@ -38,17 +38,16 @@ class CheckCounter extends Command
      */
     public function handle()
     {
-        $sender = Sender::select('counter','user_id')->get();
+        $phoneNumber = PhoneNumber::select('counter','user_id')->get();
 
-        if($sender->count() > 0){
-            foreach($sender as $row){
+        if($phoneNumber->count() > 0){
+            foreach($phoneNumber as $row){
                 $counter = $row->counter;
-                if($counter < 6){
-                    $update = Sender::where('user_id',$row->user_id)->update(['counter'=>6]);
+                if($counter < env('MAXIMUM_COUNTER')){
+                    $update = PhoneNumber::where('user_id',$row->user_id)->update(['counter'=>env('MAXIMUM_COUNTER')]);
                 }
             }
         }
-        
     }
 
 /* End check counter */
