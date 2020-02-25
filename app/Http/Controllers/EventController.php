@@ -17,6 +17,7 @@ use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
 use App\Sender;
+use App\Campaign;
 use DB;
 
 class EventController extends Controller
@@ -53,17 +54,48 @@ class EventController extends Controller
            
         }
         */
-         $reminder = new Reminder;
+
+         if($request->campaign_type == 'event')
+         {
+            $campaign_type = 0;
+         }
+         else if($request->campaign_type == 'auto') {
+            $campaign_type = 1;
+         }
+         else if($request->campaign_type == 'broadcast')
+         {
+            $campaign_type = 2;
+         }
+         else {
+            return 'Please do not change default type value';
+         }
+
+         $campaign = new Campaign;
+         $campaign->name =  $request->campaign_name;
+         $campaign->type =  $campaign_type;
+         $campaign->list_id = $request->list_id;
+         $campaign->user_id = $user_id;
+         $campaign->save();
+         $campaign_id = $campaign->id;
+
+         if($campaign->save())
+         {
+            $reminder = new Reminder;
             $reminder->user_id = $user_id;
             $reminder->list_id = $request->list_id;
+            $reminder->campaign_id = $campaign_id;
             $reminder->is_event = 1;
             $reminder->days = $request->day;
             $reminder->hour_time = $request->hour;
             $reminder->event_time = $request->event_time;
-            $reminder->package = $request->campaign_name;
             $reminder->message = $request->message;
             $reminder->save();
-
+         }
+         else
+         {
+            return 'Sorry, cannot create event, please contact administrator';
+         }
+          
         // if reminder stored / save successfully 
         if($reminder->save()){
             // retrieve customer id 

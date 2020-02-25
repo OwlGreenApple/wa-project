@@ -34,7 +34,7 @@ class CampaignController extends Controller
 
     public function SaveCampaign(Request $request)
     {
-      $campaign = $request->campaign;
+      $campaign = $request->campaign_type;
 
       if($campaign == 'event')
       {
@@ -73,12 +73,18 @@ class CampaignController extends Controller
 
     public function addMessageAutoResponder()
     {
-      return view('reminder.add-message-auto-responder');
+      $userid = Auth::id();
+      $lists = UserList::where('user_id',$userid)->get();
+      $data['lists'] = $lists;
+      return view('reminder.add-message-auto-responder',$data);
     }
 
     public function addMessageEvent()
     {
-      return view('event.add-message-event');
+      $userid = Auth::id();
+      $lists = UserList::where('user_id',$userid)->get();
+      $data['lists'] = $lists;
+      return view('event.add-message-event',$data);
     }
 
     public function reportReminder()

@@ -12,6 +12,7 @@ use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
 use App\Sender;
+use App\Campaign;
 use DB;
 
 class ReminderController extends Controller
@@ -48,16 +49,46 @@ class ReminderController extends Controller
            
         }
         */
+
+        if($request->campaign_type == 'event')
+        {
+            $campaign_type = 0;
+        }
+        else if($request->campaign_type == 'auto') {
+            $campaign_type = 1;
+        }
+        else if($request->campaign_type == 'broadcast')
+        {
+            $campaign_type = 2;
+        }
+        else {
+          return 'Please do not change default type value';
+        }
+
+        $campaign = new Campaign;
+        $campaign->name =  $request->campaign_name;
+        $campaign->type =  $campaign_type;
+        $campaign->list_id = $request->list_id;
+        $campaign->user_id = $user_id;
+        $campaign->save();
+        $campaign_id = $campaign->id;
     
-        $reminder = new Reminder;
-        $reminder->user_id = $user_id;
-        $reminder->list_id = $list_id;
-        $reminder->days = $days;
-        $reminder->hour_time = $request->hour;
-        $reminder->package = $package;
-        $reminder->message = $message;
-        $reminder->save();
-        $created_date = $reminder->created_at;
+        if($campaign->save())
+        {
+          $reminder = new Reminder;
+          $reminder->user_id = $user_id;
+          $reminder->list_id = $list_id;
+          $reminder->campaign_id = $campaign_id;
+          $reminder->days = $days;
+          $reminder->hour_time = $request->hour;
+          $reminder->message = $message;
+          $reminder->save();
+          $created_date = $reminder->created_at;
+        }
+        else
+        {
+          return 'Sorry, cannot create event, please contact administrator';
+        }
 
         // If data successfully inserted into reminder
         if($reminder->save() == true){
@@ -77,39 +108,35 @@ class ReminderController extends Controller
                 } 
             }
         } else {
-            $datacustomer = null;
+            return 'Your reminder has been set!';
         }
 
-        // indicate user doesn't have customer / subscriber
-        if($datacustomer == null || count($datacustomer) == 0){
-            return 'Your reminder has been set!';
-        } else {
-            // display data customer 
-            foreach($datacustomer as $col){
-                // retrieve reminder id according on created at 
-                $reminder_get_id = Reminder::where([
-                    ['list_id','=',$col->list_id],
-                    ['is_event','=',0],
-                    ['created_at','=',$created_date],
-                    ['status','=',1],
-                ])->select('id')->get();
+        // display data customer 
+        foreach($datacustomer as $col){
+            // retrieve reminder id according on created at 
+            $reminder_get_id = Reminder::where([
+                ['list_id','=',$col->list_id],
+                ['is_event','=',0],
+                ['created_at','=',$created_date],
+                ['status','=',1],
+            ])->select('id')->get();
 
-                $remindercustomer = new ReminderCustomers;
-                foreach($reminder_get_id as $id_reminder){
-                    $remindercustomer->user_id = $user_id;
-                    $remindercustomer->list_id = $col->list_id;
-                    $remindercustomer->reminder_id = $id_reminder->id;
-                    $remindercustomer->customer_id = $col->id;
-                    $remindercustomer->save();
-                }
-
-            } // end loop 
-            // If successful insert data into reminder customer 
-            if($remindercustomer->save()){
-                return 'Your reminder has been set!!';
-            } else {
-                return 'Error!! failed to set reminder for customer';
+            $remindercustomer = new ReminderCustomers;
+            foreach($reminder_get_id as $id_reminder){
+                $remindercustomer->user_id = $user_id;
+                $remindercustomer->list_id = $col->list_id;
+                $remindercustomer->reminder_id = $id_reminder->id;
+                $remindercustomer->customer_id = $col->id;
+                $remindercustomer->save();
             }
+
+        } // end loop
+
+        // If successful insert data into reminder customer 
+        if($remindercustomer->save()){
+            return 'Your reminder has been set!!';
+        } else {
+            return 'Error!! failed to set reminder for customer';
         }
     }
 

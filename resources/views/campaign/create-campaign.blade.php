@@ -16,7 +16,7 @@
   <form id="save_campaign">
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Name :</label>
-        <div class="col-sm-9">
+        <div class="col-sm-6">
           <input type="text" name="campaign_name" class="form-control" />
         </div>
       </div>
@@ -26,7 +26,7 @@
         <div class="col-sm-9">
           <div class="form-check form-check-inline">
             <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign" id="inlineRadio1" value="event" checked>
+              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio1" value="event" checked>
               <span class="checkmark"></span>
             </label>
             <label class="form-check-label" for="inlineRadio1">Event</label>
@@ -34,7 +34,7 @@
 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign" id="inlineRadio2" value="auto">
+              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio2" value="auto">
               <span class="checkmark"></span>
             </label>
             <label class="form-check-label" for="inlineRadio2">Auto Responder</label>
@@ -42,7 +42,7 @@
 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign" id="inlineRadio3" value="broadcast">
+              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio3" value="broadcast">
               <span class="checkmark"></span>
             </label>
             <label class="form-check-label" for="inlineRadio3">Broadcast</label>
@@ -116,12 +116,12 @@
 
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Message :</label>
-        <div class="col-sm-9">
+        <div class="col-sm-6">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
         </div>
       </div>
 
-      <div class="text-right">
+      <div class="text-right col-sm-9">
         <button type="submit" class="btn btn-custom">Create</button>
       </div>
 
@@ -188,7 +188,7 @@
   }
 
   function displayOption(){
-    $("input[name=campaign]").change(function(){
+    $("input[name='campaign_type']").change(function(){
         var val = $(this).val();
         var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
         var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
