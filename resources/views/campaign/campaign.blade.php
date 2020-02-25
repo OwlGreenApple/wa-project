@@ -446,6 +446,8 @@
         alert(xhr.responseText);
       }
     });
+      
+    });
   }
 
   function displayCampaign() {
