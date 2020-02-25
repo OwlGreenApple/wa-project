@@ -14,7 +14,6 @@ class DeleteColIdWaSenderIdFromReminderCustomer extends Migration
     public function up()
     {
         Schema::table('reminder_customers', function (Blueprint $table) {
-          $table->dropColumn('sender_id');
           $table->dropColumn('id_wa');
         });
     }
