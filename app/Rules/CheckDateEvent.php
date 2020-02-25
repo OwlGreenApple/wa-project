@@ -5,6 +5,7 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use App\Reminder;
+use Carbon\Carbon;
 
 class CheckDateEvent implements Rule
 {
@@ -32,11 +33,13 @@ class CheckDateEvent implements Rule
 
     public function checkDate($value){
         $id_user = Auth::id();
-        $reminder = Reminder::where([['user_id',$id_user],['event_date',$value]])->first();
-        if(is_null($reminder)){
-            return true;
-        } else {
+        $date = $value;
+        $today = Carbon::now();
+
+        if($date < $today){
             return false;
+        } else {
+            return true;
         }
     }
 
@@ -47,6 +50,6 @@ class CheckDateEvent implements Rule
      */
     public function message()
     {
-        return 'Date event has already been taken';
+        return 'Event date and time cannot be less than today and current time';
     }
 }

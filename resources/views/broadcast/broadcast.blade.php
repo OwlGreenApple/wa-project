@@ -23,14 +23,17 @@
 
         <div class="col-lg-5 pad-fix mt-4">
           <div class="row">
-              <div class="col-lg-3 pad-fix cardnumber">
-                <div class="big-number">{{ $row['total_message'] }}</div>
-                <div class="contact">Message</div>
-              </div>  
-              <div class="col-lg-3 pad-fix cardnumber">
-                <div class="big-number">{{ $row['sent_message'] }}</div>
-                <div class="contact">Send</div>
-              </div> 
+              @if($row['label'] !== null)
+                <div class="col-lg-3 pad-fix cardnumber">
+                  <div class="big-number">{{ $row['total_message'] }}</div>
+                  <div class="contact">Message</div>
+                </div>  
+                <div class="col-lg-3 pad-fix cardnumber">
+                  <div class="big-number">{{ $row['sent_message'] }}</div>
+                  <div class="contact">Send</div>
+                </div> 
+              @endif
+              <!--
               <div class="col-lg-3 pad-fix cardnumber">
                 <div class="big-number">9</div>
                 <div class="contact">Opened</div>
@@ -39,6 +42,7 @@
                 <div class="big-number">9%</div>
                 <div class="contact">Open Rate</div>
               </div>
+              -->
           </div>  
         </div>
 

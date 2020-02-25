@@ -117,7 +117,7 @@
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Message :</label>
         <div class="col-sm-9">
-          <textarea name="message" class="form-control"></textarea>
+          <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
         </div>
       </div>
 
@@ -138,6 +138,11 @@
 
         $('#datetimepicker-date').datetimepicker({
           format : 'YYYY-MM-DD',
+        });
+
+        $("#divInput-description-post").emojioneArea({
+            pickerPosition: "right",
+            mainPathFolder : "{{url('')}}",
         });
     });
 

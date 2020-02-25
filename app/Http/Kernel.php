@@ -70,6 +70,8 @@ class Kernel extends HttpKernel
         'checkdevicename' => \App\Http\Middleware\CheckDeviceName::class,
         'authsettings' => \App\Http\Middleware\AuthSettings::class,
         'usersettings'=>\App\Http\Middleware\CheckSettings::class,
+        'checkeventduplicate'=>\App\Http\Middleware\CheckEventCampaignDuplicate::class,
+        'checkresponderduplicate'=>\App\Http\Middleware\CheckAutoResponderDuplicate::class,
     ];
 
     /**
