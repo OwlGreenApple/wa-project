@@ -39,8 +39,8 @@ Auth::routes();
 //Route::get('createlists', 'HomeController@formList');
 //Route::get('lists-create', 'HomeController@createList');
 //Route::get('lists', 'HomeController@dataList');
-Route::get('add-event', 'CampaignController@addEvent');
-Route::get('add-auto-responder', 'CampaignController@addAutoResponder');
+Route::get('add-message-event', 'CampaignController@addMessageEvent');
+Route::get('add-message-auto-responder', 'CampaignController@addMessageAutoResponder');
 Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('history-order', 'HomeController@historyOrder');
 

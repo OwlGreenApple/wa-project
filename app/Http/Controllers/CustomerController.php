@@ -570,7 +570,6 @@ class CustomerController extends Controller
           'chat_id'=>"955127354", 
           'message'=>"test kirim telegram", 
           'filename'=>$phoneNumber->filename,
-          
       );
 
       curl_setopt_array($curl, array(
