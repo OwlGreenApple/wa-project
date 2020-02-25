@@ -145,7 +145,7 @@ class BroadCastController extends Controller
 
       if(empty($search))
       {
-        $broadcasts = BroadCast::where([['broad_casts.user_id','=',$id_user]])->get();
+        $broadcasts = BroadCast::where([['broad_casts.user_id','=',$id_user]])->orderBy('id','desc')->get();
       }
       else
       {
@@ -213,6 +213,112 @@ class BroadCastController extends Controller
              BroadCastCustomers::where('broadcast_id','=',$id)->delete();
         }
         return response()->json(['message'=>'Your broadcast has been deleted successfully']);
+    }
+
+    public function cehckBroadcastType(Request $request)
+    {
+        $user_id = Auth::id();
+        $id = $request->id;
+
+        $broadcast = BroadCast::where([['id',$id],['user_id',$user_id]])->first();
+
+        $data = array(
+          'list_id' => $broadcast->list_id,
+          'group_name' => $broadcast->group_name,
+          'channel' => $broadcast->channel,
+          'campaign' => $broadcast->campaign,
+          'day_send' => $broadcast->day_send,
+          'hour_time' => $broadcast->hour_time,
+          'message' => $broadcast->message,
+        );
+
+        return response()->json($data);
+    }
+
+    public function duplicateBroadcast(Request $request)
+    {
+        $user_id = Auth::id();
+        $list_id = $request->list_id;
+        $broadcast_id = $request->id;
+        $broadcast_name = $request->campaign_name;
+        $broadcast_date =  $request->date_send;
+        $broadcast_sending =  $request->hour;
+        $broadcast_message =  $request->message;
+        $broadcast_group_name =  $request->group_name;
+        $broadcast_channel =  $request->channel_name;
+        $broadcast = new BroadCast;
+
+        if(empty($list_id))
+        {
+            $list_id = 0;
+        }
+
+        if($list_id > 0)
+        {
+          $broadcast->user_id = $user_id;
+          $broadcast->list_id = $list_id;
+          $broadcast->campaign = $broadcast_name;
+          $broadcast->day_send = $broadcast_date;
+          $broadcast->hour_time = $broadcast_sending;
+          $broadcast->message = $broadcast_message;
+          $broadcast->save();
+        }
+        else if(empty($list_id) && !empty($broadcast_group_name))
+        {
+          $broadcast->user_id = $user_id;
+          $broadcast->list_id = $list_id;
+          $broadcast->campaign = $broadcast_name;
+          $broadcast->group_name = $broadcast_group_name;
+          $broadcast->day_send = $broadcast_date;
+          $broadcast->hour_time = $broadcast_sending;
+          $broadcast->message = $broadcast_message;
+          $broadcast->save();
+        }
+        else if(empty($list_id) && !empty($broadcast_channel))
+        {
+          $broadcast->user_id = $user_id;
+          $broadcast->list_id = $list_id;
+          $broadcast->campaign = $broadcast_name;
+          $broadcast->channel = $broadcast_channel;
+          $broadcast->day_send = $broadcast_date;
+          $broadcast->hour_time = $broadcast_sending;
+          $broadcast->message = $broadcast_message;
+          $broadcast->save();
+        }
+
+        if($broadcast->save() && $list_id > 0)
+        { 
+          $broadcastcustomer = ReminderCustomers::where([['user_id',$user_id],['reminder_id',$event_id]])->get();
+        }
+        else {
+           return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
+        }
+
+        if($remindercustomer->count() > 0)
+        {
+          foreach($remindercustomer as $row)
+          {
+              $eventcustomer = new ReminderCustomers;
+              $eventcustomer->user_id = $user_id;
+              $eventcustomer->list_id = $list_id;
+              $eventcustomer->reminder_id = $newreminderid;
+              $eventcustomer->customer_id = $row->customer_id;
+              $eventcustomer->save();
+          }
+        }
+        else 
+        {
+            return response()->json(['message'=>'Your campaign duplicated successfully']);
+        }
+
+        if($eventcustomer->save())
+        {
+            return response()->json(['message'=>'Your campaign duplicated successfully']);
+        }
+        else
+        {
+            return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
+        }
     }
 
     /****************************************************************************************

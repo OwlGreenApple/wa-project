@@ -13,8 +13,11 @@ class CampaignController extends Controller
 {
     public function index()
     {
-      
-      return view('campaign.campaign');
+      $userid = Auth::id();
+      $lists = UserList::where('user_id',$userid)->get();
+
+      $data['lists'] = $lists;
+      return view('campaign.campaign',$data);
     }
 
     public function CreateCampaign() 

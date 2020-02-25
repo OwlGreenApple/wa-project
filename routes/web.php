@@ -109,14 +109,18 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   /* EVENT */
   Route::get('event-list','EventController@displayEventList')->name('eventlist');
   Route::get('event-del','EventController@delEvent');
+  Route::post('event-duplicate','EventController@duplicateEvent');
 
   /* REMINDER */
   Route::get('reminder-list','ReminderController@displayReminderList')->name('reminderlist');
   Route::get('reminder-del','ReminderController@delReminder');
+  Route::post('reminder-duplicate','ReminderController@duplicateReminder');
 
   /* BROADCAST */
   Route::get('broadcast-list','BroadCastController@displayBroadCast')->name('broadcastlist'); 
   Route::get('broadcast-del','BroadCastController@delBroadcast'); 
+  Route::get('broadcast-check','BroadCastController@cehckBroadcastType'); 
+  Route::post('broadcast-duplicate','BroadCastController@duplicateBroadcast'); 
 
   # scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');

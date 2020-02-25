@@ -755,7 +755,7 @@ class ListController extends Controller
         //IF ADDITIONAL SAVED SUCCESSFULLY
         if($additional->save() == true)
         {
-            //$reminderList = Reminder::where([['list_id',$idlist],['user_id',$userid]])->get();
+            $reminderList = Reminder::where([['list_id',$idlist],['user_id',$userid]])->get();
             $response['error'] = false;
             $response['message'] = 'List successfully duplicated!';
         }
@@ -767,7 +767,7 @@ class ListController extends Controller
 
         return response()->json($response);
 
-        /* DUPLICATE ENTIRE LIST REMINDER
+        // DUPLICATE ENTIRE LIST REMINDER
         if($reminderList->count() > 0)
         {
             foreach($reminderList as $cols)
@@ -800,7 +800,6 @@ class ListController extends Controller
             $response['message'] = 'Error, Sorry unable to duplicate list record';
         }
         return response()->json($response);
-        */
     }
 
     //IMPORT SUBSCRIBER / CUSTOMER INTO CSV

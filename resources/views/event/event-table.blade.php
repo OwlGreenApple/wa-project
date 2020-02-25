@@ -37,7 +37,7 @@
 
       <div class="col-lg-3 pad-fix col-button">
         <a href="{{url('report-reminder')}}" id="{{ $row['id'] }}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></a>
-        <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm"><span class="icon-copy-text"></span></button>
+        <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm event_duplicate"><span class="icon-copy-text"></span></button>
         <button type="button" id="{{ $row['id'] }}" class="btn btn-danger btn-sm event-del"><span class="icon-delete"></span></button>
         <div>
           <a href="{{url('add-reminder')}}" class="btn btn-custom">Add Message</a>

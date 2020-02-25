@@ -61,7 +61,170 @@
   </div>
 </div>
 
+<!-- Modal Duplicate Event -->
+  <div class="modal fade child-modal" id="modal_duplicate" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2 act-tel-campaign">
+                  <form id="duplicate">
+                    <label>Event Name</label>
+                    <div class="form-group">
+                      <input type="text" class="form-control" name="campaign_name" />
+                    </div>
+
+                    <label>Event Date & Time</label>
+                    <div class="form-group row">
+                      <div class="col-sm-12 relativity">
+                        <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
+                        <span class="icon-calendar"></span>
+                      </div>
+                    </div>
+                 
+                    <div class="text-right">
+                      <button type="submit" class="btn btn-custom mr-1">Save</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+               
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
+  <!-- Modal Duplicate Auto Responder -->
+  <div class="modal fade child-modal" id="modal_duplicate_reminder" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2 act-tel-campaign">
+                  <form id="duplicate_reminder">
+                    <label>Auto Responder Name</label>
+                    <div class="form-group">
+                      <input type="text" class="form-control" name="campaign_name" />
+                    </div>
+                 
+                    <div class="text-right">
+                      <button type="submit" class="btn btn-custom mr-1">Save</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+               
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
+  <!-- Modal Duplicate Broadast -->
+  <div class="modal fade child-modal" id="modal_duplicate_broadcast" role="dialog">
+    <div class="modal-dialog" style="max-width : 800px">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2 act-tel-campaign">
+                  <form id="duplicate_broadcast">
+
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Broadcast Name</label>
+                      <div class="col-sm-9 relativity">
+                        <input type="text" class="form-control" name="campaign_name" />
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Broadcast Type :</label>
+                      <div class="col-sm-9 relativity">
+                         <div class="broadcast-type from-control"></div>
+                      </div>
+                    </div>
+
+                    <div class="form-group row lists">
+                      <label class="col-sm-3 col-form-label">Select List :</label>
+                      <div class="col-sm-9 relativity">
+                         <select name="list_id" class="custom-select-campaign form-control">
+                            @if($lists->count() > 0)
+                              @foreach($lists as $row)
+                                <option value="{{$row->id}}">{{$row->label}}</option>
+                              @endforeach
+                            @endif
+                         </select>
+                         <span class="icon-carret-down-circle"></span>
+                      </div>
+                    </div>
+
+                    <div class="box-schedule"></div>
+
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Date Send :</label>
+                      <div class="col-sm-9 relativity">
+                        <input id="datetimepicker-date" type="text" name="date_send" class="form-control custom-select-campaign" />
+                        <span class="icon-calendar"></span>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Time to send Message :</label>
+                      <div class="col-sm-9 relativity">
+                        <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Message :</label>
+                      <div class="col-sm-9">
+                        <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
+                      </div>
+                    </div>
+                 
+                    <div class="text-right">
+                      <button type="submit" class="btn btn-custom mr-1">Save</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+               
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
 <script type="text/javascript">
+
+  /* Datetimepicker */
+  $(function () {
+      $('#datetimepicker').datetimepicker({
+        format : 'YYYY-MM-DD HH:mm',
+      }); 
+
+      $('#datetimepicker-date').datetimepicker({
+        format : 'YYYY-MM-DD',
+      }); 
+
+      $("#divInput-description-post").emojioneArea({
+            pickerPosition: "right",
+            mainPathFolder : "{{url('')}}",
+      });
+  });
+
   $(document).ready(function(){
       displayCampaign();
       displayEvent();
@@ -69,7 +232,221 @@
       delAutoResponder();
       delEvent();
       searchCampaign();
+      duplicateEventForm()
+      duplicateEvent();
+      duplicateResponderForm();
+      duplicateResponder();
+      duplicateBroadcastForm();
+      duplicateBroadcast();
   });
+
+  function duplicateEventForm()
+  {
+    $("body").on("click",".event_duplicate",function(){
+        var id = $(this).attr('id');
+        $("#duplicate").attr('data',id);
+        $("#modal_duplicate").modal();
+    });
+  }
+
+  function duplicateEvent()
+  {
+    $("#duplicate").submit(function(e){
+        e.preventDefault();
+        var reminder_id = $(this).attr('data');
+
+        var data = $(this).serializeArray();
+        data.push({name : 'id', value:reminder_id});
+
+        $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'POST',
+        url: "{{ url('event-duplicate') }}",
+        data: data,
+        dataType: 'json',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert(result.message);
+          $("#modal_duplicate").modal('hide');
+          $("#duplicate:input").val('');
+          displayEvent();
+        },
+        error : function(xhr,attr,throwable){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert(xhr.responseText);
+        }
+      });
+
+    });
+  }
+
+  function duplicateResponderForm()
+  {
+    $("body").on("click",".responder_duplicate",function(){
+        var id = $(this).attr('id');
+        $("#duplicate_reminder").attr('data',id);
+        $("#modal_duplicate_reminder").modal();
+    });
+  }
+
+  function duplicateResponder()
+  {
+    $("#duplicate_reminder").submit(function(e){
+        e.preventDefault();
+        var reminder_id = $(this).attr('data');
+
+        var data = $(this).serializeArray();
+        data.push({name : 'id', value : reminder_id});
+
+        $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'POST',
+        url: "{{ url('reminder-duplicate') }}",
+        data: data,
+        dataType: 'json',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert(result.message);
+          $("#modal_duplicate_reminder").modal('hide');
+          $("#duplicate_reminder:input").val('');
+          displayAutoResponder();
+        },
+        error : function(xhr,attr,throwable){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert(xhr.responseText);
+        }
+      });
+
+    });
+  }
+
+  function duplicateBroadcastForm()
+  {
+    $("body").on("click",".broadcast_duplicate",function(){
+        var id = $(this).attr('id');
+
+        $.ajax({
+          type : 'GET',
+          url : '{{ url("broadcast-check") }}',
+          data : {id : id},
+          dataType : "json",
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            broadcastFormArrange(result);
+          },
+          error: function(xhr,attr,throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+          }
+        });
+
+        $("#duplicate_broadcast").attr('data',id);
+        $("#modal_duplicate_broadcast").modal();
+    });
+  }
+
+  function broadcastFormArrange(result)
+  {
+      var box = '';
+      $("input[name='campaign_name']").val(result.campaign);
+      if(result.list_id > 0){
+        $(".broadcast-type").html('Schedule Broadcast');
+        $(".lists").show();
+        $("select[name='list_id']").prop('disabled',false);
+        $("select[name='list_id'] > option[value="+result.list_id+"]").prop('selected',true);
+        $(".box-schedule").html('');
+      }
+      else if(result.list_id == 0 && result.group_name !== null)
+      {
+        $(".broadcast-type").html('Schedule Group');
+        $(".lists").hide();
+        $("select[name='list_id']").prop('disabled',true);
+
+        box += '<div class="form-group row">';
+        box += '<label class="col-sm-3 col-form-label">Telegram Group Name :</label>';
+        box += '<div class="col-sm-9 relativity">';
+        box += '<input type="text" value="'+result.group_name+'" name="group_name" class="form-control" />';
+        box += '</div>';
+        box += '</div>';
+        $(".box-schedule").html(box);
+      }
+      else if(result.list_id == 0 && result.channel !== null)
+      {
+        $(".broadcast-type").html('Schedule Channel');
+        $(".lists").hide();
+        $("select[name='list_id']").prop('disabled',true);
+
+        box += '<div class="form-group row">';
+        box += '<label class="col-sm-3 col-form-label">Telegram Channel Name :</label>';
+        box += '<div class="col-sm-9 relativity">';
+        box += '<input type="text" value="'+result.channel+'" name="channel_name" class="form-control" />';
+        box += '</div>';
+        box += '</div>';
+        $(".box-schedule").html(box);
+      }
+
+      $("input[name='date_send']").val(result.day_send);
+      $("input[name='hour']").val(result.hour_time);
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(result.message);
+  }
+
+  function duplicateBroadcast()
+  {
+    $("#duplicate_broadcast").submit(function(e){
+      e.preventDefault();
+      var reminder_id = $(this).attr('data');
+
+      var data = $(this).serializeArray();
+      data.push({name : 'id', value : reminder_id});
+
+      $.ajax({
+      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+      type: 'POST',
+      url: "{{ url('broadcast-duplicate') }}",
+      data: data,
+      dataType: 'json',
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success: function(result) {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        alert(result.message);
+        $("#modal_duplicate_broadcast").modal('hide');
+        $("#duplicate_broadcast:input").val('');
+        displayBroadcast();
+      },
+      error : function(xhr,attr,throwable){
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        alert(xhr.responseText);
+      }
+    });
+  }
 
   function displayCampaign() {
       $("#campaign_option").change(function(){
@@ -154,7 +531,7 @@
         error : function(xhr,attributes,throwable){
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          alert(xhr.responseText());
+          alert(xhr.responseText);
         }
     });
   }
