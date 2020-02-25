@@ -71,17 +71,21 @@
             <div class="form-group">
                  <div class="mb-2 act-tel-campaign">
                   <form id="duplicate">
-                    <label>Event Name</label>
+                    
                     <div class="form-group">
+                      <label>Event Name</label>
                       <input type="text" class="form-control" name="campaign_name" />
+                      <span class="error campaign_name"></span>
                     </div>
 
-                    <label>Event Date & Time</label>
-                    <div class="form-group row">
-                      <div class="col-sm-12 relativity">
+                    
+                    <div class="form-group">
+                      <label>Event Date & Time</label>
+                      <div class="relativity">
                         <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
                         <span class="icon-calendar"></span>
                       </div>
+                      <span class="error event_time"></span>
                     </div>
                  
                     <div class="text-right">
@@ -109,9 +113,11 @@
             <div class="form-group">
                  <div class="mb-2 act-tel-campaign">
                   <form id="duplicate_reminder">
-                    <label>Auto Responder Name</label>
+              
                     <div class="form-group">
+                      <label>Auto Responder Name</label>
                       <input type="text" class="form-control" name="campaign_name" />
+                      <span class="error campaign_name_reminder"></span>
                     </div>
                  
                     <div class="text-right">
@@ -238,6 +244,8 @@
       duplicateResponder();
       duplicateBroadcastForm();
       duplicateBroadcast();
+      MDTimepicker(); 
+      neutralizeClock();
   });
 
   function duplicateEventForm()
@@ -272,14 +280,26 @@
         success: function(result) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          alert(result.message);
-          $("#modal_duplicate").modal('hide');
-          $("#duplicate:input").val('');
-          displayEvent();
+
+          if(result.success == 0)
+          { 
+            $(".error").show();
+            $(".campaign_name").html(result.campaign_name);
+            $(".event_time").html(result.event_time);
+          }
+          else
+          {
+            $(".error").hide();
+            alert(result.message);
+            $("#modal_duplicate").modal('hide');
+            $("#duplicate:input").val('');
+            displayEvent();
+          }
         },
         error : function(xhr,attr,throwable){
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
+          $(".error").hide();
           alert(xhr.responseText);
         }
       });
@@ -319,12 +339,24 @@
         success: function(result) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          alert(result.message);
-          $("#modal_duplicate_reminder").modal('hide');
-          $("#duplicate_reminder:input").val('');
-          displayAutoResponder();
+
+          if(result.success == 0)
+          { 
+            $("#duplicate_reminder :input").val('');
+            $(".error").show();
+            $(".campaign_name_reminder").html(result.campaign_name);
+          }
+          else
+          {
+            $(".error").hide();
+            alert(result.message);
+            $("#modal_duplicate_reminder").modal('hide');
+            $("#duplicate_reminder :input").val('');
+            displayAutoResponder();
+          }
         },
         error : function(xhr,attr,throwable){
+          $(".error").hide();
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
           alert(xhr.responseText);
@@ -446,7 +478,7 @@
         alert(xhr.responseText);
       }
     });
-      
+
     });
   }
 
@@ -693,6 +725,21 @@
         displayEvent(search);
       });
   }
+
+  function MDTimepicker(){
+      $("body").on('focus','.timepicker',function(){
+          $(this).mdtimepicker({
+            format: 'hh:mm',
+          });
+      });
+    }
+
+    /* prevent empty col if user click cancel on clock */
+    function neutralizeClock(){
+       $("body").on("click",".mdtp__button.cancel",function(){
+          $(".timepicker").val('00:00');
+      });
+    }
 
 </script>
 @endsection

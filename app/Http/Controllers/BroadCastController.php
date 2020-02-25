@@ -122,6 +122,7 @@ class BroadCastController extends Controller
             foreach($customer as $col){
                 $broadcastcustomer = new BroadCastCustomers;
                 $broadcastcustomer->broadcast_id = $broadcast_id;
+                $broadcastcustomer->customer_id = $col->id;
                 $broadcastcustomer->save();
             }
         } else if($broadcast_schedule == 0) {
@@ -167,9 +168,10 @@ class BroadCastController extends Controller
                   $label = null;
               }
 
-              $reminder_customer = ReminderCustomers::where('reminder_id','=',$row->id_reminder)->select(DB::raw('COUNT("id") AS total_message'))->first();
+              $broadcast_customer = BroadCastCustomers::where('broadcast_id','=',$row->id)
+                ->select(DB::raw('COUNT("id") AS total_message'))->first();
 
-              $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$row->id_reminder],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+              $broadcast_customer_open = BroadCastCustomers::where([['broadcast_id','=',$row->id],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
 
               $data[] = array(
                   'id'=>$row->id,
@@ -180,8 +182,8 @@ class BroadCastController extends Controller
                   'sending' => Date('h:i',strtotime($row->hour_time)),
                   'label' => $label,
                   'created_at' => Date('M d, Y',strtotime($row->created_at)),
-                  'total_message' => $reminder_customer->total_message,
-                  'sent_message' => $reminder_customer_open->total_sending_message,
+                  'total_message' => $broadcast_customer->total_message,
+                  'sent_message' => $broadcast_customer_open->total_sending_message,
               );
           }
       }
@@ -262,6 +264,7 @@ class BroadCastController extends Controller
           $broadcast->hour_time = $broadcast_sending;
           $broadcast->message = $broadcast_message;
           $broadcast->save();
+          $broadcastnewID = $broadcast->id;
         }
         else if(empty($list_id) && !empty($broadcast_group_name))
         {
@@ -288,36 +291,41 @@ class BroadCastController extends Controller
 
         if($broadcast->save() && $list_id > 0)
         { 
-          $broadcastcustomer = ReminderCustomers::where([['user_id',$user_id],['reminder_id',$event_id]])->get();
+          //$broadcastcustomer = BroadCastCustomers::where([['broadcast_id',$broadcast_id]])->get();
+           $customer = Customer::where([
+                ['user_id','=',$user_id],
+                ['list_id','=',$list_id],
+                ['status','=',1],
+            ])->get();
+        }
+        else if($broadcast->save() && $list_id == 0)
+        {
+          return response()->json(['message'=>'Your campaign duplicated successfully']);
         }
         else {
            return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
         }
 
-        if($remindercustomer->count() > 0)
+        //CUSTOMER ADDING IF TYPE : SCHEDULE BROADCAST
+        if($customer->count() > 0)
         {
-          foreach($remindercustomer as $row)
-          {
-              $eventcustomer = new ReminderCustomers;
-              $eventcustomer->user_id = $user_id;
-              $eventcustomer->list_id = $list_id;
-              $eventcustomer->reminder_id = $newreminderid;
-              $eventcustomer->customer_id = $row->customer_id;
-              $eventcustomer->save();
-          }
-        }
-        else 
-        {
-            return response()->json(['message'=>'Your campaign duplicated successfully']);
+            foreach($customer as $col){
+                $broadcastcustomers = new BroadCastCustomers;
+                $broadcastcustomers->broadcast_id = $broadcastnewID;
+                $broadcastcustomers->customer_id = $col->id;
+                $broadcastcustomers->save();
+            }
+        } else {
+            return response()->json(['message'=>'Broadcast created, but will not send anything because you do not have subscriber']);
         }
 
-        if($eventcustomer->save())
+        if($broadcastcustomers->save())
         {
             return response()->json(['message'=>'Your campaign duplicated successfully']);
         }
         else
         {
-            return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
+            return response()->json(['message'=>'Sorry, cannot duplicate your campaign subscriber, please call administrator']);
         }
     }
 

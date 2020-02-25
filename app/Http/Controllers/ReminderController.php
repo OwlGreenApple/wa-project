@@ -122,7 +122,7 @@ class ReminderController extends Controller
         if(empty($search))
         {
            $reminder = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',0]])->join('lists','reminders.list_id','=','lists.id')
-              ->select('lists.label','reminders.*')
+              ->select('lists.label','reminders.*','reminders.id AS id_reminder')
               ->orderBy('id','desc')
               ->get();
         }
@@ -141,7 +141,7 @@ class ReminderController extends Controller
 
               $sending = Carbon::parse($row->event_time)->subDays(abs($row->days));
 
-              $reminder_customer = ReminderCustomers::where('reminder_id','=',$row->id_reminder)->select(DB::raw('COUNT("id") AS total_message'))->first();
+              $reminder_customer = ReminderCustomers::where([['reminder_id','=',$row->id_reminder]])->select(DB::raw('COUNT("id") AS total_message'))->first();
 
               $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$row->id_reminder],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
 
@@ -156,13 +156,6 @@ class ReminderController extends Controller
               );
            }
         }
-
-        /*$reminder = Reminder::where([['reminders.list_id','=',$listid],['reminders.user_id',$id],['lists.is_event','=',0],['reminders.days','>',0]])
-                ->join('lists','reminders.list_id','=','lists.id')
-                ->select('lists.name','lists.label','reminders.*')
-                ->get();
-        */
-
         return view('reminder.reminder-table',['reminder' => $data]);
     }
 

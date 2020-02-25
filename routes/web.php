@@ -110,12 +110,12 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   /* EVENT */
   Route::get('event-list','EventController@displayEventList')->name('eventlist');
   Route::get('event-del','EventController@delEvent');
-  Route::post('event-duplicate','EventController@duplicateEvent');
+  Route::post('event-duplicate','EventController@duplicateEvent')->middleware('checkeventduplicate');
 
   /* REMINDER */
   Route::get('reminder-list','ReminderController@displayReminderList')->name('reminderlist');
   Route::get('reminder-del','ReminderController@delReminder');
-  Route::post('reminder-duplicate','ReminderController@duplicateReminder');
+  Route::post('reminder-duplicate','ReminderController@duplicateReminder')->middleware('checkresponderduplicate');
 
   /* BROADCAST */
   Route::get('broadcast-list','BroadCastController@displayBroadCast')->name('broadcastlist'); 
