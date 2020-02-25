@@ -40,7 +40,7 @@
         <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm event_duplicate"><span class="icon-copy-text"></span></button>
         <button type="button" id="{{ $row['id'] }}" class="btn btn-danger btn-sm event-del"><span class="icon-delete"></span></button>
         <div>
-          <a href="{{url('add-message-event')}}" class="btn btn-custom">Add Message</a>
+          <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">Add Message</a>
         </div>
       </div>
   </div> 
