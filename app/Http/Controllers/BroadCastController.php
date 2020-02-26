@@ -174,16 +174,18 @@ class BroadCastController extends Controller
     public function displayBroadCast(Request $request){
       $id_user = Auth::id();
       $data = array();
-      $search = $request->search;
+      $type = $request->type;
 
-      if(empty($search))
+      if($type <> 2)
       {
-        $broadcasts = BroadCast::where([['broad_casts.user_id','=',$id_user]])->orderBy('id','desc')->get();
+          return 'Please do not modify default value';
       }
-      else
-      {
-        $broadcasts = BroadCast::where([['broad_casts.user_id','=',$id_user]])->orWhere('campaign','like','%'.$search.'%')->get();
-      }
+
+      $broadcasts = Campaign::where([['campaigns.user_id',$id_user],['campaigns.type',$type]])
+          ->join('broad_casts','broad_casts.campaign_id','=','campaigns.id')
+          ->select('campaigns.name','broad_casts.*','broad_casts.id AS broadcast_id')
+          ->orderBy('campaigns.id','desc')
+          ->get();
 
       if($broadcasts->count() > 0)
       {
@@ -200,14 +202,14 @@ class BroadCastController extends Controller
                   $label = null;
               }
 
-              $broadcast_customer = BroadCastCustomers::where('broadcast_id','=',$row->id)
+              $broadcast_customer = BroadCastCustomers::where('broadcast_id','=',$row->broadcast_id)
                 ->select(DB::raw('COUNT("id") AS total_message'))->first();
 
-              $broadcast_customer_open = BroadCastCustomers::where([['broadcast_id','=',$row->id],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+              $broadcast_customer_open = BroadCastCustomers::where([['broadcast_id','=',$row->broadcast_id],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
 
               $data[] = array(
                   'id'=>$row->id,
-                  'campaign' => $row->campaign,
+                  'campaign' => $row->name,
                   'group_name' => $row->group_name,
                   'channel' => $row->channel,
                   'day_send' => Date('M d, Y',strtotime($row->day_send)),
@@ -249,18 +251,21 @@ class BroadCastController extends Controller
         return response()->json(['message'=>'Your broadcast has been deleted successfully']);
     }
 
-    public function cehckBroadcastType(Request $request)
+    public function checkBroadcastType(Request $request)
     {
         $user_id = Auth::id();
         $id = $request->id;
 
-        $broadcast = BroadCast::where([['id',$id],['user_id',$user_id]])->first();
+        $broadcast = BroadCast::where([['broad_casts.id',$id],['broad_casts.user_id',$user_id]])
+          ->join('campaigns','campaigns.id','=','broad_casts.campaign_id')
+          ->select('campaigns.name','broad_casts.*','broad_casts.id AS broadcast_id')
+          ->first();
 
         $data = array(
           'list_id' => $broadcast->list_id,
           'group_name' => $broadcast->group_name,
           'channel' => $broadcast->channel,
-          'campaign' => $broadcast->campaign,
+          'campaign' => $broadcast->name,
           'day_send' => $broadcast->day_send,
           'hour_time' => $broadcast->hour_time,
           'message' => $broadcast->message,
@@ -273,8 +278,8 @@ class BroadCastController extends Controller
     {
         $user_id = Auth::id();
         $list_id = $request->list_id;
+        $campaign_name = $request->campaign_name;
         $broadcast_id = $request->id;
-        $broadcast_name = $request->campaign_name;
         $broadcast_date =  $request->date_send;
         $broadcast_sending =  $request->hour;
         $broadcast_message =  $request->message;
@@ -287,11 +292,19 @@ class BroadCastController extends Controller
             $list_id = 0;
         }
 
+        $campaign = new Campaign;
+        $campaign->name = $campaign_name;
+        $campaign->type = 2;
+        $campaign->list_id = $list_id;
+        $campaign->user_id = $user_id;
+        $campaign->save();
+        $campaign_id = $campaign->id;
+
         if($list_id > 0)
         {
           $broadcast->user_id = $user_id;
           $broadcast->list_id = $list_id;
-          $broadcast->campaign = $broadcast_name;
+          $broadcast->campaign_id = $campaign_id;
           $broadcast->day_send = $broadcast_date;
           $broadcast->hour_time = $broadcast_sending;
           $broadcast->message = $broadcast_message;
@@ -302,7 +315,7 @@ class BroadCastController extends Controller
         {
           $broadcast->user_id = $user_id;
           $broadcast->list_id = $list_id;
-          $broadcast->campaign = $broadcast_name;
+          $broadcast->campaign_id = $campaign_id;
           $broadcast->group_name = $broadcast_group_name;
           $broadcast->day_send = $broadcast_date;
           $broadcast->hour_time = $broadcast_sending;
@@ -313,7 +326,7 @@ class BroadCastController extends Controller
         {
           $broadcast->user_id = $user_id;
           $broadcast->list_id = $list_id;
-          $broadcast->campaign = $broadcast_name;
+          $broadcast->campaign_id = $campaign_id;
           $broadcast->channel = $broadcast_channel;
           $broadcast->day_send = $broadcast_date;
           $broadcast->hour_time = $broadcast_sending;

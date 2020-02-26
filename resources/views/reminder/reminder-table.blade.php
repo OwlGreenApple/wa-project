@@ -3,7 +3,7 @@
   @foreach($reminder as $index => $row)
   <div class="bg-dashboard campaign row">
     <div class="col-lg-4 pad-fix col-card">
-      <h5>{{ $row['package'] }}</h5>
+      <h5>{{ $row['campaign_name'] }}</h5>
       <div class="notes">
         <div>Type Campaign : <color><span class="og">Auto Responder</span></color></div>
         <div>Date Send : <b>{{ $row['sending'] }}</b></div>
@@ -38,7 +38,7 @@
     </div>
 
     <div class="col-lg-3 pad-fix col-button">
-        <button id="{{ $row['id'] }}" type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
+        <!--<button id="{{ $row['id'] }}" type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>-->
         <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm responder_duplicate"><span class="icon-copy-text"></span></button>
         <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm responder-del"><span class="icon-delete"></span></button>
         <div>
