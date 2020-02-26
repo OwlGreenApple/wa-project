@@ -3,7 +3,7 @@
   @foreach($event as $index => $row)
   <div class="bg-dashboard campaign row">
       <div class="col-lg-4 pad-fix col-card">
-        <h5>{{ $row['package'] }}</h5>
+        <h5>{{ $row['campaign_name'] }}</h5>                                                
         <div class="notes">
           <div>Type Campaign : <color>Event</color></div>
           <div>Date Send : <b>{{ $row['sending'] }}</b></div>

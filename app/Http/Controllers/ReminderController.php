@@ -144,22 +144,19 @@ class ReminderController extends Controller
     {
         $data = array();
         $id = Auth::id();
-        $search = $request->search;
+        $type = $request->type;
 
-        if(empty($search))
+        if($type <> 1)
         {
-           $reminder = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',0]])->join('lists','reminders.list_id','=','lists.id')
-              ->select('lists.label','reminders.*','reminders.id AS id_reminder')
-              ->orderBy('id','desc')
-              ->get();
+            return 'Please do not modify default value';
         }
-        else 
-        {
-           $reminder = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',0]])->orWhere('package','like','%'.$search.'%')
-              ->join('lists','reminders.list_id','=','lists.id')
-              ->select('lists.label','reminders.*')
-              ->get();
-        }
+
+        $reminder = Campaign::where([['campaigns.user_id',$id],['campaigns.type',$type],['reminders.is_event','=',0]])
+            ->join('reminders','reminders.campaign_id','=','campaigns.id')
+            ->join('lists','lists.id','=','campaigns.list_id')
+            ->select('campaigns.name','lists.label','lists.created_at','reminders.*','reminders.id AS id_reminder')
+            ->orderBy('campaigns.id','desc')
+            ->get();
 
         if($reminder->count() > 0)
         {
@@ -174,7 +171,7 @@ class ReminderController extends Controller
 
               $data[] = array(
                   'id'=>$row->id,
-                  'package' => $row->package,
+                  'campaign_name' => $row->name,
                   'sending' => Date('M d, Y',strtotime($sending)),
                   'label' => $row->label,
                   'created_at' => Date('M d, Y',strtotime($row->created_at)),

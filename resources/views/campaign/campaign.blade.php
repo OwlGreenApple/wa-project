@@ -150,6 +150,7 @@
                       <label class="col-sm-3 col-form-label">Broadcast Name</label>
                       <div class="col-sm-9 relativity">
                         <input type="text" class="form-control" name="campaign_name" />
+                        <span class="error campaign_name"></span>
                       </div>
                     </div>
 
@@ -171,16 +172,18 @@
                             @endif
                          </select>
                          <span class="icon-carret-down-circle"></span>
+                         <span class="error list_id"></span>
                       </div>
                     </div>
 
                     <div class="box-schedule"></div>
 
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Date Send :</label>
+                      <label class="col-sm-3 col-form-label">Deliver Date :</label>
                       <div class="col-sm-9 relativity">
                         <input id="datetimepicker-date" type="text" name="date_send" class="form-control custom-select-campaign" />
                         <span class="icon-calendar"></span>
+                        <span class="error date_send"></span>
                       </div>
                     </div>
 
@@ -188,6 +191,7 @@
                       <label class="col-sm-3 col-form-label">Time to send Message :</label>
                       <div class="col-sm-9 relativity">
                         <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
+                        <span class="error hour"></span>
                       </div>
                     </div>
 
@@ -195,6 +199,7 @@
                       <label>Message :</label>
                       <div class="col-sm-9">
                         <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
+                        <span class="error message"></span>
                       </div>
                     </div>
                  
@@ -420,6 +425,7 @@
         box += '<label class="col-sm-3 col-form-label">Telegram Group Name :</label>';
         box += '<div class="col-sm-9 relativity">';
         box += '<input type="text" value="'+result.group_name+'" name="group_name" class="form-control" />';
+        box += '<span class="error group_name"></span>';
         box += '</div>';
         box += '</div>';
         $(".box-schedule").html(box);
@@ -434,6 +440,7 @@
         box += '<label class="col-sm-3 col-form-label">Telegram Channel Name :</label>';
         box += '<div class="col-sm-9 relativity">';
         box += '<input type="text" value="'+result.channel+'" name="channel_name" class="form-control" />';
+        box += '<span class="error channel_name"></span>';
         box += '</div>';
         box += '</div>';
         $(".box-schedule").html(box);
@@ -454,30 +461,46 @@
       data.push({name : 'id', value : reminder_id});
 
       $.ajax({
-      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-      type: 'POST',
-      url: "{{ url('broadcast-duplicate') }}",
-      data: data,
-      dataType: 'json',
-      beforeSend: function()
-      {
-        $('#loader').show();
-        $('.div-loading').addClass('background-load');
-      },
-      success: function(result) {
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-        alert(result.message);
-        $("#modal_duplicate_broadcast").modal('hide');
-        $("#duplicate_broadcast:input").val('');
-        displayBroadcast();
-      },
-      error : function(xhr,attr,throwable){
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-        alert(xhr.responseText);
-      }
-    });
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'POST',
+        url: "{{ url('broadcast-duplicate') }}",
+        data: data,
+        dataType: 'json',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          if(result.success == 0)
+          {
+            $(".error").show();
+            $(".campaign_name").html(result.campaign_name);
+            $(".group_name").html(result.group_name);
+            $(".channel_name").html(result.channel_name);
+            $(".date_send").html(result.date_send);
+            $(".hour").html(result.hour);
+            $(".message").html(result.message);
+            $(".list_id").html(result.list_id);
+          }
+          else
+          {
+            $(".error").hide();
+            alert(result.message);
+            $("#modal_duplicate_broadcast").modal('hide');
+            $("#duplicate_broadcast:input").val('');
+            displayBroadcast();
+          }
+        },
+        error : function(xhr,attr,throwable){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert(xhr.responseText);
+        }
+      });
 
     });
   }
@@ -501,12 +524,12 @@
       });
   }
 
-  function displayEvent(search)
+  function displayEvent()
   {
      $.ajax({
         type : 'GET',
         url : '{{ route("eventlist") }}',
-        data : {search : search},
+        data : {type : 0},
         dataType : 'html',
         beforeSend: function()
         {
@@ -516,17 +539,7 @@
         success : function(result){
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-
-          if(search == null){
-            $("#search-event").html('');
-            $("#search-responder").html('');
-            $("#search-broadcast").html('');
-            $("#display_campaign").html(result);
-          }
-          else {
-            $("#display_campaign").html('');
-            $("#search-event").html(result);
-          }
+          $("#display_campaign").html(result);
         },
         error : function(xhr,attributes,throwable){
           $('#loader').hide();
@@ -535,12 +548,12 @@
      });
   }
 
-  function displayBroadcast(search)
+  function displayBroadcast()
   {
     $.ajax({
         type : 'GET',
         url : '{{ route("broadcastlist") }}',
-        data : {search : search},
+        data : {type : 2},
         dataType : 'html',
         beforeSend: function()
         {
@@ -550,17 +563,7 @@
         success : function(result){
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          
-          if(search == null){
-            $("#search-event").html('');
-            $("#search-responder").html('');
-            $("#search-broadcast").html('');
-            $("#display_campaign").html(result);
-          }
-          else {
-            $("#display_campaign").html('');
-            $("#search-broadcast").html(result);
-          }
+          $("#display_campaign").html(result);          
         },
         error : function(xhr,attributes,throwable){
           $('#loader').hide();
@@ -570,12 +573,12 @@
     });
   }
 
-  function displayAutoResponder(search)
+  function displayAutoResponder()
   {
     $.ajax({
         type : 'GET',
         url : '{{ route("reminderlist") }}',
-        data : {search : search},
+        data : {type : 1},
         dataType : 'html',
         beforeSend: function()
         {
@@ -584,18 +587,8 @@
         },
         success : function(result){
           $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-          
-          if(search == null){
-            $("#search-event").html('');
-            $("#search-responder").html('');
-            $("#search-broadcast").html('');
-            $("#display_campaign").html(result);
-          }
-          else {
-            $("#display_campaign").html('');
-            $("#search-responder").html(result);
-          }
+          $('.div-loading').removeClass('background-load');         
+          $("#display_campaign").html(result); 
         },
         error : function(xhr,attributes,throwable){
           $('#loader').hide();

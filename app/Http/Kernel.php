@@ -72,6 +72,7 @@ class Kernel extends HttpKernel
         'usersettings'=>\App\Http\Middleware\CheckSettings::class,
         'checkeventduplicate'=>\App\Http\Middleware\CheckEventCampaignDuplicate::class,
         'checkresponderduplicate'=>\App\Http\Middleware\CheckAutoResponderDuplicate::class,
+        'checkbroadcastduplicate'=>\App\Http\Middleware\CheckBroadcastDuplicate::class,
     ];
 
     /**
