@@ -29,7 +29,7 @@
     <!-- Icomoon -->
     <link href="{{ asset('/assets/icomoon/icomoon.css') }}" rel="stylesheet" />
 
-     <!-- Emoji -->
+    <!-- Emoji -->
     <link href="{{ asset('/assets/emoji/css/emojionearea.min.css') }}" rel="stylesheet"> 
     <script type="text/javascript" src="{{ asset('/assets/emoji/js/prettify.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/assets/emoji/js/emojionearea.js') }}"></script>
