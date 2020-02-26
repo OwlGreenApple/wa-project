@@ -36,25 +36,27 @@ class ListSubscribersImport implements ToCollection,WithStartRow
     public function collection(Collection $rows)
     {
         $data = $rows->toArray();
+        $cell = array();
 
         if(count($data) > 0)
         {
-            foreach($data as $col)
+            foreach($data as $index => $col)
             {
-              
+                $cell[] = array(
+                    'name'=>$col[0],
+                    'phone'=>$col[1],
+                    'email'=>$col[2],
+                    'username'=>$col[3],
+                );
             }
         }
 
-        die('');
-        /*
-        
-         Validator::make($rows->toArray(), [
-             '*.0'=> ['required'],
-             '*.1'=> ['required_unless:*.3,null'],
-             '*.2'=> ['required','email'],
-             '*.3'=> ['required_unless:*.1,null'],
-         ])->validate(); 
-         */
+        Validator::make($cell, [
+           '*.name'=> ['required'],
+           '*.phone'=> ['required_if:*.username,==,null'],
+           '*.email'=> ['required','email'],
+           '*.username'=> ['required_if:*.phone,==,null'],
+        ])->validate(); 
 
         foreach ($rows as $row) {
             if($row[1] == '' && $row[3] == '')
