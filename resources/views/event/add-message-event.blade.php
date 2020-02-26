@@ -1,6 +1,40 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Modal Delete Confirmation -->
+<div class="modal fade" id="confirm-delete" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content content-premiumid">
+      <div class="modal-header header-premiumid">
+        <h5 class="modal-title" id="modaltitle">
+          Confirmation Delete
+        </h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <input type="hidden" name="id_reminder" id="id_reminder">
+
+        <label>Are you sure want to <i>delete</i> this data ?</label>
+        <br><br>
+        <span class="txt-mode"></span>
+        <br>
+        
+        <div class="col-12 mb-4" style="margin-top: 30px">
+          <button class="btn btn-danger btn-block btn-delete-ok" data-dismiss="modal" id="button-delete-reminder">
+            Yes, Delete Now
+          </button>
+        </div>
+        
+        <div class="col-12 text-center mb-4">
+          <button class="btn  btn-block btn-delete-ok" data-dismiss="modal">
+            Cancel
+          </button>  
+        </div>
+      </div>
+    </div>   
+  </div>
+</div>
 
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
@@ -176,6 +210,8 @@
       saveCampaign();
       loadEvent();
       clickButtonEdit();
+      clickButtonDelete();
+      clickIconDelete();
   });
 
   function displayAddDaysBtn()
@@ -231,6 +267,42 @@
       $('input[name="event_time"]').val("");
       $('select[name="list_id"]').val("");
       $('textarea[name="message"]').val("");
+  }
+  
+  function clickIconDelete(){
+    $("body").on('click','.icon-delete',function(e){
+      e.preventDefault();
+      $("#id_reminder").val($(this).attr("data-id"));
+    });
+  }
+  
+  function clickButtonDelete(){
+    $('#button-delete-reminder').click(function(){
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        url: "<?php echo url('/delete-event');?>",
+        data: {
+          id : $("#id_reminder").val(),
+        },
+        dataType: 'text',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          var data = jQuery.parseJSON(result);
+          $('.message').show();
+          $('.message').html(data.message);
+          
+          loadEvent();
+        }
+      });
+    });
   }
 </script>  
 @endsection
