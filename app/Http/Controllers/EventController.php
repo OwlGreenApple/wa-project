@@ -188,9 +188,12 @@ class EventController extends Controller
     public function delEvent(Request $request){
         $id = $request->id;
         $user_id = Auth::id();
+        $event = Reminder::where([['user_id','=',$user_id],['id',$id]])->first();
+        $campaign_id = $event->campaign_id;
         
         try {
           Reminder::where([['user_id','=',$user_id],['id',$id]])->delete();
+          Campaign::where([['id',$campaign_id],['user_id',$user_id]])->delete();
           $success = true;
         }
         catch(Exception $e)
@@ -214,7 +217,7 @@ class EventController extends Controller
     {
         $user_id = Auth::id();
         $event_id = $request->id;
-        $event_name = $request->campaign_name;
+        $campaign_name = $request->campaign_name;
         $event_date =  $request->event_time;
 
         $row_event = Reminder::where([['id',$event_id],['user_id',$user_id],['is_event',1]])->first();
@@ -226,10 +229,18 @@ class EventController extends Controller
           $event_sending = $row_event->hour_time;
           $event_message = $row_event->message;
 
+          $campaign = new Campaign;
+          $campaign->name = $campaign_name;
+          $campaign->type = 0;
+          $campaign->list_id = $list_id;
+          $campaign->user_id = $user_id;
+          $campaign->save();
+          $campaign_id = $campaign->id;
+
           $event = new Reminder;
           $event->user_id = $user_id;
           $event->list_id = $list_id;
-          $event->package = $event_name;
+          $event->campaign_id = $campaign_id;
           $event->is_event = 1;
           $event->days = $event_day;
           $event->event_time = $event_date;

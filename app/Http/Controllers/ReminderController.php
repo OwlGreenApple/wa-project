@@ -154,7 +154,7 @@ class ReminderController extends Controller
         $reminder = Campaign::where([['campaigns.user_id',$id],['campaigns.type',$type],['reminders.is_event','=',0]])
             ->join('reminders','reminders.campaign_id','=','campaigns.id')
             ->join('lists','lists.id','=','campaigns.list_id')
-            ->select('campaigns.name','lists.label','lists.created_at','reminders.*','reminders.id AS id_reminder')
+            ->select('campaigns.name','lists.label','campaigns.created_at','reminders.*','reminders.id AS id_reminder')
             ->orderBy('campaigns.id','desc')
             ->get();
 
@@ -162,8 +162,14 @@ class ReminderController extends Controller
         {
            foreach($reminder as $row)
            {
-
-              $sending = Carbon::parse($row->event_time)->subDays(abs($row->days));
+              $sending = $row->days;
+              if($sending > 1)
+              {
+                  $message = 'days from subscriber join on your list';
+              }
+              else{
+                  $message = 'day from subscriber join on your list';
+              }
 
               $reminder_customer = ReminderCustomers::where([['reminder_id','=',$row->id_reminder]])->select(DB::raw('COUNT("id") AS total_message'))->first();
 
@@ -172,7 +178,7 @@ class ReminderController extends Controller
               $data[] = array(
                   'id'=>$row->id,
                   'campaign_name' => $row->name,
-                  'sending' => Date('M d, Y',strtotime($sending)),
+                  'sending' => $sending.' '.$message,
                   'label' => $row->label,
                   'created_at' => Date('M d, Y',strtotime($row->created_at)),
                   'total_message' => $reminder_customer->total_message,
@@ -187,9 +193,12 @@ class ReminderController extends Controller
     {
         $id = $request->id;
         $user_id = Auth::id();
+        $reminder = Reminder::where([['user_id','=',$user_id],['id',$id]])->first();
+        $campaign_id = $reminder->campaign_id;
 
         try {
           Reminder::where([['user_id','=',$user_id],['id',$id]])->delete();
+          Campaign::where([['id',$campaign_id],['user_id',$user_id]])->delete();
           $success = true;
         }
         catch(Exception $e)
@@ -213,7 +222,7 @@ class ReminderController extends Controller
     {
         $user_id = Auth::id();
         $reminder_id = $request->id;
-        $reminder_name = $request->campaign_name;
+        $campaign_name = $request->campaign_name;
 
         $row_reminder = Reminder::where([['id',$reminder_id],['user_id',$user_id],['is_event',0]])->first();
 
@@ -224,10 +233,18 @@ class ReminderController extends Controller
           $reminder_sending = $row_reminder->hour_time;
           $reminder_message = $row_reminder->message;
 
+          $campaign = new Campaign;
+          $campaign->name = $campaign_name;
+          $campaign->type = 1;
+          $campaign->list_id = $list_id;
+          $campaign->user_id = $user_id;
+          $campaign->save();
+          $campaign_id = $campaign->id;
+
           $reminder = new Reminder;
           $reminder->user_id = $user_id;
           $reminder->list_id = $list_id;
-          $reminder->package = $reminder_name;
+          $reminder->campaign_id = $campaign_id;
           $reminder->is_event = 0;
           $reminder->days = $reminder_day;
           $reminder->hour_time = $reminder_sending;

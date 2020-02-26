@@ -49,15 +49,6 @@
       <div id="display_campaign" class="col-lg-12">
         <!-- display campaign -->
       </div>
-      <div id="search-event" class="col-lg-12">
-        <!-- display search event -->
-      </div>
-      <div id="search-responder" class="col-lg-12">
-        <!-- display search auto responder -->
-      </div>
-      <div id="search-broadcast" class="col-lg-12">
-        <!-- display search campaign -->
-      </div>
   </div>
 </div>
 
@@ -691,6 +682,8 @@
           },
           success : function(result)
           {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
             alert(result.message);
             displayEvent();
           },
@@ -713,9 +706,31 @@
   {
       $(".search-icon").click(function(){
         var search = $(".search-box").val();
-        displayBroadcast(search);
-        displayAutoResponder(search);
-        displayEvent(search);
+
+        $.ajax({
+          type : 'GET',
+          url : '{{ url("search-campaign") }}',
+          data : {'search' : search},
+          dataType : 'html',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            $("#display_campaign").html(result);
+          },
+          error : function(xhr, attr, throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
+          }
+        });
+
       });
   }
 

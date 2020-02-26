@@ -35,8 +35,19 @@ class ListSubscribersImport implements ToCollection,WithStartRow
     
     public function collection(Collection $rows)
     {
+        $data = $rows->toArray();
+
+        if(count($data) > 0)
+        {
+            foreach($data as $col)
+            {
+              
+            }
+        }
+
+        die('');
         /*
-        dd($rows);
+        
          Validator::make($rows->toArray(), [
              '*.0'=> ['required'],
              '*.1'=> ['required_unless:*.3,null'],
