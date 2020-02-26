@@ -777,5 +777,23 @@ class EventController extends Controller
 
       return $arr;
     }
+
+    public function deleteEvent(Request $request)
+    {
+        $id = $request->id;
+
+        try{
+          Reminder::find($id)->delete();
+          $err['status'] = 'success';
+          $err['message'] = 'Data catalog telah dihapus';  
+        }catch(\Illuminate\Database\QueryException $e){
+          $err['status'] = FALSE;
+          $err['message'] = 'Data catalog gagal dihapus';
+        }
+
+
+        return response()->json($err);
+    }
+
 /* End event controller */
 }
