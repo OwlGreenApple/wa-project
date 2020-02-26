@@ -3,7 +3,7 @@
   @foreach($event as $index => $row)
   <div class="bg-dashboard campaign row">
       <div class="col-lg-4 pad-fix col-card">
-        <h5>{{ $row['package'] }}</h5>                                                
+        <h5>{{ $row['package'] }}</h5>
         <div class="notes">
           <div>Type Campaign : <color>Event</color></div>
           <div>Date Send : <b>{{ $row['sending'] }}</b></div>
@@ -42,7 +42,7 @@
         <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm event_duplicate"><span class="icon-copy-text"></span></button>
         <button type="button" id="{{ $row['id'] }}" class="btn btn-danger btn-sm event-del"><span class="icon-delete"></span></button>
         <div>
-          <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">Add Message</a>
+          <a href="{{url('add-message-event').'/'.$row['campaign_id']}}" class="btn btn-custom">Add Message</a>
         </div>
       </div>
   </div> 

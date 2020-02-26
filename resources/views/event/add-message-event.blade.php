@@ -175,25 +175,17 @@
       neutralizeClock();
   });
 
-   function displayAddDaysBtn()
-   {
+  function displayAddDaysBtn()
+  {
       $(".add-day").hide();
       $("#schedule").change(function(){
         var val = $(this).val();
 
         var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
 
-        var hmin = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=-90;$x<=-1;$x++) {
-              echo "<option value=".$x.">$x days before event</option>";
-        }?></select>'+
-        '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
-        ;
+        var hmin = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3">'+'<?php for($x=-90;$x<=-1;$x++) {echo "<option value=".$x.">$x days before event</option>";}?></select><input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />';
 
-        var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
-              echo "<option value=".$x.">$x days after event</option>";
-        }?></select>'+
-        '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
-        ;
+        var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3">'+'<?php for($x=1;$x<=100;$x++) {echo "<option value=".$x.">$x days after event</option>";}?></select><input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />';
 
         if(val == 0){
           $(".inputh").html(hday);
@@ -204,7 +196,7 @@
         }
 
       });
-   }
+  }
 
   function MDTimepicker(){
     $("body").on('focus','.timepicker',function(){
