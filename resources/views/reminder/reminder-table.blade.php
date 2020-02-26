@@ -42,7 +42,7 @@
         <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm responder_duplicate"><span class="icon-copy-text"></span></button>
         <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm responder-del"><span class="icon-delete"></span></button>
         <div>
-          <a href="{{url('add-message-auto-responder')}}" class="btn btn-custom">Add Message</a>
+          <a href="{{url('add-message-auto-responder').'/'.$row['campaign_id']}}" class="btn btn-custom">Add Message</a>
         </div>
     </div>
   </div> 

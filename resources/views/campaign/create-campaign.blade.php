@@ -14,6 +14,8 @@
 <!-- NUMBER -->
 <div class="container act-tel-campaign">
   <form id="save_campaign">
+      <input type="hidden" name="campaign_id" value="new">
+      <input type="hidden" name="reminder_id" value="new">
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Name :</label>
         <div class="col-sm-6">

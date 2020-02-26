@@ -39,8 +39,8 @@ Auth::routes();
 //Route::get('createlists', 'HomeController@formList');
 //Route::get('lists-create', 'HomeController@createList');
 //Route::get('lists', 'HomeController@dataList');
-Route::get('add-message-event', 'CampaignController@addMessageEvent');
-Route::get('add-message-auto-responder', 'CampaignController@addMessageAutoResponder');
+Route::get('add-message-event/{campaign_id}', 'CampaignController@addMessageEvent');
+Route::get('add-message-auto-responder/{campaign_id}', 'CampaignController@addMessageAutoResponder');
 Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('history-order', 'HomeController@historyOrder');
 
@@ -111,6 +111,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('event-list','EventController@displayEventList')->name('eventlist');
   Route::get('event-del','EventController@delEvent');
   Route::post('event-duplicate','EventController@duplicateEvent')->middleware('checkeventduplicate');
+  Route::get('load-event','EventController@loadEvent');
 
   /* REMINDER */
   Route::get('reminder-list','ReminderController@displayReminderList')->name('reminderlist');
@@ -123,7 +124,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('broadcast-check','BroadCastController@checkBroadcastType'); 
   Route::post('broadcast-duplicate','BroadCastController@duplicateBroadcast')->middleware('checkbroadcastduplicate'); 
 
-  # scheduled event
+  // scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');
   Route::get('eventform','EventController@eventForm')->name('eventform');
   Route::get('eventcustomer','EventController@displayEventCustomers')->name('eventcustomer');
@@ -135,7 +136,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');
 
   Route::get('event','EventController@index')->name('event');
-  # auto reply event
+  // auto reply event
   Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
   Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');
   Route::get('eventautoreplyturn/{id}/{status}','EventController@turnEventAutoReply');

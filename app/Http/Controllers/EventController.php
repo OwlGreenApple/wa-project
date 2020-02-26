@@ -55,47 +55,37 @@ class EventController extends Controller
         }
         */
 
-         if($request->campaign_type == 'event')
-         {
-            $campaign_type = 0;
-         }
-         else if($request->campaign_type == 'auto') {
-            $campaign_type = 1;
-         }
-         else if($request->campaign_type == 'broadcast')
-         {
-            $campaign_type = 2;
-         }
-         else {
-            return 'Please do not change default type value';
-         }
+        $campaign_type = 0;
 
-         $campaign = new Campaign;
-         $campaign->name =  $request->campaign_name;
-         $campaign->type =  $campaign_type;
-         $campaign->list_id = $request->list_id;
-         $campaign->user_id = $user_id;
-         $campaign->save();
-         $campaign_id = $campaign->id;
+        if ($request->campaign_id=="new") {
+          $campaign = new Campaign;
+          $campaign->name =  $request->campaign_name;
+          $campaign->type =  $campaign_type;
+          $campaign->list_id = $request->list_id;
+          $campaign->user_id = $user_id;
+          $campaign->save();
+          $campaign_id = $campaign->id;
+        }
+        else {
+          $campaign_id = $request->campaign_id;
+        }
 
-         if($campaign->save())
-         {
-            $reminder = new Reminder;
-            $reminder->user_id = $user_id;
-            $reminder->list_id = $request->list_id;
-            $reminder->campaign_id = $campaign_id;
-            $reminder->is_event = 1;
-            $reminder->days = $request->day;
-            $reminder->hour_time = $request->hour;
-            $reminder->event_time = $request->event_time;
-            $reminder->message = $request->message;
-            $reminder->save();
-         }
-         else
-         {
-            return 'Sorry, cannot create event, please contact administrator';
-         }
-          
+        if ($request->reminder_id=="new") {
+          $reminder = new Reminder;
+        }
+        else {
+          $reminder = Reminder::find($request->reminder_id);
+        }
+        $reminder->user_id = $user_id;
+        $reminder->list_id = $request->list_id;
+        $reminder->campaign_id = $campaign_id;
+        $reminder->is_event = 1;
+        $reminder->days = $request->day;
+        $reminder->hour_time = $request->hour;
+        $reminder->event_time = $request->event_time;
+        $reminder->message = $request->message;
+        $reminder->save();
+
         // if reminder stored / save successfully 
         if($reminder->save()){
             // retrieve customer id 
@@ -138,19 +128,20 @@ class EventController extends Controller
     {
         $data = array();
         $id = Auth::id();
-        $type = $request->type;
+        $search = $request->search;
 
-        if($type <> 0)
-        {
-            return 'Please do not modify default value';
+        if(empty($search)){
+          $event = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',1]])
+                ->join('lists','reminders.list_id','=','lists.id')
+                ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
+                ->orderBy('id','desc')
+                ->get();
+        } else {
+          $event = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',1],['package','like','%'.$search.'%']])
+              ->join('lists','reminders.list_id','=','lists.id')
+              ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
+              ->get();
         }
-
-        $event = Campaign::where([['campaigns.user_id',$id],['campaigns.type',$type],['reminders.is_event',1]])
-            ->join('reminders','reminders.campaign_id','=','campaigns.id')
-            ->join('lists','lists.id','=','campaigns.list_id')
-            ->select('campaigns.name','lists.label','lists.created_at','reminders.*','reminders.id AS id_reminder')
-            ->orderBy('campaigns.id','desc')
-            ->get();
 
           if($event->count() > 0)
           {
@@ -172,7 +163,8 @@ class EventController extends Controller
 
                   $data[] = array(
                     'id'=>$row->id,
-                    'campaign_name' => $row->name,
+                    'campaign_id'=>$row->campaign_id,
+                    'campaign_name' => $row->campaign_name,
                     'sending' => Date('M d, Y',strtotime($event_time)),
                     'label' => $row->label,
                     'created_at' => Date('M d, Y',strtotime($row->created_at)),
@@ -771,5 +763,19 @@ class EventController extends Controller
         Excel::import(new UsersImport($id_list), $file);
     }
 
+
+    function loadEvent(Request $request){
+      $id = Auth::id();
+      $events = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',1],['reminders.campaign_id','=',$request->campaign_id]])
+                // ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
+                ->orderBy('id','desc')
+                ->get();
+      $arr['view'] =(string) view('event.load-event')
+                      ->with([
+                        "events"=>$events,
+                      ]);
+
+      return $arr;
+    }
 /* End event controller */
 }

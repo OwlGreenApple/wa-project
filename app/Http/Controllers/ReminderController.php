@@ -50,20 +50,8 @@ class ReminderController extends Controller
         }
         */
 
-        if($request->campaign_type == 'event')
-        {
-            $campaign_type = 0;
-        }
-        else if($request->campaign_type == 'auto') {
-            $campaign_type = 1;
-        }
-        else if($request->campaign_type == 'broadcast')
-        {
-            $campaign_type = 2;
-        }
-        else {
-          return 'Please do not change default type value';
-        }
+        $campaign_type = 1;
+
 
         $campaign = new Campaign;
         $campaign->name =  $request->campaign_name;
@@ -171,6 +159,7 @@ class ReminderController extends Controller
 
               $data[] = array(
                   'id'=>$row->id,
+                  'campaign_id'=>$row->campaign_id,
                   'campaign_name' => $row->name,
                   'sending' => Date('M d, Y',strtotime($sending)),
                   'label' => $row->label,

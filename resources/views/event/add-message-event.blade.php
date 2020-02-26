@@ -13,7 +13,10 @@
 
 <!-- NUMBER -->
 <div class="container act-tel-campaign">
-  <form>
+  <form id="save_campaign">
+      <input type="hidden" name="campaign_type" value="event">
+      <input type="hidden" name="campaign_id" value="<?php echo $campaign_id; ?>">
+      <input type="hidden" name="reminder_id" value="new">
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Type Campaign :</label>
         <div class="col-sm-9 py-2">
@@ -71,6 +74,7 @@
 
       <div class="text-right col-sm-9">
         <button type="submit" class="btn btn-custom">Save</button>
+        <button type="button" id="btn-clear" class="btn btn-custom">Clear</button>
       </div>
 
   </form>
@@ -89,71 +93,42 @@
         </tr>
       </thead>
 
-      <tbody>
-        <tr>
-          <td class="text-center">H-1</td>
-          <td class="text-center">00:00</td>
-          <td>Remindered Message H-1</td>
-          <td class="text-center"><a class="icon icon-edit"></a></td>
-          <td class="text-center"><a class="icon icon-delete"></a></td>
-        </tr>
+      <tbody id="tbody-event">
       </tbody>
     </table>
 </div>
 
 <script type="text/javascript">
-  function saveSubscriber(){
-    $("#addcustomer").submit(function(e){
-        e.preventDefault();
-        var data = $(this).serialize();
-        //$("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
-        $.ajaxSetup({
-          headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  function saveCampaign()
+  {
+    $("#save_campaign").submit(function(e){
+      e.preventDefault();
+      var data = $(this).serialize();
+
+      $.ajax({
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          type : 'POST',
+          url : '{{url("save-campaign")}}',
+          data : data,
+          dataType : 'json',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            loadEvent();
+            alert(result.message);
+          },
+          error : function(xhr,attribute,throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
           }
-        });
-        $.ajax({
-            type : "POST",
-            url : "{{ route('savesubscriber') }}",
-            data : data,
-            beforeSend: function()
-            {
-              $('#loader').show();
-              $('.div-loading').addClass('background-load');
-            },
-            success : function(result){
-              $('#loader').hide();
-              $('.div-loading').removeClass('background-load');
-
-              if(result.success == true){
-                  $(".modal-body > p").text(result.message);
-                  alert('Your data has stored!');
-                  //getModal();
-                  //setTimeout(function(){location.href= result.wa_link} , 1000);   
-                  clearField();
-              } 
-              else {
-                  $(".error").fadeIn('fast');
-                  $(".name").text(result.name);
-                  $(".main").text(result.main);
-                  $(".email").text(result.email);
-                  $(".phone").text(result.phone);
-                  $(".phone").text(result.usertel);
-                  $(".captcha").text(result.captcha);
-                  $(".error_list").text(result.list);
-
-                  if(result.message !== undefined){
-                       $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
-                  }
-                  $.each(result.data, function(key, value) {
-                      $("."+key).text(value);
-                  })
-
-                  $(".error").delay(2000).fadeOut(5000);
-              }
-            }
-        });
-        /*end ajax*/
+      });
+      //ajax
     });
   }
 
@@ -168,11 +143,39 @@
           mainPathFolder : "{{url('')}}",
       });
   });
+  
+  function loadEvent()
+  {
+    $.ajax({
+      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+      type: 'GET',
+      url: "<?php echo url('/load-event');?>",
+      data : {
+        campaign_id : "<?php echo $campaign_id; ?>"
+      },
+      dataType: 'text',
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success: function(result) {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+
+        var data = jQuery.parseJSON(result);
+        $('#tbody-event').html(data.view);
+      }
+    });
+  }
 
   $(document).ready(function(){
       displayAddDaysBtn();
       MDTimepicker();
       neutralizeClock();
+      saveCampaign();
+      loadEvent();
+      clickButtonEdit();
   });
 
   function displayAddDaysBtn()
@@ -213,5 +216,21 @@
     });
   }
   
+  function clickButtonEdit(){
+    $("body").on('click','.icon-edit',function(e){
+      e.preventDefault();
+      $('input[name="reminder_id"]').val($(this).attr("data-id"));
+      $('input[name="event_time"]').val($(this).attr("data-event_time"));
+      $('select[name="list_id"]').val($(this).attr("data-list_id"));
+      $('textarea[name="message"]').val($(this).attr("data-message"));
+    });
+  }
+
+  function clickButtonClear(){
+      $('input[name="reminder_id"]').val("new");
+      $('input[name="event_time"]').val("");
+      $('select[name="list_id"]').val("");
+      $('textarea[name="message"]').val("");
+  }
 </script>  
 @endsection
