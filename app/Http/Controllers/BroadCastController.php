@@ -229,9 +229,12 @@ class BroadCastController extends Controller
     {
         $user_id = Auth::id();
         $id = $request->id;
+        $broadcast = BroadCast::where([['id',$id],['user_id',$user_id]])->first();
+        $campaign_id = $broadcast->campaign_id;
 
         try {
           BroadCast::where([['id',$id],['user_id',$user_id]])->delete();
+          Campaign::where([['id',$campaign_id],['user_id',$user_id]])->delete();
           $success = true;
         }
         catch(Exception $e)

@@ -106,6 +106,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('campaign', 'CampaignController@index');
   Route::get('create-campaign', 'CampaignController@CreateCampaign');
   Route::post('save-campaign', 'CampaignController@SaveCampaign');
+  Route::get('search-campaign', 'CampaignController@searchCampaign');
 
   /* EVENT */
   Route::get('event-list','EventController@displayEventList')->name('eventlist');
