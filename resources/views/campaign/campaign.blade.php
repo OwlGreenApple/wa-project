@@ -234,7 +234,7 @@
       delAutoResponder();
       delEvent();
       searchCampaign();
-      duplicateEventForm()
+      duplicateEventForm();
       duplicateEvent();
       duplicateResponderForm();
       duplicateResponder();

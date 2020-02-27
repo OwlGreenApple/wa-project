@@ -155,37 +155,8 @@
           </div>
           
           <div class="form-group text-left">
-             <label>COPY / PASTE on your Site&nbsp;&nbsp;<a class="structure-form"><span class="icon-copy"></span></a></label>
-             <textarea class="form-control" id="structure-form" readonly="readonly"><form action="https://celebmail.id/mail/index.php/lists/tw895x290bc64/subscribe" method="post" accept-charset="utf-8" target="_blank">
-
-                  <div class="form-group">
-                  <label>Email <span class="required">*</span></label>
-                  <input type="text" class="form-control" name="EMAIL" placeholder="" value="" required />
-                  </div>
-
-                  <div class="form-group">
-                  <label>Telephone</label>
-                  <input type="text" class="form-control" name="TELP" placeholder="" value=""/>
-                  </div>
-
-                  <div class="form-group">
-                  <label>Name</label>
-                  <input type="text" class="form-control" name="NAME" placeholder="" value=""/>
-                  </div>
-
-                  <div class="form-group">
-                  <label>First name</label>
-                  <input type="text" class="form-control" name="FNAME" placeholder="" value=""/>
-                  </div>
-
-                   <div class="clearfix"><!-- --></div>
-                   <div class="actions">
-                   <button type="submit" class="btn btn-primary btn-flat">Subscribe</button>
-                   </div>
-                   <div class="clearfix"><!-- --></div>
-
-                  </form>
-              </textarea>
+              <label>COPY / PASTE on your Site&nbsp;&nbsp;<a class="structure-form"><span class="icon-copy"></span></a></label>
+              <textarea class="form-control" id="structure-form" readonly="readonly"><iframe src="{{url($listname)}}" style="border:0px #ffffff none;" name="myiFrame" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe></textarea>
           </div>
         </div>
         <!-- end last wrapper -->
@@ -545,7 +516,7 @@
       });
   }
 
-  /*** Column Additional ***/
+  /* Column Additional */
 
   var limit = 'You only can create 5 fields only';
 

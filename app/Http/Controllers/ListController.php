@@ -345,7 +345,7 @@ class ListController extends Controller
         return response()->json($response);
     }
 
-    #DELETE LIST
+    //DELETE LIST
     public function delListContent(Request $request)
     {
         $id = $request->id;
@@ -361,7 +361,7 @@ class ListController extends Controller
         $delete_userlist = UserList::where([['id',$id],['user_id',$userid]])->delete();
         $checkafterdelete = UserList::where([['id',$id],['user_id',$userid]])->first();
 
-        #if success delete list then delete customer / subscriber
+        //if success delete list then delete customer / subscriber
         if(is_null($checkafterdelete)){
             $delete = Customer::where('list_id','=',$id)->delete();
             $checkdeletecustomer = Customer::where('list_id','=',$id)->get()->count();
@@ -370,7 +370,7 @@ class ListController extends Controller
             return response()->json($data);
         }
 
-        #if success delete customer / subscriber
+        //if success delete customer / subscriber
         if($checkdeletecustomer == 0){
             $deladditional = Additional::where('list_id','=',$id)->delete();
             $checkdeladditional = Additional::where('list_id','=',$id)->get()->count();
@@ -379,7 +379,7 @@ class ListController extends Controller
             return response()->json($data);
         } 
 
-        #if success delete list additional
+        //if success delete list additional
         if($checkdeladditional == 0){
             $data['message'] = 'Data deleted successfully';
         } else {

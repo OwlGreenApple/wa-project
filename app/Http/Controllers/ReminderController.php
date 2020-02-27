@@ -53,30 +53,32 @@ class ReminderController extends Controller
         $campaign_type = 1;
 
 
-        $campaign = new Campaign;
-        $campaign->name =  $request->campaign_name;
-        $campaign->type =  $campaign_type;
-        $campaign->list_id = $request->list_id;
-        $campaign->user_id = $user_id;
-        $campaign->save();
-        $campaign_id = $campaign->id;
+        if ($request->campaign_id=="new") {
+          $campaign = new Campaign;
+          $campaign->name =  $request->campaign_name;
+          $campaign->type =  $campaign_type;
+          $campaign->list_id = $request->list_id;
+          $campaign->user_id = $user_id;
+          $campaign->save();
+        }
+        else {
+          $campaign_id = $request->campaign_id;
+        }
     
-        if($campaign->save())
-        {
+        if ($request->reminder_id=="new") {
           $reminder = new Reminder;
-          $reminder->user_id = $user_id;
-          $reminder->list_id = $list_id;
-          $reminder->campaign_id = $campaign_id;
-          $reminder->days = $days;
-          $reminder->hour_time = $request->hour;
-          $reminder->message = $message;
-          $reminder->save();
-          $created_date = $reminder->created_at;
         }
-        else
-        {
-          return 'Sorry, cannot create event, please contact administrator';
+        else {
+          $reminder = Reminder::find($request->reminder_id);
         }
+        $reminder->user_id = $user_id;
+        $reminder->list_id = $list_id;
+        $reminder->campaign_id = $campaign_id;
+        $reminder->days = $days;
+        $reminder->hour_time = $request->hour;
+        $reminder->message = $message;
+        $reminder->save();
+        $created_date = $reminder->created_at;
 
         // If data successfully inserted into reminder
         if($reminder->save() == true){
@@ -610,6 +612,39 @@ class ReminderController extends Controller
         }
         return (new UsersExport($id_list))->download('users.csv');
     }
+
+    function loadAutoResponder(Request $request){
+      $id = Auth::id();
+      $reminders = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',0],['reminders.campaign_id','=',$request->campaign_id]])
+                // ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
+                ->orderBy('id','desc')
+                ->get();
+      $arr['view'] =(string) view('reminder.load-auto-responder')
+                      ->with([
+                        "reminders"=>$reminders,
+                      ]);
+
+      return $arr;
+    }
+
+    public function deleteAutoResponder(Request $request)
+    {
+        $id = $request->id;
+
+        try{
+          Reminder::find($id)->delete();
+          $err['status'] = 'success';
+          $err['message'] = 'Data catalog telah dihapus';  
+        }catch(\Illuminate\Database\QueryException $e){
+          $err['status'] = FALSE;
+          $err['message'] = 'Data catalog gagal dihapus';
+        }
+
+
+        return response()->json($err);
+    }
+
+
 
 /* end class reminder controller */    
 }
