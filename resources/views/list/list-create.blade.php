@@ -208,10 +208,11 @@
                  <div class="mb-2">
                   <form>
                     <label>Import Contact</label>
-                      <input class="form-control" name="import_file" type="file" />
+                      <input class="form-control" name="csv_file" type="file" />
+                      <input type="hidden" name="list_id_import" value="{{ $id }}" />
                     <span><i>Please .csv only</i></span>
 
-                    <div><a>Download Example CSV</a></div>
+                    <div><a href="{{ asset('assets/csv/csv-example.csv') }}">Download Example CSV</a></div>
 
                     <div class="text-right">
                       <button type="submit" class="btn btn-custom mr-1">Import</button>
@@ -372,6 +373,7 @@
     table();
     Choose();
     openImport();
+    csvImport();
     addContact();
     //column -- edit
     displayAdditional();
@@ -458,6 +460,48 @@
   function openImport() {
     $(".open_import").click(function(){
       $("#import-contact").modal();
+    });
+  }
+
+  function csvImport()
+  {
+    $("body").on('submit','#importform',function(e){
+        e.preventDefault();
+        var data = new FormData($(this)[0]);
+        $.ajaxSetup({
+              headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+        });
+        $.ajax({
+            type : 'POST',
+            url : "{{ url('import_csv_list_subscriber') }}",
+            data : data,
+            contentType: false,
+            processData: false,
+            beforeSend: function()
+            {
+              $('#loader').show();
+              $('.div-loading').addClass('background-load');
+            },
+            success : function(result){
+              $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
+              $('input[name="csv_file"]').val('');
+              alert(result.message);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+              $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
+              var err = eval("(" + xhr.responseText + ")");
+              var msg = '';
+              for ( var property in err.errors ) {
+                msg += err.errors[property][0]+"\n"; // Outputs: foo, fiz or fiz, foo
+              }
+              alert(msg);
+              $('input[name="csv_file"]').val('');
+            }
+        });/* end ajax */
     });
   }
 

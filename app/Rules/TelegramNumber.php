@@ -30,7 +30,13 @@ class TelegramNumber implements Rule
 
     public function checkNumber($value)
     {
-        if(preg_match("/(^|,)([+]|0|[+]0)/i",$value))
+        //PREVENT VALIDATION IF PHONE NUMBER EMPTY ON IMPORT CSV CASE
+        if($value == null)
+        {
+            return true;
+        }
+
+        if(preg_match("/(^|,)(0|[+]0)/i",$value) || !preg_match("/^[+][0-9]*$/i",$value))
         {
            return false;
         } 
@@ -46,6 +52,6 @@ class TelegramNumber implements Rule
      */
     public function message()
     {
-        return 'Your Number is invalid, please do not use 0 or + as a leading number';
+        return 'Your Number is invalid, please use + as a leading number following by your country code and don\'t use 0 as leading number ';
     }
 }

@@ -87,9 +87,10 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('list-search','ListController@searchList')->name('searchlist');
   Route::get('list-edit/{list_id}','ListController@editList');
   Route::get('list-additional','ListController@additionalList')->name('additionalList');
+  Route::get('list-customer','ListController@displaySubscriber');
   Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');
   Route::post('list-duplicate','ListController@duplicateList')->name('duplicatelist');
-  Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers');
+  Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers')->middleware('checkimportcsv');
 
   /* ADDITIONAL */
   Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');

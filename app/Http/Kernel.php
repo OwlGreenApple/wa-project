@@ -73,6 +73,7 @@ class Kernel extends HttpKernel
         'checkeventduplicate'=>\App\Http\Middleware\CheckEventCampaignDuplicate::class,
         'checkresponderduplicate'=>\App\Http\Middleware\CheckAutoResponderDuplicate::class,
         'checkbroadcastduplicate'=>\App\Http\Middleware\CheckBroadcastDuplicate::class,
+        'checkimportcsv'=>\App\Http\Middleware\CheckImportCSV::class,
     ];
 
     /**

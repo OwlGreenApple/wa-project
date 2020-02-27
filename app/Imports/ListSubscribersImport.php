@@ -6,14 +6,12 @@ use App\Customer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
-
-use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use App\Rules\TelegramNumber;
 
 use App\Http\Controllers\ListController;
 
@@ -36,7 +34,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
     public function collection(Collection $rows)
     {
         $data = $rows->toArray();
-        $cell = array();
+        $cell = $rules_phone = $rules_username = array();
 
         if(count($data) > 0)
         {
@@ -51,66 +49,73 @@ class ListSubscribersImport implements ToCollection,WithStartRow
             }
         }
 
-        Validator::make($cell, [
+        $niceNames = array(
+            '*.name' => 'name',
+            '*.phone' => 'phone',
+            '*.email' => 'email',
+            '*.username' => 'telegram username',
+        );
+
+        $messages = [
+            'required_if'=>'The :attribute field is required when :other is blank'
+        ];
+
+        $rules = [
            '*.name'=> ['required'],
-           '*.phone'=> ['required_if:*.username,==,null'],
+           '*.phone'=> ['required_if:*.username,==,'.null.'',new TelegramNumber],
            '*.email'=> ['required','email'],
-           '*.username'=> ['required_if:*.phone,==,null'],
-        ])->validate(); 
+           '*.username'=> ['required_if:*.phone,==,'.null.''],
+        ];
 
-        foreach ($rows as $row) {
-            if($row[1] == '' && $row[3] == '')
-            {
-                continue;
+        $validator = Validator::make($cell,$rules,$messages); 
+        $validator->setAttributeNames($niceNames);
+        $validator->validate(); 
+
+        if(count($rows) > 0)
+        {
+            foreach ($rows as $row) {
+                if($row[1] == '' && $row[3] == '')
+                {
+                    continue;
+                }
+
+                if(empty($row[3]))
+                {
+                    $row[1] = $this->checkPhone($row[1]);
+                    $checkunique = $this->checkUniquePhone($row[1],$row[2]);
+                }
+                else {
+                    $row[1] = 0;
+                    $checkunique = $this->checkUniqueUsername($row[3],$row[2]);
+                }
+
+                /*
+                $list = new ListController;
+
+                if($row[1] <> null){
+                  $chat_id = $list->getPhoneTelegramChatID($this->id_list,$row[1]);
+                } else {
+                  $chat_id = $list->getChatIDByUsername($this->id_list,$row[3]);
+                }
+                */
+
+                if($checkunique == true)
+                {
+                  ++$this->rows;
+                  Customer::create([
+                     'user_id'  => Auth::id(),
+                     'list_id'  => $this->id_list,
+                     'name'     => $row[0],
+                     'telegram_number'=> $row[1],
+                     'email'=> $row[2],
+                     'username' => $row[3],
+                     //'chat_id' => $chat_id,
+                  ]);
+                }
             }
-
-            $list = new ListController;
-
-            if(!empty($row[1])){
-              $chat_id = $list->getPhoneTelegramChatID($this->id_list,$row[1]);
-            } else {
-              $chat_id = $list->getChatIDByUsername($this->id_list,$row[3]);
-            }
-
-            Customer::create([
-               'user_id'  => Auth::id(),
-               'list_id'  => $this->id_list,
-               'name'     => $row[0],
-               'telegram_number'=> $row[1],
-               'email'=> $row[2],
-               'username' => $row[3],
-               'chat_id' => $chat_id,
-            ]);
         }
     } 
-
-  
-    public function model(array $row)
-    {
-        if(empty($row[3]))
-        {
-            $row[1] = $this->checkPhone($row[1]);
-            $checkunique = $this->checkUniquePhone($row[1]);
-        }
-        else {
-            $row[1] = 0;
-            $checkunique = $this->checkUniqueUsername($row[3]);
-        }
-
-        ++$this->rows;
-        if($checkunique == true){
-            return new Customer([
-               'user_id'  => Auth::id(),
-               'list_id'  => $this->id_list,
-               'name'     => $row[0],
-               'telegram_number'=> $row[1],
-               'email'=> $row[2],
-               'username' => $row[3]
-            ]);
-        }
-    }
     
-
     public function getRowCount(): int
     {
         return $this->rows;
@@ -145,8 +150,8 @@ class ListSubscribersImport implements ToCollection,WithStartRow
         return $row;
     }
 
-    public function checkUniquePhone($row){
-        $telegramnumber = Customer::where('telegram_number','=',$row)->first();
+    public function checkUniquePhone($number,$email){
+        $telegramnumber = Customer::where([['telegram_number','=',$number],['email','=',$email]])->first();
         if(is_null($telegramnumber))
         {
            return true;
@@ -156,8 +161,8 @@ class ListSubscribersImport implements ToCollection,WithStartRow
         }
     }
     
-    public function checkUniqueUsername($row){
-        $telegram_username = Customer::where('username','=',$row)->first();
+    public function checkUniqueUsername($username,$email){
+        $telegram_username = Customer::where([['username','=',$username],['email','=',$email]])->first();
         if(is_null($telegram_username))
         {
            return true;
@@ -167,32 +172,5 @@ class ListSubscribersImport implements ToCollection,WithStartRow
         }
     }
 
-    public function rules(): array
-    {
-        return [
-             // Can also use callback validation rules
-             /*'0' => function($attribute, $value, $onFailure) {
-                  if ($value !== 'import1') {
-                       $onFailure('Name is not Patrick Brouwers');
-                  }
-              }
-              */
-            '0'=> ['required'],
-            '1'=> ['required_without:3'],
-            '2'=> ['required','email'],
-            '3'=> ['required_without:1'],
-        ];
-    }
-
-
-    /**
-     * @return array
-     */
-    public function customValidationMessages()
-    {
-        return [
-            'telegram_number.required_without' => 'You must fill telegram number or telegram username'."\n",
-            'telegram_username.required_without' => 'You must fill telegram username or telegram number'."\n",
-        ];
-    }
+/* end class */    
 }

@@ -25,34 +25,6 @@
       <div class="act-tel-tab">
           <h2>Add Your Contact</h2>
           <h6 class="mt-3">From <a id="tab-contact">Add Contact</a> or <a id="tab-form">Form</a></h6>
-
-          <!-- if contact added successfully -->
-          @if($contact->count() > 0)     
-            <table id="datasubscriber" class="table table-bordered mt-4">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Nama</th>
-                  <th>Phone</th>
-                  <th>Username</th>
-                  <th>Email</th>
-                </tr>
-              </thead>
-              <tbody>
-                @php $x=1;  @endphp
-                @foreach($contact as $rows)
-                  <tr>
-                    <td>{{$x}}</td>
-                    <td>{{$rows->name}}</td>
-                    <td>{{$rows->telegram_number}}</td>
-                    <td>{{$rows->username}}</td>
-                    <td>{{$rows->email}}</td>
-                  </tr>
-                  @php $x++; @endphp
-                @endforeach
-              </tbody>
-            </table> 
-          @endif
       </div>
     <!-- end tabs -->  
     </div>
@@ -240,7 +212,7 @@
                       <input type="hidden" name="list_id_import" value="{{ $id }}" />
                     <span><i>Please .csv only</i></span>
 
-                    <div><a>Download Example CSV</a></div>
+                    <div><a href="{{ asset('assets/csv/csv-example.csv') }}">Download Example CSV</a></div>
 
                     <div class="text-right">
                       <button type="submit" class="btn btn-custom mr-1">Import</button>
@@ -398,7 +370,6 @@
 
   $(document).ready(function() {    
     tabs();
-    table();
     Choose();
     openImport();
     csvImport();
@@ -451,12 +422,6 @@
 
          $('.tabs-container').hide();
          $('#tab3C').fadeIn('slow');
-      });
-  }
-
-  function table(){
-      $("#datasubscriber").DataTable({
-          "pageLength": 5
       });
   }
 
@@ -522,8 +487,12 @@
               $('#loader').hide();
               $('.div-loading').removeClass('background-load');
               var err = eval("(" + xhr.responseText + ")");
-              alert(err.errors);
-              //alert(xhr.status);
+              var msg = '';
+              for ( var property in err.errors ) {
+                msg += err.errors[property][0]+"\n"; // Outputs: foo, fiz or fiz, foo
+              }
+              alert(msg);
+              $('input[name="csv_file"]').val('');
             }
         });/* end ajax */
     });

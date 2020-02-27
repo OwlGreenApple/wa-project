@@ -9,7 +9,7 @@
   </div>
 
   <div class="act-tel-dashboard-right">
-     <a href="{{url('createlists')}}" class="btn btn-custom">Create List</a>
+     <a href="{{url('list-form')}}" class="btn btn-custom">Create List</a>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -61,6 +61,41 @@
   </div>
 </div>
 
+<!-- Modal  -->
+<div class="modal fade" id="table-data" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modaltitle">
+          Copy Link
+        </h5>
+      </div>
+      <div class="modal-body">
+        <table id="datasubscriber" class="table table-responsive" style="width : 100%">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama</th>
+              <th>Phone</th>
+              <th>Username</th>
+              <!--<th>Email</th>-->
+            </tr>
+          </thead>
+          <tbody id="data-customer"></tbody>
+        </table> 
+      </div>
+      <div class="modal-footer" id="foot">
+        <button class="btn btn-primary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+      
+  </div>
+</div>
+
 <script type="text/javascript">
 
   $(document).ready(function(){
@@ -69,7 +104,47 @@
     deleteList();
     duplicateList();
     copyLink();
+    openTable();
   });
+
+  function openTable(){
+      $("body").on("click",".open-table",function(){
+        var id = $(this).attr('id');
+        $("#table-data").modal();
+        $.ajax({
+          type : 'GET',
+          url : '{{ url("list-customer") }}',
+          data : {list_id : id},
+          dataType : 'html',
+          success : function(result)
+          {
+            $("#data-customer").html(result);
+          },
+          error : function(xhr,attr,throwable)
+          {
+            alert(xhr.responseText);
+          }
+        });
+      });
+  }
+
+  function table(){
+      $("#datasubscriber").DataTable({
+          'pageLength': 5,
+          'processing': true,
+          'serverSide': true,
+          'serverMethod': 'get',
+          'ajax': {
+              'url':'{{ url("list-customer") }}'
+          },
+          'columns': [
+             { data: 'name' },
+             { data: 'phone' },
+             { data: 'username' },
+             { data: 'email' },
+          ]
+      });
+  }
 
   function displayData(){
     $.ajax({
@@ -192,6 +267,85 @@
         $('#copy-link').modal('show');
       });
     }
+
+    /*$(document).ready(function(){
+        table();
+        displayDataAdditional();
+        openImport();
+        csvImport();
+    });
+
+    //TO IMPORT
+    function openImport()
+    {
+        $(".import-col").click(function(){
+            $("#import_popup").modal();
+            var id = $(this).attr('id');
+            $("input[name='list_id_import']").val(id);
+        });
+    } 
+
+    function csvImport()
+    {
+        $("body").on("submit","#import_list_subscriber",function(e){
+            e.preventDefault();
+            var form = $(this)[0];
+            var data = new FormData(form);
+
+            $.ajaxSetup({
+              headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+            });
+            $.ajax({
+                type : 'POST',
+                enctype: 'multipart/form-data',
+                url : '{{url("import_csv_list_subscriber")}}',
+                processData: false,
+                contentType: false,
+                cache: false,
+                timeout: 600000,
+                data : data,
+                dataType : 'json',
+                success : function(response)
+                {
+                    alert(response.message);
+                }
+            })
+        });
+    }
+
+    function displayDataAdditional(){
+        $("body").on("click",".addt",function(){
+            var listid = $(this).attr('id');
+            var boxdata = '';
+            $("#additional_popup").modal();
+
+            $.ajax({
+                type:'GET',
+                url:'{{route("customeradditional")}}',
+                data : {id:listid},
+                dataType : 'json',
+                success : function(response) 
+                {
+                    //console.log(response.additonal);
+                    $.each(response.additonal,function(key,value){
+
+                        boxdata += '<div class="form-group row"><label class="col-md-3 col-form-label text-md-right"><b class="text-capitalize">'+key+'</b></label><div class="col-md-8 form-control">'+value+'</div></div></div>';
+                    });
+                    $("#displayadditional").html(boxdata);
+                }
+            });
+        });
+    }
+
+     function table(){
+        $("#user-customer").dataTable({
+            'pageLength':10,
+            'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        });
+    }
+    */
 
 </script>
 @endsection

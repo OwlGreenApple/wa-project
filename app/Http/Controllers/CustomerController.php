@@ -198,14 +198,108 @@ class CustomerController extends Controller
 
         // if customer successful sign up 
         if($customer->save()){
-          $data['success'] = true;
-          $data['message'] = 'Thank You For Subscribe';
+           $this->addSubscriber();
+          //$data['success'] = true;
+          //$data['message'] = 'Thank You For Subscribe';
         } 
         else {
           $data['success'] = false;
           $data['message'] = 'Error-000! Sorry there is something wrong with our system';
         }
         return response()->json($data);
+    }
+
+    function addSubscriber($list_id,$customer_id,$user_id,$reminder_id)
+    {
+        $reminder = Reminder::where([['list_id','=',$list_id],['user_id','=',$user_id],['status','=',1],])->get();
+
+        if($reminder->count() > 0)
+        {
+           //Event
+            foreach($reminder as $row)
+            {
+              $is_event = $row->is_event;
+
+              if($is_event == 1)
+              {
+                  $today_event = Carbon::now()->toDateString();
+                  $days = (int)$row->days;
+                  $event_date = Carbon::parse($row->event_date);
+
+                  if($days < 0){
+                    $days = abs($days);
+                    $event_date->subDays($days);
+                  } 
+                  else {
+                    $event_date->addDays($days);
+                  }
+
+                  if($event_date >= $today_event){
+                      $reminder_customer = new ReminderCustomers;
+                      $reminder_customer->user_id = $user_id;
+                      $reminder_customer->list_id = $list_id;
+                      $reminder_customer->reminder_id = $reminder_id;
+                      $reminder_customer->customer_id = $customer_id;
+                      $reminder_customer->save();
+                  } 
+              }
+            }//END FOREACH
+
+            if($reminder_customer->save())
+            {
+                $data['success'] = true;
+                $data['message'] = 'Thank you for join us';
+                return response()->json($data);
+            }
+            else 
+            {
+                $data['message'] = 'Sorry this event has expired';
+                return response()->json($data);
+            }
+        } 
+        else if($reminder->count() > 0 && $is_event == 0) 
+        {
+            // Reminder
+            foreach($reminder as $row)
+            {
+                $days = (int)$row->days;
+                $after_sum_day = Carbon::parse($customer_subscribe_date)->addDays($days);
+                $validday = $after_sum_day->toDateString();
+                $createdreminder = Carbon::parse($row->created_at)->toDateString();
+
+                if($validday >= $createdreminder){
+                    $reminder_customer = new ReminderCustomers;
+                    $reminder_customer->user_id = $row->user_id;
+                    $reminder_customer->list_id = $row->list_id;
+                    $reminder_customer->reminder_id = $row->id;
+                    $reminder_customer->customer_id = $customerid;
+                    $reminder_customer->save(); 
+                    $eligible = true; 
+                } else {
+                    $eligible = null;
+                }
+            }
+
+            if($is_event == 1){
+                $msg = 'event';
+            } 
+            else {
+                $msg = 'reminder';
+            }
+
+              // if reminder has been set up into reminder-customer 
+            if($eligible == true){
+                //return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
+                $data['success'] = true;
+                $data['message'] = 'Thank you for join us';
+            } else if($eligible == null) {
+                $data['message'] = 'Sorry this '.$msg.' has expired';
+                return response()->json($data);
+            } else {
+                $data['success'] = false;
+                $data['message'] = 'Error-002! Sorry there is something wrong with our system';
+                return response()->json($data);
+            }    
     }
 
     /******* OLD CODES *******/

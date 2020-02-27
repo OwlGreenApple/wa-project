@@ -42,10 +42,19 @@ class ListController extends Controller
        return view('list.list-data');
     }
 
+    public function displaySubscriber(Request $request)
+    {
+       $userid = Auth::id();
+       $list_id = $request->list_id;
+       $data = array();
+       $customer = Customer::where([['user_id',$userid],['list_id',$list_id],['status',1]])->get();
+       return view('list.list-customer',['contact'=>$customer]);
+    }
+
     public function dataList(Request $request){
        $userid = Auth::id();
       
-       $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->get();
+       $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->orderBy('id','desc')->get();
        return view('list.list-table',['lists'=>$lists]);
     }
 
@@ -616,7 +625,6 @@ class ListController extends Controller
 
         $userid = Auth::id();
         $list = UserList::where('id',$listid)->first();
-        $customer = Customer::where('user_id',$userid)->get();
 
         if(is_null($list)){
             return redirect('lists');
@@ -630,11 +638,11 @@ class ListController extends Controller
             'listid'=>$listid
         );
 
-        $url = env('APP_URL').$list->name;
+        $url = env('APP_URL').$list->name; 
         $id = $listid;
         $list_id = encrypt($id);
       
-       return view('list.list-edit',['data'=>$data, 'contact'=>$customer,'label'=>$list->label,'listid'=>$list_id,'url'=>$url,'listname'=>$list->name,'id'=>$id]);
+       return view('list.list-edit',['data'=>$data,'label'=>$list->label,'listid'=>$list_id,'url'=>$url,'listname'=>$list->name,'id'=>$id]);
     }
 
     //DUPLICATE LIST
@@ -767,6 +775,7 @@ class ListController extends Controller
 
         return response()->json($response);
 
+        /*
         // DUPLICATE ENTIRE LIST REMINDER
         if($reminderList->count() > 0)
         {
@@ -799,6 +808,7 @@ class ListController extends Controller
             $response['error'] = true;
             $response['message'] = 'Error, Sorry unable to duplicate list record';
         }
+        */
         return response()->json($response);
     }
 
