@@ -1,6 +1,41 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Modal Delete Confirmation -->
+<div class="modal fade" id="confirm-delete" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content content-premiumid">
+      <div class="modal-header header-premiumid">
+        <h5 class="modal-title" id="modaltitle">
+          Confirmation Delete
+        </h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <input type="hidden" name="id_reminder" id="id_reminder">
+
+        <label>Are you sure want to <i>delete</i> this data ?</label>
+        <br><br>
+        <span class="txt-mode"></span>
+        <br>
+        
+        <div class="col-12 mb-4" style="margin-top: 30px">
+          <button class="btn btn-danger btn-block btn-delete-ok" data-dismiss="modal" id="button-delete-reminder">
+            Yes, Delete Now
+          </button>
+        </div>
+        
+        <div class="col-12 text-center mb-4">
+          <button class="btn  btn-block btn-delete-ok" data-dismiss="modal">
+            Cancel
+          </button>  
+        </div>
+      </div>
+    </div>   
+  </div>
+</div>
+
 
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
@@ -13,7 +48,10 @@
 
 <!-- NUMBER -->
 <div class="container act-tel-campaign">
-  <form>
+  <form id="save_campaign">
+      <input type="hidden" name="campaign_type" value="auto">
+      <input type="hidden" name="campaign_id" value="<?php echo $campaign_id; ?>">
+      <input type="hidden" name="reminder_id" value="new">
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Type Campaign :</label>
         <div class="col-sm-9 py-2">
@@ -58,6 +96,7 @@
 
       <div class="text-right col-sm-9">
         <button type="submit" class="btn btn-custom">Save</button>
+        <button type="button" id="btn-clear" class="btn btn-custom">Clear</button>
       </div>
 
   </form>
@@ -76,19 +115,45 @@
         </tr>
       </thead>
 
-      <tbody>
-        <tr>
-          <td class="text-center">H-1</td>
-          <td class="text-center">00:00</td>
-          <td>Remindered Message H-1</td>
-          <td class="text-center"><a class="icon icon-edit"></a></td>
-          <td class="text-center"><a class="icon icon-delete"></a></td>
-        </tr>
+      <tbody id="tbody-event">
       </tbody>
     </table>
 </div>
 
 <script type="text/javascript">
+  function saveAutoResponder()
+  {
+    $("#save_campaign").submit(function(e){
+      e.preventDefault();
+      var data = $(this).serialize();
+
+      $.ajax({
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          type : 'POST',
+          url : '{{url("save-campaign")}}',
+          data : data,
+          dataType : 'json',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            loadAutoResponder();
+            alert(result.message);
+          },
+          error : function(xhr,attribute,throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+          }
+      });
+      //ajax
+    });
+  }
+
   $(function () {
       $("#divInput-description-post").emojioneArea({
           pickerPosition: "right",
@@ -96,24 +161,127 @@
       });
   });
 
+  function loadAutoResponder()
+  {
+    $.ajax({
+      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+      type: 'GET',
+      url: "<?php echo url('/load-auto-responder');?>",
+      data : {
+        campaign_id : "<?php echo $campaign_id; ?>"
+      },
+      dataType: 'text',
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success: function(result) {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+
+        var data = jQuery.parseJSON(result);
+        $('#tbody-event').html(data.view);
+      }
+    });
+  }
+
   $(document).ready(function(){
     MDTimepicker();
     neutralizeClock();
+    loadAutoResponder();
+    clickButtonDelete();
+    clickIconDelete();
+    saveAutoResponder();
+    clickButtonEdit();
+    clickButtonClear();
+    $("#btn-clear").hide();
   });
 
-    function MDTimepicker(){
-      $("body").on('focus','.timepicker',function(){
-          $(this).mdtimepicker({
-            format: 'hh:mm',
-          });
-      });
-    }
+  function clickButtonEdit(){
+    $("body").on('click','.icon-edit',function(e){
+      e.preventDefault();
+      $('input[name="reminder_id"]').val($(this).attr("data-id"));
+      $('input[name="event_time"]').val($(this).attr("data-event_time"));
+      if ( $(this).attr("data-days") == 0 ) {
+        $('select[name="schedule"]').val(0).trigger('change');
+      }
+      else if ( $(this).attr("data-days") > 0 ) {
+        $('select[name="schedule"]').val(2).trigger('change');
+        $('select[name="day"]').val($(this).attr("data-days")).trigger('change');
+      }
+      else if ( $(this).attr("data-days") < 0 ) {
+        $('select[name="schedule"]').val(1).trigger('change');
+        $('select[name="day"]').val($(this).attr("data-days")).trigger('change');
+      }
+      $('input[name="hour"]').val($(this).attr("data-hour_time"));
+      $('select[name="list_id"]').val($(this).attr("data-list_id"));
+      $('textarea[name="message"]').val($(this).attr("data-message"));
+      $("#btn-clear").show();
+    });
+  }
 
-    /* prevent empty col if user click cancel on clock */
-    function neutralizeClock(){
-       $("body").on("click",".mdtp__button.cancel",function(){
-          $(".timepicker").val('00:00');
+  function clickButtonClear(){
+    $("body").on('click','#btn-clear',function(e){
+      $('input[name="reminder_id"]').val("new");
+      $('select[name="day"]').val($('select[name="day"]').prop("selectedIndex", 0).val());
+      $('input[name="hour"]').val("00:00");
+      $('select[name="list_id"]').val($('select[name="list_id"]').prop("selectedIndex", 0).val());
+      $('textarea[name="message"]').val("");
+      $("#btn-clear").hide();
+    });
+  }
+  
+  function MDTimepicker(){
+    $("body").on('focus','.timepicker',function(){
+        $(this).mdtimepicker({
+          format: 'hh:mm',
+        });
+    });
+  }
+
+  /* prevent empty col if user click cancel on clock */
+  function neutralizeClock(){
+     $("body").on("click",".mdtp__button.cancel",function(){
+        $(".timepicker").val('00:00');
+    });
+  }
+  
+  function clickIconDelete(){
+    $("body").on('click','.icon-delete',function(e){
+      e.preventDefault();
+      $("#id_reminder").val($(this).attr("data-id"));
+    });
+  }
+  
+  function clickButtonDelete(){
+    $('#button-delete-reminder').click(function(){
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        url: "<?php echo url('/delete-auto-responder');?>",
+        data: {
+          id : $("#id_reminder").val(),
+        },
+        dataType: 'text',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          var data = jQuery.parseJSON(result);
+          $('.message').show();
+          $('.message').html(data.message);
+          
+          loadEvent();
+        }
       });
-    }
+    });
+  }
+  
 </script>
 @endsection

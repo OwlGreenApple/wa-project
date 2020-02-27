@@ -118,6 +118,8 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('reminder-list','ReminderController@displayReminderList')->name('reminderlist');
   Route::get('reminder-del','ReminderController@delReminder');
   Route::post('reminder-duplicate','ReminderController@duplicateReminder')->middleware('checkresponderduplicate');
+  Route::get('load-auto-responder','ReminderController@loadAutoResponder');
+  Route::get('delete-auto-responder','ReminderController@deleteAutoResponder');
 
   /* BROADCAST */
   Route::get('broadcast-list','BroadCastController@displayBroadCast')->name('broadcastlist'); 

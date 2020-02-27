@@ -133,7 +133,7 @@
 </div>
 
 <script type="text/javascript">
-  function saveCampaign()
+  function saveEvent()
   {
     $("#save_campaign").submit(function(e){
       e.preventDefault();
@@ -207,11 +207,13 @@
       displayAddDaysBtn();
       MDTimepicker();
       neutralizeClock();
-      saveCampaign();
+      saveEvent();
       loadEvent();
       clickButtonEdit();
       clickButtonDelete();
       clickIconDelete();
+      clickButtonClear();
+      $("#btn-clear").hide();
   });
 
   function displayAddDaysBtn()
@@ -257,16 +259,35 @@
       e.preventDefault();
       $('input[name="reminder_id"]').val($(this).attr("data-id"));
       $('input[name="event_time"]').val($(this).attr("data-event_time"));
+      if ( $(this).attr("data-days") == 0 ) {
+        $('select[name="schedule"]').val(0).trigger('change');
+        displayAddDaysBtn();
+      }
+      else if ( $(this).attr("data-days") > 0 ) {
+        $('select[name="schedule"]').val(2).trigger('change');
+        $('select[name="day"]').val($(this).attr("data-days")).trigger('change');
+        displayAddDaysBtn();
+      }
+      else if ( $(this).attr("data-days") < 0 ) {
+        $('select[name="schedule"]').val(1).trigger('change');
+        $('select[name="day"]').val($(this).attr("data-days")).trigger('change');
+        displayAddDaysBtn();
+      }
+      $('input[name="hour"]').val($(this).attr("data-hour_time"));
       $('select[name="list_id"]').val($(this).attr("data-list_id"));
       $('textarea[name="message"]').val($(this).attr("data-message"));
+      $("#btn-clear").show();
     });
   }
 
   function clickButtonClear(){
+    $("body").on('click','#btn-clear',function(e){
       $('input[name="reminder_id"]').val("new");
       $('input[name="event_time"]').val("");
       $('select[name="list_id"]').val("");
       $('textarea[name="message"]').val("");
+      $("#btn-clear").hide();
+    });
   }
   
   function clickIconDelete(){
