@@ -82,7 +82,7 @@ class ListController extends Controller
 
     public function createList(Request $request)
     {
-      $userid = Auth::id();
+      $user = Auth::user();
       $label = $request->listname;
       $autoreply = $request->autoreply;
       $rules =  [
@@ -100,7 +100,14 @@ class ListController extends Controller
                       ->withErrors($validator);
       }
 
-      $phone = PhoneNumber::where('user_id',$userid)->first();
+
+      $phone = PhoneNumber::where('user_id',$user->id)->first();
+      if (is_null($phone)) {
+        return redirect('list-form')->with('error_number','Error! Please set your phone number first ');
+      }
+      if ($this->getChatIDByUsername($phone,$request->groupname) == 0){
+        return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator');
+      }
 
       $list = new UserList;
       $list->user_id = Auth::id();
@@ -113,7 +120,7 @@ class ListController extends Controller
       $listname = $list->name;
 
       $data = array(
-        'userid'=>$userid,
+        'userid'=>$user->id,
         'label'=>$label,
         'listid'=>$listid,
         'listname'=>$listname,
@@ -128,7 +135,7 @@ class ListController extends Controller
       //AUTO REPLY
       if(!empty($autoreply)){
         $reminder = new Reminder;
-        $reminder->user_id = $userid;
+        $reminder->user_id = $user->id;
         $reminder->list_id = $listid;
         $reminder->message = $autoreply;
         $reminder->save();
@@ -889,15 +896,13 @@ class ListController extends Controller
       }
     }
 
-    public function getChatIDByUsername($listid,$usertel){
+    public function getChatIDByUsername($phoneNumber,$usertel){
       /*
       * Write to PHPTDLIB API Server 
       * (Username Telegram)
       */
       $curl = curl_init();
-
-      $list = UserList::where('id',$listid)->first();
-      $phoneNumber = PhoneNumber::find($list->phone_number_id);
+      
 
       $data = array(
           'token'=> env('TOKEN_API'),

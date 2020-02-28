@@ -33,6 +33,12 @@ class ListSubscribersImport implements ToCollection,WithStartRow
     
     public function collection(Collection $rows)
     {
+        $user = Auth::user();
+        $phone = PhoneNumber::where('user_id',$user->id)->first();
+        if (is_null($phone)) {
+          // return redirect('list-form')->with('error_number','Error! Please set your phone number first ');
+        }
+        
         $data = $rows->toArray();
         $cell = $rules_phone = $rules_username = array();
 
@@ -89,15 +95,15 @@ class ListSubscribersImport implements ToCollection,WithStartRow
                     $checkunique = $this->checkUniqueUsername($row[3],$row[2]);
                 }
 
-                /*
+                
                 $list = new ListController;
 
                 if($row[1] <> null){
                   $chat_id = $list->getPhoneTelegramChatID($this->id_list,$row[1]);
                 } else {
-                  $chat_id = $list->getChatIDByUsername($this->id_list,$row[3]);
+                  $chat_id = $list->getChatIDByUsername($phone,$row[3]);
                 }
-                */
+                
 
                 if($checkunique == true)
                 {

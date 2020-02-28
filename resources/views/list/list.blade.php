@@ -50,7 +50,7 @@
           -->
 
           <div class="text-right">
-            <button class="btn btn-custom" href="{{url('lists-create')}}">Create List</button>
+            <button class="btn btn-custom">Create List</button>
           </div>
         </form>
       </div>

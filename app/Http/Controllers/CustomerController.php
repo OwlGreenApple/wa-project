@@ -300,9 +300,9 @@ class CustomerController extends Controller
                 $data['message'] = 'Error-002! Sorry there is something wrong with our system';
                 return response()->json($data);
             }    
+      }
     }
-
-    /******* OLD CODES *******/
+    /* OLD CODES */
 
     //Reminder
     public function index(Request $request, $product_list){
@@ -337,7 +337,7 @@ class CustomerController extends Controller
             {
                 foreach($data['fields'] as $col)
                 {
-                     # count if name has child or not
+                     // count if name has child or not
                      $doption = Additional::where([['list_id',$list->id],['id_parent',$col->id]])->get();
 
                      if($doption->count() > 0)
