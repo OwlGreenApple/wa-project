@@ -58,6 +58,7 @@ class CampaignController extends Controller
             'campaign_name'=>['required','max:50'],
             'list_id'=>['required',new CheckValidListID],
             'event_time'=>['required',new CheckDateEvent,new CheckEventEligibleDate($request->day)],
+            'hour'=>['required','date_format:H:i'],
             'message'=>['required','max:4095']
         );
 
@@ -75,6 +76,7 @@ class CampaignController extends Controller
               'list_id'=>$err->first('list_id'),
               'event_time'=>$err->first('event_time'),
               'day'=>$err->first('day'),
+              'hour'=>$err->first('hour'),
               'msg'=>$err->first('message'),
             );
             return response()->json($error);
@@ -97,6 +99,7 @@ class CampaignController extends Controller
             'campaign_name'=>['required','max:50'],
             'list_id'=>['required',new CheckValidListID],
             'day'=>['required','numeric','min:1','max:100'],
+            'hour'=>['required','date_format:H:i'],
             'message'=>['required','max:4095']
         );
 
@@ -109,6 +112,7 @@ class CampaignController extends Controller
               'campaign_name'=>$err->first('campaign_name'),
               'list_id'=>$err->first('list_id'),
               'day'=>$err->first('day'),
+              'hour'=>$err->first('hour'),
               'msg'=>$err->first('message'),
             );
             return response()->json($error);

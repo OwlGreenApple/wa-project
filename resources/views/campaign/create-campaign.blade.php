@@ -119,7 +119,7 @@
           <span class="inputh">
             <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
           </span>
-          <span class="error day"></span>
+          <span class="error day"></span><br/>
           <span class="error hour"></span>
         </div>
       </div>
