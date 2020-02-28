@@ -30,8 +30,7 @@ class SettingController extends Controller
   
     public function index()
     {
-      $id = Auth::id();
-      $user = User::where('id',$id)->first();
+      $user = Auth::user();
       return view('auth.settings',['user'=>$user]);
     }
 

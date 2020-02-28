@@ -18,6 +18,7 @@ use App\ReminderCustomers;
 use App\Campaign;
 use Session;
 use DB;
+use App\Http\Controllers\ListController;
 
 class BroadCastController extends Controller
 {
@@ -42,57 +43,29 @@ class BroadCastController extends Controller
             $list_id = 0;
             $group_name = $request->group_name;
             $channel = null;
+
+            $list = new ListController;
+            $chat_id = $list->getChatIDByUsername($phone,$request->group_name);
+            if ($chat_id == 0) {
+              return 'Error!! Group name not found, your broadcast failed to create';
+            }
         }
         else if($broadcast_schedule == 2)
         {
             $list_id = 0;
             $group_name = null;
             $channel = $request->channel_name;
+            
+            $list = new ListController;
+            $chat_id = $list->getChatIDByUsername($phone,$request->channel_name);
+            if ($chat_id == 0) {
+              return 'Error!! Channel name not found, your broadcast failed to create';
+            }
         }
         else {
             return 'Please reload your browser and then try again without modify default value';
         }
         
-        /*
-        #prevent user to change value is_event
-        try{
-            $is_event = decrypt($request->is_event);
-        }catch(DecryptException $e){
-            return redirect('broadcast');
-        }
-
-        #determine redirect link
-        if($is_event == 1){
-            $link = 'broadcasteventform';
-        } else {
-            $link = 'broadcastform';
-        }
-
-        #prevent user to change value list id
-        $checklist = UserList::where('is_event',$is_event)->whereIn('id',$req['id'])->select('is_event')->count();
-
-        $total_list = count($req['id']);
-
-        if($total_list !== $checklist){
-            return redirect('broadcast');
-        } 
-        //print('<pre>'.print_r($checklist,true).'</pre>');
-     
-        /* Validator to limit max message character 
-          $rules = array(
-            'id'=>['required'],
-            'message'=>['required','max:3000'],
-        );
-
-        $validator = Validator::make($request->all(),$rules);
-
-        if($validator->fails()){
-            $error = $validator->errors();
-            return redirect($link)->with('error',$error);
-        } else {
-            
-        }
-        */
 
         if($request->campaign_type == 'event')
         {

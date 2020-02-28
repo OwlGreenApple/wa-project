@@ -288,11 +288,9 @@ class CustomerController extends Controller
         $data['success'] = true;
         $data['message'] = 'Thank you for join us';
         return response()->json($data);
+      }
     }
-
-    /******* ******* ******* ******* ******* ******* ******* 
-                          OLD CODES 
-    ******* ******* ******* ******* ******* ******* *******/
+    /* OLD CODES */
 
     //Reminder
     public function index(Request $request, $product_list){
@@ -327,7 +325,7 @@ class CustomerController extends Controller
             {
                 foreach($data['fields'] as $col)
                 {
-                     # count if name has child or not
+                     // count if name has child or not
                      $doption = Additional::where([['list_id',$list->id],['id_parent',$col->id]])->get();
 
                      if($doption->count() > 0)
