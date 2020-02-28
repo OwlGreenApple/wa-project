@@ -288,9 +288,10 @@ class CustomerController extends Controller
         $data['success'] = true;
         $data['message'] = 'Thank you for join us';
         return response()->json($data);
-      }
     }
-    /* OLD CODES */
+
+
+    /************************ OLD CODES ************************/
 
     //Reminder
     public function index(Request $request, $product_list){
