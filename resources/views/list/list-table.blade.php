@@ -9,7 +9,7 @@
     <div class="bg-dashboard cardlist row">
       <div class="col-lg-4 pad-fix col-card">
         <h5>{{$rows->label}}</h5>
-        <div>Link From : activele.com/{{$rows->name}}&nbsp;&nbsp;<a data-link="{{env('APP_URL')}}{{ $rows->name }}" class="btn-copy"><span class="icon-copy"></span></a></div>
+        <div>Link From : {{env('APP_URL')}}{{$rows->name}}&nbsp;&nbsp;<a data-link="{{env('APP_URL')}}{{ $rows->name }}" class="btn-copy"><span class="icon-copy"></span></a></div>
         <div>Create On : {{Date("M d, Y", strtotime($rows->created_at))}}</div><!--Jan 23, 2020  -->
       </div>
 
