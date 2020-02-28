@@ -832,6 +832,11 @@ class ListController extends Controller
             return response()->json($msg);
         }
 
+        $phone = PhoneNumber::where('user_id',$userid)->first();
+        if (is_null($phone)) {
+           return response()->json(['message'=>'Error! Please set your phone number first']);
+        }
+
         $file = $request->file('csv_file');
         $import = new ListSubscribersImport($id_list);
         Excel::import($import, $file);

@@ -32,13 +32,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
     }
     
     public function collection(Collection $rows)
-    {
-        $user = Auth::user();
-        $phone = PhoneNumber::where('user_id',$user->id)->first();
-        if (is_null($phone)) {
-          // return redirect('list-form')->with('error_number','Error! Please set your phone number first ');
-        }
-        
+    { 
         $data = $rows->toArray();
         $cell = $rules_phone = $rules_username = array();
 
@@ -68,7 +62,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
 
         $rules = [
            '*.name'=> ['required'],
-           '*.phone'=> ['required_if:*.username,==,'.null.'',new TelegramNumber],
+           '*.phone'=> ['required_if:*.username,==,'.null.'',new TelegramNumber, new ],
            '*.email'=> ['required','email'],
            '*.username'=> ['required_if:*.phone,==,'.null.''],
         ];
