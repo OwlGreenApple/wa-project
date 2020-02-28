@@ -191,6 +191,7 @@ class CampaignController extends Controller
       $lists = UserList::where('user_id',$user_id)->get();
       $data['lists'] = $lists;
       $data['campaign_id'] = $campaign_id;
+      $data['campaign_name'] = $campaign->name;
       return view('reminder.add-message-auto-responder',$data);
     }
 

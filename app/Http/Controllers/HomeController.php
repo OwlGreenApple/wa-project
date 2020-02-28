@@ -10,6 +10,14 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
 use App\PhoneNumber;
+use App\UserList;
+use App\Customer;
+use App\Campaign;
+use App\Reminder;
+use App\ReminderCustomers;
+use App\BroadCast;
+use App\BroadCastCustomers;
+use DB;
 
 class HomeController extends Controller
 {
@@ -30,8 +38,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-
-        session_start();
+        //session_start();
         $id = Auth::id();
         $user_name = Auth::user()->name;
         $folder = $user_name.'-'.$id;
@@ -52,8 +59,36 @@ class HomeController extends Controller
             //File::makeDirectory($path, $mode = 0741, true, true);
         }
 
-        $user = User::where('id','=',$id)->first();
-        return view('home',['user'=>$user]);
+        $lists = UserList::where('user_id',$id)->get()->count();
+        $campaign = Customer::where('user_id',$id)->get()->count();
+        $contact = Customer::where('user_id',$id)->get()->count();
+
+        $latest_list = DB::select('select * from lists where user_id ='.$id.' and DATE(created_at) > (NOW() - INTERVAL 7 DAY)');
+        (count($latest_list) > 0)? $latest = '+'.count($latest_list) : $latest = count($latest_list);
+
+        $reminder = ReminderCustomers::where('user_id','=',$id)->get()->count();
+
+        $reminder_sent = ReminderCustomers::where([['user_id','=',$id],['status',1]])->get()->count();
+
+        $broadcast = BroadCast::where('broad_casts.user_id','=',$id)
+            ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')->get()->count();
+
+        $broadcast_sent = BroadCast::where([['broad_casts.user_id','=',$id],['broad_cast_customers.status',1]])
+            ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')->get()->count();
+
+        $total_message = $reminder + $broadcast;
+        $total_sending_message = $reminder_sent + $broadcast_sent;
+
+        $data = array(
+          'lists'=>$lists,
+          'latest_lists'=>$latest,
+          'campaign'=>$campaign,
+          'contact'=>$contact,
+          'total_message'=>$total_message,
+          'total_sending_message'=>$total_sending_message
+        );
+
+        return view('home',$data);
     }
 
     public function updateUser(Request $request){
