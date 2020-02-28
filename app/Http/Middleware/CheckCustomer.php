@@ -73,7 +73,7 @@ class CheckCustomer
 
         if($request->selectType == 'ph') {
            $data['phone'] = $req['phone'];
-           $rules['phone'] = ['required','numeric','digits_between:9,18',new TelegramNumber, new SubscriberPhone($id_list)];
+           $rules['phone'] = ['required','min:9','max:18',new TelegramNumber, new SubscriberPhone($id_list)];
         }
 
         if($request->selectType == 'tl') {

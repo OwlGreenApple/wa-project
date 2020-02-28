@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\BroadCastController;
@@ -13,6 +14,10 @@ use App\BroadCast;
 use App\BroadCastCustomers;
 use App\Reminder;
 use App\ReminderCustomers;
+use App\Rules\CheckDateEvent;
+use App\Rules\CheckValidListID;
+use App\Rules\CheckEventEligibleDate;
+use App\Rules\CheckBroadcastDate;
 use DB;
 
 class CampaignController extends Controller
@@ -41,39 +46,138 @@ class CampaignController extends Controller
     public function SaveCampaign(Request $request)
     {
       $campaign = $request->campaign_type;
+      if($request->schedule == 0)
+      {
+          $request->day = 0;
+      }
 
       if($campaign == 'event')
       {
-          $event = new EventController;
-          $saveEvent = $event->saveEvent($request);
+        /* Validator */
+        $rules = array(
+            'campaign_name'=>['required','max:50'],
+            'list_id'=>['required',new CheckValidListID],
+            'event_time'=>['required',new CheckDateEvent,new CheckEventEligibleDate($request->day)],
+            'hour'=>['required','date_format:H:i'],
+            'message'=>['required','max:4095']
+        );
 
-          if(!empty($saveEvent))
-          {
-              $data['message'] = $saveEvent;
-              return response()->json($data);
-          }
+        if($request->schedule > 0){
+          $rules['day'] = ['required','numeric','min:-90','max:100'];
+        }
+
+        $validator = Validator::make($request->all(),$rules);
+        $err = $validator->errors();
+
+        if($validator->fails()){
+            $error = array(
+              'err'=>'ev_err',
+              'campaign_name'=>$err->first('campaign_name'),
+              'list_id'=>$err->first('list_id'),
+              'event_time'=>$err->first('event_time'),
+              'day'=>$err->first('day'),
+              'hour'=>$err->first('hour'),
+              'msg'=>$err->first('message'),
+            );
+            return response()->json($error);
+        }
+
+        $event = new EventController;
+        $saveEvent = $event->saveEvent($request);
+
+        if(!empty($saveEvent))
+        {
+            $data['err'] = 0;
+            $data['message'] = $saveEvent;
+            return response()->json($data);
+        }
       } 
       elseif($campaign == 'auto')
-      {
-          $auto = new ReminderController;
-          $saveAutoReponder = $auto->saveAutoReponder($request);
-          
-          if(!empty($saveAutoReponder))
-          {
-              $data['message'] = $saveAutoReponder;
-              return response()->json($data);
-          }
+      {   
+        /* Validator */
+        $rules = array(
+            'campaign_name'=>['required','max:50'],
+            'list_id'=>['required',new CheckValidListID],
+            'day'=>['required','numeric','min:1','max:100'],
+            'hour'=>['required','date_format:H:i'],
+            'message'=>['required','max:4095']
+        );
+
+        $validator = Validator::make($request->all(),$rules);
+        $err = $validator->errors();
+
+        if($validator->fails()){
+            $error = array(
+              'err'=>'responder_err',
+              'campaign_name'=>$err->first('campaign_name'),
+              'list_id'=>$err->first('list_id'),
+              'day'=>$err->first('day'),
+              'hour'=>$err->first('hour'),
+              'msg'=>$err->first('message'),
+            );
+            return response()->json($error);
+        }
+
+        $auto = new ReminderController;
+        $saveAutoReponder = $auto->saveAutoReponder($request);
+        
+        if(!empty($saveAutoReponder))
+        {
+            $data['message'] = $saveAutoReponder;
+            return response()->json($data);
+        }
       }
       else
       {
-          $broadcast = new BroadCastController;
-          $saveBroadcast = $broadcast->saveBroadCast($request);
+        /* Validator */
+        $rules = array(
+          'campaign_name'=>['required','max:50'],
+          'date_send'=>['required',new CheckBroadcastDate],
+          'hour'=>['required','date_format:H:i'],
+          'message'=>['required','max:4095'],
+        );
 
-          if(!empty($saveBroadcast))
-          {
-              $data['message'] = $saveBroadcast;
-              return response()->json($data);
-          }
+        if(isset($_POST['list_id']))
+        {
+           $rules['list_id'] = ['required', new CheckValidListID];
+        } 
+
+        if(isset($_POST['group_name']))
+        {
+           $rules['group_name'] = ['required', 'max:50'];
+        }
+
+        if(isset($_POST['channel_name']))
+        {
+           $rules['channel_name'] = ['required', 'max:50'];
+        }
+
+        $validator = Validator::make($request->all(),$rules);
+        if($validator->fails())
+        {
+            $error = $validator->errors();
+            $data_error = [
+              'err'=>'broadcast_err',
+              'campaign_name'=>$error->first('campaign_name'),
+              'list_id' =>$error->first('list_id'),
+              'group_name' =>$error->first('group_name'),
+              'channel_name' =>$error->first('channel_name'),       
+              'date_send'=>$error->first('date_send'),
+              'hour'=>$error->first('hour'),
+              'msg'=>$error->first('message'),
+            ];
+
+            return response()->json($data_error);
+        }
+
+        $broadcast = new BroadCastController;
+        $saveBroadcast = $broadcast->saveBroadCast($request);
+
+        if(!empty($saveBroadcast))
+        {
+            $data['message'] = $saveBroadcast;
+            return response()->json($data);
+        }
       }
     }
 
@@ -100,6 +204,7 @@ class CampaignController extends Controller
       $lists = UserList::where('user_id',$user_id)->get();
       $data['lists'] = $lists;
       $data['campaign_id'] = $campaign_id;
+      $data['campaign_name'] = $campaign->name;
       return view('event.add-message-event',$data);
     }
 

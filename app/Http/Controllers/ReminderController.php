@@ -60,6 +60,7 @@ class ReminderController extends Controller
           $campaign->list_id = $request->list_id;
           $campaign->user_id = $user_id;
           $campaign->save();
+          $campaign_id = $campaign->id;
         }
         else {
           $campaign_id = $request->campaign_id;
@@ -101,26 +102,33 @@ class ReminderController extends Controller
             return 'Your reminder has been set!';
         }
 
-        // display data customer 
-        foreach($datacustomer as $col){
-            // retrieve reminder id according on created at 
-            $reminder_get_id = Reminder::where([
-                ['list_id','=',$col->list_id],
-                ['is_event','=',0],
-                ['created_at','=',$created_date],
-                ['status','=',1],
-            ])->select('id')->get();
+        if(count($datacustomer) > 0)
+        {
+            // display data customer 
+            foreach($datacustomer as $col){
+                // retrieve reminder id according on created at 
+                $reminder_get_id = Reminder::where([
+                    ['list_id','=',$col->list_id],
+                    ['is_event','=',0],
+                    ['created_at','=',$created_date],
+                    ['status','=',1],
+                ])->select('id')->get();
 
-            $remindercustomer = new ReminderCustomers;
-            foreach($reminder_get_id as $id_reminder){
-                $remindercustomer->user_id = $user_id;
-                $remindercustomer->list_id = $col->list_id;
-                $remindercustomer->reminder_id = $id_reminder->id;
-                $remindercustomer->customer_id = $col->id;
-                $remindercustomer->save();
-            }
+                $remindercustomer = new ReminderCustomers;
+                foreach($reminder_get_id as $id_reminder){
+                    $remindercustomer->user_id = $user_id;
+                    $remindercustomer->list_id = $col->list_id;
+                    $remindercustomer->reminder_id = $id_reminder->id;
+                    $remindercustomer->customer_id = $col->id;
+                    $remindercustomer->save();
+                }
 
-        } // end loop
+            } // end loop
+        }
+        else
+        { 
+            return 'Your reminder has been set!';
+        }
 
         // If successful insert data into reminder customer 
         if($remindercustomer->save()){
