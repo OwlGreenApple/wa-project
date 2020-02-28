@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('check:authtelegram')->everyWeek();
          $schedule->command('send:telegram')->everyMinute()->withoutOverlapping(1);
          $schedule->command('check:counter')->everyMinute()->withoutOverlapping(1);
-         $schedule->command('check:wa')->hourly();
+         // $schedule->command('check:wa')->hourly();
     }
 
     /**
