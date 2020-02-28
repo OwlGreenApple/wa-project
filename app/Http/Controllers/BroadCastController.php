@@ -18,6 +18,7 @@ use App\ReminderCustomers;
 use App\Campaign;
 use Session;
 use DB;
+use App\Http\Controllers\ListController;
 
 class BroadCastController extends Controller
 {
@@ -42,12 +43,24 @@ class BroadCastController extends Controller
             $list_id = 0;
             $group_name = $request->group_name;
             $channel = null;
+
+            $list = new ListController;
+            $chat_id = $list->getChatIDByUsername($phone,$request->group_name);
+            if ($chat_id == 0) {
+              return 'Error!! Group name not found, your broadcast failed to create';
+            }
         }
         else if($broadcast_schedule == 2)
         {
             $list_id = 0;
             $group_name = null;
             $channel = $request->channel_name;
+            
+            $list = new ListController;
+            $chat_id = $list->getChatIDByUsername($phone,$request->channel_name);
+            if ($chat_id == 0) {
+              return 'Error!! Channel name not found, your broadcast failed to create';
+            }
         }
         else {
             return 'Please reload your browser and then try again without modify default value';

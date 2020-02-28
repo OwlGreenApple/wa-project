@@ -115,7 +115,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
                      'telegram_number'=> $row[1],
                      'email'=> $row[2],
                      'username' => $row[3],
-                     //'chat_id' => $chat_id,
+                     'chat_id' => $chat_id,
                   ]);
                 }
             }
