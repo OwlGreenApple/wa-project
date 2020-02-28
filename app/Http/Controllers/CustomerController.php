@@ -9,6 +9,8 @@ use App\UserList;
 use Carbon\Carbon;
 use App\Reminder;
 use App\ReminderCustomers;
+use App\BroadCast;
+use App\BroadCastCustomers;
 use App\Sender;
 use App\Additional;
 use App\PhoneNumber;
@@ -98,15 +100,17 @@ class CustomerController extends Controller
             $customer->list_id = $lists->id;
             $customer->name = $request->subscribername;
             $customer->email = $request->email;
+            $customer->telegram_number = $request->phone;
 
             $phoneNumber = PhoneNumber::find($lists->phone_number_id);
             // dd($lists);
             // dd($phoneNumber);
 
-            // $phoneNumber = PhoneNumber::find(88);
+            //$phoneNumber = PhoneNumber::find(88);
+            
             if($request->selectType == 'ph'){
 
-              $customer->telegram_number = '+'.$request->phone;
+              $customer->telegram_number = $request->phone;
 
               /*
               * Write to PHPTDLIB API Server 
@@ -191,16 +195,18 @@ class CustomerController extends Controller
                 $customer->chat_id = $response;
               }
             }
-
+            
             $customer->additional = $addt;
             $customer->save();
+            $customer_id = $customer->id;
+            $customer_join = $customer->created_at;
         }
 
         // if customer successful sign up 
         if($customer->save()){
-           $this->addSubscriber();
-          //$data['success'] = true;
-          //$data['message'] = 'Thank You For Subscribe';
+           $user_id = $lists->user_id;
+           $list_id = $lists->id;
+           return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
         } 
         else {
           $data['success'] = false;
@@ -209,22 +215,22 @@ class CustomerController extends Controller
         return response()->json($data);
     }
 
-    function addSubscriber($list_id,$customer_id,$user_id,$reminder_id)
+    function addSubscriber($list_id,$customer_id,$customer_join,$user_id)
     {
         $reminder = Reminder::where([['list_id','=',$list_id],['user_id','=',$user_id],['status','=',1],])->get();
 
         if($reminder->count() > 0)
         {
-           //Event
-            foreach($reminder as $row)
-            {
+           //EVENT
+          foreach($reminder as $row)
+          {
               $is_event = $row->is_event;
 
               if($is_event == 1)
               {
-                  $today_event = Carbon::now()->toDateString();
+                  $today = Carbon::now()->toDateString();
                   $days = (int)$row->days;
-                  $event_date = Carbon::parse($row->event_date);
+                  $event_date = Carbon::parse($row->event_time);
 
                   if($days < 0){
                     $days = abs($days);
@@ -234,75 +240,59 @@ class CustomerController extends Controller
                     $event_date->addDays($days);
                   }
 
-                  if($event_date >= $today_event){
+                  $event_date = $event_date->toDateString();
+
+                  if($event_date >= $today){
                       $reminder_customer = new ReminderCustomers;
                       $reminder_customer->user_id = $user_id;
                       $reminder_customer->list_id = $list_id;
-                      $reminder_customer->reminder_id = $reminder_id;
+                      $reminder_customer->reminder_id = $row->id;
                       $reminder_customer->customer_id = $customer_id;
                       $reminder_customer->save();
                   } 
+              } //END IF IS_EVENT
+              else
+              //AUTO RESPONDER
+              {
+                  $days = (int)$row->days;
+                  $after_sum_day = Carbon::parse($customer_join)->addDays($days);
+                  $validday = $after_sum_day->toDateString();
+                  $createdreminder = Carbon::parse($row->created_at)->toDateString();
+
+                  if($validday >= $createdreminder){
+                      $reminder_customer = new ReminderCustomers;
+                      $reminder_customer->user_id = $user_id;
+                      $reminder_customer->list_id = $list_id;
+                      $reminder_customer->reminder_id = $row->id;
+                      $reminder_customer->customer_id = $customer_id;
+                      $reminder_customer->save(); 
+                  } 
               }
-            }//END FOREACH
+          }//END FOREACH
+        }
 
-            if($reminder_customer->save())
-            {
-                $data['success'] = true;
-                $data['message'] = 'Thank you for join us';
-                return response()->json($data);
-            }
-            else 
-            {
-                $data['message'] = 'Sorry this event has expired';
-                return response()->json($data);
-            }
-        } 
-        else if($reminder->count() > 0 && $is_event == 0) 
+        //BROADCAST 
+        $broadcast = BroadCast::where([['list_id',$list_id],['user_id',$user_id]],['status',1])->get();
+
+        if($broadcast->count() > 0)
         {
-            // Reminder
-            foreach($reminder as $row)
-            {
-                $days = (int)$row->days;
-                $after_sum_day = Carbon::parse($customer_subscribe_date)->addDays($days);
-                $validday = $after_sum_day->toDateString();
-                $createdreminder = Carbon::parse($row->created_at)->toDateString();
-
-                if($validday >= $createdreminder){
-                    $reminder_customer = new ReminderCustomers;
-                    $reminder_customer->user_id = $row->user_id;
-                    $reminder_customer->list_id = $row->list_id;
-                    $reminder_customer->reminder_id = $row->id;
-                    $reminder_customer->customer_id = $customerid;
-                    $reminder_customer->save(); 
-                    $eligible = true; 
-                } else {
-                    $eligible = null;
-                }
-            }
-
-            if($is_event == 1){
-                $msg = 'event';
-            } 
-            else {
-                $msg = 'reminder';
-            }
-
-              // if reminder has been set up into reminder-customer 
-            if($eligible == true){
-                //return $this->autoReply($get_id_list->id,$wa_number,$list_message,$list_wa_number,$request->name);
-                $data['success'] = true;
-                $data['message'] = 'Thank you for join us';
-            } else if($eligible == null) {
-                $data['message'] = 'Sorry this '.$msg.' has expired';
-                return response()->json($data);
-            } else {
-                $data['success'] = false;
-                $data['message'] = 'Error-002! Sorry there is something wrong with our system';
-                return response()->json($data);
-            }    
+          foreach($broadcast as $row)
+          {
+              $broadcastcustomer = new BroadCastCustomers;
+              $broadcastcustomer->broadcast_id = $row->id;
+              $broadcastcustomer->customer_id = $customer_id;
+              $broadcastcustomer->save();
+          }
+        }
+        
+        $data['success'] = true;
+        $data['message'] = 'Thank you for join us';
+        return response()->json($data);
     }
 
-    /******* OLD CODES *******/
+    /******* ******* ******* ******* ******* ******* ******* 
+                          OLD CODES 
+    ******* ******* ******* ******* ******* ******* *******/
 
     //Reminder
     public function index(Request $request, $product_list){

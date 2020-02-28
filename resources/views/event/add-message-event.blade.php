@@ -39,7 +39,7 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>ADD MESSAGE : <color>Test Campaigns</color></h2>
+    <h2>ADD MESSAGE : <color>{{ $campaign_name }}</color></h2>
   </div>
 
   <div class="clearfix"></div>

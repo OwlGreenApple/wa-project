@@ -20,6 +20,7 @@
         <label class="col-sm-3 col-form-label">Name :</label>
         <div class="col-sm-6">
           <input type="text" name="campaign_name" class="form-control" />
+          <span class="error campaign_name"></span>
         </div>
       </div>
 
@@ -76,6 +77,7 @@
               @endif
            </select>
            <span class="icon-carret-down-circle"></span>
+           <span class="error list_id"></span>
         </div>
       </div>
 
@@ -86,6 +88,7 @@
         <div class="col-sm-9 relativity">
           <input id="datetimepicker-date" type="text" name="date_send" class="form-control custom-select-campaign" />
           <span class="icon-calendar"></span>
+          <span class="error date_send"></span>
         </div>
       </div>
 
@@ -94,6 +97,7 @@
         <div class="col-sm-9 relativity">
           <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
           <span class="icon-calendar"></span>
+          <span class="error event_time"></span>
         </div>
       </div>
 
@@ -111,8 +115,12 @@
 
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Time to send Message :</label>
-        <div class="col-sm-9 relativity inputh">
-          <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
+        <div class="col-sm-9 relativity">
+          <span class="inputh">
+            <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
+          </span>
+          <span class="error day"></span>
+          <span class="error hour"></span>
         </div>
       </div>
 
@@ -120,6 +128,7 @@
         <label class="col-sm-3 col-form-label">Message :</label>
         <div class="col-sm-6">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
+          <span class="error msg"></span>
         </div>
       </div>
 
@@ -177,12 +186,53 @@
           success : function(result){
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
-            alert(result.message);
+
+            if(result.err == 'ev_err')
+            {   $(".error").show();
+                $(".campaign_name").html(result.campaign_name);
+                $(".list_id").html(result.list_id);
+                $(".event_time").html(result.event_time);
+                $(".day").html(result.day);
+                $(".hour").html(result.hour);
+                $(".msg").html(result.msg);
+            }
+            else if(result.err == 'responder_err')
+            {
+                $(".error").show();
+                $(".campaign_name").html(result.campaign_name);
+                $(".list_id").html(result.list_id);
+                $(".day").html(result.day);
+                $(".hour").html(result.hour);
+                $(".msg").html(result.msg);
+            }
+            else if(result.err == 'broadcast_err')
+            {
+                $(".error").show();
+                $(".campaign_name").html(result.campaign_name);
+                $(".list_id").html(result.list_id);
+                $(".group_name").html(result.group_name);
+                $(".channel_name").html(result.channel_name);
+                $(".date_send").html(result.date_send);
+                $(".hour").html(result.hour);
+                $(".msg").html(result.msg);
+            }
+            else
+            {
+                $(".error").hide();
+                $("input[name='campaign_name']").val('');
+                $("input[name='group_name']").val('');
+                $("input[name='group_name']").val('');
+                $("input[name='channel_name']").val('');
+                $("input[name='date_send']").val('');
+                $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+                alert(result.message);
+            }
           },
           error : function(xhr,attribute,throwable)
           {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
           }
       });
       //ajax
@@ -254,6 +304,7 @@
             box += '<label class="col-sm-3 col-form-label">Telegram Group Name :</label>';
             box += '<div class="col-sm-9 relativity">';
             box += '<input type="text" name="group_name" class="form-control" />';
+            box += '<span class="error group_name"></span>';
             box += '</div>';
             box += '</div>';
             $(".box-schedule").html(box);
@@ -266,6 +317,7 @@
             box += '<label class="col-sm-3 col-form-label">Telegram Channel Name :</label>';
             box += '<div class="col-sm-9 relativity">';
             box += '<input type="text" name="channel_name" class="form-control" />';
+            box += '<span class="error channel_name"></span>';
             box += '</div>';
             box += '</div>';
             $(".box-schedule").html(box);

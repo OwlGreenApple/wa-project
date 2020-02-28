@@ -30,31 +30,6 @@ class EventController extends Controller
             $request->day = 0;
         }
 
-        /* Validator 
-        if($request->schedule > 0 &&  $request->day == 0){
-           $error['message'] = 'Please do not modify event days, if you want to use 0 days please use The Day instead';
-           return response()->json($error);
-        }
-
-        $rules = array(
-            'list_id'=>['required'],
-            'message'=>['required','max:3000'],
-            'schedule'=>['required','numeric'],
-            'day'=>['numeric'],
-        );
-
-        $validator = Validator::make($request->all(),$rules);
-        $err = $validator->errors();
-
-        
-        if($validator->fails()){
-            $error['message'] = $err;
-            return response()->json($error);
-        } else {
-           
-        }
-        */
-
         $campaign_type = 0;
 
         if ($request->campaign_id=="new") {
@@ -104,15 +79,17 @@ class EventController extends Controller
         // check whether user have customer 
         if($event->count() == 0){
             return 'Your event has been set!!';
-        } else {
-             foreach($event as $col){
-                $remindercustomer = new ReminderCustomers;
-                $remindercustomer->user_id = $user_id;
-                $remindercustomer->list_id = $col->list_id;
-                $remindercustomer->reminder_id = $col->id;
-                $remindercustomer->customer_id = $col->csid;
-                $remindercustomer->save();
-             }  
+        } 
+        else
+        {
+            foreach($event as $col){
+              $remindercustomer = new ReminderCustomers;
+              $remindercustomer->user_id = $user_id;
+              $remindercustomer->list_id = $col->list_id;
+              $remindercustomer->reminder_id = $col->id;
+              $remindercustomer->customer_id = $col->csid;
+              $remindercustomer->save();
+            }  
         }
 
         // If successful insert data into event customer
