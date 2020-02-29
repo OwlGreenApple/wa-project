@@ -314,7 +314,8 @@ class SettingController extends Controller
         CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/auth-verify-phone.php",
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => http_build_query($data),
+        // CURLOPT_POSTFIELDS => http_build_query($data),
+        CURLOPT_POSTFIELDS => $data,
         CURLOPT_POST => 1,
       ));
 
