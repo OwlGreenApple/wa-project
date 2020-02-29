@@ -85,6 +85,7 @@ class ListController extends Controller
       $user = Auth::user();
       $label = $request->listname;
       $autoreply = $request->autoreply;
+
       $rules =  [
             'listname' => 'required|min:4|max:190',
             'groupname' => 'required|min:4|max:190',
@@ -94,12 +95,9 @@ class ListController extends Controller
       ];
 
       $validator = Validator::make($request->all(),$rules,$message);
-
       if ($validator->fails()) {
-          return redirect('list-form')
-                      ->withErrors($validator);
+          return redirect('list-form')->withErrors($validator);               
       }
-
 
       $phone = PhoneNumber::where('user_id',$user->id)->first();
       if (is_null($phone)) {
@@ -114,7 +112,7 @@ class ListController extends Controller
       $list->name = $this->createRandomListName();
       $list->label = $label;
       $list->group_name = $request->groupname;
-      $list->phone_number_id = $phone->id;
+      //$list->phone_number_id = $phone->id;
       $list->save();
       $listid = $list->id;
       $listname = $list->name;

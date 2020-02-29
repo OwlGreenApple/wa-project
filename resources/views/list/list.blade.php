@@ -16,6 +16,9 @@
       <h3>Create Your List</h3>
 
       <div align="center">
+        @if(session('error_number'))
+          <div class="alert alert-danger col-lg-6">{{ session('error_number') }}</div>
+        @endif
 
         <form method="GET" action="{{url('list-create')}}">
           @csrf
