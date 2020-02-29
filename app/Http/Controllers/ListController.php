@@ -113,14 +113,6 @@ class ListController extends Controller
           ;
       }
 
-      if ($this->getChatIDByUsername($phone,$request->groupname) == 0){
-        return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator')
-          ->with('listname',$request->listname)
-          ->with('autoreply',$request->autoreply)
-          ->with('groupname',$request->groupname)
-          ;
-      }
-
       $result = $this->checkGroupByGroupName($phone,$request->groupname);
       if ( ( $result== 0) || ( $result== "0") ){
         return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator '.$result)
