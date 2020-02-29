@@ -165,10 +165,11 @@ class SettingController extends Controller
     public function connect_phone(Request $request)
     {
       $user = Auth::user();
+      $resend = $request->resend;
 
       //pastikan phone number hanya 1 phone number
       $countphoneNumber = PhoneNumber::where("user_id",$user->id)->first();
-      if(!is_null($countphoneNumber)){
+      if(!is_null($countphoneNumber) && $resend == null){
           $arr['status'] = 'error';
           $arr['message'] = "Sorry, you can create 1 phone number only";
           return $arr;

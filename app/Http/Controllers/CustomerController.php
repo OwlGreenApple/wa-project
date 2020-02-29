@@ -643,14 +643,15 @@ class CustomerController extends Controller
     
     public function testSendMessage()
     {
-      $phoneNumber = PhoneNumber::find(5);
+      $phoneNumber = PhoneNumber::find(10);
 
       $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
           // 'username'=>"gungunomni", 
-          'chat_id'=>"955127354", 
+          //'chat_id'=>"955127354", 
+          'chat_id'=>"414470148", 
           'message'=>"test kirim telegram", 
           'filename'=>$phoneNumber->filename,
       );
