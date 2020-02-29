@@ -104,7 +104,8 @@ class ListController extends Controller
       }
 
       $phone = PhoneNumber::where('user_id',$user->id)->first();
-      if (is_null($phone)) {
+      if (is_null($phone)) 
+      {
         return redirect('list-form')->with('error_number','Error! Please set your phone number first ')
           ->with('listname',$request->listname)
           ->with('autoreply',$request->autoreply)
@@ -118,6 +119,7 @@ class ListController extends Controller
           ->with('autoreply',$request->autoreply)
           ->with('groupname',$request->groupname)
           ;
+      }
 
       $result = $this->checkGroupByGroupName($phone,$request->groupname);
       if ( ( $result== 0) || ( $result== "0") ){
@@ -133,7 +135,7 @@ class ListController extends Controller
       $list->name = $this->createRandomListName();
       $list->label = $label;
       $list->group_name = $request->groupname;
-      //$list->phone_number_id = $phone->id;
+      $list->phone_number_id = $phone->id;
       $list->save();
       $listid = $list->id;
       $listname = $list->name;
