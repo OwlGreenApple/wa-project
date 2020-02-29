@@ -103,7 +103,8 @@ class ListController extends Controller
       if (is_null($phone)) {
         return redirect('list-form')->with('error_number','Error! Please set your phone number first ');
       }
-      if ($this->getChatIDByUsername($phone,$request->groupname) == 0){
+      $result = $this->getChatIDByUsername($phone,$request->groupname);
+      if ( ( $result== 0) || ( $result== "0") ){
         return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator');
       }
 
