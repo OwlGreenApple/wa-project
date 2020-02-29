@@ -23,18 +23,18 @@
         <form method="GET" action="{{url('list-create')}}">
           @csrf
           <div class="form-group">
-            <input name="listname" type="text" class="form-control custom-form" placeholder="Your List Name"/>
+            <input name="listname" value="@if(session('listname')){{ session('listname') }}@endif" type="text" class="form-control custom-form" placeholder="Your List Name"/>
              @error('listname')
                 <span class="error">{{ $message }}</span>
              @enderror
           </div>
 
           <div class="form-group">
-            <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text"></textarea>
+            <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text">@if(session('autoreply')){{ session('autoreply') }}@endif</textarea>
           </div>
           
           <div class="form-group">
-            <input name="groupname" type="text" class="form-control custom-form" placeholder="Telegram Group Name"/>
+            <input name="groupname" value="@if(session('groupname')){{ session('groupname') }}@endif" type="text" class="form-control custom-form" placeholder="Telegram Group Name"/>
              @error('groupname')
                 <span class="error">{{ $message }}</span>
              @enderror

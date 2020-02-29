@@ -96,15 +96,27 @@ class ListController extends Controller
 
       $validator = Validator::make($request->all(),$rules,$message);
       if ($validator->fails()) {
-          return redirect('list-form')->withErrors($validator);               
+          return redirect('list-form')->withErrors($validator)->with('listname',$request->listname)
+          ->with('listname',$request->listname)
+          ->with('autoreply',$request->autoreply)
+          ->with('groupname',$request->groupname)
+          ;               
       }
 
       $phone = PhoneNumber::where('user_id',$user->id)->first();
       if (is_null($phone)) {
-        return redirect('list-form')->with('error_number','Error! Please set your phone number first ');
+        return redirect('list-form')->with('error_number','Error! Please set your phone number first ')
+          ->with('listname',$request->listname)
+          ->with('autoreply',$request->autoreply)
+          ->with('groupname',$request->groupname)
+          ;
       }
       if ($this->getChatIDByUsername($phone,$request->groupname) == 0){
-        return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator');
+        return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator')
+          ->with('listname',$request->listname)
+          ->with('autoreply',$request->autoreply)
+          ->with('groupname',$request->groupname)
+          ;
       }
 
       $list = new UserList;

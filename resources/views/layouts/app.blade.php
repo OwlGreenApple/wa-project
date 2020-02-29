@@ -225,9 +225,6 @@
     </div>
 
     <script type="text/javascript">
-        $(document).ready(function(){
-            $(".alert-success,.alert-warning,.alert-danger").delay(5000).fadeOut(3000);
-        });
         $(window).on('load', function() { 
           $("#div-loading").hide();
         });   
