@@ -330,8 +330,8 @@ class SettingController extends Controller
         return $arr;
       } else {
         // echo $response."\n";
-        // print_r($response);
-        return json_decode($response, true);
+        print_r($response);exit;
+        // return json_decode($response, true);
       }
       
       $phoneNumber->status = 2;

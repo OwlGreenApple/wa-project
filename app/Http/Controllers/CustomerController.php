@@ -643,7 +643,7 @@ class CustomerController extends Controller
     
     public function testSendMessage()
     {
-      $phoneNumber = PhoneNumber::find(3);
+      $phoneNumber = PhoneNumber::find(5);
 
       $curl = curl_init();
       $data = array(
