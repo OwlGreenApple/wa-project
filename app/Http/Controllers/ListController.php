@@ -105,7 +105,7 @@ class ListController extends Controller
       }
       $result = $this->getChatIDByUsername($phone,$request->groupname);
       if ( ( $result== 0) || ( $result== "0") ){
-        return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator');
+        return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator '.$result);
       }
 
       $list = new UserList;
@@ -930,6 +930,7 @@ class ListController extends Controller
 
       if ($err) {
         // echo "cURL Error #:" . $err;
+        return "cURL Error #:" . $err;
       } else {
         // echo $response."\n";
         //$customer->chat_id = $response;
