@@ -103,7 +103,7 @@ class ListController extends Controller
       if (is_null($phone)) {
         return redirect('list-form')->with('error_number','Error! Please set your phone number first ');
       }
-      $result = $this->getChatIDByUsername($phone,$request->groupname);
+      $result = $this->checkGroupByGroupName($phone,$request->groupname);
       if ( ( $result== 0) || ( $result== "0") ){
         return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator '.$result);
       }
@@ -917,6 +917,44 @@ class ListController extends Controller
 
       curl_setopt_array($curl, array(
         CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/getChatId-username.php",
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => http_build_query($data),
+        CURLOPT_POST => 1,
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+
+      if ($err) {
+        // echo "cURL Error #:" . $err;
+        return "cURL Error #:" . $err;
+      } else {
+        // echo $response."\n";
+        //$customer->chat_id = $response;
+        return $response;
+      }
+    }
+
+    public function checkGroupByGroupName($phoneNumber,$groupName){
+      /*
+      * Write to PHPTDLIB API Server 
+      * (Username Telegram)
+      */
+      $curl = curl_init();
+      
+
+      $data = array(
+          'token'=> env('TOKEN_API'),
+          'phone_number' => $phoneNumber->phone_number,
+          'username'=>$groupName, 
+          'filename'=>env('FILENAME_API').$phoneNumber->id,
+      );
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/check-group.php",
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_CUSTOMREQUEST => "POST",
         CURLOPT_POSTFIELDS => http_build_query($data),
