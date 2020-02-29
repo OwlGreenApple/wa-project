@@ -290,7 +290,15 @@ class SendTelegram extends Command
                 // get id reminder for reminder customer
                 if($today >= $time_sending){
                     $idr[] = $id_reminder;
-                    $idr['counter'][] = $count;
+                }
+
+                 // limit data according on count 
+                if(count($idr) > 0){
+                   //$idr = array_slice($idr,0,$count);
+                }
+                else
+                {
+                  return $this->dateReminder();
                 }
               
               }//end for loop event
@@ -308,17 +316,6 @@ class SendTelegram extends Command
                       ])->join('customers','customers.id','=','reminder_customers.customer_id')->join('reminders','reminders.id','=','reminder_customers.reminder_id')->select('customers.chat_id','customers.name','reminders.message','reminder_customers.id AS rc_id','customers.id AS cs_id','reminder_customers.reminder_id AS id_reminder')->first();
                 
                 $event[] = $remindercustomer;
-
-                /*
-                // limit data according on count 
-                if(count($event) > 0){
-                   //$event = array_slice($event,0,$count);
-                }
-                else
-                {
-                  return $this->dateReminder();
-                }
-                  */
               } // end foreach reminder 
           }
 
