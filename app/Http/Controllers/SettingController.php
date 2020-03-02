@@ -13,7 +13,7 @@ use App\User;
 use App\PhoneNumber;
 use App\Rules\TelNumber;
 use App\Rules\AvailablePhoneNumber;
-
+use App\Classes\Telegram;
 use DB;
 
 class SettingController extends Controller
@@ -165,10 +165,11 @@ class SettingController extends Controller
     public function connect_phone(Request $request)
     {
       $user = Auth::user();
+      $resend = $request->resend;
 
       //pastikan phone number hanya 1 phone number
       $countphoneNumber = PhoneNumber::where("user_id",$user->id)->first();
-      if(!is_null($countphoneNumber)){
+      if(!is_null($countphoneNumber) && $resend == null){
           $arr['status'] = 'error';
           $arr['message'] = "Sorry, you can create 1 phone number only";
           return $arr;
@@ -283,7 +284,7 @@ class SettingController extends Controller
         }
       }
 
-      $curl = curl_init();
+     /* $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
@@ -313,7 +314,12 @@ class SettingController extends Controller
         // echo $response."\n";
         print_r($response);exit;
         // return json_decode($response, true);
-      }
+      }*/
+
+      $telegram = new Telegram;
+      $verify = $telegram->getVerify();
+
+      dd($verify);
       /*
       $endpoint = "https://172.98.193.36/phptdlib/php_examples/auth-verify-phone.php";
       $client = new \GuzzleHttp\Client();
@@ -353,5 +359,12 @@ class SettingController extends Controller
       $arr['status'] = 'success';
       $arr['message'] = "Telegram Phone number deleted";
       return $arr;
+    }
+
+    public function test_verify(){
+      $telegram = new Telegram;
+      $verify = $telegram->getVerify();
+
+      dd($verify);
     }
 }

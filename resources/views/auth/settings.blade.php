@@ -65,7 +65,10 @@
             <form class="wrapper add-contact col-lg-9 pad-fix" id="form-connect">
                 <div class="form-group row col-fix">
                   <label class="col-sm-3 col-form-label">Phone Telegram :</label>
-                  <input type="text" id="phone_number" name="phone_number" class="form-control col-sm-9" />
+                  <div class="col-sm-9">
+                    <input type="text" id="phone_number" name="phone_number" class="form-control" />
+                    <span class="error phone_number"></span>
+                  </div>
                 </div>
 
                 <div class="text-right">
@@ -286,16 +289,19 @@
         success: function(result) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-
           var data = jQuery.parseJSON(result);
-          $('.message').show();
-          $('.message').html(data.message);
+
           if(data.status == "success") {
+            $('.message').show();
+            $('.message').html(data.message);
             $('#div-verify').show();
             loadPhoneNumber();
           }
-          if (data.status == "error") {
+
+          if(data.status == "error") {
+              $(".phone_number").html(data.phone_number);
           }
+
         }
       });
       
@@ -351,6 +357,42 @@
         }
       });
     });
+
+
+    $('body').on("click","#link-resend",function(){
+      var data_tel = $(this).attr('data-phone');
+      var data = {'resend':1,'phone_number':data_tel};
+
+      $.ajax({
+        type: 'GET',
+        url: "{{ url('connect-phone') }}",
+        data: data,
+        dataType: 'json',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+        
+          if(result.status == "success") {
+            $('.message').show();
+            $('.message').html(result.message);
+            $('#div-verify').show();
+            loadPhoneNumber();
+          }
+
+          if(result.status == "error") {
+              $(".phone_number").html(data.phone_number);
+          }
+
+        }
+      });
+      
+    });
+
     $("body").on("click", ".icon-delete", function() {
       $('#id_phone_number').val($(this).attr('data-id'));
       $('#confirm-delete').modal('show');

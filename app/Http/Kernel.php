@@ -74,6 +74,7 @@ class Kernel extends HttpKernel
         'checkresponderduplicate'=>\App\Http\Middleware\CheckAutoResponderDuplicate::class,
         'checkbroadcastduplicate'=>\App\Http\Middleware\CheckBroadcastDuplicate::class,
         'checkimportcsv'=>\App\Http\Middleware\CheckImportCSV::class,
+        'checkphone'=>\App\Http\Middleware\CheckPhone::class,
     ];
 
     /**

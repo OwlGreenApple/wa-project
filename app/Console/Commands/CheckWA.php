@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\UserList;
 use App\BroadCast;
 use App\BroadCastCustomers;
@@ -47,78 +48,20 @@ class CheckWA extends Command
      */
     public function handle()
     {
-         /* Users counter */
-        $user = Sender::select('id','user_id')->get();
-        $getWA = null;
-        $delivery_status = null;
+        $logexists = Storage::disk('local')->exists('log/log.txt');
 
-        foreach($user as $userow){
-            $id_user = $userow->id;
-
-            $broadcastcustomer = BroadCastCustomers::where([
-                    ['user_id',$id_user],
-                    ['status','=',1],
-            ])->select('id_wa')->get();
-
-            if($broadcastcustomer->count() > 0){
-                /* Broadcast */
-                foreach($broadcastcustomer as $row){
-                    $id_wa =  $row->id_wa;
-                    $getWA = $this->getWA($id_wa);
-
-                    if($getWA !== null)
-                    {
-                        $delivery_status = $getWA->deliveryStatus;
-                        //check delivery status
-                        if($delivery_status == 'queued'){
-                            $status = 1;
-                        } elseif($delivery_status == 'sent') {
-                            $status = 2;
-                        } elseif($delivery_status == 'failed') {
-                            $status = 5;
-                        } else {
-                            $status = 0;
-                        }
-                        $updatebroadcastcustomer = BroadCastCustomers::where([
-                            ['id_wa',$id_wa],
-                        ])->update(['status'=>$status]);
-                    }
-                }
-            } else {
-                /* Reminder */
-                $getWAreminder = null;
-                $remindercustomer = ReminderCustomers::where([
-                    ['user_id',$id_user],
-                    ['status',1],
-                ])->select('id_wa')->get();
-
-                foreach($remindercustomer as $cols){
-                     $id_wa =  $cols->id_wa;
-                     $getWAreminder = $this->getWA($id_wa);
-
-                     if($getWAreminder !== null)
-                     {
-                         $delivery_status = $getWAreminder->deliveryStatus;
-                         //check delivery status
-                         if($delivery_status == 'queued'){
-                            $status = 1;
-                         } elseif($delivery_status == 'sent') {
-                            $status = 2;
-                         } elseif($delivery_status == 'failed') {
-                            $status = 5;
-                         } else {
-                            $status = 0;
-                         }
-
-                        $updateremindercustomer = ReminderCustomers::where([
-                            ['id_wa',$id_wa]
-                        ])->update(['status'=>$status]);
-                     }
-                }
-            }
-
-        /* end user loop */    
+        if($logexists == true)
+        {
+            $log = Storage::get('log/log.txt');
+            $string = $log."\n".'ccccccc'."\n";
+            Storage::put('log/log.txt',$string);
         }
+        else
+        {
+            $string = 'aaaaaa';
+            Storage::put('log/log.txt',$string);
+        }
+       
     }
 
      /* get wa status */
@@ -150,5 +93,79 @@ class CheckWA extends Command
           return json_decode($response);
         }
     }
+
+    /*OLD CODES
+        $user = Sender::select('id','user_id')->get();
+        $getWA = null;
+        $delivery_status = null;
+
+        foreach($user as $userow){
+            $id_user = $userow->id;
+
+            $broadcastcustomer = BroadCastCustomers::where([
+                    ['user_id',$id_user],
+                    ['status','=',1],
+            ])->select('id_wa')->get();
+
+            if($broadcastcustomer->count() > 0){
+                
+                foreach($broadcastcustomer as $row){
+                    $id_wa =  $row->id_wa;
+                    $getWA = $this->getWA($id_wa);
+
+                    if($getWA !== null)
+                    {
+                        $delivery_status = $getWA->deliveryStatus;
+                        //check delivery status
+                        if($delivery_status == 'queued'){
+                            $status = 1;
+                        } elseif($delivery_status == 'sent') {
+                            $status = 2;
+                        } elseif($delivery_status == 'failed') {
+                            $status = 5;
+                        } else {
+                            $status = 0;
+                        }
+                        $updatebroadcastcustomer = BroadCastCustomers::where([
+                            ['id_wa',$id_wa],
+                        ])->update(['status'=>$status]);
+                    }
+                }
+            } else {
+               
+                $getWAreminder = null;
+                $remindercustomer = ReminderCustomers::where([
+                    ['user_id',$id_user],
+                    ['status',1],
+                ])->select('id_wa')->get();
+
+                foreach($remindercustomer as $cols){
+                     $id_wa =  $cols->id_wa;
+                     $getWAreminder = $this->getWA($id_wa);
+
+                     if($getWAreminder !== null)
+                     {
+                         $delivery_status = $getWAreminder->deliveryStatus;
+                         //check delivery status
+                         if($delivery_status == 'queued'){
+                            $status = 1;
+                         } elseif($delivery_status == 'sent') {
+                            $status = 2;
+                         } elseif($delivery_status == 'failed') {
+                            $status = 5;
+                         } else {
+                            $status = 0;
+                         }
+
+                        $updateremindercustomer = ReminderCustomers::where([
+                            ['id_wa',$id_wa]
+                        ])->update(['status'=>$status]);
+                     }
+                }
+            }
+
+         end user loop   
+        }
+    */
 
 }

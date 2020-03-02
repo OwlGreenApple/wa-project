@@ -14,7 +14,7 @@
         echo "Pending";
       }
       if ($phoneNumber->status == 1) {
-        echo 'Waiting Verification <a href="#" class="link-verify" data-phone="'.$phoneNumber->phone_number.'">(klik to verify)</a>';
+        echo 'Waiting Verification <a href="#" class="link-verify btn btn-success btn-sm" data-phone="'.$phoneNumber->phone_number.'">klik to verify</a> OR <a id="link-resend" class="btn btn-warning btn-sm" data-phone="'.$phoneNumber->phone_number.'">klik to Resend</a>';
       }
       if ($phoneNumber->status == 2) {
         echo "Connected";
