@@ -13,7 +13,6 @@ use App\User;
 use App\PhoneNumber;
 use App\Rules\TelNumber;
 use App\Rules\AvailablePhoneNumber;
-use App\Classes\Telegram;
 use DB;
 
 class SettingController extends Controller
@@ -220,7 +219,7 @@ class SettingController extends Controller
       }
 
 
-     /* $curl = curl_init();
+      $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
@@ -247,13 +246,9 @@ class SettingController extends Controller
         return $arr;
       } else {
         // echo $response."\n";
-      }*/
+      }
 
-      $phone_number = $phoneNumber->phone_number;
-
-      $telegram = new Telegram;
-      $auth = $telegram->setAuthPhone($phone_number,$filename);
-      
+     
       $phoneNumber->status = 1;
       $phoneNumber->save();
 
