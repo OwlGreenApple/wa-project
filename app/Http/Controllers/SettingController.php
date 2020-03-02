@@ -301,7 +301,7 @@ class SettingController extends Controller
         return $arr;
       } else {
         // echo $response."\n";
-        print_r($response);exit;
+        // print_r($response);exit;
         // return json_decode($response, true);
       }
 
