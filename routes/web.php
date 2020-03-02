@@ -64,10 +64,9 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::post('save-settings', 'SettingController@settingsUser')->middleware('usersettings');
   Route::get('load-phone-number', 'SettingController@load_phone_number');
   Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkphone');
-  Route::get('verify-phone', 'SettingController@verify_phone');
+  Route::post('verify-phone', 'SettingController@verify_phone');
   Route::get('delete-phone', 'SettingController@delete_phone');
   Route::post('edit-phone', 'SettingController@editPhone');
-  Route::get('test-verify', 'SettingController@test_verify');
 });
 
 /* HOME */

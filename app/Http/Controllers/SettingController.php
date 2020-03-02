@@ -220,7 +220,7 @@ class SettingController extends Controller
       }
 
 
-      $curl = curl_init();
+     /* $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
@@ -247,7 +247,12 @@ class SettingController extends Controller
         return $arr;
       } else {
         // echo $response."\n";
-      }
+      }*/
+
+      $phone_number = $phoneNumber->phone_number;
+
+      $telegram = new Telegram;
+      $auth = $telegram->setAuthPhone($phone_number,$filename);
       
       $phoneNumber->status = 1;
       $phoneNumber->save();
@@ -305,31 +310,6 @@ class SettingController extends Controller
         // return json_decode($response, true);
       }
 
-      // $telegram = new Telegram;
-      // $verify = $telegram->getVerify();
-
-      // dd($verify);
-      /*
-      $endpoint = "https://172.98.193.36/phptdlib/php_examples/auth-verify-phone.php";
-      $client = new \GuzzleHttp\Client();
-
-      $response = $client->request('post', $endpoint, ['query' => [
-        'token'=> env('TOKEN_API'),
-        'phone_number' => $phoneNumber->phone_number,
-        'authcode'=>$request->verify_code,
-        'filename'=>$phoneNumber->filename,
-      ]]);
-
-      // url will be: http://my.domain.com/test.php?key1=5&key2=ABC;
-
-      $statusCode = $response->getStatusCode();
-      $content = $response->getBody();
-      dd($content);
-      // or when your server returns json
-      // $content = json_decode($response->getBody(), true);      
-      */
-      
-
       $phoneNumber->status = 2;
       $phoneNumber->save();
 
@@ -348,12 +328,5 @@ class SettingController extends Controller
       $arr['status'] = 'success';
       $arr['message'] = "Telegram Phone number deleted";
       return $arr;
-    }
-
-    public function test_verify(){
-      $telegram = new Telegram;
-      $verify = $telegram->getVerify();
-
-      dd($verify);
     }
 }
