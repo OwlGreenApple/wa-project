@@ -10,7 +10,7 @@
       <div class="col-lg-4 pad-fix col-card">
         <h5>{{$rows->label}}</h5>
         <div>Link From : {{env('APP_URL')}}{{$rows->name}}&nbsp;&nbsp;<a data-link="{{env('APP_URL')}}{{ $rows->name }}" class="btn-copy"><span class="icon-copy"></span></a></div>
-        <div>Create On : {{Date("M d, Y", strtotime($rows->created_at))}}</div><!--Jan 23, 2020  -->
+        <div>Created On : {{Date("M d, Y", strtotime($rows->created_at))}}</div><!--Jan 23, 2020  -->
       </div>
 
       <div class="col-lg-3 pad-fix cardnumber">
