@@ -283,31 +283,12 @@ class SettingController extends Controller
         }
       }
 
-      //cek phone number valid or ngga 
-      /*$request->phone_number = "62".$request->phone_number;
-      $is_error = false;
-      $error_message = "";
-      if(!is_numeric($request->phone_number)){
-        $is_error = true;
-        $error_message = "Phone number must be a number";
-      }
-      if(!preg_match("/^628+[0-9]/i",$request->phone_number)){
-        $is_error = true;
-        $error_message = "Phone number is not valid";
-      }
-      if ($is_error) {
-        $arr['status'] = 'error';
-        $arr['message'] = $error_message;
-        return $arr;
-      }*/
-
-
       $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
-          'filename'=>$phoneNumber->filename,
           'authcode'=>$request->verify_code,
+          'filename'=>$phoneNumber->filename,
       );
 
       curl_setopt_array($curl, array(
@@ -333,7 +314,27 @@ class SettingController extends Controller
         print_r($response);exit;
         // return json_decode($response, true);
       }
+      /*
+      $endpoint = "https://172.98.193.36/phptdlib/php_examples/auth-verify-phone.php";
+      $client = new \GuzzleHttp\Client();
+
+      $response = $client->request('post', $endpoint, ['query' => [
+        'token'=> env('TOKEN_API'),
+        'phone_number' => $phoneNumber->phone_number,
+        'authcode'=>$request->verify_code,
+        'filename'=>$phoneNumber->filename,
+      ]]);
+
+      // url will be: http://my.domain.com/test.php?key1=5&key2=ABC;
+
+      $statusCode = $response->getStatusCode();
+      $content = $response->getBody();
+      dd($content);
+      // or when your server returns json
+      // $content = json_decode($response->getBody(), true);      
+      */
       
+
       $phoneNumber->status = 2;
       $phoneNumber->save();
 

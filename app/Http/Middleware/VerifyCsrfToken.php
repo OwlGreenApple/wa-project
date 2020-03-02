@@ -22,5 +22,7 @@ class VerifyCsrfToken extends Middleware
         'ckupload',
         'private-list',
         'is_pay',
+        'connect-phone',
+        'verify-phone',
     ];
 }
