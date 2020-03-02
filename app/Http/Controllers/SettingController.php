@@ -13,7 +13,6 @@ use App\User;
 use App\PhoneNumber;
 use App\Rules\TelNumber;
 use App\Rules\AvailablePhoneNumber;
-use App\Classes\Telegram;
 use DB;
 
 class SettingController extends Controller
@@ -219,23 +218,12 @@ class SettingController extends Controller
         $phoneNumber->save();
       }
 
-      $server = DB::table('phone_numbers')->select(DB::raw('SUBSTRING(filename, -1) AS filename'))->where('user_id',Auth::id())->first();
-         $idserver = $server->filename;
 
-       if($idserver == '')
-       {
-          $filename = env('FILENAME_API').'0';
-       }
-       else {
-          $serverint = (int)$server->filename + 1;
-          $filename = env('FILENAME_API').$serverint;
-       }
-
-     /* $curl = curl_init();
+      $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
-          'filename'=>$filename,
+          'filename'=>$phoneNumber->filename,
       );
 
       curl_setopt_array($curl, array(
@@ -258,13 +246,9 @@ class SettingController extends Controller
         return $arr;
       } else {
         // echo $response."\n";
-      }*/
+      }
 
-      $phone_number = $phoneNumber->phone_number;
-
-      $telegram = new Telegram;
-      $auth = $telegram->setAuthPhone($phone_number,$filename);
-      
+     
       $phoneNumber->status = 1;
       $phoneNumber->save();
 
@@ -289,7 +273,7 @@ class SettingController extends Controller
         }
       }
 
-     /* $curl = curl_init();
+      $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
@@ -317,9 +301,9 @@ class SettingController extends Controller
         return $arr;
       } else {
         // echo $response."\n";
-        print_r($response);exit;
+        // print_r($response);exit;
         // return json_decode($response, true);
-      }*/
+      }
 
       $phoneNumber->status = 2;
       $phoneNumber->save();
