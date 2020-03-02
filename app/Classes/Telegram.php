@@ -5,21 +5,16 @@ namespace App\Classes;
 class Telegram
 {
 
-  // public function getVerify($phone_number,$authcode,$filename) 
-  public function getVerify() 
+  public function getVerify($phone_number,$authcode,$filename) 
   {
     $curl = curl_init();
     $data = array(
-        // 'token'=> '0698a365aec87be50795ab07230d7df55df6eda532b81',
-        // 'phone_number'=>$phone_number,
-        // 'authcode'=>$authcode,
-        // 'filename'=>$filename,
-      "token" => "0698a365aec87be50795ab07230d7df55df6eda532b81",
-      "phone_number" => "+6287723238793",
-      "authcode" => "79656",
-      "filename" => "tdllb8",
+        'token'=> '0698a365aec87be50795ab07230d7df55df6eda532b81',
+        'phone_number'=>$phone_number,
+        'authcode'=>$authcode,
+        'filename'=>$filename,
     );
-// dd($data);
+
     curl_setopt_array($curl, array(
       CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/auth-verify-phone.php",
       CURLOPT_RETURNTRANSFER => 1,

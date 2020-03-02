@@ -219,23 +219,12 @@ class SettingController extends Controller
         $phoneNumber->save();
       }
 
-      $server = DB::table('phone_numbers')->select(DB::raw('SUBSTRING(filename, -1) AS filename'))->where('user_id',Auth::id())->first();
-         $idserver = $server->filename;
-
-       if($idserver == '')
-       {
-          $filename = env('FILENAME_API').'0';
-       }
-       else {
-          $serverint = (int)$server->filename + 1;
-          $filename = env('FILENAME_API').$serverint;
-       }
 
       $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
-          'filename'=>$filename,
+          'filename'=>$phoneNumber->filename,
       );
 
       curl_setopt_array($curl, array(
@@ -284,7 +273,7 @@ class SettingController extends Controller
         }
       }
 
-     /* $curl = curl_init();
+      $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
@@ -314,12 +303,12 @@ class SettingController extends Controller
         // echo $response."\n";
         print_r($response);exit;
         // return json_decode($response, true);
-      }*/
+      }
 
-      $telegram = new Telegram;
-      $verify = $telegram->getVerify();
+      // $telegram = new Telegram;
+      // $verify = $telegram->getVerify();
 
-      dd($verify);
+      // dd($verify);
       /*
       $endpoint = "https://172.98.193.36/phptdlib/php_examples/auth-verify-phone.php";
       $client = new \GuzzleHttp\Client();
