@@ -13,7 +13,7 @@ use App\User;
 use App\PhoneNumber;
 use App\Rules\TelNumber;
 use App\Rules\AvailablePhoneNumber;
-
+use App\Classes\Telegram;
 use DB;
 
 class SettingController extends Controller
@@ -303,7 +303,7 @@ class SettingController extends Controller
       }*/
 
 
-      $curl = curl_init();
+     /* $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
@@ -333,7 +333,12 @@ class SettingController extends Controller
         // echo $response."\n";
         print_r($response);exit;
         // return json_decode($response, true);
-      }
+      }*/
+
+      $telegram = new Telegram;
+      $verify = $telegram->getVerify($phoneNumber->phone_number,$request->verify_code,$phoneNumber->filename);
+
+      dd($verify);
       
       $phoneNumber->status = 2;
       $phoneNumber->save();
@@ -354,4 +359,5 @@ class SettingController extends Controller
       $arr['message'] = "Telegram Phone number deleted";
       return $arr;
     }
+
 }
