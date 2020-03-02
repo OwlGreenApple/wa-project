@@ -309,7 +309,7 @@
     $('#button-verify').click(function(){
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        type: 'GET',
+        type: 'POST',
         url: "<?php echo url('/verify-phone');?>",
         data: {
           phone_number : $("#phone_number").val(),

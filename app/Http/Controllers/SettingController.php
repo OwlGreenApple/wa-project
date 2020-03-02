@@ -231,7 +231,7 @@ class SettingController extends Controller
           $filename = env('FILENAME_API').$serverint;
        }
 
-      $curl = curl_init();
+     /* $curl = curl_init();
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
@@ -258,7 +258,12 @@ class SettingController extends Controller
         return $arr;
       } else {
         // echo $response."\n";
-      }
+      }*/
+
+      $phone_number = $phoneNumber->phone_number;
+
+      $telegram = new Telegram;
+      $auth = $telegram->setAuthPhone($phone_number,$filename);
       
       $phoneNumber->status = 1;
       $phoneNumber->save();
@@ -334,11 +339,6 @@ class SettingController extends Controller
         print_r($response);exit;
         // return json_decode($response, true);
       }*/
-
-      $telegram = new Telegram;
-      $verify = $telegram->getVerify($phoneNumber->phone_number,$request->verify_code,$phoneNumber->filename);
-
-      dd($verify);
       
       $phoneNumber->status = 2;
       $phoneNumber->save();
