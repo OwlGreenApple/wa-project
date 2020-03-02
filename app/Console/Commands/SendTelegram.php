@@ -69,7 +69,6 @@ class SendTelegram extends Command
                
         if($broadcast->count() > 0)
         {
-            $number = 0;
             foreach($broadcast as $rows)
             {
                 $phoneNumber = PhoneNumber::where([['user_id','=',$rows->user_id]])
@@ -81,9 +80,8 @@ class SendTelegram extends Command
 
                 $customers = Customer::where('id',$rows->customer_id)->first();
                 $message = $rows->message;
-                $number++;
 
-                if(!is_null($customers) && $number <= $count)
+                if(!is_null($customers))
                 {
                     $message = str_replace('{name}',$customers->name,$rows->message);
                     $chat_id = $customers->chat_id;  
@@ -94,6 +92,7 @@ class SendTelegram extends Command
                         'phoneNumber'=>$phoneNumber
                     );
 
+                    $total = array_slice($data,0,$count);
                   /*try{                   
                       $wasengger = $this->sendTelegram($phoneNumber,$chat_id,$message);
                       $campaign = 'broadcast';
@@ -115,7 +114,20 @@ class SendTelegram extends Command
                 
             }//END LOOPING
 
-             dd(count($data));
+            if(count($total) > 0)
+            {
+                $number = 0;
+                foreach($total as $row)
+                {
+                    $number++;
+                    $wasengger = $this->sendTelegram($row['phoneNumber'],$row['chat_id'],$row['message']);
+                    $campaign = 'broadcast';
+                    $id_campaign = $row['brodacst_customer_id'];
+                    $status = 'Sent';
+                    $this->generateLog($number,$campaign,$id_campaign,$status);
+                }
+            }
+
         } // END BROADCAST AND THEN EVENT
         else if($check_event->count() > 0)
         {
@@ -517,7 +529,7 @@ class SendTelegram extends Command
     {
         $timegenerate = Carbon::now();
         $logexists = Storage::disk('local')->exists('log/log.txt');
-        $format = "No : ".$number." Date and time : ".$timegenerate." Type : ".$campaign." id : ".$id_campaign." Status : ".$error."\n";
+        $format = "No : ".$number.", Date and time : ".$timegenerate.", Type : ".$campaign.", id : ".$id_campaign.", Status : ".$error."\n";
 
         if($logexists == true)
         {

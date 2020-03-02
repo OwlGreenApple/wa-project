@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\BroadCastCustomers;
 
 class BroadCastCustomerSeeder extends Seeder
 {
@@ -13,11 +14,13 @@ class BroadCastCustomerSeeder extends Seeder
      */
     public function run()
     {
-        for($x=0;$x<=100;$x++)
+        $broadcast = BroadCastCustomers::all();
+
+        foreach($broadcast as $row)
         {
              DB::table('broad_cast_customers')->insert([
-              'broadcast_id' => mt_rand(1,12),
-              'customer_id' => mt_rand(1,12),
+              'broadcast_id' => $row->broadcast_id,
+              'customer_id' => $row->customer_id,
               'created_at' => Carbon::now(),
               'updated_at' => Carbon::now()
             ]);  
