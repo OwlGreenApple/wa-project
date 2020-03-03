@@ -72,6 +72,8 @@ class SendTelegram extends Command
         CURLOPT_CUSTOMREQUEST => "POST",
         CURLOPT_POSTFIELDS => http_build_query($data),
         CURLOPT_POST => 1,
+        CURLOPT_SSL_VERIFYPEER => 0,
+        CURLOPT_SSL_VERIFYHOST => 0,
       ));
 
       $response = curl_exec($curl);
@@ -80,9 +82,9 @@ class SendTelegram extends Command
       curl_close($curl);
 
       if ($err) {
-        // echo "cURL Error #:" . $err;
+        echo "cURL Error #:" . $err;
       } else {
-        // echo $response."\n";
+        echo $response."\n";
         // print_r($response);
         // return json_decode($response, true);
       }
