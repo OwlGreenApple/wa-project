@@ -145,11 +145,11 @@ class CustomerController extends Controller
                 // dd($result);
                 $chat_id = 0;
                 foreach($result as $res){
-                  if (isset($res["phone_number"])){
+                  // if (isset($res["phone_number"])){
                     if ("+".$res["phone_number"]==$request->phone) {
                       $chat_id = $res["id"];
                     }
-                  }
+                  // }
                 }
                 if ($chat_id == 0){
                   $data['success'] = false;
