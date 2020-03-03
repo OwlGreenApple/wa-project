@@ -127,7 +127,7 @@ class SendTelegram extends Command
                         $status = 'Sent';
                         $number ++;
                         $this->sendTelegram($phoneNumber,$chat_id,$message);
-                        // $this->generateLog($number,$campaign,$id_campaign,$status);
+                        $this->generateLog($number,$campaign,$id_campaign,$status);
 
                         $phoneNumber->counter --;
                         $phoneNumber->save();
