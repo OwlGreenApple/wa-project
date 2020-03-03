@@ -145,8 +145,10 @@ class CustomerController extends Controller
                 dd($result);
                 $chat_id = 0;
                 foreach($result as $res){
-                  if (isset($res["phone_number"])){
-                    if ($res["phone_number"]==$request->phone) {
+                  if (empty($res["phone_number"]) || ($res["phone_number"]==null)){
+                  }
+                  else {
+                    if ("+".$res["phone_number"]==$request->phone) {
                       $chat_id = $res["id"];
                     }
                   }
