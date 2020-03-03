@@ -95,7 +95,7 @@ class SendTelegram extends Command
                         $id_campaign = $row->bccsid;
                         $status = 'Sent';
                         $number ++;
-                        $this->sendTelegram($phoneNumber,$char_id,$message);
+                        $this->sendTelegram($phoneNumber,$chat_id,$message);
                         // $this->generateLog($number,$campaign,$id_campaign,$status);
 
                         $phoneNumber->counter --;
