@@ -44,7 +44,6 @@ Route::get('add-message-auto-responder/{campaign_id}', 'CampaignController@addMe
 Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('history-order', 'HomeController@historyOrder');
 
-
 /* User Customer */
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 

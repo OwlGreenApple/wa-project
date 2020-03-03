@@ -42,6 +42,12 @@
                       <label class="checkbox-left"><sb>Remember Me</sb></label>
                     </div>
 
+                    @if (Route::has('password.request'))
+                      <div class="form-group">
+                        <a href="{{route('password.request')}}">Forgot Password</a>
+                      </div>
+                    @endif  
+
                     <div class="text-left">
                       <button type="submit" class="btn btn-custom btn-lg">LOG IN</button>
                     </div>

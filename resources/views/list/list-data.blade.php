@@ -46,7 +46,6 @@
         <h5 class="modal-title" id="modaltitle">
           Copy Link
         </h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         You have copied the link!
@@ -69,7 +68,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modaltitle">
-          Copy Link
+          Data Subscriber
         </h5>
       </div>
       <div class="modal-body">
@@ -160,6 +159,7 @@
   function searchList(){
     $(".search-icon").click(function(){
         var listname = $("input[name=listname]").val();
+
         $.ajax({
           type : 'GET',
           url : '{{route("searchlist")}}',
