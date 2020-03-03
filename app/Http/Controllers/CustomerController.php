@@ -142,16 +142,18 @@ class CustomerController extends Controller
               } else {
                 // echo $response."\n";
                 $result = json_decode($response,true);
-                //dd($result);
+                // dd($result);
                 $chat_id = 0;
                 foreach($result as $res){
-                  if ($res["phone_number"]==$request->phone) {
-                    $chat_id = $res["id"];
+                  if (isset($res["phone_number"])){
+                    if ($res["phone_number"]==$request->phone) {
+                      $chat_id = $res["id"];
+                    }
                   }
                 }
                 if ($chat_id == 0){
                   $data['success'] = false;
-                  $data['message'] = 'Error-000! Sorry there is something wrong with our system';
+                  $data['message'] = 'Error-000! Sorry there is something wrong with our system (please join the group'.$lists->group_name.' first)';
                   return response()->json($data);
                 }
 
