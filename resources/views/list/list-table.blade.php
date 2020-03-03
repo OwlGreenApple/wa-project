@@ -6,11 +6,16 @@
 <!-- tab -->
 @if($lists->count() > 0)
   @foreach($lists as $rows)
-    <div class="bg-dashboard cardlist row">
+    <div class="bg-dashboard cardlist col-lg-12 row">
       <div class="col-lg-4 pad-fix col-card">
         <h5>{{$rows->label}}</h5>
-        <div>Link From : {{env('APP_URL')}}{{$rows->name}}&nbsp;&nbsp;<a data-link="{{env('APP_URL')}}{{ $rows->name }}" class="btn-copy"><span class="icon-copy"></span></a></div>
-        <div>Created On : {{Date("M d, Y", strtotime($rows->created_at))}}</div><!--Jan 23, 2020  -->
+          <div class="link_wrap">Link From : {{env('APP_URL')}}{{$rows->name}}
+            <span>
+              <a data-link="{{env('APP_URL')}}{{ $rows->name }}" class="btn-copy icon-copy"></a>
+            </span>
+          </div>
+
+          <div>Created On : {{Date("M d, Y", strtotime($rows->created_at))}}</div> <!--Jan 23, 2020  -->
       </div>
 
       <div class="col-lg-3 pad-fix cardnumber">
@@ -34,7 +39,7 @@
         <a href="{{url('list-edit')}}/{{$rows->id}}" class="btn btn-edit btn-sm" target="_blank"><span class="icon-edit"></span></a>
         <button id="{{$rows->id}}" type="button" class="btn btn-success btn-sm duplicate"><span class="icon-copy-text"></span></button>
         <a type="button" id="{{$rows->id}}" class="btn btn-danger btn-sm del"><span class="icon-delete"></span></a>
-      </div>
+      </div> 
     </div> 
   @endforeach
   @else
