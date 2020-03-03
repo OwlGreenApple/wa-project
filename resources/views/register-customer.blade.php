@@ -191,7 +191,7 @@
                           alert('Your data has stored!');
                           //getModal();
                           //setTimeout(function(){location.href= result.wa_link} , 1000);   
-                          clearField();
+                          // clearField();
                       } else {
                           $(".error").fadeIn('fast');
                           $(".name").text(result.name);
