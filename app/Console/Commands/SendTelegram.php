@@ -45,25 +45,16 @@ class SendTelegram extends Command
 
     public function handle()
     {
-         // Users counter 
-       /* $user = User::select('id')->orderBy('id','asc')->get();
-        $wasengger = null;
-        $current_time = Carbon::now();
-        $userid = array();
-        if($user->count() > 0){
-          foreach($user as $row){
-              $userid[] = $row->id;
-          }
-        }*/
-
-        return $this->dateReminder(); 
         /*die('');
-        return $this->dateReminder($userid);*/
+        return $this->dateReminder();
+        return $this->dateEvent()
+        */
         
-        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id")
+        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","broad_cast_customers.id as broadcastcustomerid")
           ->join('users','broad_casts.user_id','=','users.id')
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
+          ->where("broad_cast_customers.status",0)
           ->orderBy('broad_casts.user_id')
           ->get();
 
@@ -100,6 +91,12 @@ class SendTelegram extends Command
 
                         $phoneNumber->counter --;
                         $phoneNumber->save();
+                        
+                        $broadcastCustomer = BroadCastCustomers::find($row->broadcastcustomerid);
+                        if (!is_null($broadcastCustomer)){
+                          $broadcastCustomer->status = 1;
+                          $broadcastCustomer->save();
+                        }
                     }
                     else {
                         $campaign = 'broadcast';
