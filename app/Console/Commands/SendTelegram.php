@@ -80,9 +80,9 @@ class SendTelegram extends Command
       curl_close($curl);
 
       if ($err) {
-        echo "cURL Error #:" . $err;
+        // echo "cURL Error #:" . $err;
       } else {
-        echo $response."\n";
+        // echo $response."\n";
         // print_r($response);
         // return json_decode($response, true);
       }
