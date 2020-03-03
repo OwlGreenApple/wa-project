@@ -109,7 +109,7 @@ class CustomerController extends Controller
             //$phoneNumber = PhoneNumber::find(88);
             
             if($request->selectType == 'ph'){
-
+              $customer->username = "";
               $customer->telegram_number = $request->phone;
 
               /*
@@ -162,6 +162,7 @@ class CustomerController extends Controller
 
             if($request->selectType == 'tl'){
               $customer->username = $request->usertel;
+              $customer->telegram_number = "";
 
               /*
               * Write to PHPTDLIB API Server 
