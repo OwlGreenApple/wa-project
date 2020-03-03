@@ -142,14 +142,16 @@ class CustomerController extends Controller
               } else {
                 // echo $response."\n";
                 $result = json_decode($response,true);
-                dd($result);
+                // dd($result);
                 $chat_id = 0;
                 foreach($result as $res){
-                  // if (isset($res["phone_number"])){
+                  if (empty($res["phone_number"]) || ($res["phone_number"]==null)){
+                  }
+                  else {
                     if ("+".$res["phone_number"]==$request->phone) {
                       $chat_id = $res["id"];
                     }
-                  // }
+                  }
                 }
                 if ($chat_id == 0){
                   $data['success'] = false;
