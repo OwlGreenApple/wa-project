@@ -192,6 +192,7 @@
                           //getModal();
                           //setTimeout(function(){location.href= result.wa_link} , 1000);   
                           clearField();
+                          choose();
                       } else {
                           $(".error").fadeIn('fast');
                           $(".name").text(result.name);
