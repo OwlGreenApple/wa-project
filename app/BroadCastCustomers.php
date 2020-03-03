@@ -9,7 +9,7 @@ class BroadCastCustomers extends Model
     /*
 		status : 
 		0 = pending
-		1 = on queue
-		2 = sent
+		1 = Sent
+		2 = Read 
     */
 }
