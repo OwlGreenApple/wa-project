@@ -31,7 +31,7 @@ class SendTelegram extends Command
      *
      * @var string
      */
-    protected $description = 'Send telegram message to customer according on broadcast or reminder customer';
+    protected $description = 'Send telegram message to customer according on broadcast or event or auto responder';
 
     /**
      * Create a new command instance.
@@ -175,8 +175,8 @@ class SendTelegram extends Command
           $today = Carbon::now();
 
           $reminder = Reminder::where([
-                  ['reminder_customers.status',0], //1 => active
-                  ['reminders.is_event',1], //1 => active
+                  ['reminder_customers.status',0], 
+                  ['reminders.is_event',1], 
           ])
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
