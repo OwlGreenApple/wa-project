@@ -652,9 +652,9 @@ class CustomerController extends Controller
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
           // 'username'=>"gungunomni", 
-          'chat_id'=>"955127354", 
-          // 'chat_id'=>"414470148", 
-          'message'=>"new test kirim telegram", 
+          // 'chat_id'=>"955127354", 
+          'chat_id'=>"414470148", 
+          'message'=>"new123 test kirim telegram", 
           'filename'=>$phoneNumber->filename,
       );
 

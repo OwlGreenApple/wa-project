@@ -28,8 +28,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('check:authtelegram')->everyWeek();
-         $schedule->command('send:telegram')->everyMinute()->withoutOverlapping(1);
-         $schedule->command('check:counter')->everyMinute()->withoutOverlapping(1);
+         $schedule->command('send:telegram')->everyMinute();
+         $schedule->command('check:counter')->everyMinute();
          // $schedule->command('check:wa')->hourly();
     }
 
