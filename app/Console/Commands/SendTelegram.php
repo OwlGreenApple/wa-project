@@ -61,7 +61,6 @@ class SendTelegram extends Command
       $data = array(
           'token'=> env('TOKEN_API'),
           'phone_number' => $phoneNumber->phone_number,
-          // 'username'=>"gungunomni", 
           'chat_id'=>$chat_id, 
           'message'=>$message, 
           'filename'=>$phoneNumber->filename,
@@ -93,7 +92,7 @@ class SendTelegram extends Command
     /* BROADCAST */
     public function campaignBroadcast()
     {
-        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","broad_cast_customers.id as broadcastcustomerid")
+        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id")
           ->join('users','broad_casts.user_id','=','users.id')
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
@@ -132,7 +131,7 @@ class SendTelegram extends Command
                         $phoneNumber->counter --;
                         $phoneNumber->save();
                         
-                        $broadcastCustomer = BroadCastCustomers::find($row->broadcastcustomerid);
+                        $broadcastCustomer = BroadCastCustomers::find($row->bccsid);
                         if (!is_null($broadcastCustomer)){
                           $broadcastCustomer->status = 1;
                           $broadcastCustomer->save();
