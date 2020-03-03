@@ -55,7 +55,7 @@ class SendTelegram extends Command
       $this->campaignAutoResponder();
     }    
  
-    public function sendTelegram($phoneNumber,$chat_id,$message)
+    public function sendMessage($phoneNumber,$chat_id,$message)
     {
       $curl = curl_init();
       $data = array(
@@ -125,7 +125,7 @@ class SendTelegram extends Command
                         $id_campaign = $row->bccsid;
                         $status = 'Sent';
                         $number ++;
-                        $this->sendTelegram($phoneNumber,$chat_id,$message);
+                        $this->sendMessage($phoneNumber,$chat_id,$message);
                         $this->generateLog($number,$campaign,$id_campaign,$status);
 
                         $phoneNumber->counter --;
@@ -146,7 +146,7 @@ class SendTelegram extends Command
                     }
                    
                   /*try{                   
-                      $wasengger = $this->sendTelegram($phoneNumber,$chat_id,$message);
+                      $wasengger = $this->sendMessage($phoneNumber,$chat_id,$message);
                       $campaign = 'broadcast';
                       $id_campaign = $rows->bccsid;
                       $status = 'Sent';
@@ -220,7 +220,7 @@ class SendTelegram extends Command
                   $message = str_replace('{name}',$row->name,$row->message);
                   $id_reminder = $row->id_reminder;
                   $chat_id = $row->chat_id;
-                  $this->sendTelegram($phoneNumber,$chat_id,$message);
+                  $this->sendMessage($phoneNumber,$chat_id,$message);
                   $this->generateLog($number,$campaign,$id_campaign,$status);
 
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
@@ -291,7 +291,7 @@ class SendTelegram extends Command
 
                 if($adding->lte(Carbon::now()) && $count > 0)
                 {
-                    $wareminder = $this->sendTelegram($phoneNumber,$chat_id,$message);
+                    $wareminder = $this->sendMessage($phoneNumber,$chat_id,$message);
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
                     $status = 'Sent';
