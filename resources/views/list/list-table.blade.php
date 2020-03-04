@@ -43,12 +43,15 @@
           <a type="button" id="{{$rows->id}}" class="btn btn-danger btn-sm del"><span class="icon-delete"></span></a>
         </div> 
       </div>
-
     </div> 
   @endforeach
+  <div class="paging">
+    {{ $paginate }}
+  </div>
   @else
   <div class="bg-dashboard cardlist row">
     Sorry, the page you're looking not available.
   </div>
 @endif
+
 <!-- end tab -->

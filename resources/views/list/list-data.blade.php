@@ -31,8 +31,15 @@
 <div class="container">
   <div class="act-tel-tab">
       <div class="col-lg-12" id="display_list">
-        <!-- display data -->
+        @if(count($lists) > 0)
+          @include('list.list-table')
+        @else
+          <div class="bg-dashboard cardlist row">
+            Sorry, the page you're currently page not available.
+          </div>
+        @endif
       </div>
+
   </div>
 </div>
 
@@ -98,13 +105,74 @@
 <script type="text/javascript">
 
   $(document).ready(function(){
-    displayData();
     searchList();
     deleteList();
     duplicateList();
     copyLink();
     openTable();
+    pagination();
   });
+
+  //ajax pagination
+  function pagination()
+  {
+      $(".page-item").removeClass('active').removeAttr('aria-current');
+      var mulr = window.location.href;
+      getActiveButtonByUrl(mulr)
+    
+      $('body').on('click', '.pagination .page-link', function (e) {
+          e.preventDefault();
+          var url = $(this).attr('href');
+          window.history.pushState("", "", url);
+          loadPagination(url);
+      });
+  }
+
+  function loadPagination(url) {
+      $.ajax({
+        beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+        url: url
+      }).done(function (data) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          getActiveButtonByUrl(url);
+          $('#display_list').html(data);
+      }).fail(function (xhr,attr,throwable) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert("Sorry, Failed to load data! please contact administrator");
+          console.log(xhr.responseText);
+      });
+  }
+
+  function getActiveButtonByUrl(url)
+  {
+    var page = url.split('?');
+    if(page[1] !== undefined)
+    {
+      var pagevalue = page[1].split('=');
+      $(".page-link").each(function(){
+         var text = $(this).text();
+         if(text == pagevalue[1])
+          {
+            $(this).attr('href',url);
+            $(this).addClass('on');
+          } else {
+            $(this).removeClass('on');
+          }
+      });
+    }
+    else {
+        var mod_url = url+'?page=1';
+        getActiveButtonByUrl(mod_url);
+    }
+  }
+
+  //end ajax pagination
 
   function openTable(){
       $("body").on("click",".open-table",function(){
@@ -145,17 +213,6 @@
       });
   }
 
-  function displayData(){
-    $.ajax({
-      type : 'GET',
-      url : '{{url("lists-table")}}',
-      dataType : 'html',
-      success : function(result){
-        $("#display_list").html(result);
-      }
-    });
-  }
-
   function searchList(){
     $(".search-icon").click(function(){
         var listname = $("input[name=listname]").val();
@@ -165,7 +222,14 @@
           url : '{{route("searchlist")}}',
           data : {'listname' : listname},
           dataType : 'html',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
           success : function(result){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
             $("#display_list").html(result);
           }
         });

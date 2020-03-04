@@ -34,7 +34,14 @@
           </div>
           
           <div class="form-group">
-            <input name="groupname" value="@if(session('groupname')){{ session('groupname') }}@endif" type="text" class="form-control custom-form" placeholder="Telegram Group Name"/>
+            <div class="row">
+              <div class="col-lg-11">
+                <input name="groupname" value="@if(session('groupname')){{ session('groupname') }}@endif" type="text" class="form-control custom-form" placeholder="Telegram Group Name"/>
+              </div>
+              <div class="col-lg-1 pad-fix text-left">
+                <a id="fancybox-modal"><i class="fa fa-question-circle fa-2x mt-5" aria-hidden="true"></i></a>
+              </div>
+            </div>
              @error('groupname')
                 <span class="error">{{ $message }}</span>
              @enderror
@@ -67,5 +74,29 @@
         pickerPosition: "right",
         mainPathFolder : "{{url('')}}",
   });
+                
+  $(function(){
+      fancyboxModal();
+  });
+
+  function fancyboxModal()
+  {
+    $('#fancybox-modal').on('click', function() {
+      $.fancybox.open([
+        {
+          src  : '{{ asset("assets/hint/hint-1.png") }}',
+          opts : {
+            caption : 'First caption'
+          }
+        },
+        {
+          src  : '{{ asset("assets/hint/hint-2.png") }}',
+          opts : {
+            caption : 'Second caption'
+          }
+        }
+      ]);
+    });
+  }
 </script>
 @endsection

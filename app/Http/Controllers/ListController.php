@@ -37,9 +37,17 @@ class ListController extends Controller
         //mkdir($_SERVER['DOCUMENT_ROOT'].'/ckfinder/mdir', 0741);
     }   
 
-    public function index()
+    public function index(Request $request)
     {
-       return view('list.list-data');
+      $userid = Auth::id();
+      
+      $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->orderBy('id','desc')->paginate(5);
+
+      if ($request->ajax()) {
+          return view('list.list-table',['lists'=>$lists,'paginate'=>$lists]);
+      }
+
+      return view('list.list-data',['lists'=>$lists,'paginate'=>$lists]);
     }
 
     public function displaySubscriber(Request $request)
@@ -418,7 +426,7 @@ class ListController extends Controller
 
         $lists = Userlist::where('label','like','%'.$listname.'%')->get();
 
-        return view('list.list-table',['lists'=>$lists]);
+        return view('list.list-table',['lists'=>$lists,'paginate'=>null]);
     }
 
 

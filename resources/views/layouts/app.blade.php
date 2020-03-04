@@ -58,6 +58,10 @@
     <!-- Clipboard -->
     <script type="text/javascript" src="{{ asset('/assets/clipboard.js-master/clipboard.min.js') }}"></script> 
 
+    <!-- Fancybox -->
+    <link href="{{ asset('/assets/fancybox/jquery.fancybox.min.css') }}" rel="stylesheet" />
+    <script type="text/javascript" src="{{ asset('/assets/fancybox/jquery.fancybox.min.js') }}"></script> 
+
     <!-- Main Styles -->
     <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/dashboard.css') }}" rel="stylesheet" />
