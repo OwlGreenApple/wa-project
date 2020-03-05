@@ -86,15 +86,51 @@
         {
           src  : '{{ asset("assets/hint/hint-1.png") }}',
           opts : {
-            caption : 'First caption'
+            caption : 'Step 1'
           }
         },
         {
           src  : '{{ asset("assets/hint/hint-2.png") }}',
           opts : {
-            caption : 'Second caption'
+            caption : 'Step 2'
           }
-        }
+        },
+        {
+          src  : '{{ asset("assets/hint/hint-3.png") }}',
+          opts : {
+            caption : 'Step 3'
+          }
+        },
+        {
+          src  : '{{ asset("assets/hint/hint-4.png") }}',
+          opts : {
+            caption : 'Step 4'
+          }
+        },
+        {
+          src  : '{{ asset("assets/hint/hint-5.png") }}',
+          opts : {
+            caption : 'Step 5'
+          }
+        },
+        {
+          src  : '{{ asset("assets/hint/hint-6.png") }}',
+          opts : {
+            caption : 'Step 6'
+          }
+        },
+        {
+          src  : '{{ asset("assets/hint/hint-7.png") }}',
+          opts : {
+            caption : 'Step 7'
+          }
+        },
+        {
+          src  : '{{ asset("assets/hint/hint-8.png") }}',
+          opts : {
+            caption : 'Last Step'
+          }
+        },
       ]);
     });
   }
