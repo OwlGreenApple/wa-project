@@ -64,22 +64,14 @@ class CheckCustomer
          $data = array(
             'name'=>$req['subscribername'],
             'email'=>$req['email'],
+            'phone'=>$req['phone'],
          );
 
          $rules = [
             'name'=> ['required','min:4','max:190'],
             'email'=> ['required','email','max:190',new SubscriberEmail($id_list)],
+            'phone'=> ['required','min:9','max:18',new TelegramNumber, new SubscriberPhone($id_list)],
          ];
-
-        if($request->selectType == 'ph') {
-           $data['phone'] = $req['phone'];
-           $rules['phone'] = ['required','min:9','max:18',new TelegramNumber, new SubscriberPhone($id_list)];
-        }
-
-        if($request->selectType == 'tl') {
-           $data['usertel'] = $req['usertel'];
-           $rules['usertel'] = ['required','max:190',new SubscriberUsername($id_list)];
-        }
 
         $validator = Validator::make($data,$rules);
 
@@ -88,16 +80,9 @@ class CheckCustomer
             $data = array(
                 'name'=>$error->first('name'),
                 'email'=>$error->first('email'),
+                'phone'=>$error->first('phone'),
             );
-
-            if($request->selectType == 'ph') {
-               $data['phone'] = $error->first('phone');
-            }
-
-            if($request->selectType == 'tl') {
-               $data['usertel'] = $error->first('usertel');
-            }
-
+            
             return response()->json($data);
         }
 

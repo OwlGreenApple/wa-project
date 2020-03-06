@@ -49,8 +49,8 @@
               <div class="form-group">
                  <label>Phone Number</label>
                  <input type="text" name="phone" class="form-control" placeholder="Input your phone number">
+                 <span class="error phone"></span>
               </div>
-              <span class="error phone"></span>
             </div>
 
             <div class="form-group">
@@ -332,7 +332,7 @@
 
   $(document).ready(function() {    
     tabs();
-    Choose();
+    //Choose();
     openImport();
     csvImport();
     addContact();
@@ -451,7 +451,7 @@
               var err = eval("(" + xhr.responseText + ")");
               var msg = '';
               for ( var property in err.errors ) {
-                msg += err.errors[property][0]+"\n"; // Outputs: foo, fiz or fiz, foo
+                msg += err.errors[property][0]+"\n"; // get message by object name
               }
               alert(msg);
               $('input[name="csv_file"]').val('');
@@ -464,7 +464,6 @@
     $(".add-contact").submit(function(e){
         e.preventDefault();
         var data = $(this).serialize();
-        //$("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
         $.ajaxSetup({
           headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -493,7 +492,6 @@
                   $(".main").text(result.list);
                   $(".email").text(result.email);
                   $(".phone").text(result.phone);
-                  $(".phone").text(result.usertel);
 
                   if(result.message !== undefined){
                        $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
