@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\SendTelegram::class,
+        Commands\SendMessage::class,
         Commands\CheckWA::class,
         Commands\CheckCounter::class,
         Commands\CheckAuthTelegram::class,
@@ -28,7 +29,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('check:authtelegram')->everyWeek();
-         $schedule->command('send:telegram')->everyMinute();
+         $schedule->command('send:message')->everyMinute();
          $schedule->command('check:counter')->everyMinute();
          // $schedule->command('check:wa')->hourly();
     }
