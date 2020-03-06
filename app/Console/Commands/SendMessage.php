@@ -46,24 +46,22 @@ class SendMessage extends Command
     public function handle()
     {
       //Broadcast 
-      $this->campaignBroadcast();
-   
-      //EVENT 
-      $this->campaignEvent();
+      //$this->campaignBroadcast();
    
       //Auto Responder
       $this->campaignAutoResponder();
     }    
  
-    public function sendMessage($phoneNumber,$message)
+    public function sendMessage($phoneNumber = null,$message = null)
     {
+      $phoneNumber = '+62895342472008';
       $param = array(
           'app_id' => '429d3472-da0f-4b2b-a63e-4644050caf8f', //app id don't change
           'include_player_ids' => ['5df8985a-242b-4ca2-80b4-b6d8e46c19c3'], //you can take Player id from Woowandroid App CS ID menu.
           'data' => array(
               "type"      => 'Reminder', //opsional Reminder/After Checkout/Pending Payment/dll editable
               "message"   => 'TEST Demo woowandroid',
-              "no_wa"     => $phoneNumber->phone_number
+              "no_wa"     =>  $phoneNumber
           ),
           'contents'  => array(
               "en"    => 'Woowa Title'
@@ -87,8 +85,6 @@ class SendMessage extends Command
       $response = curl_exec($ch);
       curl_close($ch);
       echo $response;
-
-      
     }
 
     /* BROADCAST */
@@ -101,6 +97,7 @@ class SendMessage extends Command
           ->where("broad_cast_customers.status",0)
           ->orderBy('broad_casts.user_id')
           ->get();
+
         if($broadcast->count() > 0)
         {
             $number = 0;
@@ -127,17 +124,17 @@ class SendMessage extends Command
                         $id_campaign = $row->bccsid;
                         $status = 'Sent';
                         $number ++;
-                        $this->sendMessage($phoneNumber,$chat_id,$message);
+                        $this->sendMessage($phoneNumber,$message);
                         $this->generateLog($number,$campaign,$id_campaign,$status);
 
                         $phoneNumber->counter --;
                         $phoneNumber->save();
                         
-                        $broadcastCustomer = BroadCastCustomers::find($row->bccsid);
+                       /* $broadcastCustomer = BroadCastCustomers::find($row->bccsid);
                         if (!is_null($broadcastCustomer)){
                           $broadcastCustomer->status = 1;
                           $broadcastCustomer->save();
-                        }
+                        }*/
                     }
                     else {
                         $campaign = 'broadcast';
@@ -162,7 +159,7 @@ class SendMessage extends Command
                   }
                   */
                 }
-                
+                sleep(10);
             }//END LOOPING
 
         } // END BROADCAST 
@@ -221,8 +218,8 @@ class SendMessage extends Command
 
                   $message = str_replace('{name}',$row->name,$row->message);
                   $id_reminder = $row->id_reminder;
-                  $chat_id = $row->chat_id;
-                  $this->sendMessage($phoneNumber,$chat_id,$message);
+     
+                  $this->sendMessage($phoneNumber,$message);
                   $this->generateLog($number,$campaign,$id_campaign,$status);
 
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
@@ -240,7 +237,7 @@ class SendMessage extends Command
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-              
+                sleep(10);
               }//END FOR LOOP EVENT
           }
     }
@@ -293,7 +290,7 @@ class SendMessage extends Command
 
                 if($adding->lte(Carbon::now()) && $count > 0)
                 {
-                    $wareminder = $this->sendMessage($phoneNumber,$chat_id,$message);
+                    $this->sendMessage($phoneNumber,$message);
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
                     $status = 'Sent';
@@ -314,7 +311,7 @@ class SendMessage extends Command
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-
+                sleep(10);
             }//END LOOPING
         }
     }
