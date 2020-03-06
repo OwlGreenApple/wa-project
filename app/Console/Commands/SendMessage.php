@@ -130,11 +130,11 @@ class SendMessage extends Command
                         $phoneNumber->counter --;
                         $phoneNumber->save();
                         
-                       /* $broadcastCustomer = BroadCastCustomers::find($row->bccsid);
+                        $broadcastCustomer = BroadCastCustomers::find($row->bccsid);
                         if (!is_null($broadcastCustomer)){
                           $broadcastCustomer->status = 1;
                           $broadcastCustomer->save();
-                        }*/
+                        }
                     }
                     else {
                         $campaign = 'broadcast';
