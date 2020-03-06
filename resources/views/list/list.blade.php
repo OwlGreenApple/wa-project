@@ -29,35 +29,10 @@
              @enderror
           </div>
 
+
           <div class="form-group">
             <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text">@if(session('autoreply')){{ session('autoreply') }}@endif</textarea>
           </div>
-          
-          <div class="form-group">
-            <div class="row">
-              <div class="col-lg-11">
-                <input name="groupname" value="@if(session('groupname')){{ session('groupname') }}@endif" type="text" class="form-control custom-form" placeholder="Telegram Group Name"/>
-              </div>
-              <div class="col-lg-1 pad-fix text-left">
-                <a id="fancybox-modal"><i class="fa fa-question-circle fa-2x mt-5" aria-hidden="true"></i></a>
-              </div>
-            </div>
-             @error('groupname')
-                <span class="error">{{ $message }}</span>
-             @enderror
-          </div>
-
-          <!-- open this on version 2 later
-           <div class="input-group form-group">
-               <select id="phoneid" name="phoneid" class="form-control custom-select">
-                  if(phonenumber->count() > 0)
-                    foreach(phonenumber as rows)
-                      <option value="rows->id">rows->phone_number</option>
-                    endforeach
-                  endif
-               </select>
-            </div> 
-          -->
 
           <div class="text-right">
             <button class="btn btn-custom">Create List</button>

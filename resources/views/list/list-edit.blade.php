@@ -46,18 +46,9 @@
             </div>
 
             <div class="prep1">
-              <div class="input-group mt-4 mb-3 move_radio">
-                <div class="input-group-prepend">
-                  <button class="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telegram Contact</button>
-                  <div class="dropdown-menu">
-                    <a class="dropdown-item" id="ph">Phone</a>
-                    <a class="dropdown-item" id="tl">Telegram Username</a>
-                  </div>
-                </div>
-
-                <input type="hidden" name="selectType" id="selectType" value="ph">
-                <input type="text" name="phone" class="form-control cphone" placeholder="Input your phone">
-                <input type="text" name="usertel" class="form-control ctel" placeholder="Input your Telegram username">
+              <div class="form-group">
+                 <label>Phone Number</label>
+                 <input type="text" name="phone" class="form-control" placeholder="Input your phone number">
               </div>
               <span class="error phone"></span>
             </div>

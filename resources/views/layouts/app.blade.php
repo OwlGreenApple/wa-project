@@ -14,11 +14,10 @@
     <script src="{{ asset('/assets/js/app.js') }}"></script>
     <script src="{{ asset('/assets/datetimepicker/jquery.datetimepicker.js') }}"></script>
 
-    <!-- Fonts 
+    <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-    -->
-
+    <link href="{{ asset('/assets/css/nunito.css') }}" rel="stylesheet">
+    
     <!-- Styles -->
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
     <!--<link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet"> -->

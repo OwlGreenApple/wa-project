@@ -96,7 +96,7 @@ class ListController extends Controller
 
       $rules =  [
             'listname' => 'required|min:4|max:190',
-            'groupname' => 'required|min:4|max:190',
+            'autoreply' => 'max:65500',
       ];
       $message = [
         'required'=> 'Field required'
@@ -107,7 +107,6 @@ class ListController extends Controller
           return redirect('list-form')->withErrors($validator)->with('listname',$request->listname)
           ->with('listname',$request->listname)
           ->with('autoreply',$request->autoreply)
-          ->with('groupname',$request->groupname)
           ;               
       }
 
@@ -117,35 +116,17 @@ class ListController extends Controller
         return redirect('list-form')->with('error_number','Error! Please set your phone number first ')
           ->with('listname',$request->listname)
           ->with('autoreply',$request->autoreply)
-          ->with('groupname',$request->groupname)
           ;
-      }
-
-      $result = $this->checkGroupByGroupName($phone,$request->groupname);
-      if ( ( $result== 0) || ( $result== "0") ){
-        return redirect('list-form')->with('error_number','Error 1.1! list failed to created, please contact administrator '.$result)
-          ->with('listname',$request->listname)
-          ->with('autoreply',$request->autoreply)
-          ->with('groupname',$request->groupname)
-        ;
       }
 
       $list = new UserList;
       $list->user_id = Auth::id();
       $list->name = $this->createRandomListName();
       $list->label = $label;
-      $list->group_name = $request->groupname;
       $list->phone_number_id = $phone->id;
       $list->save();
       $listid = $list->id;
       $listname = $list->name;
-
-      $data = array(
-        'userid'=>$user->id,
-        'label'=>$label,
-        'listid'=>$listid,
-        'listname'=>$listname,
-      );
 
       $check = UserList::where('id',$listid)->first();
 
@@ -162,27 +143,7 @@ class ListController extends Controller
         $reminder->save();
       }
 
-      Session::flash('data',$data);
-      return redirect('list-created');
-    }
-
-    public function createdList(Request $request)
-    {
-      if(Session::get('data') == null)
-      {
-          return redirect('list-form');
-      }
-      else {
-          Session::reflash();
-      }
-      $userid = Session::get('data')['userid'];
-      $label = Session::get('data')['label'];
-      $listname = Session::get('data')['listname'];
-      $id = Session::get('data')['listid'];
-      $listid = encrypt($id);
-      $url = env('APP_URL').$listname;
-
-      return view('list.list-create',['label'=>$label,'listid'=>$listid,'url'=>$url,'listname'=>$listname,'id'=>$id]);
+      return redirect('list-edit/'.$listid.'');
     }
 
     public function saveList(Request $request)
@@ -998,6 +959,26 @@ class ListController extends Controller
       }
     }
 
+     /* check random list name */
+    public function createRandomListName(){
+
+        $generate = $this->generateRandomListName();
+        $list = Userlist::where([['name','=',$generate],['status',1]])->first();
+
+        if(is_null($list)){
+            return $generate;
+        } else {
+            return $this->createRandomListName();
+        }
+    }
+
+    /* create random list name */
+    public function generateRandomListName(){
+        //return strtolower(Str::random(8));
+        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+        return substr(str_shuffle($permitted_chars), 0, 8);
+    }
+
 
     /* *************************************** 
         OLD CODES
@@ -1421,24 +1402,5 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    /* check random list name */
-    public function createRandomListName(){
-
-        $generate = $this->generateRandomListName();
-        $list = Userlist::where('name','=',$generate)->first();
-
-        if(is_null($list)){
-            return $generate;
-        } else {
-            return $this->generateRandomListName();
-        }
-    }
-
-    /* create random list name */
-    public function generateRandomListName(){
-        //return strtolower(Str::random(8));
-        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        return substr(str_shuffle($permitted_chars), 0, 8);
-    }
-
+/* end list controller */
 }

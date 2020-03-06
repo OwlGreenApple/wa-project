@@ -51,9 +51,8 @@ class CampaignController extends Controller
           $request->day = 0;
       }
 
-      if($campaign == 'event')
+      /*if($campaign == 'event')
       {
-        /* Validator */
         $rules = array(
             'campaign_name'=>['required','max:50'],
             'list_id'=>['required',new CheckValidListID],
@@ -92,7 +91,8 @@ class CampaignController extends Controller
             return response()->json($data);
         }
       } 
-      elseif($campaign == 'auto')
+      */
+      if($campaign == 'auto')
       {   
         /* Validator */
         $rules = array(
@@ -132,25 +132,11 @@ class CampaignController extends Controller
         /* Validator */
         $rules = array(
           'campaign_name'=>['required','max:50'],
+          'list_id'=>['required', new CheckValidListID],
           'date_send'=>['required',new CheckBroadcastDate],
           'hour'=>['required','date_format:H:i'],
           'message'=>['required','max:4095'],
         );
-
-        if(isset($_POST['list_id']))
-        {
-           $rules['list_id'] = ['required', new CheckValidListID];
-        } 
-
-        if(isset($_POST['group_name']))
-        {
-           $rules['group_name'] = ['required', 'max:50'];
-        }
-
-        if(isset($_POST['channel_name']))
-        {
-           $rules['channel_name'] = ['required', 'max:50'];
-        }
 
         $validator = Validator::make($request->all(),$rules);
         if($validator->fails())

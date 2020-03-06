@@ -80,7 +80,6 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('lists-table', 'ListController@dataList');
   Route::get('list-form', 'ListController@formList');
   Route::get('list-create', 'ListController@createList');
-  Route::get('list-created', 'ListController@createdList');
   Route::post('list-save','ListController@saveList')->name('savelist'); 
   Route::get('list-delete','ListController@delListContent')->name('deletelist');
   Route::get('list-search','ListController@searchList')->name('searchlist');

@@ -15,7 +15,7 @@
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link href="{{ asset('/assets/css/nunito.css') }}" rel="stylesheet" />
 
     <!-- Styles -->
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
@@ -65,20 +65,11 @@
                     </div>
 
                     <div class="prep1">
-                      <div class="input-group mt-4 mb-3 move_radio">
-                        <div class="input-group-prepend">
-                          <button class="btn btn-dropdown dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telegram Contact</button>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item" id="ph">Phone</a>
-                            <a class="dropdown-item" id="tl">Telegram Username</a>
-                          </div>
-                        </div>
-
-                        <input type="hidden" name="selectType" id="selectType" value="ph">
-                        <input type="text" name="phone" class="form-control cphone" placeholder="Input your phone">
-                        <input type="text" name="usertel" class="form-control ctel" placeholder="Input your Telegram username">
+                      <div class="form-group">
+                          <label>Phone Number*</label>
+                          <input type="text" name="phone_number" class="form-control" placeholder="Input your phone number"/>
+                          <span class="error phone"></span>
                       </div>
-                       <span class="error phone"></span>
                     </div>
 
                     <div class="form-group">
@@ -153,7 +144,7 @@
   <script type="text/javascript">
 
         $(document).ready(function() {
-            choose();
+            //choose();
             grecaptcha.ready(function() {
               grecaptcha.execute("<?php echo env('GOOGLE_RECAPTCHA_SITE_KEY');?>", {action: 'contact_form'}).then(function(token) {
                   $('#recaptchaResponse').val(token);
@@ -228,7 +219,7 @@
             $(".error").html('');
         }
         
-        function choose(){
+        /*function choose(){
           $("input[name=usertel]").prop('disabled',true);
           $(".ctel").hide();
 
@@ -251,7 +242,7 @@
                 $("#selectType").val("tl");
               }
           });
-        }
+        }*/
     </script>
 
 </body>
