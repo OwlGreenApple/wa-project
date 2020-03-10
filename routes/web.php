@@ -55,6 +55,21 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 	Route::get('loginuser/{id_user}', 'AdminController@LoginUser');//home.blade
 	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');//home.blade
 	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');
+  
+  //List User 
+  Route::get('/list-user','Admin\UserController@index');
+  Route::get('/list-user/load-user','Admin\UserController@load_user');
+  Route::get('/list-user/add-user','Admin\UserController@add_user');
+  Route::get('/list-user/edit-user','Admin\UserController@edit_user');
+  Route::get('list-user/view-log','Admin\UserController@load_log');
+  Route::post('/import-excel-user','Admin\UserController@import_excel_user');
+  
+  //admin order
+  Route::get('/list-order',function(){
+    return view('admin.list-order.index');
+  });
+  Route::get('/list-order/load-order','Admin\OrderController@load_list_order');
+  Route::get('/list-order/confirm','Admin\OrderController@confirm_order');
 });
 
 /* SETTING */

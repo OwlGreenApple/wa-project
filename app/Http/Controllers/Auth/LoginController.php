@@ -46,7 +46,7 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    protected function authenticated(Request $request)
+    protected function authenticated(Request $request,$user)
     {
         if($request->remember == 1)
         {
@@ -54,6 +54,13 @@ class LoginController extends Controller
         }
         else {
             $this->delCookie($request->email,$request->password);
+        }
+
+        if ( $user->is_admin  == 1) {// do your magic here
+            return redirect('list-user');
+        }
+        if ( $user->is_admin  == 2) {// Halaman woowa
+            // return redirect('list-user');
         }
     }
 

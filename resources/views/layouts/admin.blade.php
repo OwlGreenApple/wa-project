@@ -11,6 +11,7 @@
 
    <!-- Scripts -->
     <script src="{{ asset('/assets/js/jquery-3.2.1.min.js') }}"></script>
+    <!--<script src="{{ asset('/assets/js/jquery-1.12.4.js') }}"></script>-->
     <script src="{{ asset('/assets/js/app.js') }}"></script>
 
     <!-- Fonts -->
@@ -32,6 +33,7 @@
     <!-- Data Table -->
     <link href="{{ asset('/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
     <script defer type="text/javascript" src="{{ asset('/assets/DataTables/datatables.min.js') }}"></script>
+    <script defer type="text/javascript" src="{{ asset('/assets/DataTables/Responsive/js/dataTables.responsive.min.js') }}"></script>
 
     <!-- CKEditor -->
     <link href="{{ asset('/assets/ckeditor/contents.css') }}" rel="stylesheet" />
@@ -40,11 +42,12 @@
     <!-- CKFinder -->
     <script type="text/javascript" src="{{ asset('/assets/ckfinder/ckfinder.js') }}"></script>
 
-    <!-- Datetimepicker -->
+    <!-- Datetimepicker-->
     <link href="{{ asset('/assets/datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
-    <script type="text/javascript" src="{{ asset('/assets/datetimepicker/js/moment.js') }}"></script>
+    <script src="{{ asset('/assets/js/moment.js') }}"></script>
+    <script src="{{ asset('/assets/js/datetime-moment.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/assets/datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script> 
-
+ 
     <!-- MDtimepicker -->
     <link href="{{ asset('/assets/MDTimePicker/mdtimepicker.min.css') }}" rel="stylesheet">
     <script type="text/javascript" src="{{ asset('/assets/MDTimePicker/mdtimepicker.min.js') }}"></script>
@@ -52,6 +55,8 @@
     <!-- Clipboard -->
     <script type="text/javascript" src="{{ asset('/assets/clipboard.js-master/clipboard.min.js') }}"></script> 
 
+    <!-- Canvas JS -->
+    <script type="text/javascript" src="{{ asset('/canvasjs/canvasjs.min.js') }}"></script>
 </head>
 <body>
 
@@ -85,23 +90,11 @@
                             @endif
                         @else
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('home')) ? 'active' : '' }}" href="{{ route('home') }}">Home</a>
+                              <a class="nav-link {{ (request()->is('list-user')) ? 'active' : '' }}" href="{{ url('list-user') }}">User</a>
                             </li> 
                             <li class="nav-item">
-                                <a class="nav-link {{ (Request::segment(1) == 'usercustomer') || (request()->is('userlist')) || (request()->is('createlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists & Events</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('broadcast')||request()->is('broadcast_customer')||request()->is('broadcastform')||request()->is('broadcasteventform')) ? 'active' : '' }}" href="{{ route('broadcast') }}">Broadcast</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')||request()->is('reminderautoreply')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder List</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('event')||request()->is('eventform')||request()->is('eventcustomer')||request()->is('eventautoreply')) ? 'active' : '' }}" href="{{ route('event') }}">Reminder Event</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('templates')) ? 'active' : '' }}" href="{{ route('templates') }}">Template</a>
-                            </li>
+                              <a class="nav-link {{ (request()->is('list-order')) ? 'active' : '' }}" href="{{ url('list-order') }}">Order</a>
+                            </li> 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
