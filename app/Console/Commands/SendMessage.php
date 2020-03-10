@@ -55,36 +55,30 @@ class SendMessage extends Command
     public function sendMessage($phoneNumber = null,$message = null)
     {
       $phoneNumber = '+62895342472008';
-      $param = array(
-          'app_id' => '429d3472-da0f-4b2b-a63e-4644050caf8f', //app id don't change
-          'include_player_ids' => ['5df8985a-242b-4ca2-80b4-b6d8e46c19c3'], //you can take Player id from Woowandroid App CS ID menu.
-          'data' => array(
-              "type"      => 'Reminder', //opsional Reminder/After Checkout/Pending Payment/dll editable
-              "message"   => 'TEST Demo woowandroid',
-              "no_wa"     =>  $phoneNumber
-          ),
-          'contents'  => array(
-              "en"    => 'Woowa Title'
-          ),
-          "headings"  =>  array(
-              "en"    => 'Woowa Notice'
-          )
+      $key='d776f366b470d04d813e75e0e83623f032e6d1fa4a389de8'; //this is demo key please change with your own key
+      $url='http://116.203.92.59/api/send_message';
+      $data = array(
+        "phone_no"=> $phoneNumber,
+        "key"		=>$key,
+        "message"	=>'Test haloooo'
       );
-      $data_json = json_encode($param);
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, 'https://onesignal.com/api/v1/notifications');
-      curl_setopt($ch, CURLOPT_POST, 1);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+      $data_string = json_encode($data);
+
+      $ch = curl_init($url);
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($ch, CURLOPT_VERBOSE, 0);
+      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+      curl_setopt($ch, CURLOPT_TIMEOUT, 360);
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-      curl_setopt($ch, CURLOPT_HEADER, 1);
       curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-          'Content-Type: application/json; charset=utf-8',
-          'Authorization: Basic NjY0NzE3MTYtMzc3ZC00YmY5LWJhNzQtOGRiMWM1ZTNhNzBh')); //os_auth don't change
-      $response = curl_exec($ch);
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($data_string))
+      );
+      echo $res=curl_exec($ch);
       curl_close($ch);
-      echo $response;
     }
 
     /* BROADCAST */
