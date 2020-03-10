@@ -68,7 +68,7 @@ class ApiHelper
   public function get_qr_code()
   {
     $url='https://116.203.92.59/api/generate_qr';
-    $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
+    $key='d776f366b470d04d813e75e0e83623f032e6d1fa4a389de8';
     $url_img='https://116.203.92.59/images/'.$key.'/';
     $no_wa='+6285704701230';
     $data = array(
@@ -92,7 +92,7 @@ class ApiHelper
   public function get_client()
   {
     $url='https://116.203.92.59/api/get_all_cust';
-    $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
+    $key='d776f366b470d04d813e75e0e83623f032e6d1fa4a389de8';
     $data = array(
       "key"=>$key
     );
@@ -118,7 +118,7 @@ class ApiHelper
   public function billing()
   {
     $url='https://api.woo-wa.com/v2.0/get-billing';
-    $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
+    $key='d776f366b470d04d813e75e0e83623f032e6d1fa4a389de8';
 
     $data = array(
       "key"=>$key
@@ -142,7 +142,7 @@ class ApiHelper
   public function reg()
   {
     $url='https://116.203.92.59/api/whatsapp_api_reg';
-    $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89'; // key partner
+    $key='d776f366b470d04d813e75e0e83623f032e6d1fa4a389de8'; // key partner
 
     $no_wa='+6285704701230'; // no wa pelanggan
     $nama='tes mike1'; // nama pelanggan
@@ -175,7 +175,7 @@ class ApiHelper
   {
     $url='https://116.203.92.59/api/unreg';
 
-    $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
+    $key='d776f366b470d04d813e75e0e83623f032e6d1fa4a389de8';
     $no_wa='+6285704701230';
 
     $data = array(
