@@ -80,6 +80,8 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkphone');
   Route::get('verify-phone', 'SettingController@verify_phone');
   Route::get('delete-phone', 'SettingController@delete_phone');
+  Route::get('delete-phone-api/{wa_number}', 'SettingController@delete_phone_api');
+  Route::get('get-clients', 'SettingController@get_all_client');
   Route::post('edit-phone', 'SettingController@editPhone');
 });
 

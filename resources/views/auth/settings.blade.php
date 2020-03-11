@@ -36,7 +36,6 @@
   </div>
 </div>
 
-
   <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
@@ -47,7 +46,7 @@
 
 <div class="container">
   <ul id="tabs" class="row">
-      <li class="col-lg-4"><a id="tab1">Telegram Settings</a></li>
+      <li class="col-lg-4"><a id="tab1">Whatsapp Settings</a></li>
       <li class="col-lg-4"><a id="tab2">Account Settings</a></li>
   </ul>
 
@@ -58,13 +57,13 @@
     <div class="tabs-container" id="tab1C">
       <div class="act-tel-settings">
         <div class="form-control message col-lg-9">
-          Your Telegram Account Connected!
+          Your Whatsapp Account Connected!
         </div>
 
         <div class="row col-fix">
             <form class="wrapper add-contact col-lg-9 pad-fix" id="form-connect">
                 <div class="form-group row col-fix">
-                  <label class="col-sm-3 col-form-label">Phone Telegram :</label>
+                  <label class="col-sm-3 col-form-label">Phone Whatsapp :</label>
                   <div class="col-sm-9">
                     <input type="text" id="phone_number" name="phone_number" class="form-control" />
                     <span class="error phone_number"></span>
@@ -84,7 +83,7 @@
         </div>
 
         <div class="wrapper verification" id="div-verify">
-            <div class="form-group"><label class="col-sm-12 col-form-label">Input verification code from your <strong>Telegram Account</strong></label></div>
+            <div class="form-group"><label class="col-sm-12 col-form-label">Input verification code from your <strong>Whatsapp Account</strong></label></div>
             <div class="form-group row col-fix">
               <label class="col-sm-3 col-form-label">Verification Code :</label>
               <input type="text" class="form-control col-sm-9" id="verify_code"/>
@@ -100,7 +99,7 @@
               <thead class="bg-dashboard">
                 <tr>
                   <th class="text-center">No</th>
-                  <th class="text-center">Phone Telegram</th>
+                  <th class="text-center">Phone Whatsapp</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Edit</th>
                 </tr>
@@ -278,7 +277,7 @@
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         type: 'GET',
-        url: "<?php echo url('/connect-phone');?>",
+        url: "{{ url('connect-phone') }}",
         data: $("#form-connect").serialize(),
         dataType: 'text',
         beforeSend: function()
@@ -289,8 +288,8 @@
         success: function(result) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          var data = jQuery.parseJSON(result);
 
+          var data = jQuery.parseJSON(result);
           if(data.status == "success") {
             $('.message').show();
             $('.message').html(data.message);
@@ -300,8 +299,16 @@
 
           if(data.status == "error") {
               $(".phone_number").html(data.phone_number);
+              $('.message').show();
+              $('.message').html(data.message);
           }
 
+        },
+        error: function(xhr,attr,throwable)
+        {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            alert(xhr.responseText);
         }
       });
       
