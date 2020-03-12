@@ -5,28 +5,6 @@
   var table;
   var tableLog;
 
-  $(document).ready(function() {
-    table = $('#myTable').DataTable({
-                responsive : true,
-                destroy: true,
-                "order": [],
-            });
-
-    tableLog = $('#tableLog').DataTable({
-                responsive : true,
-                destroy: true,
-                "order": [],
-            });
-
-    // $.fn.dataTable.moment( 'ddd, DD MMM YYYY' );
-
-    refresh_page();
-
-    // $('.formatted-date').datepicker({
-      // dateFormat: 'yy/mm/dd',
-    // });
-  });
-
   function refresh_page(){
     table.destroy();
     $.ajax({
@@ -43,7 +21,7 @@
         $('.div-loading').removeClass('background-load');
 
         var data = jQuery.parseJSON(result);
-        // $('#content').html(data.view);
+        $('#content').html(data.view);
         
         table = $('#myTable').DataTable({
                   responsive : true,
@@ -213,36 +191,6 @@
             </th>
           </thead>
           <tbody id="content">
-  <tr>
-    <td data-label="Name">
-      test
-    </td>
-    <td data-label="Email">
-      rizky@gmail.com
-    </td>
-    <td data-label="Username">
-      rizkyredjo
-    </td>
-    <td data-label="Status">
-        User
-    </td> 
-    <td data-label="Membership">
-      pro
-    </td>
-    <td data-label="Valid_until">
-        Unlimited
-    </td>
-    <td data-label="Created">
-    </td>
-    <td data-label="Action">
-      <button type="button" class="btn btn-primary btn-edit">
-        Edit User
-      </button>
-      <button type="button" class="btn btn-primary btn-log" data-toggle="modal" data-target="#view-log">
-        Log
-      </button>
-    </td>
-  </tr>
           </tbody>
         </table>
 
@@ -448,32 +396,32 @@
 
   window.onload = function () {
 
-  var users = [];
-  $.each(<?php echo json_encode($users);?>, function( i, item ) {
-      users.push({'x': new Date(i), 'y': item});
-  });
+    var users = [];
+    $.each(<?php echo json_encode($users);?>, function( i, item ) {
+        users.push({'x': new Date(i), 'y': item});
+    });
 
-  var chart = new CanvasJS.Chart("user-charts", {
-    animationEnabled: true,
-    theme: "light2",
-    title:{
-      text: "Users Statistics",
-      fontFamily: "Nunito,sans-serif"
-    },
-    axisY: {
-        titleFontFamily: "Nunito,sans-serif",
-        titleFontSize : 14,
-        title : "Total registered users",
-        titleFontColor: "#b7b7b7",
-        includeZero: false
-    },
-    data: [{        
-      type: "line",       
-      dataPoints: users
-    }]
-  });
-  chart.render();
-  //{x : new Date('2019-12-04'), y: 520, indexLabel: "highest",markerColor: "red", markerType: "triangle" },
+    var chart = new CanvasJS.Chart("user-charts", {
+      animationEnabled: true,
+      theme: "light2",
+      title:{
+        text: "Users Statistics",
+        fontFamily: "Nunito,sans-serif"
+      },
+      axisY: {
+          titleFontFamily: "Nunito,sans-serif",
+          titleFontSize : 14,
+          title : "Total registered users",
+          titleFontColor: "#b7b7b7",
+          includeZero: false
+      },
+      data: [{        
+        type: "line",       
+        dataPoints: users
+      }]
+    });
+    chart.render();
+    //{x : new Date('2019-12-04'), y: 520, indexLabel: "highest",markerColor: "red", markerType: "triangle" },
   }
 
   $( "body" ).on( "click", "#btn-add-user-free-trial", function() {
@@ -573,5 +521,30 @@
     $('#idlog').val($(this).attr('data-id'));
     get_log();
   });
+
+  $(document).ready(function() {
+    table = $('#myTable').DataTable({
+                responsive : true,
+                destroy: true,
+                "order": [],
+            });
+
+    tableLog = $('#tableLog').DataTable({
+                responsive : true,
+                destroy: true,
+                "order": [],
+            });
+            
+    // $.fn.dataTable.moment( 'ddd, DD MMM YYYY' );
+    moment( 'ddd, DD MMM YYYY' );
+
+    refresh_page();
+
+    // $('.formatted-date').datepicker({
+      // dateFormat: 'yy/mm/dd',
+    // });
+  });
+
+  
 </script>
 @endsection
