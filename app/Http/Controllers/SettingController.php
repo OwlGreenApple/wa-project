@@ -191,27 +191,27 @@ class SettingController extends Controller
       $member = User::find($user->id);
       $registered_phone = ApiHelper::reg($request->phone_number,$member->name);
       $status_register = json_decode($registered_phone,true);
+      $message = strval($status_register['message']);
 
-      if(strpos($status_register['message'],'success') == false)
+      if(stripos($message,'success') === false)
       {
           $arr['status'] = 'error';
           $arr['message'] = 'Phone '.$status_register['message'];
           return $arr;
       }
 
-      if (is_null($phoneNumber)){
+      if(is_null($phoneNumber)){
         $phoneNumber = new PhoneNumber();
         $phoneNumber->user_id = $user->id;
         $phoneNumber->phone_number = $request->phone_number;
         $phoneNumber->counter = 0;
         $phoneNumber->status = 0;
         $phoneNumber->filename = $this->getToken($request->phone_number);
-        $phoneNumber->status = 1;
         $phoneNumber->save();
       }
 
       $arr['status'] = 'success';
-      $arr['message'] = "Please Check your Telegram for Verification Code";
+      $arr['message'] = "Please open your whatsapp then scan the barcode";
       return $arr;
     }
 
@@ -246,68 +246,18 @@ class SettingController extends Controller
     // DELETE PHONE FROM WOO WA
     public function delete_phone_api($no_wa)
     {
-        ApiHelper::unreg($no_wa);
+        return ApiHelper::unreg($no_wa);
     }
 
     public function get_all_client()
     {
-        ApiHelper::get_client();
+        return ApiHelper::get_client();
     }
     
     public function verify_phone(Request $request)
     {
-      $user = Auth::user();
-      //cek phone number uda ada didatabase ngga 
-      $phoneNumber = PhoneNumber::
-                      where("phone_number",$request->phone_number)
-                      ->where("user_id",$user->id)
-                      ->first();
-      if (!is_null($phoneNumber)){
-        if ($phoneNumber->status == 2) {
-          $arr['status'] = 'error';
-          $arr['message'] = "Phone Number Already Registered";
-          return $arr;
-        }
-      }
-
-      $curl = curl_init();
-      $data = array(
-          'token'=> env('TOKEN_API'),
-          'phone_number' => $phoneNumber->phone_number,
-          'authcode'=>$request->verify_code,
-          'filename'=>$phoneNumber->filename,
-      );
-
-      curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/auth-verify-phone.php",
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => http_build_query($data),
-        CURLOPT_POST => 1,
-      ));
-
-      $response = curl_exec($curl);
-      $err = curl_error($curl);
-
-      curl_close($curl);
-
-      if ($err) {
-        // echo "cURL Error #:" . $err;
-        $arr['status'] = 'error';
-        $arr['message'] = "Please try to connect again";
-        return $arr;
-      } else {
-        // echo $response."\n";
-        // print_r($response);exit;
-        // return json_decode($response, true);
-      }
-
-      $phoneNumber->status = 2;
-      $phoneNumber->save();
-
-      $arr['status'] = 'success';
-      $arr['message'] = "Telegram Phone number registered";
-      return $arr;
+      //SCAN QR CODE
+      return ApiHelper::get_qr_code($request->phone_number);
     }
 
     public function delete_phone(Request $request)

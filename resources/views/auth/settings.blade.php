@@ -83,10 +83,10 @@
         </div>
 
         <div class="wrapper verification" id="div-verify">
-            <div class="form-group"><label class="col-sm-12 col-form-label">Input verification code from your <strong>Whatsapp Account</strong></label></div>
+            <div class="form-group"><label class="col-sm-12 col-form-label">Sacn this QR code from your <strong>Whatsapp Phone</strong></label></div>
             <div class="form-group row col-fix">
-              <label class="col-sm-3 col-form-label">Verification Code :</label>
-              <input type="text" class="form-control col-sm-9" id="verify_code"/>
+              <div class="col-lg-6"><div id="qr-code"></div></div>
+              <div class="col-lg-6"><h3><div id="timer"></div></h3></div>
             </div>
 
             <div class="text-right">
@@ -225,6 +225,7 @@
   <!-- End Modal -->
 
 <script type="text/javascript">
+  var sec = 25; //countdown timer
   // Jquery Tabs
   function tabs() {    
       $('#tabs li a:not(:first)').addClass('inactive');
@@ -260,6 +261,11 @@
 
         var data = jQuery.parseJSON(result);
         $('#table-phone').html(data.view);
+      },
+      error: function(xhr,attr,throwable){
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        alert('Sorry cannot load phone list, please call administrator'); 
       }
     });
   }
@@ -273,7 +279,9 @@
 
     $('#div-verify').hide();
     $('.message').hide();
+
     $('#button-connect').click(function(){
+      var phone_number = $("#phone_number").val();
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         type: 'GET',
@@ -294,6 +302,8 @@
             $('.message').show();
             $('.message').html(data.message);
             $('#div-verify').show();
+
+            getQRCode(phone_number);
             loadPhoneNumber();
           }
 
@@ -313,32 +323,52 @@
       });
       
     });
-    $('#button-verify').click(function(){
-      $.ajax({
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        type: 'GET',
-        url: "<?php echo url('/verify-phone');?>",
-        data: {
-          phone_number : $("#phone_number").val(),
-          verify_code : $("#verify_code").val(),
-        },
-        dataType: 'text',
-        beforeSend: function()
-        {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
-        },
-        success: function(result) {
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
 
-          var data = jQuery.parseJSON(result);
-          $('.message').show();
-          $('.message').html(data.message);
-          loadPhoneNumber();
-        }
-      });
-    });
+    function getQRCode(phone_number)
+    {
+      $.ajax({
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          type: 'GET',
+          url: "{{ url('verify-phone') }}",
+          data: {
+            phone_number : phone_number,
+          },
+          dataType: 'html',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success: function(result) {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            $("#qr-code").html(result)
+            
+            var timer = setInterval(function(){
+                countDownTimer()
+            },1000);
+
+            loadPhoneNumber();
+          },
+          error : function(xhr,attr,throwable){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
+            alert('Sorry, unable to display QR-CODE, there is something wrong with our server, please try again later')
+          }
+        });
+
+    }
+
+    function countDownTimer(){
+      sec = sec -1;
+      if(sec == 0){
+        clearInterval(timer);
+        alert('time stop');
+      }
+      $("#timer").html(time);
+    }
+    
     $('#button-delete-phone').click(function(){
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -404,10 +434,12 @@
       $('#id_phone_number').val($(this).attr('data-id'));
       $('#confirm-delete').modal('show');
     });
+
     $("body").on("click", ".link-verify", function() {
-      $("#phone_number").val($(this).attr('data-phone'));
+      var phone_number = $(this).attr('data-phone');
+      $("#phone_number").val(phone_number);
       $('#div-verify').show();
-      $("#verify_code").focus();
+      getQRCode(phone_number);
     });
   });
 

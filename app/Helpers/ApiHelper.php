@@ -71,11 +71,12 @@ class ApiHelper
       "key"=>$key,
     );
 
-    $filename=go_curl($url,$data,"POST");
+    $_this = new self;
+    $filename= $_this->go_curl($url,$data,"POST");
 
     $res_arr=array('not_valid_ip','failed','port_down');
     if (!in_array($filename,$res_arr)) {
-      $file_code=go_curl($url_img.$filename,$data,"GET");
+      $file_code=$_this->go_curl($url_img.$filename,$data,"GET");
         $qrcode='<img src="data:image/jpeg;base64,'.base64_encode($file_code).'"/>';
     }else{
         $qrcode=$filename;

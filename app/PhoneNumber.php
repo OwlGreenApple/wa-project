@@ -9,8 +9,7 @@ class PhoneNumber extends Model
   /*
   * Status 
   * 0 -> Not Verified
-  * 1 -> Verify Code Berhasil terkirim
-  * 2 -> Verified
+  * 1 -> Verified
   */
   protected $table = 'phone_numbers';
 }
