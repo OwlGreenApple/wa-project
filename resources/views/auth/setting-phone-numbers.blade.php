@@ -11,16 +11,15 @@
       <td class="text-center">{{$phoneNumber->phone_number}}</td>
       <td class="text-center"><?php 
       if ($phoneNumber->status == 0) {
-        echo "Pending";
+        echo 'Waiting Verification <a href="#" class="link-verify btn btn-success btn-sm" data-phone="'.$phoneNumber->phone_number.'">klik to verify</a>';
       }
       if ($phoneNumber->status == 1) {
-        echo 'Waiting Verification <a href="#" class="link-verify btn btn-success btn-sm" data-phone="'.$phoneNumber->phone_number.'">klik to verify</a> OR <a id="link-resend" class="btn btn-warning btn-sm" data-phone="'.$phoneNumber->phone_number.'">klik to Resend</a>';
-      }
-      if ($phoneNumber->status == 2) {
         echo "Connected";
       }
       ?></td>
-      <td class="text-center"><a class="icon icon-edit btn-edit" data-number="{{$phoneNumber->phone_number}}"></a></td>
-      <!--<td class="text-center"><a class="icon icon-delete" data-id="{{$phoneNumber->id}}"></a></td>-->
+      <!-- <td class="text-center"><a class="icon icon-edit btn-edit" data-number="{{$phoneNumber->phone_number}}"></a></td> -->
+      <td class="text-center">
+        <a class="icon icon-delete" data-id="{{$phoneNumber->id}}"></a>
+      </td>
     </tr>
   @endforeach
