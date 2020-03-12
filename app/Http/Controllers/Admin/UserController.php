@@ -48,8 +48,8 @@ class UserController extends Controller
 
     public function load_user(Request $request){
       //list user admin
-      $users = User::orderBy('is_admin','descend')
-                  ->orderBy('created_at','descend')
+      $users = User::orderBy('is_admin','desc')
+                  ->orderBy('created_at','desc')
                   ->get();
 
       $arr['view'] = (string) view('admin.list-user.content')

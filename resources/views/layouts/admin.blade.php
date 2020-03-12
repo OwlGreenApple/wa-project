@@ -15,7 +15,7 @@
     <script src="{{ asset('/assets/js/app.js') }}"></script>
 
     <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <!-- <link rel="dns-prefetch" href="//fonts.gstatic.com">-->
     <link href="{{ asset('/assets/css/nunito.css') }}" rel="stylesheet">
 
     <!-- Styles -->
@@ -44,8 +44,7 @@
 
     <!-- Datetimepicker-->
     <link href="{{ asset('/assets/datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
-    <script src="{{ asset('/assets/js/moment.js') }}"></script>
-    <script src="{{ asset('/assets/js/datetime-moment.js') }}"></script>
+    <script src="{{ asset('/assets/datetimepicker/js/moment.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/assets/datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script> 
  
     <!-- MDtimepicker -->
@@ -94,6 +93,9 @@
                             </li> 
                             <li class="nav-item">
                               <a class="nav-link {{ (request()->is('list-order')) ? 'active' : '' }}" href="{{ url('list-order') }}">Order</a>
+                            </li> 
+                            <li class="nav-item">
+                              <a class="nav-link {{ (request()->is('list-phone')) ? 'active' : '' }}" href="{{ url('list-phone') }}">Phone</a>
                             </li> 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

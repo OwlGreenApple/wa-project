@@ -70,6 +70,12 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
   });
   Route::get('/list-order/load-order','Admin\OrderController@load_list_order');
   Route::get('/list-order/confirm','Admin\OrderController@confirm_order');
+  
+  //list phone
+  Route::get('/list-phone',function(){
+    return view('admin.list-phone.index');
+  });
+  Route::get('/list-phone/load','Admin\PhoneController@load_phone');
 });
 
 /* SETTING */
