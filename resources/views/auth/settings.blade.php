@@ -15,7 +15,7 @@
       <div class="modal-body text-center">
         <input type="hidden" name="id_phone_number" id="id_phone_number">
 
-        <label>Are you sure want to <i>delete</i> this data ?</label>
+        <label><h4>Are you sure want to <i>delete</i> this phone number ?</h4></label>
         <br><br>
         <span class="txt-mode"></span>
         <br>
@@ -86,7 +86,7 @@
             <div class="form-group"><label class="col-sm-12 col-form-label">Sacn this QR code from your <strong>Whatsapp Phone</strong></label></div>
             <div class="form-group row col-fix">
               <div class="col-lg-6"><div id="qr-code"></div></div>
-              <div class="col-lg-6"><h3><div id="timer"></div></h3></div>
+              <div class="col-lg-6"><div id="timer"></div></h3></div>
             </div>
 
             <div class="text-right">
@@ -101,7 +101,7 @@
                   <th class="text-center">No</th>
                   <th class="text-center">Phone Whatsapp</th>
                   <th class="text-center">Status</th>
-                  <th class="text-center">Edit</th>
+                  <th class="text-center">Delete</th>
                 </tr>
               </thead>
 
@@ -225,7 +225,7 @@
   <!-- End Modal -->
 
 <script type="text/javascript">
-  var sec = 25; //countdown timer
+
   // Jquery Tabs
   function tabs() {    
       $('#tabs li a:not(:first)').addClass('inactive');
@@ -333,7 +333,7 @@
           data: {
             phone_number : phone_number,
           },
-          dataType: 'html',
+          dataType: 'json',
           beforeSend: function()
           {
             $('#loader').show();
@@ -342,12 +342,18 @@
           success: function(result) {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
-            $("#qr-code").html(result)
-            
-            var timer = setInterval(function(){
-                countDownTimer()
-            },1000);
 
+            if(result.status == 'error'){
+              $('.message').show();
+              $('.message').html(result.phone_number);
+            }
+            else
+            {
+              $('#div-verify').show();
+              $("#qr-code").html(result.data);
+              countDownTimer(phone_number);
+            }
+            
             loadPhoneNumber();
           },
           error : function(xhr,attr,throwable){
@@ -360,13 +366,63 @@
 
     }
 
-    function countDownTimer(){
-      sec = sec -1;
-      if(sec == 0){
-        clearInterval(timer);
-        alert('time stop');
-      }
-      $("#timer").html(time);
+    function countDownTimer(phone_number)
+    {
+      var sec = 25; //countdown timer
+      var word = '<h3>Please scan qr-code before time\'s up :</h3>';
+      var timer = setInterval( function(){
+                
+                if(sec < 1){
+                  clearInterval(timer);
+                  checkQRcode(phone_number);
+                }
+
+                if(sec < 10){
+                  $("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
+                }
+                else
+                {
+                  $("#timer").html(word+'<h4><b>'+sec+'</b></h4>');
+                }
+                sec--;
+            },1000);
+    }
+
+    function checkQRcode(phone_number)
+    {
+      $.ajax({
+        type: 'GET',
+        url: "{{ url('check-qr') }}",
+        data: {
+          no_wa : phone_number,
+        },
+        dataType: 'json',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          $('#div-verify').hide();
+          $("#timer, #qr-code").html('');
+
+          $('.message').show();
+          $('.message').html(result.status);
+          loadPhoneNumber();
+        },
+        error : function(xhr){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          $('#div-verify').hide();
+          $("#timer, #qr-code").html('');
+
+          alert('Sorry, unable to check if your phone verified, please try again later');
+          console.log(xhr.responseText);
+        }
+      });
     }
     
     $('#button-delete-phone').click(function(){
@@ -438,7 +494,6 @@
     $("body").on("click", ".link-verify", function() {
       var phone_number = $(this).attr('data-phone');
       $("#phone_number").val(phone_number);
-      $('#div-verify').show();
       getQRCode(phone_number);
     });
   });

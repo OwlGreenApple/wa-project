@@ -82,10 +82,11 @@ class ApiHelper
         $qrcode=$filename;
     }
 
-    echo $qrcode;
+    return $qrcode;
+    //echo $qrcode;
   }
 
-  public function qr_status($no_wa)
+  public static function qr_status($no_wa)
   {
     $url='https://116.203.92.59/api/qr_status';
     $key= self::bar();
@@ -110,7 +111,8 @@ class ApiHelper
     'Content-Length: ' . strlen($data_string))
     );
 
-    echo $res=curl_exec($ch);
+    // echo $res=curl_exec($ch);
+    return curl_exec($ch);
   }
   
   public static function get_client()
@@ -143,7 +145,7 @@ class ApiHelper
   public function billing()
   {
     $url='https://api.woo-wa.com/v2.0/get-billing';
-    $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
+    $key= self::bar();
 
     $data = array(
       "key"=>$key
@@ -167,7 +169,7 @@ class ApiHelper
   public static function unreg($no_wa)
   {
     $url='https://116.203.92.59/api/unreg';
-    $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
+    $key= self::bar();
 
     $data = array(
       "no_wa" => $no_wa,
@@ -189,13 +191,14 @@ class ApiHelper
     'Content-Length: ' . strlen($data_string))
     );
 
-    echo $res=curl_exec($ch);
+    return curl_exec($ch);
+    // echo $res=curl_exec($ch);
   }
 
   public function driver_restart($no_wa)
   {
     $url='https://116.203.92.59/api/driver_restart';
-    $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
+    $key= self::bar();
 
     $data = array(
       "no_wa" => $no_wa,
@@ -223,7 +226,7 @@ class ApiHelper
   public function get_status_by_message_id($no_wa,$wa_id)
   {
     $url='https://116.203.92.59/api/bulk_check_id';
-    $key= $this->partner_key;
+    $key= self::bar();
 
     $data = array(
       "no_wa" => $no_wa,

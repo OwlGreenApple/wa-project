@@ -243,12 +243,6 @@ class SettingController extends Controller
         //echo $res=curl_exec($ch);
     }
 
-    // DELETE PHONE FROM WOO WA
-    public function delete_phone_api($no_wa)
-    {
-        return ApiHelper::unreg($no_wa);
-    }
-
     public function get_all_client()
     {
         return ApiHelper::get_client();
@@ -257,18 +251,104 @@ class SettingController extends Controller
     public function verify_phone(Request $request)
     {
       //SCAN QR CODE
-      return ApiHelper::get_qr_code($request->phone_number);
+      //$string = '+62895342972008_not_your_client';
+
+      $check_connected = $this->check_connected_phone($request);
+      $check = json_decode($check_connected,true);
+
+      //IF PHONE NUMBER NOT REGISTERED
+      if(preg_match("/\b" .'not_your_client'. "\b/i",$check['status']))
+      {
+          $error = array(
+            'status'=>'error',
+            'phone_number'=>'Error, phone number not registered yet',
+          );
+          return response()->json($error);
+      } 
+
+      //IF PHONE NUMBER DIDN'T SCANNED OR VERIFY YET AND DISPLAY QR-CODE
+      if(preg_match("/\b" .'none'. "\b/i",$check['status']))
+      {
+          $qr_code = ApiHelper::get_qr_code($request->phone_number);
+
+          $data = array(
+            'status'=>'success',
+            'data'=>$qr_code,
+          );
+
+          return response()->json($data);
+      }
+
+      //IF PHONE NUMBER SCANNED OR VERIFY ALREADY
+      $error = array(
+          'status'=>'error',
+          'phone_number'=>'Your phone had connected',
+      );
+
+      return response()->json($error);
+      
+    }
+
+    public function check_connected_phone(Request $request)
+    {
+        $user_id = Auth::id();
+
+        if($request->phone_number <> null)
+        {
+            $no_wa = $request->phone_number;
+        }
+        else 
+        {
+            $no_wa = $request->no_wa;
+        }
+
+        $wa_number = substr($no_wa, 1);
+        $status_connect = ApiHelper::qr_status($no_wa);
+        //if status_connect == none which mean phone still not connect
+        if($status_connect == $wa_number)
+        {
+            $data = array(
+              'status'=>1,
+              'counter'=>6,
+              'max_counter'=>5000
+            );
+
+            try{
+              PhoneNumber::where([['user_id',$user_id],['phone_number',$no_wa]])->update($data);
+              $response['status'] = 'Congratulations, your phone is connected';
+            }catch(Exception $e){
+              $response['status'] = 'Sorry, there is some error, please retry to verify your phone';
+            }
+        }
+        else {
+          $response['status'] = $status_connect;
+        }
+        
+        return json_encode($response);
     }
 
     public function delete_phone(Request $request)
     {
       $phoneNumber = PhoneNumber::find($request->id);
-      $phoneNumber->delete();
-      
-      //hapus diAPI juga
-      
-      $arr['status'] = 'success';
-      $arr['message'] = "Telegram Phone number deleted";
+      $wa_number = $phoneNumber->phone_number;
+      $delete_api = ApiHelper::unreg($wa_number);
+
+      if($delete_api !== 'success')
+      {
+        $arr['status'] = 'error';
+        $arr['message'] = "Error! Sorry unable to delete your phone number";
+        return $arr;
+      }
+
+      try{
+        $phoneNumber->delete();
+        $arr['status'] = 'success';
+        $arr['message'] = "Your Phone number has deleted";
+      }catch(Exception $e){
+        $arr['status'] = 'error';
+        $arr['message'] = "Error! Sorry unable to delete your phone number";
+      } 
+
       return $arr;
     }
 }

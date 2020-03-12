@@ -78,10 +78,11 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::post('save-settings', 'SettingController@settingsUser')->middleware('usersettings');
   Route::get('load-phone-number', 'SettingController@load_phone_number');
   Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkphone');
-  Route::get('verify-phone', 'SettingController@verify_phone');
+  Route::get('verify-phone', 'SettingController@verify_phone')->middleware('checkphone');
   Route::get('delete-phone', 'SettingController@delete_phone');
-  Route::get('delete-phone-api/{wa_number}', 'SettingController@delete_phone_api');
   Route::get('get-clients', 'SettingController@get_all_client');
+  Route::get('check-qr', 'SettingController@check_connected_phone');
+
   Route::post('edit-phone', 'SettingController@editPhone');
 });
 

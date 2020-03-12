@@ -46,7 +46,7 @@ class SendMessage extends Command
     public function handle()
     {
       //Broadcast 
-      //$this->campaignBroadcast();
+      $this->campaignBroadcast();
    
       //Auto Responder
       $this->campaignAutoResponder();
@@ -54,9 +54,9 @@ class SendMessage extends Command
  
     public function sendMessage($phoneNumber = null,$message = null)
     {
-      $phoneNumber = '+62895342472008';
-      $key='d776f366b470d04d813e75e0e83623f032e6d1fa4a389de8'; //this is demo key please change with your own key
-      $url='http://116.203.92.59/api/send_message';
+      $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
+      //$url='https://116.203.92.59/api/send_message';
+      $url='https://116.203.92.59/api/send_message';
       $data = array(
         "phone_no"=> $phoneNumber,
         "key"		=>$key,
