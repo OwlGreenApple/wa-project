@@ -94,7 +94,7 @@
             </div>
         </div>
 
-        <div class="wrapper add-contact">
+        <div class="wrapper add-contact table-responsive">
             <table class="table table-bordered mt-4">
               <thead class="bg-dashboard">
                 <tr>
@@ -301,9 +301,6 @@
           if(data.status == "success") {
             $('.message').show();
             $('.message').html(data.message);
-            $('#div-verify').show();
-
-            getQRCode(phone_number);
             loadPhoneNumber();
           }
 

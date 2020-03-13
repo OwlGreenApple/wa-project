@@ -88,8 +88,7 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('delete-phone', 'SettingController@delete_phone');
   Route::get('get-clients', 'SettingController@get_all_client');
   Route::get('check-qr', 'SettingController@check_connected_phone');
-
-  Route::post('edit-phone', 'SettingController@editPhone');
+  // Route::post('edit-phone', 'SettingController@editPhone');
 });
 
 /* HOME */

@@ -14,6 +14,7 @@ use App\PhoneNumber;
 use App\Rules\TelNumber;
 use App\Rules\AvailablePhoneNumber;
 use App\Helpers\ApiHelper;
+use App\Helpers\Alert;
 use DB;
 
 class SettingController extends Controller
@@ -65,9 +66,27 @@ class SettingController extends Controller
       $phoneNumbers = PhoneNumber::
                       where("user_id",$user->id)
                       ->get();
+
+      //CHECK WHETHER PHONE IS CONNECTED OR NOT
+      if($phoneNumbers->count() > 0)
+      {
+        foreach($phoneNumbers as $rows)
+        {
+            $phone_number = $rows->phone_number;
+            $check_qr_status = ApiHelper::qr_status($phone_number);
+            $phone_string = substr($phone_number, 1);
+
+            if($check_qr_status <> $phone_string)
+            {
+                PhoneNumber::where([["user_id",$user->id],['phone_number',$phone_number]])->update(['status'=>0]);                      
+            }
+        }
+      }
+
+      $phone_updated = PhoneNumber::where("user_id",$user->id)->get();
       $arr['view'] =(string) view('auth.setting-phone-numbers')
                       ->with([
-                        "phoneNumbers"=>$phoneNumbers,
+                        "phoneNumbers"=>$phone_updated,
                       ]);
 
       return $arr;
@@ -171,7 +190,7 @@ class SettingController extends Controller
       $countphoneNumber = PhoneNumber::where("user_id",$user->id)->first();
       if(!is_null($countphoneNumber) && $resend == null){
           $arr['status'] = 'error';
-          $arr['message'] = "Sorry, you can create 1 phone number only";
+          $arr['message'] = Alert::one_number();
           return $arr;
       }
 
@@ -184,10 +203,11 @@ class SettingController extends Controller
 
       if (!is_null($phoneNumber) && $phoneNumber->status == 2){
           $arr['status'] = 'error';
-          $arr['message'] = "Phone Number Already Registered";
+          $arr['message'] = Alert::exists_phone();
           return $arr;
       }
 
+      //PHONE REGISTER TO API
       $member = User::find($user->id);
       $registered_phone = ApiHelper::reg($request->phone_number,$member->name);
       $status_register = json_decode($registered_phone,true);
@@ -201,17 +221,18 @@ class SettingController extends Controller
       }
 
       if(is_null($phoneNumber)){
+        $token = explode(':',$this->getToken($request->phone_number));
         $phoneNumber = new PhoneNumber();
         $phoneNumber->user_id = $user->id;
         $phoneNumber->phone_number = $request->phone_number;
         $phoneNumber->counter = 0;
         $phoneNumber->status = 0;
-        $phoneNumber->filename = $this->getToken($request->phone_number);
+        $phoneNumber->filename = $token[1];
         $phoneNumber->save();
       }
 
       $arr['status'] = 'success';
-      $arr['message'] = "Please open your whatsapp then scan the barcode";
+      $arr['message'] = "Mohon tunggu 3 - 5 menit, kemudian silahkan tekan 'klik to verify'";
       return $arr;
     }
 
@@ -261,29 +282,50 @@ class SettingController extends Controller
       {
           $error = array(
             'status'=>'error',
-            'phone_number'=>'Error, phone number not registered yet',
+            'phone_number'=>Alert::registered_phone(),
           );
           return response()->json($error);
       } 
 
       //IF PHONE NUMBER DIDN'T SCANNED OR VERIFY YET AND DISPLAY QR-CODE
-      if(preg_match("/\b" .'none'. "\b/i",$check['status']))
+      if(preg_match("/\b" .'none'. "\b/i",$check['status']) || empty($check['status']))
       {
           $qr_code = ApiHelper::get_qr_code($request->phone_number);
 
-          $data = array(
-            'status'=>'success',
-            'data'=>$qr_code,
-          );
+          if($qr_code == false)
+          {
+            $data = array(
+              'status'=>'error',
+              'phone_number'=>Alert::qrcode(),
+            );
+          }
+          else
+          {
+            $data = array(
+              'status'=>'success',
+              'data'=>$qr_code,
+            );
+          }
 
           return response()->json($data);
       }
 
       //IF PHONE NUMBER SCANNED OR VERIFY ALREADY
-      $error = array(
-          'status'=>'error',
-          'phone_number'=>'Your phone had connected',
-      );
+
+      if($request->phone_number == $check['status'])
+      {
+          $error = array(
+              'status'=>'true',
+              'phone_number'=>Alert::phone_connect(),
+          );
+      }
+      else
+      {
+          $error = array(
+              'status'=>'error',
+              'phone_number'=>Alert::error_verify(),
+          );
+      }
 
       return response()->json($error);
       

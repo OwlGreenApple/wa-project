@@ -33,7 +33,7 @@
     <div class="tabs-container" id="tab2C">
       <div class="act-tel-tab">
         <div class="form-control wrapper message mimport">
-          If you want add contact more than 1 please click : "<b><a class="open_import">import contact</a></b>" <!--or "<b>take from group</b>" if you want -->
+          If you want add contact more than 1 please click : "<a class="open_import"><b>import contact</b></a>" <!--or "<b>take from group</b>" if you want -->
         </div>
 
         <div class="error_message"><!-- error --></div>

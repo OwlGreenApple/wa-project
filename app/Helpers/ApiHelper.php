@@ -78,11 +78,12 @@ class ApiHelper
     if (!in_array($filename,$res_arr)) {
       $file_code=$_this->go_curl($url_img.$filename,$data,"GET");
         $qrcode='<img src="data:image/jpeg;base64,'.base64_encode($file_code).'"/>';
+        return $qrcode;
     }else{
         $qrcode=$filename;
+        return false;
     }
 
-    return $qrcode;
     //echo $qrcode;
   }
 

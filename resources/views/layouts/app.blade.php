@@ -19,7 +19,10 @@
     <link href="{{ asset('/assets/css/nunito.css') }}" rel="stylesheet">
     
     <!-- Styles -->
+
+    <!-- Bootstrap Style -->
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
+
     <!--<link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet"> -->
     <link href="{{ asset('/assets/datetimepicker/jquery.datetimepicker.css') }}" rel="stylesheet">
 
@@ -177,16 +180,17 @@
                      <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item mr-3">
-                           Hi,
+                           Hi, {{Auth()->user()->name}}
                         </li>
+                        <!--
                         <li class="nav-item mr-3">
-                            {{Auth()->user()->name}}
-                            <!--
+                           
+                            
                            <select class="form-control-sm tel-color" name="">
                              <option>08523193113</option>
                            </select>
-                            -->
-                        </li>
+                            
+                        </li>-->
                          <li class="nav-item cog-pos dropdown">
                            <a id="cogDropdown" class="icon-cog" data-toggle="dropdown"></a>
                            <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="cogDropdown">
@@ -224,7 +228,7 @@
     <!-- footer -->
     <div class="col-md-12">
       <div class="container footer">
-        Copyright &copy; 2020 <b>Activrespons</b> All Rights Reserved.
+        Copyright &copy; 2020 <b>Activrespon</b> All Rights Reserved.
       </div>
     </div>
 
