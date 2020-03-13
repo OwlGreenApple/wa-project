@@ -39,7 +39,7 @@
   <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>SETTINGS</h2>
+    <h2>SETTINGS <span id="min"></span> : <span id="secs"></span></h2>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -89,9 +89,9 @@
               <div class="col-lg-6"><div id="timer"></div></h3></div>
             </div>
 
-            <div class="text-right">
+            <!-- <div class="text-right">
               <button type="button" id="button-verify" class="btn btn-custom">Submit</button>
-            </div>
+            </div> -->
         </div>
 
         <div class="wrapper add-contact table-responsive">
@@ -215,7 +215,7 @@
                     </div>
                   </form>
                 </div>
-               
+                
             </div>
         </div>
       </div>
@@ -276,6 +276,7 @@
     editPhoneNumber();
     openEditModal();
     settingUser();
+    waitingTime();
 
     $('#div-verify').hide();
     $('.message').hide();
@@ -320,6 +321,36 @@
       });
       
     });
+
+    function waitingTime()
+    {
+        var sc = 0;
+        var min = 0;
+        var tm = setInterval(function(){
+            $("#secs").html(sc);
+            $("#min").html('0'+min);
+
+            if(sc < 10)
+            {
+              $("#secs").html('0'+sc);
+            }
+
+            if(sc == 60){
+              min = min + 1;
+              $("#min").html('0'+min);
+              sc = 0;
+              $("#secs").html('0'+sc);
+            }
+
+            if(min == 6)
+            {
+                $("#secs").html(0);
+                clearInterval(tm);
+            }
+
+            sc++;
+        },1000);
+    };
 
     function getQRCode(phone_number)
     {
