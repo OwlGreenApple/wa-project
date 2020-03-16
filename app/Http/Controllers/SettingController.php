@@ -393,4 +393,9 @@ class SettingController extends Controller
 
       return $arr;
     }
+
+    public function delete_api($wa_number)
+    {
+        ApiHelper::unreg($wa_number);
+    }
 }
