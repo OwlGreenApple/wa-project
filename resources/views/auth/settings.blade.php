@@ -39,7 +39,7 @@
   <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>SETTINGS <span id="min"></span> : <span id="secs"></span></h2>
+    <h2>SETTINGS</h2>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -57,7 +57,7 @@
     <div class="tabs-container" id="tab1C">
       <div class="act-tel-settings">
         <div class="form-control message col-lg-9">
-          Your Whatsapp Account Connected!
+          <!-- logic here -->
         </div>
 
         <div class="row col-fix">
@@ -270,13 +270,12 @@
     });
   }
 
-  $(document).ready(function() {    
+  $(document).ready(function() {   
     tabs();
     loadPhoneNumber();
     editPhoneNumber();
     openEditModal();
     settingUser();
-    waitingTime();
 
     $('#div-verify').hide();
     $('.message').hide();
@@ -301,8 +300,9 @@
           var data = jQuery.parseJSON(result);
           if(data.status == "success") {
             $('.message').show();
-            $('.message').html(data.message);
+            $('.message').html('<div class="text-center">'+data.message+" <b><h5><span id='min'></span> : <span id='secs'></span></h5></b></div>");
             loadPhoneNumber();
+            waitingTime();
           }
 
           if(data.status == "error") {
@@ -344,7 +344,7 @@
 
             if(min == 6)
             {
-                $("#secs").html(0);
+                $("#secs").html('0'+0);
                 clearInterval(tm);
             }
 

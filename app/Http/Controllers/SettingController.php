@@ -232,7 +232,7 @@ class SettingController extends Controller
       }
 
       $arr['status'] = 'success';
-      $arr['message'] = "Mohon tunggu 3 - 5 menit, kemudian silahkan tekan 'klik to verify'";
+      $arr['message'] = Alert::connect_success();
       return $arr;
     }
 
