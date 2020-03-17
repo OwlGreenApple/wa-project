@@ -71,6 +71,12 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
   Route::get('/list-order/load-order','Admin\OrderController@load_list_order');
   Route::get('/list-order/confirm','Admin\OrderController@confirm_order');
   
+  //admin Woowa
+  Route::get('/list-woowa',function(){
+    return view('admin.list-woowa.index');
+  });
+  Route::get('/list-woowa/load-woowa','Admin\OrderController@load_woowa');
+  
   //list phone
   Route::get('/list-phone',function(){
     return view('admin.list-phone.index');
