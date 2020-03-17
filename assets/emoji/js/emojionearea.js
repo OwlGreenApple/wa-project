@@ -134,7 +134,7 @@ document = window.document || {};
                 autocorrect       : "off",
                 autocapitalize    : "off",
             },
-            mainPathFolder    : 'assets',
+            mainPathFolder    : 'https://localhost/activrespons/assets',
             placeholder       : null,
             emojiPlaceholder  : ":smiley:",
             container         : null,

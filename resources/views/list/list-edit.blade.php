@@ -4,9 +4,12 @@
 
   <!-- TOP SECTION -->
 <div class="container act-tel-list-data">
+
   <div class="left">
-    <h2>{{$label}}</h2>
-    <h4 class="form-control">{{$url}}</h4>
+    <h2>{{$label}}&nbsp;</h2>
+    <input type="text" name="list_label" class="form-control" placeholder="Input List name" value="{{$label}}"/>
+    <div class="error list_label col-lg-12 text-left"></div>
+    <div class="text-left"><a id="list_name" class="btn btn-activ btn-sm mt-2">Change list name</a></div>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -23,8 +26,33 @@
     <!-- TABS 1 -->
     <div class="tabs-container" id="tab1C">
       <div class="act-tel-tab">
+        @if($customer->count() > 0)
+          <table class="table" id="data-customer">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Additional</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach($customer as $col)
+                <tr>
+                  <td>{{ $col->name }}</td>
+                  <td>{{ $col->email }}</td>
+                  <td>{{ $col->telegram_number }}</td>
+                  <td><a additional="{{ $col->additional }}" class="btn btn-info btn-sm text-white view">View Addtional</a></td>
+                  <td><a id="{{ $col->id }}" class="btn btn-danger btn-sm text-white">Delete</a></td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        @else
           <h2>Add Your Contact</h2>
           <h6 class="mt-3">From <a id="tab-contact">Add Contact</a> or <a id="tab-form">Form</a></h6>
+        @endif
       </div>
     <!-- end tabs -->  
     </div>
@@ -84,13 +112,28 @@
           <div class="wrapper">
             <div class="form-contact">
               <div class="input-group form-group">
+                  <input type="button" id="open_ck_editor" class="form-control" value="Click to add messages" />
+                  <div class="error list_label col-lg-12 text-left"></div>
+              </div>
+
+              <div class="input-group form-group showeditor">
                 <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
               </div>
 
               <div class="input-group form-group">
-                  <input type="text" name="list_label" class="form-control" placeholder="Input List name" value="{{$label}}"/>
-                  <div class="error list_label col-lg-12 text-left"></div>
-              </div> 
+                  <input type="text" name="label_name" class="form-control" placeholder="Label Name" value="{{ $data['label_name'] }}"/>
+                  <div class="error label_name col-lg-12 text-left"></div>
+              </div>
+
+              <div class="input-group form-group">
+                  <input type="text" name="label_phone" class="form-control" placeholder="Label Phone" value="{{ $data['label_phone'] }}"/>
+                  <div class="error label_phone col-lg-12 text-left"></div>
+              </div>
+
+              <div class="input-group form-group">
+                  <input type="text" name="label_email" class="form-control" placeholder="Label Email" value="{{ $data['label_email'] }}"/>
+                  <div class="error label_email col-lg-12 text-left"></div>
+              </div>
           </div>
           <!-- end wrapper -->
 
@@ -312,6 +355,32 @@
   </div>
 </div>
 
+<!-- Modal Copy Link -->
+<div class="modal fade" id="display_attribute" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modaltitle">
+          Customer Attribute
+        </h5>
+      </div>
+      <div class="modal-body">
+        <div id="customer_additional">
+          <!-- display customer additional -->
+        </div>
+      </div>
+      <div class="modal-footer" id="foot">
+        <button class="btn btn-primary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+      
+  </div>
+</div>
+
 <script type="text/javascript">
 
   /* CKEditor */
@@ -332,6 +401,7 @@
 
   $(document).ready(function() {    
     tabs();
+    open_ck_editor();
     //Choose();
     openImport();
     csvImport();
@@ -351,7 +421,18 @@
     insertFields();
     openAdditional();
     copyLink();
+    changeListName();
+    dataCustomer();
+    customerAttribute();
   });
+
+  function open_ck_editor()
+  {
+      $(".showeditor").hide();
+      $("#open_ck_editor").click(function(){
+        $(".showeditor").slideToggle(1000);
+      });
+  }
 
   // Jquery Tabs
   function tabs() {    
@@ -610,7 +691,10 @@
              // all data
              var data = {
                 id : {!! $id !!},
-                list_label : $("input[name='list_label']").val(),
+                //list_label : $("input[name='list_label']").val(),
+                label_name : $("input[name='label_name']").val(),
+                label_phone : $("input[name='label_phone']").val(),
+                label_email : $("input[name='label_email']").val(),
                 editor : CKEDITOR.instances.editor1.getData(),
                 pixel : $("textarea[name='pixel']").val(),
                 fields : datafields,
@@ -650,7 +734,9 @@
                    }
                    else
                    {
-                      $(".list_label").html(result.label);
+                      $(".label_name").html(result.label_name);
+                      $(".label_phone").html(result.label_phone);
+                      $(".label_email").html(result.label_email);
                    }
                 }
             });
@@ -1045,7 +1131,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
                 });
-                $.ajax({
+              $.ajax({
                   type : 'POST',
                   url : '{{route("insertdropdown")}}',
                   data : data,
@@ -1139,6 +1225,69 @@
         $('#copy-link').modal('show');
       });
     }
+
+  function changeListName()
+  {
+    $("#list_name").click(function(){
+        var list_label = $("input[name='list_label']").val();
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+          type : 'POST',
+          url : '{{url("changelistname")}}',
+          data : {id : {!! $data['listid'] !!}, list_name : list_label},
+          dataType : 'json',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            alert(result.response);
+
+            if(result.status == 'success')
+            {
+              $(".act-tel-list-data h2").html(list_label);
+            }
+          },
+          error : function(xhr){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
+          }
+        });
+    });
+  }
+
+  function dataCustomer()
+  {
+    $("#data-customer").DataTable({
+        "pageLength": 5
+    });
+  }
+
+  function customerAttribute()
+  {
+    $(".view").click(function(){
+      var attribute = $(this).attr('additional');
+      var box = '';
+      $("#display_attribute").modal();
+
+      $.each( jQuery.parseJSON(attribute), function( key, value ) {
+          box += '<div class="form-group row">';
+          box += '<label class="col-sm-4 col-form-label">'+key+'</label>';
+          box += '<div class="form-control form-control-sm col-sm-6 col-form-label">'+value+'</div>';
+          box += '</div>';
+      });
+      $("#customer_additional").html(box);
+    });
+  }
 
   /*
   function radioCheck(){

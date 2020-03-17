@@ -27,19 +27,18 @@
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Campaign :</label>
         <div class="col-sm-9">
-          <!--
+
           <div class="form-check form-check-inline">
             <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio1" value="event" checked>
+              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio1" value="event" checked />
               <span class="checkmark"></span>
             </label>
             <label class="form-check-label" for="inlineRadio1">Event</label>
           </div>
-        -->
 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio2" value="auto" checked>
+              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio2" value="auto" />
               <span class="checkmark"></span>
             </label>
             <label class="form-check-label" for="inlineRadio2">Auto Responder</label>
@@ -47,7 +46,7 @@
 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio3" value="broadcast">
+              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio3" value="broadcast" />
               <span class="checkmark"></span>
             </label>
             <label class="form-check-label" for="inlineRadio3">Broadcast</label>
@@ -87,7 +86,6 @@
 
       <div class="box-schedule"></div>
 
-      <!--
       <div class="form-group row date-send">
         <label class="col-sm-3 col-form-label">Date Send :</label>
         <div class="col-sm-9 relativity">
@@ -106,7 +104,6 @@
         </div>
       </div>
 
-
       <div class="form-group row reminder">
         <label class="col-sm-3 col-form-label">Select Reminder :</label>
         <div class="col-sm-9 relativity">
@@ -118,18 +115,20 @@
            <span class="icon-carret-down-circle"></span>
         </div>
       </div>
-      -->
 
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Time to send Message :</label>
         <div class="col-sm-9 relativity">
           <span class="inputh">
+            <input name="hour" type="text" class="timepicker form-control" value="00:00" readonly />
+          </span>
+          <!-- <span class="inputh">
              <select name="day" class="form-control col-sm-7 float-left days delcols mr-3"> @for($x=1;$x<=100;$x++) 
                   <option value="{{ $x }}">{{ $x }} days after event</option>;
              @endfor
              </select>
             <input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />
-          </span>
+          </span> -->
           <span class="error day"></span><br/>
           <span class="error hour"></span>
         </div>
@@ -195,11 +194,12 @@
             $('.div-loading').addClass('background-load');
           },
           success : function(result){
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
 
             if(result.err == 'ev_err')
-            {   $(".error").show();
+            {  
+                $('#loader').hide();
+                $('.div-loading').removeClass('background-load');
+                $(".error").show();
                 $(".campaign_name").html(result.campaign_name);
                 $(".list_id").html(result.list_id);
                 $(".event_time").html(result.event_time);
@@ -209,6 +209,8 @@
             }
             else if(result.err == 'responder_err')
             {
+                $('#loader').hide();
+                $('.div-loading').removeClass('background-load');
                 $(".error").show();
                 $(".campaign_name").html(result.campaign_name);
                 $(".list_id").html(result.list_id);
@@ -218,6 +220,8 @@
             }
             else if(result.err == 'broadcast_err')
             {
+                $('#loader').hide();
+                $('.div-loading').removeClass('background-load');
                 $(".error").show();
                 $(".campaign_name").html(result.campaign_name);
                 $(".list_id").html(result.list_id);
@@ -237,6 +241,7 @@
                 $("input[name='date_send']").val('');
                 $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
                 alert(result.message);
+                location.href='{{ url("campaign") }}';
             }
           },
           error : function(xhr,attribute,throwable)
@@ -266,7 +271,7 @@
           $("input[name=day_reminder]").prop('disabled',false);
           $(".event-time").show();
           $(".reminder").show();
-          $(".broadcast-type").hide();
+          //$(".broadcast-type").hide();
           $(".date-send").hide();
         }
         else if(val == 'auto'){
@@ -275,7 +280,7 @@
           $("input[name=day_reminder]").prop('disabled',false);
           $(".reminder").hide();
           $(".inputh").html(hplus);
-          $(".broadcast-type").hide();
+          //$(".broadcast-type").hide();
           $(".date-send").hide();
         }
         else {
@@ -284,7 +289,7 @@
           $(".event-time").hide();
           $(".reminder").hide();
           $(".inputh").html(hday);
-          $(".broadcast-type").show();
+          //$(".broadcast-type").show();
           $(".date-send").show();
         }
 

@@ -54,22 +54,35 @@ class CustomerController extends Controller
                      # count if name has child or not
                      $doption = Additional::where([['list_id',$list->id],['id_parent',$col->id]])->get();
 
+                     $colname = $col->name;
+
                      if($doption->count() > 0)
                      {
                          foreach($doption as $rows)
                          {
-                            $arr[$col->name][$col->is_field][] = $rows->name;
+                            $arr[(int)$col->is_optional][$colname][$col->is_field][] = $rows->name;
                          }
                      } 
                      else 
                      {
-                            $arr[$col->name][$col->is_field] = $col;
+                            $arr[(int)$col->is_optional][$colname][$col->is_field] = $col;
                      }
                 } 
 
             }
-            
-        return view('register-customer',['id'=>encrypt($list->id),'content'=>$list->content,'listname'=>$link_list,'pixel'=>$list->pixel_text,'additional'=>$arr]);
+
+        $data = [
+          'id'=>encrypt($list->id),
+          'label_name'=>$list->label_name,
+          'label_phone'=>$list->label_phone,
+          'label_email'=>$list->label_email,
+          'content'=>$list->content,
+          'listname'=>$link_list,
+          'pixel'=>$list->pixel_text,
+          'additional'=>$arr,
+        ];
+
+        return view('register-customer',$data);
       }
     }
 
@@ -100,109 +113,10 @@ class CustomerController extends Controller
             $customer->list_id = $lists->id;
             $customer->name = $request->subscribername;
             $customer->email = $request->email;
-            $customer->telegram_number = $request->phone;
-
-            $phoneNumber = PhoneNumber::find($lists->phone_number_id);
-            // dd($lists);
-            // dd($phoneNumber);
-
-            //$phoneNumber = PhoneNumber::find(88);
-            
-            if($request->selectType == 'ph'){
-              $customer->username = "";
-              $customer->telegram_number = $request->phone;
-
-              /*
-              * Write to PHPTDLIB API Server 
-              * (Phone number)
-              */
-              $curl = curl_init();
-              $data = array(
-                  'token'=> env('TOKEN_API'),
-                  'phone_number' => $phoneNumber->phone_number,
-                  'groupname'=>$lists->group_name, 
-                  'filename'=>env('FILENAME_API').$phoneNumber->id,
-              );
-
-              curl_setopt_array($curl, array(
-                CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/getChatId-phone.php",
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => http_build_query($data),
-                CURLOPT_POST => 1,
-              ));
-
-              $response = curl_exec($curl);
-              $err = curl_error($curl);
-
-              curl_close($curl);
-
-              if ($err) {
-                echo "cURL Error #:" . $err;
-              } else {
-                // echo $response."\n";
-                $result = json_decode($response,true);
-                dd($result);
-                $chat_id = 0;
-                foreach($result as $res){
-                  if (empty($res["phone_number"]) || ($res["phone_number"]==null)){
-                  }
-                  else {
-                    if ("+".$res["phone_number"]==$request->phone) {
-                      $chat_id = $res["id"];
-                    }
-                  }
-                }
-                if ($chat_id == 0){
-                  $data['success'] = false;
-                  $data['message'] = 'Error-000! Sorry there is something wrong with our system (please join the group '.$lists->group_name.' first on telegram)';
-                  return response()->json($data);
-                }
-
-                $customer->chat_id = $chat_id;
-              }
-
-            } 
-
-            if($request->selectType == 'tl'){
-              $customer->username = $request->usertel;
-              $customer->telegram_number = "";
-
-              /*
-              * Write to PHPTDLIB API Server 
-              * (Username Telegram)
-              */
-              $curl = curl_init();
-              $data = array(
-                  'token'=> env('TOKEN_API'),
-                  'phone_number' => $phoneNumber->phone_number,
-                  'username'=>$request->usertel, 
-                  'filename'=>env('FILENAME_API').$phoneNumber->id,
-              );
-
-              curl_setopt_array($curl, array(
-                CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/getChatId-username.php",
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => http_build_query($data),
-                CURLOPT_POST => 1,
-              ));
-
-              $response = curl_exec($curl);
-              $err = curl_error($curl);
-
-              curl_close($curl);
-
-              if ($err) {
-                // echo "cURL Error #:" . $err;
-              } else {
-                // echo $response."\n";
-                $customer->chat_id = $response;
-              }
-            }
-            
+            $customer->telegram_number = $request->phone_number;
             $customer->additional = $addt;
             $customer->save();
+
             $customer_id = $customer->id;
             $customer_join = $customer->created_at;
         }

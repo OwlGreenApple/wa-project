@@ -51,7 +51,7 @@ class CampaignController extends Controller
           $request->day = 0;
       }
 
-      /*if($campaign == 'event')
+      if($campaign == 'event')
       {
         $rules = array(
             'campaign_name'=>['required','max:50'],
@@ -91,7 +91,7 @@ class CampaignController extends Controller
             return response()->json($data);
         }
       } 
-      */
+      
       if($campaign == 'auto')
       {   
         /* Validator */
@@ -175,9 +175,12 @@ class CampaignController extends Controller
         return "Not Authorized";
       }
       $lists = UserList::where('user_id',$user_id)->get();
+      $current_list = UserList::where('id',$campaign->list_id)->select('label')->first();
       $data['lists'] = $lists;
       $data['campaign_id'] = $campaign_id;
       $data['campaign_name'] = $campaign->name;
+      $data['currentlist'] = $current_list->label;
+      $data['currentlistid'] = $campaign->list_id;
       return view('reminder.add-message-auto-responder',$data);
     }
 
@@ -189,9 +192,12 @@ class CampaignController extends Controller
         return "Not Authorized";
       }
       $lists = UserList::where('user_id',$user_id)->get();
+      $current_list = UserList::where('id',$campaign->list_id)->select('label')->first();
       $data['lists'] = $lists;
       $data['campaign_id'] = $campaign_id;
       $data['campaign_name'] = $campaign->name;
+      $data['currentlist'] = $current_list->label;
+      $data['currentlistid'] = $campaign->list_id;
       return view('event.add-message-event',$data);
     }
 

@@ -59,43 +59,49 @@
 
                 <form class="add-contact" id="addcustomer">
                     <div class="form-group">
-                      <label>Name*</label>
-                      <input type="text" name="subscribername" class="form-control" placeholder="Input Your Name" >
+                      <label>{{ $label_name }}*</label>
+                      <input type="text" name="subscribername" class="form-control" />
                       <span class="error name"></span>
                     </div>
 
                     <div class="prep1">
                       <div class="form-group">
-                          <label>Phone Number*</label>
-                          <input type="text" name="phone_number" class="form-control" placeholder="Input your phone number"/>
+                          <label>{{ $label_phone }}*</label>
+                          <input type="text" name="phone_number" class="form-control" />
                           <span class="error phone"></span>
                       </div>
                     </div>
 
                     <div class="form-group">
-                      <label>Email*</label>
-                      <input type="email" name="email" class="form-control" placeholder="Input Your Email" />
+                      <label>{{ $label_email }}*</label>
+                      <input type="email" name="email" class="form-control" />
                       <span class="error email"></span>
                     </div> 
 
                     @if(count($additional) > 0)
-                      @foreach($additional as $row=>$val)
+                      @foreach($additional as $is_optional=>$row)
                         <div class="form-group">
-                            <label>{{$row}}</label>
-
+                            @foreach($row as $name=>$val)
+                              @if($is_optional > 0)
+                                <label>{{$name}}*</label>
+                              @else
+                                <label>{{$name}}</label>
+                              @endif
+                           
                             @foreach($val as $key=>$col)
                                 @if($key == 0)
-                                     <input type="text" class="form-control" name="data[{{$row}}]" />
+                                     <input type="text" class="form-control" name="data[{{$name}}]" />
                                 @else
-                                    <select name="data[{{$row}}]" class="form-control">
+                                    <select name="data[{{$name}}]" class="form-control">
                                         @foreach($col as $opt)
                                             <option value="{{$opt}}">{{$opt}}</option>
                                         @endforeach
                                     </select>
                                 @endif
                             @endforeach
-                            <span class="error {{$row}}"></span>
+                            <span class="error {{$name}}"></span>
                        </div>
+                        @endforeach
                       @endforeach
                     @endif
 
@@ -184,12 +190,12 @@
                           //setTimeout(function(){location.href= result.wa_link} , 1000);   
                           // clearField();
                       } else {
-                          $(".error").fadeIn('fast');
+                          $(".error").html('');
+                          $(".error").fadeIn('slow');
                           $(".name").text(result.name);
                           $(".main").text(result.main);
                           $(".email").text(result.email);
                           $(".phone").text(result.phone);
-                          $(".phone").text(result.usertel);
                           $(".captcha").text(result.captcha);
                           $(".error_list").text(result.list);
 
@@ -202,6 +208,12 @@
 
                           $(".error").delay(2000).fadeOut(5000);
                       }
+                    },
+                    error : function(xhr)
+                    {
+                      $('#loader').hide();
+                      $('.div-loading').removeClass('background-load');
+                      console.log(xhr.responseText);
                     }
                 });
                 /*end ajax*/

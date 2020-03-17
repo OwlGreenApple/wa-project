@@ -67,16 +67,18 @@
       </div>
 
       <div class="form-group row lists">
-        <label class="col-sm-3 col-form-label">Select List :</label>
+        <label class="col-sm-3 col-form-label">Current List :</label>
         <div class="col-sm-9 relativity">
-           <select name="list_id" class="custom-select-campaign form-control">
+          {{ $currentlist }}
+           <!-- <select name="list_id" class="custom-select-campaign form-control">
               @if($lists->count() > 0)
                 @foreach($lists as $row)
                   <option value="{{$row->id}}">{{$row->label}}</option>
                 @endforeach
               @endif
-           </select>
+           </select> 
            <span class="icon-carret-down-circle"></span>
+           -->
         </div>
       </div>
 
@@ -133,11 +135,25 @@
 </div>
 
 <script type="text/javascript">
+
+   /* Datetimepicker + emojione */
+  $(function () {
+      $('#datetimepicker').datetimepicker({
+        format : 'YYYY-MM-DD HH:mm',
+      }); 
+
+      $("#divInput-description-post").emojioneArea({
+          pickerPosition: "right",
+          //mainPathFolder : "aaaaaa",
+      });
+  });
+
   function saveEvent()
   {
     $("#save_campaign").submit(function(e){
       e.preventDefault();
-      var data = $(this).serialize();
+      var data = $(this).serializeArray();
+      data.push({name:'list_id',value:'{!! $currentlistid !!}'},{ name:'campaign_name', value:'<?php echo $campaign_name;?>'});
 
       $.ajax({
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -154,7 +170,17 @@
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
             loadEvent();
-            alert(result.message);
+
+            if(result.err == undefined)
+            {
+              alert(result.message);
+              $("input[name='event_time']").val('')
+               $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+            }
+            else
+            {
+              alert('Sorry, there is some error on our system, please try again later');
+            }
           },
           error : function(xhr,attribute,throwable)
           {
@@ -165,18 +191,6 @@
       //ajax
     });
   }
-
-  /* Datetimepicker */
-  $(function () {
-      $('#datetimepicker').datetimepicker({
-        format : 'YYYY-MM-DD HH:mm',
-      }); 
-
-      $("#divInput-description-post").emojioneArea({
-          pickerPosition: "right",
-          mainPathFolder : "{{url('')}}",
-      });
-  });
   
   function loadEvent()
   {

@@ -519,7 +519,10 @@ class ListController extends Controller
        
         $userid = Auth::id();
         $id = $request->id;
-        $list_label = $request->list_label;
+        //$list_label = $request->list_label;
+        $label_name = $request->label_name;
+        $label_phone = $request->label_phone;
+        $label_email = $request->label_email;
         $editor = $request->editor;
         $pixel = $request->pixel;
         $fields = $request->fields;
@@ -529,7 +532,9 @@ class ListController extends Controller
         $data['additionalerror'] = false;
 
         $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
-            'label'=>$list_label,
+            'label_name'=>$label_name,
+            'label_phone'=>$label_phone,
+            'label_email'=>$label_email,
             'content'=> $editor,
             'pixel_text'=> $pixel,
         ]);
@@ -576,6 +581,39 @@ class ListController extends Controller
         return response()->json($data);
     }
 
+    public function changeListName(Request $request)
+    {
+        $userid = Auth::id();
+        $id = $request->id;
+        $list_label = $request->list_name;
+        $result['status'] = false;
+
+        if(empty($list_label) || $list_label == null)
+        {
+            $result['response'] = 'List name cannot be empty';
+            return response()->json($result);
+        } 
+
+        if(strlen($list_label) > 50)
+        {
+            $result['response'] = 'List name cannot greater than 50 characters';
+            return response()->json($result);
+        }
+
+        try{
+            $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
+                'label'=>$list_label,
+            ]);
+            $result['status'] = 'success';
+            $result['response'] = 'List name has been updated';
+        }
+        catch(Exception $e)
+        {
+            $result['response'] = 'Error, failed to change list name';
+        }
+        return response()->json($result);
+    }
+
     #DELETE FIELD ADDITIONAL
     public function delField(Request $request)
     {
@@ -619,9 +657,14 @@ class ListController extends Controller
             return redirect('lists');
         } 
 
+        $customer = Customer::where([['list_id',$listid],['user_id',$userid]])->get();
+
         $data = array(
             'list_label'=>$list->label,
             'list_name'=>$list->name,
+            'label_name'=>$list->label_name,
+            'label_phone'=>$list->label_phone,
+            'label_email'=>$list->label_email,
             'content'=> $list->content,
             'pixel'=>$list->pixel_text,
             'listid'=>$listid
@@ -631,7 +674,7 @@ class ListController extends Controller
         $id = $listid;
         $list_id = encrypt($id);
       
-       return view('list.list-edit',['data'=>$data,'label'=>$list->label,'listid'=>$list_id,'url'=>$url,'listname'=>$list->name,'id'=>$id]);
+       return view('list.list-edit',['data'=>$data,'label'=>$list->label,'listid'=>$list_id,'url'=>$url,'listname'=>$list->name,'id'=>$id,'customer'=>$customer]);
     }
 
     //DUPLICATE LIST

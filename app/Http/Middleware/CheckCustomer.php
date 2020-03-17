@@ -50,7 +50,6 @@ class CheckCustomer
     
         /* Get all data from request and then fetch it in array */
         $req = $request->all();
-        $telegram_number = $request->phone;
         $id_list = $request->listid;
 
         try{
@@ -64,13 +63,13 @@ class CheckCustomer
          $data = array(
             'name'=>$req['subscribername'],
             'email'=>$req['email'],
-            'phone'=>$req['phone'],
+            'phone_number'=>$req['phone_number'],
          );
 
          $rules = [
             'name'=> ['required','min:4','max:190'],
             'email'=> ['required','email','max:190',new SubscriberEmail($id_list)],
-            'phone'=> ['required','min:9','max:18',new TelegramNumber, new SubscriberPhone($id_list)],
+            'phone_number'=> ['required','min:9','max:18',new TelegramNumber, new SubscriberPhone($id_list)],
          ];
 
         $validator = Validator::make($data,$rules);
@@ -80,7 +79,7 @@ class CheckCustomer
             $data = array(
                 'name'=>$error->first('name'),
                 'email'=>$error->first('email'),
-                'phone'=>$error->first('phone'),
+                'phone'=>$error->first('phone_number'),
             );
             
             return response()->json($data);
@@ -137,9 +136,16 @@ class CheckCustomer
 
                 if(empty($data[$row->name])){
                      $error[$row->name] = "Column ".$row->name." cannot be empty ";
-                } else {
+                } 
+                else if(strlen($data[$row->name]) > 30)
+                {
+                     $error[$row->name] = "Column ".$row->name." maximum character length is 30 ";
+                } 
+                else 
+                {
                     return true;
                 }
+
              }
             return json_encode($error);
         } else {

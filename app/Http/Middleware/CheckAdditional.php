@@ -17,10 +17,23 @@ class CheckAdditional
      * @param  \Closure  $next
      * @return mixed
      */
+
+    function __construct()
+    {
+        // LANGUAGE ERROR
+        $this->label_name_empty = 'Label name cannot be empty';
+        $this->label_phone_empty = 'Label phone cannot be empty';
+        $this->label_email_empty = 'Label email cannot be empty';
+        $this->label_name_gt = 'Label name cannot greater than 30 characters';
+        $this->label_phone_gt = 'Label phone cannot greater than 30 characters';
+        $this->label_email_gt = 'Label email cannot greater than 30 characters';
+    }
+
     public function handle($request, Closure $next)
     {
-
-        $label = $request->list_label;
+        $label_name = $request->label_name;
+        $label_phone = $request->label_phone;
+        $label_email = $request->label_email;
         $fields = $request->fields;
         $dropfields = $request->dropfields;
         $data['error'] = true;
@@ -28,14 +41,34 @@ class CheckAdditional
         $checkuserlist = new CheckUserLists;
         $error = array();
 
-        if(empty($label) || $label == null)
+        if($label_name == null)
         {
-            $error['label'] = 'List name cannot be empty';
-        } 
+            $error['label_name'] = $this->label_name_empty;
+        }
 
-        if(strlen($label) > 50)
+        if(strlen($label_name) > 30)
         {
-            $error['label'] = 'List name cannot greater than 50 characters';
+            $error['label_name'] = $this->label_name_gt;
+        }
+
+        if($label_phone == null)
+        {
+            $error['label_phone'] = $this->label_phone_empty;
+        }
+
+        if(strlen($label_phone) > 30)
+        {
+            $error['label_phone'] = $this->label_phone_gt;
+        }
+
+        if($label_email == null)
+        {
+            $error['label_email'] = $this->label_email_empty;
+        }
+
+        if(strlen($label_email) > 30)
+        {
+            $error['label_email'] = $this->label_email_gt;
         }
 
         if(count($error) > 0)
