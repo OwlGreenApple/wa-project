@@ -205,6 +205,23 @@ class EventController extends Controller
         $event_date =  $request->event_time;
         $reminderid = array();
 
+        $old_campaign = Campaign::find($campaign_id);
+
+        if(!is_null($old_campaign))
+        {
+            $campaign = new Campaign;
+            $campaign->name = $campaign_name;
+            $campaign->type = 0;
+            $campaign->list_id = $old_campaign->list_id;
+            $campaign->user_id = $user_id;
+            $campaign->save();
+            $new_campaign_id = $campaign->id;
+        }
+        else
+        {
+            return response()->json(['message'=>'Invalid campaign']);
+        }
+
         $row_event = Reminder::where([['campaign_id',$campaign_id],['user_id',$user_id],['is_event',1]])->get();
 
         if($row_event->count() > 0)
@@ -215,68 +232,72 @@ class EventController extends Controller
               $event_day = $row->days;
               $event_sending = $row->hour_time;
               $event_message = $row->message;
-
-              $campaign = new Campaign;
-              $campaign->name = $campaign_name;
-              $campaign->type = 0;
-              $campaign->list_id = $list_id;
-              $campaign->user_id = $user_id;
-              $campaign->save();
-              $campaign_id = $campaign->id;
+              $oldreminderid[] = $row->id;
 
               $event = new Reminder;
               $event->user_id = $user_id;
               $event->list_id = $list_id;
-              $event->campaign_id = $campaign_id;
+              $event->campaign_id = $new_campaign_id;
               $event->is_event = 1;
               $event->days = $event_day;
               $event->event_time = $event_date;
               $event->hour_time = $event_sending;
               $event->message = $event_message;
               $event->save();
-              $newreminderid = $event->id;
-
-              $reminderid[] = $row->id;
+              $newreminderid[] = $event->id;
+              $combine = array_combine($oldreminderid,$newreminderid);
             }
         }
         else 
         {
-            return response()->json(['message'=>'Id is not registered, please reload or refresh your browser!']);
+            return response()->json(['message'=>'Your campaign duplicated successfully']);
         }
 
-        if($event->save())
+        if(count($oldreminderid) > 0)
         { 
-          $remindercustomer = ReminderCustomers::whereIn('reminder_id',$reminderid)->where('user_id',$user_id)->get();
+          $remindercustomer = ReminderCustomers::whereIn('reminder_id',$oldreminderid)->where('user_id',$user_id)->get();
         }
         else {
            return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
         }
 
-        dd($remindercustomer);
-
         if($remindercustomer->count() > 0)
         {
-          foreach($remindercustomer as $row)
-          {
-              $eventcustomer = new ReminderCustomers;
-              $eventcustomer->user_id = $user_id;
-              $eventcustomer->list_id = $list_id;
-              $eventcustomer->reminder_id = $newreminderid;
-              $eventcustomer->customer_id = $row->customer_id;
-          }
+           try
+           {
+              foreach($remindercustomer as $row)
+              {
+                $eventcustomer = new ReminderCustomers;
+                $eventcustomer->user_id = $user_id;
+                $eventcustomer->list_id = $list_id;
+                $eventcustomer->reminder_id = $row->reminder_id;
+                $eventcustomer->customer_id = $row->customer_id;
+                $eventcustomer->save();
+                $newremindercustomerid[] = $eventcustomer->id;
+              }
+
+              if(count($newremindercustomerid) > 0)
+              {
+                foreach($newremindercustomerid as $newid)
+                {
+                  foreach($combine as $oldreminderid=>$newreminderid)
+                  {
+                    ReminderCustomers::where([['id',$newid],['reminder_id',$oldreminderid]])->update(['reminder_id'=>$newreminderid]);
+                  }
+                }
+              }
+
+             return response()->json(['message'=>'Your campaign duplicated successfully']);
+           }
+           catch(Exception $e)
+           {
+             return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
+           }
+            
         }
         else 
         {
             return response()->json(['message'=>'Your campaign duplicated successfully']);
-        }
-
-        if($eventcustomer->save())
-        {
-            return response()->json(['message'=>'Your campaign duplicated successfully']);
-        }
-        else
-        {
-            return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
         }
     }
 

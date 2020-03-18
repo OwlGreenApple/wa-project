@@ -257,47 +257,47 @@
   {
     $("#duplicate").submit(function(e){
         e.preventDefault();
-        var reminder_id = $(this).attr('data');
+        var campaign_id = $(this).attr('data');
 
         var data = $(this).serializeArray();
-        data.push({name : 'id', value:reminder_id});
+        data.push({name : 'id', value:campaign_id});
 
         $.ajax({
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        type: 'POST',
-        url: "{{ url('event-duplicate') }}",
-        data: data,
-        dataType: 'json',
-        beforeSend: function()
-        {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
-        },
-        success: function(result) {
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-
-          if(result.success == 0)
-          { 
-            $(".error").show();
-            $(".campaign_name").html(result.campaign_name);
-            $(".event_time").html(result.event_time);
-          }
-          else
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          type: 'POST',
+          url: "{{ url('event-duplicate') }}",
+          data: data,
+          dataType: 'json',
+          beforeSend: function()
           {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success: function(result) {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+
+            if(result.success == 0)
+            { 
+              $(".error").show();
+              $(".campaign_name").html(result.campaign_name);
+              $(".event_time").html(result.event_time);
+            }
+            else
+            {
+              $(".error").hide();
+              alert(result.message);
+              $("#modal_duplicate").modal('hide');
+              $("#duplicate:input").val('');
+              displayEvent();
+            }
+          },
+          error : function(xhr,attr,throwable){
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
             $(".error").hide();
-            alert(result.message);
-            $("#modal_duplicate").modal('hide');
-            $("#duplicate:input").val('');
-            displayEvent();
+            alert(xhr.responseText);
           }
-        },
-        error : function(xhr,attr,throwable){
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-          $(".error").hide();
-          alert(xhr.responseText);
-        }
       });
 
     });
@@ -316,10 +316,10 @@
   {
     $("#duplicate_reminder").submit(function(e){
         e.preventDefault();
-        var reminder_id = $(this).attr('data');
+        var campaign_id = $(this).attr('data');
 
         var data = $(this).serializeArray();
-        data.push({name : 'id', value : reminder_id});
+        data.push({name : 'id', value : campaign_id});
 
         $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },

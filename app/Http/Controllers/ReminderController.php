@@ -215,45 +215,61 @@ class ReminderController extends Controller
     public function duplicateReminder(Request $request)
     {
         $user_id = Auth::id();
-        $reminder_id = $request->id;
+        $campaign_id = $request->id;
         $campaign_name = $request->campaign_name;
+        $reminderid = array();
 
-        $row_reminder = Reminder::where([['id',$reminder_id],['user_id',$user_id],['is_event',0]])->first();
+        $old_campaign = Campaign::find($campaign_id);
 
-        if(!is_null($row_reminder))
+         if(!is_null($old_campaign))
         {
-          $list_id = $row_reminder->list_id;
-          $reminder_day = $row_reminder->days;
-          $reminder_sending = $row_reminder->hour_time;
-          $reminder_message = $row_reminder->message;
+            $campaign = new Campaign;
+            $campaign->name = $campaign_name;
+            $campaign->type = 0;
+            $campaign->list_id = $old_campaign->list_id;
+            $campaign->user_id = $user_id;
+            $campaign->save();
+            $new_campaign_id = $campaign->id;
+        }
+        else
+        {
+            return response()->json(['message'=>'Invalid campaign']);
+        }
 
-          $campaign = new Campaign;
-          $campaign->name = $campaign_name;
-          $campaign->type = 1;
-          $campaign->list_id = $list_id;
-          $campaign->user_id = $user_id;
-          $campaign->save();
-          $campaign_id = $campaign->id;
+        $row_reminder = Reminder::where([['campaign_id',$campaign_id],['user_id',$user_id],['is_event',0]])->get();
 
-          $reminder = new Reminder;
-          $reminder->user_id = $user_id;
-          $reminder->list_id = $list_id;
-          $reminder->campaign_id = $campaign_id;
-          $reminder->is_event = 0;
-          $reminder->days = $reminder_day;
-          $reminder->hour_time = $reminder_sending;
-          $reminder->message = $reminder_message;
-          $reminder->save();
-          $newreminderid = $reminder->id;
+        if($row_reminder->count() > 0)
+        {
+           foreach($row_reminder as $row)
+            {
+              $list_id = $row_reminder->list_id;
+              $reminder_day = $row_reminder->days;
+              $reminder_sending = $row_reminder->hour_time;
+              $reminder_message = $row_reminder->message;
+              $oldreminderid[] = $row->id;
+
+              $reminder = new Reminder;
+              $reminder->user_id = $user_id;
+              $reminder->list_id = $list_id;
+              $reminder->campaign_id = $campaign_id;
+              $reminder->is_event = 0;
+              $reminder->days = $reminder_day;
+              $reminder->hour_time = $reminder_sending;
+              $reminder->message = $reminder_message;
+              $reminder->save();
+              $newreminderid = $reminder->id;
+              $newreminderid[] = $event->id;
+              $combine = array_combine($oldreminderid,$newreminderid);
+            }
         }
         else 
         {
            return response()->json(['message'=>'Id is not registered, please reload or refresh your browser!']);
         }
 
-        if($reminder->save())
+        if(count($oldreminderid) > 0)
         { 
-          $remindercustomer = ReminderCustomers::where([['user_id',$user_id],['reminder_id',$reminder_id]])->get();
+         $remindercustomer = ReminderCustomers::whereIn('reminder_id',$oldreminderid)->where('user_id',$user_id)->get();
         }
         else {
            return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
@@ -261,29 +277,43 @@ class ReminderController extends Controller
 
         if($remindercustomer->count() > 0)
         {
-          foreach($remindercustomer as $row)
-          {
-              $respondercustomer = new ReminderCustomers;
-              $respondercustomer->user_id = $user_id;
-              $respondercustomer->list_id = $list_id;
-              $respondercustomer->reminder_id = $newreminderid;
-              $respondercustomer->customer_id = $row->customer_id;
-              $respondercustomer->save();
-          }
+           try
+           {
+              foreach($remindercustomer as $row)
+              {
+                $eventcustomer = new ReminderCustomers;
+                $eventcustomer->user_id = $user_id;
+                $eventcustomer->list_id = $list_id;
+                $eventcustomer->reminder_id = $row->reminder_id;
+                $eventcustomer->customer_id = $row->customer_id;
+                $eventcustomer->save();
+                $newremindercustomerid[] = $eventcustomer->id;
+              }
+
+              if(count($newremindercustomerid) > 0)
+              {
+                foreach($newremindercustomerid as $newid)
+                {
+                  foreach($combine as $oldreminderid=>$newreminderid)
+                  {
+                    ReminderCustomers::where([['id',$newid],['reminder_id',$oldreminderid]])->update(['reminder_id'=>$newreminderid]);
+                  }
+                }
+              }
+
+             return response()->json(['message'=>'Your campaign duplicated successfully']);
+           }
+           catch(Exception $e)
+           {
+             return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
+           }
+            
         }
         else 
         {
             return response()->json(['message'=>'Your campaign duplicated successfully']);
         }
 
-        if($respondercustomer->save())
-        {
-            return response()->json(['message'=>'Your campaign duplicated successfully']);
-        }
-        else
-        {
-            return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
-        }
     }
 
     /****************************************************************************************
