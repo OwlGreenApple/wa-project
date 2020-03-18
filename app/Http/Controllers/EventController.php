@@ -18,6 +18,7 @@ use App\Customer;
 use Carbon\Carbon;
 use App\Sender;
 use App\Campaign;
+use App\Helpers\Alert;
 use DB;
 
 class EventController extends Controller
@@ -111,43 +112,58 @@ class EventController extends Controller
         {
             return 'Please do not modify default value';
         }
-          $event = Campaign::where([['campaigns.user_id',$id],['campaigns.type',$type],['reminders.is_event','=',1]])
-            ->join('reminders','reminders.campaign_id','=','campaigns.id')
-            ->join('lists','lists.id','=','campaigns.list_id')
-            ->select('campaigns.name','lists.label','campaigns.created_at','reminders.*','reminders.id AS id_reminder')
+          $event = Campaign::where([['campaigns.user_id',$id],['campaigns.type',$type]])
+            ->leftJoin('lists','lists.id','=','campaigns.list_id')
+            ->select('campaigns.name','lists.label','campaigns.created_at','campaigns.id')
             ->orderBy('campaigns.id','desc')
             ->get();
-
 
           if($event->count() > 0)
           {
               foreach($event as $row)
               {
-                  $days = (int)$row->days;
-                  if($days < 0){
-                    $abs = abs($days);
-                    $event_time = Carbon::parse($row->event_time)->subDays($abs);
+                  $reminder = Reminder::where([['campaign_id', $row->id],['is_event',1],['status',1]])->first();
+
+                  if(!is_null($reminder))
+                  {
+                      $days = (int)$reminder->days;
+                      if($days < 0){
+                        $abs = abs($days);
+                        $event_time = Carbon::parse($reminder->event_time)->subDays($abs);
+                      }
+                      else
+                      {
+                        $event_time = Carbon::parse($reminder->event_time)->addDays($days);
+                      }
+
+                      $reminder_customer = ReminderCustomers::where('reminder_id','=',$reminder->id)->select(DB::raw('COUNT("id") AS total_message'))->first();
+
+                      $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$reminder->id_reminder],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+
+                       $data[] = array(
+                        'id'=>$row->id,
+                        'campaign_name' => $row->name,
+                        'sending' => Date('M d, Y',strtotime($event_time)),
+                        'label' => $row->label,
+                        'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                        'total_message' => $reminder_customer->total_message,
+                        'sent_message' => $reminder_customer_open->total_sending_message,
+                      );
                   }
                   else
                   {
-                    $event_time = Carbon::parse($row->event_time)->addDays($days);
+                      $data[] = array(
+                        'id'=>$row->id,
+                        'campaign_name' => $row->name,
+                        'sending' => '-',
+                        'label' => $row->label,
+                        'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                        'total_message' => 0,
+                        'sent_message' => 0,
+                      );
                   }
 
-                  $reminder_customer = ReminderCustomers::where('reminder_id','=',$row->id_reminder)->select(DB::raw('COUNT("id") AS total_message'))->first();
-
-                  $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$row->id_reminder],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
-
-                  $data[] = array(
-                    'id'=>$row->id,
-                    'campaign_id'=>$row->campaign_id,
-                    'campaign_name' => $row->name,
-                    'sending' => Date('M d, Y',strtotime($event_time)),
-                    'label' => $row->label,
-                    'created_at' => Date('M d, Y',strtotime($row->created_at)),
-                    'total_message' => $reminder_customer->total_message,
-                    'sent_message' => $reminder_customer_open->total_sending_message,
-                  );
-              }
+              }//END FOREACH
           }
     
           return view('event.event-table',['event' => $data]);
@@ -184,51 +200,59 @@ class EventController extends Controller
     function duplicateEvent(Request $request)
     {
         $user_id = Auth::id();
-        $event_id = $request->id;
+        $campaign_id = $request->id;
         $campaign_name = $request->campaign_name;
         $event_date =  $request->event_time;
+        $reminderid = array();
 
-        $row_event = Reminder::where([['id',$event_id],['user_id',$user_id],['is_event',1]])->first();
+        $row_event = Reminder::where([['campaign_id',$campaign_id],['user_id',$user_id],['is_event',1]])->get();
 
-        if(!is_null($row_event))
+        if($row_event->count() > 0)
         {
-          $list_id = $row_event->list_id;
-          $event_day = $row_event->days;
-          $event_sending = $row_event->hour_time;
-          $event_message = $row_event->message;
+            foreach($row_event as $row)
+            {
+              $list_id = $row->list_id;
+              $event_day = $row->days;
+              $event_sending = $row->hour_time;
+              $event_message = $row->message;
 
-          $campaign = new Campaign;
-          $campaign->name = $campaign_name;
-          $campaign->type = 0;
-          $campaign->list_id = $list_id;
-          $campaign->user_id = $user_id;
-          $campaign->save();
-          $campaign_id = $campaign->id;
+              $campaign = new Campaign;
+              $campaign->name = $campaign_name;
+              $campaign->type = 0;
+              $campaign->list_id = $list_id;
+              $campaign->user_id = $user_id;
+              $campaign->save();
+              $campaign_id = $campaign->id;
 
-          $event = new Reminder;
-          $event->user_id = $user_id;
-          $event->list_id = $list_id;
-          $event->campaign_id = $campaign_id;
-          $event->is_event = 1;
-          $event->days = $event_day;
-          $event->event_time = $event_date;
-          $event->hour_time = $event_sending;
-          $event->message = $event_message;
-          $event->save();
-          $newreminderid = $event->id;
+              $event = new Reminder;
+              $event->user_id = $user_id;
+              $event->list_id = $list_id;
+              $event->campaign_id = $campaign_id;
+              $event->is_event = 1;
+              $event->days = $event_day;
+              $event->event_time = $event_date;
+              $event->hour_time = $event_sending;
+              $event->message = $event_message;
+              $event->save();
+              $newreminderid = $event->id;
+
+              $reminderid[] = $row->id;
+            }
         }
         else 
         {
-           return response()->json(['message'=>'Id is not registered, please reload or refresh your browser!']);
+            return response()->json(['message'=>'Id is not registered, please reload or refresh your browser!']);
         }
 
         if($event->save())
         { 
-          $remindercustomer = ReminderCustomers::where([['user_id',$user_id],['reminder_id',$event_id]])->get();
+          $remindercustomer = ReminderCustomers::whereIn('reminder_id',$reminderid)->where('user_id',$user_id)->get();
         }
         else {
            return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
         }
+
+        dd($remindercustomer);
 
         if($remindercustomer->count() > 0)
         {
@@ -239,7 +263,6 @@ class EventController extends Controller
               $eventcustomer->list_id = $list_id;
               $eventcustomer->reminder_id = $newreminderid;
               $eventcustomer->customer_id = $row->customer_id;
-              $eventcustomer->save();
           }
         }
         else 

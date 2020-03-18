@@ -15,6 +15,10 @@ class Alert
     public static function qrcode(){ return 'Maaf, untuk sementara tidak dapat menampilkan QR-CODE, silahkan coba kembali, apabila anda baru mendaftar mohon menunggu 3- 5 menit.';}
     public static function phone_connect(){ return 'Your phone had connected';}
     public static function error_verify(){ return 'Sorry there is error on our server, please try again later';}
+
+    /*EventController*/
+   /* public static function no_message(){ return 'Campaign ini tidak memiliki message';}
+    public static function no_sending_message(){ return 'Campaign ini tidak memiliki message yang terkirim';}*/
 }
 
 ?>

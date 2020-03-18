@@ -39,7 +39,7 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>ADD MESSAGE : <color>{{ $campaign_name }}</color></h2>
+    <h2>ADD MESSAGE</h2>
   </div>
 
   <div class="clearfix"></div>
@@ -58,14 +58,6 @@
         </div>
       </div>
 
-      <div class="form-group row event-time">
-        <label class="col-sm-3 col-form-label">Event Time :</label>
-        <div class="col-sm-9 relativity">
-          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
-          <span class="icon-calendar"></span>
-        </div>
-      </div>
-
       <div class="form-group row lists">
         <label class="col-sm-3 col-form-label">Current List :</label>
         <div class="col-sm-9 relativity">
@@ -79,6 +71,21 @@
            </select> 
            <span class="icon-carret-down-circle"></span>
            -->
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Campaign Name :</label>
+        <div class="col-sm-6">
+          <div>{{ $campaign_name }}</div>
+        </div>
+      </div>
+
+      <div class="form-group row event-time">
+        <label class="col-sm-3 col-form-label">Event Time :</label>
+        <div class="col-sm-9 relativity">
+          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
+          <span class="icon-calendar"></span>
         </div>
       </div>
 
@@ -171,7 +178,7 @@
             $('.div-loading').removeClass('background-load');
             loadEvent();
 
-            if(result.err == undefined)
+            if(result.err == 0)
             {
               alert(result.message);
               $("input[name='event_time']").val('')

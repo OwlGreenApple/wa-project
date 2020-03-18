@@ -30,6 +30,7 @@
 
       <div class="input-group col-lg-2">
          <select id="campaign_option" class="custom-select-campaign form-control col-lg-10 relativity">
+            <option value="all">All</option>
             <option value="0">Event</option>
             <option value="1">Auto Responder</option>
             <option value="2">Broadcast</option>
@@ -69,7 +70,6 @@
                       <span class="error campaign_name"></span>
                     </div>
 
-                    
                     <div class="form-group">
                       <label>Event Date & Time</label>
                       <div class="relativity">
@@ -228,8 +228,8 @@
   });
 
   $(document).ready(function(){
+      displayResult();
       displayCampaign();
-      displayEvent();
       delBroadcast();
       delAutoResponder();
       delEvent();
@@ -500,7 +500,11 @@
       $("#campaign_option").change(function(){
           var val = $(this).val();
 
-          if(val == 0){
+          if(val == 'all')
+          {
+            displayResult();
+          }
+          else if(val == 0){
             displayEvent();
           }
           else if(val == 1)
@@ -706,11 +710,16 @@
   {
       $(".search-icon").click(function(){
         var search = $(".search-box").val();
+        displayResult(search);
+      });
+  }
 
-        $.ajax({
+  function displayResult(query)
+  {
+      $.ajax({
           type : 'GET',
           url : '{{ url("search-campaign") }}',
-          data : {'search' : search},
+          data : {'search' : query},
           dataType : 'html',
           beforeSend: function()
           {
@@ -730,8 +739,6 @@
             console.log(xhr.responseText);
           }
         });
-
-      });
   }
 
   function MDTimepicker(){

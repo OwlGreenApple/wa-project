@@ -19,37 +19,15 @@ class ReminderController extends Controller
 {
     /* Create and insert data reminder and reminder customer into database */
     public function saveAutoReponder(Request $request){
+
+        $temprequest = $request->all();
         $user_id = Auth::id();
         $list_id = $request->list_id;
         $message = $request->message;
-        $days = $request->day;
+        $days = $temprequest['day'];
         $package = $request->campaign_name;
         //$mailsubject = $request->mailsubject;
         //$mailmessage = $request->mailmessage;
-
-        /*
-        if(isset($request->list_id)){
-            $list_id = $request->list_id;
-        } else {
-            return redirect('reminderform');
-        }
-
-        $rules = array(
-            'list_id'=>['required'],
-            'message'=>['required','max:3000'],
-            'day'=>['required','numeric'],
-        );
-
-        $validator = Validator::make($request->all(),$rules);
-        $err = $validator->errors();
-
-        if($validator->fails()){
-            return redirect('reminderform')->with('error',$err);
-        } else {
-           
-        }
-        */
-
         $campaign_type = 1;
 
 
@@ -72,6 +50,7 @@ class ReminderController extends Controller
         else {
           $reminder = Reminder::find($request->reminder_id);
         }
+
         $reminder->user_id = $user_id;
         $reminder->list_id = $list_id;
         $reminder->campaign_id = $campaign_id;
@@ -149,41 +128,57 @@ class ReminderController extends Controller
             return 'Please do not modify default value';
         }
 
-        $reminder = Campaign::where([['campaigns.user_id',$id],['campaigns.type',$type],['reminders.is_event','=',0]])
-            ->join('reminders','reminders.campaign_id','=','campaigns.id')
-            ->join('lists','lists.id','=','campaigns.list_id')
-            ->select('campaigns.name','lists.label','campaigns.created_at','reminders.*','reminders.id AS id_reminder')
+        $campaign = Campaign::where([['campaigns.user_id',$id],['campaigns.type',$type]])
+            ->leftJoin('lists','lists.id','=','campaigns.list_id')
+            ->select('campaigns.name','lists.label','campaigns.created_at','campaigns.id')
             ->orderBy('campaigns.id','desc')
             ->get();
 
-        if($reminder->count() > 0)
+        if($campaign->count() > 0)
         {
-           foreach($reminder as $row)
+           foreach($campaign as $row)
            {
-              $sending = $row->days;
-              if($sending > 1)
+              $reminder = Reminder::where([['campaign_id', $row->id],['is_event',0],['status',1]])->first();
+
+              if(!is_null($reminder))
               {
-                  $message = 'days from subscriber join on your list';
+                $sending = $reminder->days;
+                if($sending > 1)
+                {
+                    $message = 'days from subscriber join on your list';
+                }
+                else{
+                    $message = 'day from subscriber join on your list';
+                }
+
+                $reminder_customer = ReminderCustomers::where([['reminder_id','=',$reminder->id]])->select(DB::raw('COUNT("id") AS total_message'))->first();
+
+                $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$reminder->id],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+
+                $data[] = array(
+                    'id'=>$row->id,
+                    'campaign_name' => $row->name,
+                    'sending' => $sending.' '.$message,
+                    'label' => $row->label,
+                    'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                    'total_message' => $reminder_customer->total_message,
+                    'sent_message' => $reminder_customer_open->total_sending_message,
+                );
               }
-              else{
-                  $message = 'day from subscriber join on your list';
+              else
+              {
+                 $data[] = array(
+                    'id'=>$row->id,
+                    'campaign_name' => $row->name,
+                    'sending' => '-',
+                    'label' => $row->label,
+                    'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                    'total_message' => 0,
+                    'sent_message' => 0,
+                );
               }
-
-              $reminder_customer = ReminderCustomers::where([['reminder_id','=',$row->id_reminder]])->select(DB::raw('COUNT("id") AS total_message'))->first();
-
-              $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$row->id_reminder],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
-
-              $data[] = array(
-                  'id'=>$row->id,
-                  'campaign_id'=>$row->campaign_id,
-                  'campaign_name' => $row->name,
-                  'sending' => $sending.' '.$message,
-                  'label' => $row->label,
-                  'created_at' => Date('M d, Y',strtotime($row->created_at)),
-                  'total_message' => $reminder_customer->total_message,
-                  'sent_message' => $reminder_customer_open->total_sending_message,
-              );
-           }
+              
+           }//END FOREACH
         }
         return view('reminder.reminder-table',['reminder' => $data]);
     }

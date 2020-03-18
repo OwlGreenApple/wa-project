@@ -40,7 +40,7 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>ADD REMINDER : <color>{{ $campaign_name }}</color></h2>
+    <h2>ADD MESSAGE</h2>
   </div>
 
   <div class="clearfix"></div>
@@ -71,6 +71,13 @@
               @endif
            </select>
            <span class="icon-carret-down-circle"></span> -->
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Campaign Name :</label>
+        <div class="col-sm-6">
+          <div>{{ $campaign_name }}</div>
         </div>
       </div>
 
@@ -127,7 +134,7 @@
     $("#save_campaign").submit(function(e){
       e.preventDefault();
       var data = $(this).serializeArray();
-       data.push({name:'list_id',value:'{!! $currentlistid !!}'},{ name:'campaign_name', value:'<?php echo $campaign_name;?>'});
+        data.push({name:'list_id',value:'{!! $currentlistid !!}'},{ name:'campaign_name', value:'<?php echo $campaign_name;?>'});
 
       $.ajax({
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -143,12 +150,12 @@
           success : function(result){
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
-            loadAutoResponder();
             
             if(result.err == undefined)
             {
               alert(result.message);
                $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+               loadAutoResponder();
             }
             else
             {
@@ -168,7 +175,7 @@
   $(function () {
       $("#divInput-description-post").emojioneArea({
           pickerPosition: "right",
-          mainPathFolder : "{{url('')}}",
+         // mainPathFolder : "{{url('/sxax')}}",
       });
   });
 
@@ -287,8 +294,12 @@
           var data = jQuery.parseJSON(result);
           $('.message').show();
           $('.message').html(data.message);
-          
-          loadEvent();
+          loadAutoResponder();
+        },
+        error : function(xhr){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
         }
       });
     });
