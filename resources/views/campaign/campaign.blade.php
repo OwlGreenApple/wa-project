@@ -603,8 +603,11 @@
       {
         $.ajax({
           type : 'GET',
-          url : '{{ url("broadcast-del") }}',
-          data : {id : id},
+          url : '{{ url("campaign-del") }}',
+          data : {
+              id : id,
+              mode : "broadcast"
+          },
           beforeSend: function()
           {
             $('#loader').show();
@@ -640,8 +643,11 @@
       {
         $.ajax({
           type : 'GET',
-          url : '{{ url("reminder-del") }}',
-          data : {id : id},
+          url : '{{ url("campaign-del") }}',
+          data : {
+            id : id,
+            mode : "auto_responder"
+          },
           beforeSend: function()
           {
             $('#loader').show();
@@ -677,8 +683,11 @@
       {
         $.ajax({
           type : 'GET',
-          url : '{{ url("event-del") }}',
-          data : {id : id},
+          url : '{{ url("campaign-del") }}',
+          data : {
+            id : id,
+            mode : "event"
+          },
           beforeSend: function()
           {
             $('#loader').show();

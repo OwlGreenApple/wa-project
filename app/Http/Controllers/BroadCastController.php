@@ -156,7 +156,7 @@ class BroadCastController extends Controller
 
       $broadcasts = Campaign::where([['campaigns.user_id',$id_user],['campaigns.type',$type]])
           ->join('broad_casts','broad_casts.campaign_id','=','campaigns.id')
-          ->select('campaigns.name','broad_casts.*','broad_casts.id AS broadcast_id')
+          ->select('campaigns.name','broad_casts.*','broad_casts.id AS broadcast_id','campaigns.id as campaign_id')
           ->orderBy('campaigns.id','desc')
           ->get();
 
@@ -182,6 +182,7 @@ class BroadCastController extends Controller
 
               $data[] = array(
                   'id'=>$row->id,
+                  'campaign_id'=>$row->campaign_id,
                   'campaign' => $row->name,
                   'group_name' => $row->group_name,
                   'channel' => $row->channel,

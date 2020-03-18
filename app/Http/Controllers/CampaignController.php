@@ -254,6 +254,7 @@ class CampaignController extends Controller
                   $data[] = array(
                       'type'=>2,
                       'id'=>$broadcast->id,
+                      'campaign_id'=>$row->id,
                       'campaign' => $row->name,
                       'group_name' => $broadcast->group_name,
                       'channel' => $broadcast->channel,
@@ -356,6 +357,37 @@ class CampaignController extends Controller
     public function reportReminder()
     {
       return view('campaign.report-reminder');
+    }
+
+    public function delCampaign(Request $request)
+    {
+        $user_id = Auth::id();
+        $campaign = Campaign::find($request->id);
+
+        try {
+          $campaign->delete();
+          if($request->mode == "broadcast") {
+            $broadCasts = BroadCast::where([['campaign_id',$campaign->id],['user_id',$user_id]])->get();
+            foreach($broadCasts as $broadCast) {
+              $broadcastcustomer = BroadCastCustomers::where('broadcast_id','=',$broadCast->id)->delete();
+            }
+            BroadCast::where([['campaign_id',$campaign->id],['user_id',$user_id]])->delete();
+          }
+          if( ($request->mode == "event") || ($request->mode == "auto_responder") ) {
+            $reminders = Reminder::where([['campaign_id',$campaign->id],['user_id',$user_id]])->get();
+            foreach($reminders as $reminder) {
+              $remindercustomer = ReminderCustomers::where('reminder_id','=',$reminder->id)->delete();
+            }
+            Reminder::where([['campaign_id',$campaign->id],['user_id',$user_id]])->delete();
+          }
+        }
+        catch(Exception $e)
+        {
+           return response()->json(['message'=>'Sorry, unable to delete , contact administrator']);
+        }
+
+
+        return response()->json(['message'=>'Your has been deleted successfully']);
     }
 
 
