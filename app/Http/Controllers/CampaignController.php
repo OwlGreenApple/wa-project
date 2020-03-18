@@ -358,6 +358,39 @@ class CampaignController extends Controller
       return view('campaign.report-reminder');
     }
 
+    public function delCampaign(Request $request)
+    {
+        $user_id = Auth::id();
+        $campaign = Campaign::find($request->id);
+
+        try {
+          $campaign->delete();
+          if($request->mode == "broadcast") {
+            BroadCast::where([['campaign_id',$campaign->id],['user_id',$user_id]])->delete();
+          }
+          if( ($request->mode == "event") || ($request->mode == "auto_responder") ) {
+            Reminder::where([['campaign_id',$campaign->id],['user_id',$user_id]])->delete();
+          }
+          $success = true;
+        }
+        catch(Exception $e)
+        {
+           return response()->json(['message'=>'Sorry, unable to delete , contact administrator']);
+        }
+
+        if($success == true)
+        {
+          if($request->mode == "broadcast") {
+            $broadcastcustomer = BroadCastCustomers::where('campaign_id','=',$campaign->id)->delete();
+          }
+          if( ($request->mode == "event") || ($request->mode == "auto_responder") ) {
+            $remindercustomer = ReminderCustomers::where('campaign_id','=',$campaign->id)->delete();
+          }
+        }
+
+        return response()->json(['message'=>'Your has been deleted successfully']);
+    }
+
 
 /* end controller */
 }
