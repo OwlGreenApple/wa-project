@@ -100,14 +100,16 @@
             <!--
             <a href="{{url('report-reminder')}}" id="{{ $row['id'] }}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></a>
             -->
-            <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm event_duplicate"><span class="icon-copy-text"></span></button>
-            <button type="button" id="{{ $row['id'] }}" class="btn btn-danger btn-sm event-del"><span class="icon-delete"></span></button>
-
+           
             @if($row['type'] == 0)
+              <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm event_duplicate"><span class="icon-copy-text"></span></button>
+              <button type="button" id="{{ $row['id'] }}" class="btn btn-danger btn-sm event-del"><span class="icon-delete"></span></button>
               <div>
                 <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">Add Message</a>
               </div>
             @elseif($row['type'] == 1)
+              <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm responder_duplicate"><span class="icon-copy-text"></span></button>
+              <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm responder-del"><span class="icon-delete"></span></button>
               <div>
                 <a href="{{url('add-message-auto-responder').'/'.$row['id']}}" class="btn btn-custom">Add Message</a>
               </div>
