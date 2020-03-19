@@ -126,6 +126,8 @@
                                     <a href="{{url('list-form')}}" class="nav-link {{ (request()->is('list-form') || request()->is('list-create')|| request()->is('userlist')) ? 'active' : '' }}">Lists</a>
                                     
                                     <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">Campaigns</a> 
+
+                                    <a href="{{url('create-apt')}}" class="nav-link {{ (request()->is('create-apt')) ? 'active' : '' }}">Appointment</a> 
                                 </div>
                             </li> 
 
@@ -136,10 +138,11 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('campaign') || request()->is('add-reminder')) ? 'active' : '' }}" href="{{url('campaign')}}">Campaigns</a>
                             </li> 
-                            <!--
+                            
                             <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('home')) ? 'active' : '' }}" href="{{ route('home') }}">Home</a>
+                                <a class="nav-link {{ (request()->is('appointment')) ? 'active' : '' }}" href="{{ route('appointment') }}">Appointment</a>
                             </li> 
+                            <!--
                             <li class="nav-item">
                                 <a class="nav-link {{ (Request::segment(1) == 'usercustomer') || (request()->is('userlist')) || (request()->is('createlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists & Events</a>
                             </li>

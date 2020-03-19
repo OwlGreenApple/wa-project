@@ -159,6 +159,12 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('broadcast-check','BroadCastController@checkBroadcastType'); 
   Route::post('broadcast-duplicate','BroadCastController@duplicateBroadcast')->middleware('checkbroadcastduplicate'); 
 
+  /* APPOINTMENT */
+  Route::get('create-apt','AppointmentController@createAppointment');
+  Route::get('appointment','AppointmentController@appointment')->name('appointment');
+  Route::get('list-apt','AppointmentController@listAppointment');
+  Route::get('form-apt','AppointmentController@formAppointment');
+
   // scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');
   Route::get('eventform','EventController@eventForm')->name('eventform');
