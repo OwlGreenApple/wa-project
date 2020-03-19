@@ -23,7 +23,11 @@ class AppointmentController extends Controller
 
     function createAppointment()
     {
-        return view('appointment.create_apt');
+      $userid = Auth::id();
+      $lists = UserList::where('user_id',$userid)->get();
+
+      $data['lists'] = $lists;
+      return view('appointment.create_apt',['lists'=>$lists]);
     }
 
     function listAppointment()
