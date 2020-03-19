@@ -161,7 +161,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 
   /* APPOINTMENT */
   Route::get('create-apt','AppointmentController@createAppointment');
-  Route::get('appointment','AppointmentController@appointment')->name('appointment');
+  Route::get('appointment','AppointmentController@index')->name('appointment');
   Route::get('list-apt','AppointmentController@listAppointment');
   Route::get('form-apt','AppointmentController@formAppointment');
 
@@ -183,7 +183,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('eventautoreplyturn/{id}/{status}','EventController@turnEventAutoReply');
   Route::get('eventstatus/{id}/{status}','EventController@setEventStatus');
 
-  /*old code*/
+  /*old code
 	Route::get('usercustomer/{id_list}','ListController@userCustomer');
   Route::get('createlist','ListController@listForm')->name('createlist');
 	Route::post('addlist','ListController@addList')->name('addlist'); 
@@ -192,8 +192,8 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	
 	Route::post('exportlistsubscriber','ListController@exportListSubscriber')->name('exportlistsubscriber');
 	Route::get('export_csv_list_subscriber/{id_list}','ListController@exportListCSVSubscriber');
-	
-	/* old BroadCast */
+	*/
+	/* old BroadCast 
 	Route::get('broadcast','BroadCastController@index')->name('broadcast');
 	// form to create broadcast reminder
 	Route::get('broadcastform','BroadCastController@FormBroadCast')->name('broadcastform');
@@ -202,12 +202,12 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	//insert broadcast and broadcast-customer data
 	Route::post('createbroadcast','BroadCastController@createBroadCast')->name('createbroadcast');
 	//see broadcast customer
-
+*/
 	//old reminder
-	Route::get('reminder','ReminderController@index')->name('reminder'); 
+	// Route::get('reminder','ReminderController@index')->name('reminder'); 
 	
 	// form to create reminder
-	Route::get('reminderform','ReminderController@reminderForm')->name('reminderform'); 
+	/*Route::get('reminderform','ReminderController@reminderForm')->name('reminderform'); 
 	// set reminder into database
 	Route::post('reminderadd','ReminderController@addReminder')->name('reminderadd');
 	// retrieve data from reminder customer
@@ -219,12 +219,12 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	Route::get('delreminder','ReminderController@delReminder')->name('delreminder');
 	Route::get('export_reminder_subscriber','ReminderController@exportSubscriber')->name('export_reminder_subscriber');
 	Route::get('export_reminder_csv/{id_list}','ReminderController@exportReminderSubscriber');
-	
+	*/
 	// reminder auto reply
 	Route::get('reminderautoreply','ReminderController@reminderAutoReply')->name('reminderautoreply');
 	Route::post('addreminderautoreply','ReminderController@addReminderAutoReply')->name('addreminderautoreply');
 
-	/* Templates */
+	/* Templates 
 	Route::get('templates','TemplatesController@templateForm')->name('templates');
 	//insert into database broadcast template
 	Route::post('addtemplate','TemplatesController@createTemplate')->middleware('template')->name('addtemplate');
@@ -236,7 +236,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	Route::post('updatetemplate','TemplatesController@updateTemplate')->middleware('template')->name('updatetemplate');
 	// delete template
 	Route::get('deletetemplate','TemplatesController@delTemplate')->name('deletetemplate');
-
+*/
 	/* Senders */
 	Route::post('addsender','SenderController@addSender')->middleware('wanumber')->name('addsender');
 
@@ -244,29 +244,6 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	Route::get('ckbrowse', 'CKController@ck_browse')->name('ckbrowse');
 	Route::get('ckdelete', 'CKController@ck_delete_image')->name('ckdelete');
 	Route::post('ckupload', 'CKController@ck_upload_image')->name('ckupload');
-
-  //Route::get('tesdevice','DeviceController@test')->name('tesdevice');
-
-  /* Create Device */
-  Route::get('registerdevice','CreateDeviceController@index')->name('registerdevice');
-  Route::post('createdevice', 'CreateDeviceController@createDevice')->middleware('checkdevicename')->name('createdevice');
-  Route::get('deviceauthorize', 'CreateDeviceController@deviceAuthorize');
-
-  Route::get('devicepackage','CreateDeviceController@devicePackage')->name('devicepackage');
-  Route::get('devicecheckout','CreateDeviceController@checkout')->name('devicecheckout');
-  Route::get('thanks','CreateDeviceController@thankYou')->name('thanks');
-  #delete if not needed anymore
-  Route::get('temporary','CreateDeviceController@temporary')->name('temporary');
-  //Route::get('testcurl','CreateDeviceController@testcurl')->name('testcurl');
-  #delete if not needed anymore
-
-  /* Device status and profile */
-  Route::get('devices','DeviceController@deviceList')->name('devices');
-  Route::get('authorize/{device_id}', 'DeviceController@getScanBarcodeAuthorize');
-  Route::get('scan', 'DeviceController@getScanBarcodeChangePhone')->name('scan');
-  Route::get('devicedetail/{device_id}', 'DeviceController@getDetailDevice')->name('devicedetail');
-  Route::get('devicestatus/{device_id}', 'DeviceController@getStatusDevice');
-  Route::post('updatenumber', 'DeviceController@updateNumber')->name('updatenumber');
 });
 
 /* Customers */
