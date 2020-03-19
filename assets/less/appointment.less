@@ -7,6 +7,10 @@
 	padding-bottom : 0;
 }
 
+.act-tel-apt.wrapper {
+	max-width : 900px;
+}
+
 .act-tel-apt form {
 	padding : 15px 0;
 	margin-left : 0;
@@ -30,11 +34,15 @@
 	border : none;
 }
 
-.act-tel-apt .custom-select-apt , .act-tel-apt .relativity {
-	max-width : 360px;
+.act-tel-apt .relativ {
+	margin-bottom : 1.5rem;
 }
 
-.act-tel-apt .relativity .icon-carret-down-circle, .act-tel-apt .relativity .icon-calendar {
+.act-tel-apt .custom-select-apt .relativ .icon-search {
+	width : auto;
+}
+
+.act-tel-apt .relativity .icon-carret-down-circle, .act-tel-apt .relativity .icon-calendar, .act-tel-apt .relativ .icon-search {
 	position: absolute;
     font-size: 20px;
     top: 0;
@@ -115,12 +123,6 @@
 	width : 180px;
 }
 
-/* old codes */
-
-.act-tel-apt .form-check {
-	padding-top : 3px;
-}
-
 
 /* table */
 
@@ -146,4 +148,9 @@
 
 .act-tel-apt table tbody .icon-edit:hover {
 	color : #086ea0;
+}
+
+.act-tel-apt table tbody .icon-cancel {
+	color : #f51919;
+	font-size : 18px;
 }

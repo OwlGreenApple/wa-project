@@ -164,6 +164,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('appointment','AppointmentController@index')->name('appointment');
   Route::get('list-apt','AppointmentController@listAppointment');
   Route::get('form-apt','AppointmentController@formAppointment');
+  Route::get('edit-apt','AppointmentController@editAppointment');
 
   // scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');

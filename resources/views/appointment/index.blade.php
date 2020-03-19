@@ -44,7 +44,11 @@
         
       <div class="bg-dashboard campaign row">
           <div class="col-lg-4 pad-fix col-card">
-            <h5>Dr Visit</h5>
+            <h5>Dr Visit
+                <span>
+                  <a data-link="{{env('APP_URL')}}xyz" class="btn-copy icon-copy"></a>
+                </span>  
+            </h5>                           
             <div class="notes">
               <div class="link_wrap">Link From : {{env('APP_URL')}}xyz
                 <span>
@@ -65,8 +69,10 @@
                 &nbsp
                 </div>  
                 <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">52</div>
-                  <div class="contact">Contact</div>
+                  <a href="{{ url('list-apt') }}" target="_blank">
+                    <div class="big-number">52</div>
+                    <div class="contact">Contact</div>
+                  </a>
                 </div>  
                 <!--<div class="col-lg-3 pad-fix cardnumber">
                   <div class="big-number">7</div>
@@ -77,7 +83,8 @@
           </div>
 
           <div class="col-lg-3 pad-fix col-button">
-              <a href="{{url('list-edit')}}/1" class="btn btn-edit btn-sm" target="_blank"><span class="icon-edit"></span></a>
+              <a href="{{url('edit-apt')}}" class="btn btn-edit btn-sm" target="_blank"><span class="icon-edit"></span></a>
+              <a href="" class="btn btn-success btn-sm" target="_blank"><span class="icon-export"></span></a>
               <button type="button" id="2" class="btn btn-danger btn-sm event-del"><span class="icon-delete"></span></button>
 
           </div>
