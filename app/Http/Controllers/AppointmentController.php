@@ -12,11 +12,18 @@ use App\User;
 
 class AppointmentController extends Controller
 {
+    function index()
+    {
+      $userid = Auth::id();
+      $lists = UserList::where('user_id',$userid)->get();
+
+      $data['lists'] = $lists;
+      return view('appointment.index',$data);
+    }
+
     function createAppointment()
     {
-        $user_id = Auth::id();
-        $lists = UserList::where('user_id',$user_id)->get();
-        return view('appointment.create_apt',['lists'=>$lists]);
+        return view('appointment.create_apt');
     }
 
     function listAppointment()

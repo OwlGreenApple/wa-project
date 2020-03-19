@@ -119,12 +119,12 @@
                           -->
                         @else
                             <li class="nav-item dropdown">
-                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('list-form') || request()->is('list-create') || request()->is('create-campaign') || request()->is('userlist')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                     Create<span class="caret"></span>
+                                <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('list-form') || request()->is('list-create') || request()->is('create-campaign') || request()->is('create-apt')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    Create<span class="caret"></span>
                                 </a>
                                 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a href="{{url('list-form')}}" class="nav-link {{ (request()->is('list-form') || request()->is('list-create')|| request()->is('userlist')) ? 'active' : '' }}">Lists</a>
+                                    <a href="{{url('list-form')}}" class="nav-link {{ (request()->is('list-form') || request()->is('create-campaign')|| request()->is('create-apt')) ? 'active' : '' }}">Lists</a>
                                     
                                     <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">Campaigns</a> 
 
@@ -143,43 +143,6 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('appointment')) ? 'active' : '' }}" href="{{ route('appointment') }}">Appointment</a>
                             </li> 
-                            <!--
-                            <li class="nav-item">
-                                <a class="nav-link {{ (Request::segment(1) == 'usercustomer') || (request()->is('userlist')) || (request()->is('createlist')) ? 'active' : '' }}" href="{{route('userlist')}}">Lists & Events</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('broadcast')||request()->is('broadcast_customer')||request()->is('broadcastform')||request()->is('broadcasteventform')) ? 'active' : '' }}" href="{{ route('broadcast') }}">Broadcast</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('reminder')||request()->is('reminderform')||request()->is('reminder_customer')||request()->is('reminderautoreply')) ? 'active' : '' }}" href="{{ route('reminder') }}">Reminder List</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('event')||request()->is('eventform')||request()->is('eventcustomer')||request()->is('eventautoreply')) ? 'active' : '' }}" href="{{ route('event') }}">Reminder Event</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('templates')) ? 'active' : '' }}" href="{{ route('templates') }}">Template</a>
-                            </li> 
-                            <li class="nav-item">
-                                <a class="nav-link {{ (request()->is('devices')) ? 'active' : '' }}" href="{{ route('devices') }}">Devices</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }} <span class="caret"></span>
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                          -->
                     </ul>
                     <ul class="navbar-nav mr-auto"><!-- separator --></ul>
                      <!-- Right Side Of Navbar -->
