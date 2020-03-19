@@ -21,7 +21,7 @@
   </div> 
 </div>
 
-<div class="container act-tel-history">
+<div class="container act-tel-apt">
     <table class="table table-bordered mt-4">
       <thead class="bg-dashboard">
         <tr>
@@ -40,7 +40,7 @@
           <td class="text-center">Ali Mahrus</td>
           <td class="text-center">6281111111</td>
           <td class="text-center"><a class="icon-edit"></a></td>
-          <td class="text-center"><a class="icon-edit"></a></td>
+          <td class="text-center"><a class="icon-cancel"></a></td>
         </tr> 
       </tbody>
     </table>

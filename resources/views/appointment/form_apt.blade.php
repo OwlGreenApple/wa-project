@@ -38,12 +38,18 @@
 
 <!-- TOP SECTION -->
 
-<div class="container act-tel-apt">
+<div class="container act-tel-apt wrapper">
       <h3 class="title">Form Appointment Reminder</h3>
-      <div class="col-md-12 row">
-        <input type="text" class="form-control" placeholder="Find a contact by phone number">
+
+      <div class="col-md-12 relativ row">
+        <input type="text" class="form-control custom-select-apt" placeholder="Find a contact by phone number">
+        <span class="icon-search"></span>
+        <span class="error date_send"></span>
+
+        <div class="mt-2"><a class="btn btn-custom btn-sm px-3" href="{{ url('create-apt') }}" target="_blank">Create New Appointment</a></div>
       </div>
-      <form>
+
+        <form>
             <div class="form-group row">
               <label class="col-sm-4 col-form-label">Name</label>
               <label class="col-sm-1 col-form-label">:</label>
@@ -72,15 +78,15 @@
               </div>
             </div>
 
-            <div class="text-left">
-              <button type="submit" class="btn btn-custom">Submit</button>
+            <div class="text-left mt-4">
+              <button type="submit" class="btn btn-custom px-4">Submit</button>
             </div>
 
             <div class="text-left marketing">
               <div>Marketing by</div>
               <div><img src="{{asset('assets/img/marketing-logo.png')}}"/></div>
             </div>
-      </form>
+        </form>
 <!-- end container -->    
 </div>
 

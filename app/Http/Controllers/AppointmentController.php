@@ -39,4 +39,9 @@ class AppointmentController extends Controller
     {
         return view('appointment.form_apt');
     }
+
+    function editAppointment()
+    {
+        return view('appointment.edit_apt');
+    }
 }

@@ -5,7 +5,7 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>Create For Appointment</h2>
+    <h2>Add Message To Appointment</h2>
   </div>
 
   <div class="clearfix"></div>
@@ -13,36 +13,64 @@
 
 <!-- NUMBER -->
 <div class="container act-tel-apt">
-  <form id="save_apt">
-      
-      <div class="form-group row lists">
-        <label class="col-sm-3 col-form-label">Select List :</label>
+ 
+  <div class="create bg-dashboard">
+
+    <form class="aptform">
+     <div class="form-group row reminder">
+        <label class="col-sm-3 col-form-label">Choose Reminder Time :</label>
         <div class="col-sm-9 relativity">
-           <select name="list_id" class="custom-select-campaign form-control">
-              @if($lists->count() > 0)
-                @foreach($lists as $row)
-                  <option value="{{$row->id}}">{{$row->label}}</option>
-                @endforeach
-              @endif
+           <select name="schedule" id="schedule" class="custom-select-campaign form-control">
+              <option value="0">The Day</option>
+              <option value="1">H-</option>
            </select>
            <span class="icon-carret-down-circle"></span>
-           <span class="error list_id"></span>
         </div>
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Name Of Appointment :</label>
-        <div class="col-sm-9">
-          <input type="text" name="name_app" class="form-control" />
-          <span class="error name_app"></span>
+        <label class="col-sm-3 col-form-label">Time to send Message :</label>
+        <div class="col-sm-9 relativity">
+          <span class="inputh">
+            <input name="hour" type="text" class="timepicker form-control" value="00:00" readonly />
+          </span>
+          <span class="error day"></span><br/>
+          <span class="error hour"></span>
         </div>
       </div>
 
-      <div class="text-right">
-        <button class="btn btn-custom">Create Appointment</button>
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Message :</label>
+        <div class="col-sm-9">
+          <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
+          <span class="error msg"></span>
+        </div>
       </div>
-  </form>
 
+      <div class="text-right col-sm-12">
+        <button type="submit" class="btn btn-custom">Create Reminder</button>
+      </div>
+    </form>
+
+    <div class="aptform">
+      <div class="col-lg-12">
+          <div id="board-1" class="board">
+            <div class="left">Reminder H-1</div>
+            <div class="right">
+              <a class="icon icon-edit"></a>
+              <a class="icon icon-delete"></a>
+              <a class="icon icon-carret-down-circle"></a>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="board-1 slide_message">
+              Message Reminder H-1
+          </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script type="text/javascript">
