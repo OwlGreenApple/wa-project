@@ -71,6 +71,7 @@
     <link href="{{ asset('/assets/css/lists.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/campaign.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/settings.css') }}" rel="stylesheet" />
+    <link href="{{ asset('/assets/css/appointment.css') }}" rel="stylesheet" />
 
     <!-- Jquery Tabs -->
     <link href="{{ asset('/assets/css/jquery-tabs.css') }}" rel="stylesheet" />

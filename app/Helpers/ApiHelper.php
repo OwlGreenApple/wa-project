@@ -31,7 +31,8 @@ class ApiHelper
 
   public static function reg($no_wa,$nama)
   {
-    $url='https://116.203.92.59/api/whatsapp_api_reg';
+    $url='https://116.203.92.59/api/async_whatsapp_api_reg';
+    // $url='https://116.203.92.59/api/whatsapp_api_reg';
     $key= self::bar(); // key partner
 
     $data = array(
@@ -85,6 +86,35 @@ class ApiHelper
     }
 
     //echo $qrcode;
+  }
+
+  public static function no_status($no_wa)
+  {
+      $url='https://116.203.92.59/api/status_nomor';
+      $key=self::bar();
+
+      $data = array(
+        "no_wa" => $no_wa,
+        "key"=>$key,
+      );
+
+      $data_string = json_encode($data);
+      $ch = curl_init($url);
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($ch, CURLOPT_VERBOSE, 0);
+      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+      curl_setopt($ch, CURLOPT_TIMEOUT, 360);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'Content-Type: application/json',
+      'Content-Length: ' . strlen($data_string))
+      );
+
+      return curl_exec($ch);
+      // echo $res=curl_exec($ch);
   }
 
   public static function qr_status($no_wa)

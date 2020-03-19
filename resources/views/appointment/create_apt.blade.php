@@ -12,63 +12,9 @@
 </div>
 
 <!-- NUMBER -->
-<div class="container act-tel-campaign">
-  <form id="save_campaign">
-      <input type="hidden" name="campaign_id" value="new">
-      <input type="hidden" name="reminder_id" value="new">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Name :</label>
-        <div class="col-sm-6">
-          <input type="text" name="campaign_name" class="form-control" />
-          <span class="error campaign_name"></span>
-        </div>
-      </div>
-
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Campaign :</label>
-        <div class="col-sm-9">
-
-          <div class="form-check form-check-inline">
-            <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio1" value="event" checked />
-              <span class="checkmark"></span>
-            </label>
-            <label class="form-check-label" for="inlineRadio1">Event</label>
-          </div>
-
-          <div class="form-check form-check-inline">
-            <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio2" value="auto" />
-              <span class="checkmark"></span>
-            </label>
-            <label class="form-check-label" for="inlineRadio2">Auto Responder</label>
-          </div>
-
-          <div class="form-check form-check-inline">
-            <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio3" value="broadcast" />
-              <span class="checkmark"></span>
-            </label>
-            <label class="form-check-label" for="inlineRadio3">Broadcast</label>
-          </div>
-          <!-- -->
-        </div>
-      </div>
-
-      <!--
-      <div class="form-group row broadcast-type">
-        <label class="col-sm-3 col-form-label">Broadcast Type :</label>
-        <div class="col-sm-9 relativity">
-           <select name="broadcast_schedule" id="broadcast-schedule" class="custom-select-campaign form-control">
-              <option value="0">Schedule Broadcast</option>
-              <option value="1">Schedule Group</option>
-              <option value="2">Schedule Channel</option>
-           </select>
-           <span class="icon-carret-down-circle"></span>
-        </div>
-      </div>
-      -->
-
+<div class="container act-tel-apt">
+  <form id="save_apt">
+      
       <div class="form-group row lists">
         <label class="col-sm-3 col-form-label">Select List :</label>
         <div class="col-sm-9 relativity">
@@ -84,33 +30,28 @@
         </div>
       </div>
 
-      <div class="box-schedule"></div>
-
-      <div class="form-group row date-send">
-        <label class="col-sm-3 col-form-label">Date Send :</label>
-        <div class="col-sm-9 relativity">
-          <input id="datetimepicker-date" type="text" name="date_send" class="form-control custom-select-campaign" />
-          <span class="icon-calendar"></span>
-          <span class="error date_send"></span>
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Name Of Appointment :</label>
+        <div class="col-sm-9">
+          <input type="text" name="name_app" class="form-control" />
+          <span class="error name_app"></span>
         </div>
       </div>
 
-      <div class="form-group row event-time">
-        <label class="col-sm-3 col-form-label">Event Time :</label>
-        <div class="col-sm-9 relativity">
-          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
-          <span class="icon-calendar"></span>
-          <span class="error event_time"></span>
-        </div>
+      <div class="text-right">
+        <button class="btn btn-custom">Create Appointment</button>
       </div>
+  </form>
 
-      <div class="form-group row reminder">
-        <label class="col-sm-3 col-form-label">Select Reminder :</label>
+  <div class="create bg-dashboard">
+
+    <form class="aptform">
+     <div class="form-group row reminder">
+        <label class="col-sm-3 col-form-label">Choose Reminder Time :</label>
         <div class="col-sm-9 relativity">
            <select name="schedule" id="schedule" class="custom-select-campaign form-control">
               <option value="0">The Day</option>
               <option value="1">H-</option>
-              <option value="2">H+</option>
            </select>
            <span class="icon-carret-down-circle"></span>
         </div>
@@ -122,13 +63,6 @@
           <span class="inputh">
             <input name="hour" type="text" class="timepicker form-control" value="00:00" readonly />
           </span>
-          <!-- <span class="inputh">
-             <select name="day" class="form-control col-sm-7 float-left days delcols mr-3"> @for($x=1;$x<=100;$x++) 
-                  <option value="{{ $x }}">{{ $x }} days after event</option>;
-             @endfor
-             </select>
-            <input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />
-          </span> -->
           <span class="error day"></span><br/>
           <span class="error hour"></span>
         </div>
@@ -136,17 +70,36 @@
 
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Message :</label>
-        <div class="col-sm-6">
+        <div class="col-sm-9">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
           <span class="error msg"></span>
         </div>
       </div>
 
-      <div class="text-right col-sm-9">
-        <button type="submit" class="btn btn-custom">Create</button>
+      <div class="text-right col-sm-12">
+        <button type="submit" class="btn btn-custom">Create Reminder</button>
       </div>
+    </form>
 
-  </form>
+    <div class="aptform">
+      <div class="col-lg-12">
+          <div id="board-1" class="board">
+            <div class="left">Reminder H-1</div>
+            <div class="right">
+              <a class="icon icon-edit"></a>
+              <a class="icon icon-delete"></a>
+              <a class="icon icon-carret-down-circle"></a>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="board-1 slide_message">
+              Message Reminder H-1
+          </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script type="text/javascript">
@@ -162,8 +115,7 @@
         });
 
         $("#divInput-description-post").emojioneArea({
-            pickerPosition: "right",
-            mainPathFolder : "{{url('')}}",
+            pickerPosition: "top",
         });
     });
 
@@ -174,7 +126,17 @@
     neutralizeClock();
     saveCampaign();
     broadcastSchedule();
+    showReminder();
   });
+
+  function showReminder()
+  {
+      $(".board").click(function(){
+        var id = $(this).attr('id');
+
+        $("."+id).slideToggle(1000);
+      });
+  }
 
   function saveCampaign()
   {
