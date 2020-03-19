@@ -44,7 +44,7 @@
         
       <div class="bg-dashboard campaign row">
           <div class="col-lg-4 pad-fix col-card">
-            <h5>Dr Visit</h5>                                                
+            <h5>Dr Visit</h5>
             <div class="notes">
               <div class="link_wrap">Link From : {{env('APP_URL')}}xyz
                 <span>

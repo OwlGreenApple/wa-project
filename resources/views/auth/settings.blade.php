@@ -298,6 +298,7 @@
           $('.div-loading').removeClass('background-load');
 
           var data = jQuery.parseJSON(result);
+          console.log(data);
           if(data.status == "success") {
             $('.message').show();
             $('.message').html('<div class="text-center">'+data.message+" <b><h5><span id='min'></span> : <span id='secs'></span></h5></b></div>");

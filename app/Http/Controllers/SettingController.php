@@ -78,7 +78,7 @@ class SettingController extends Controller
 
             if($check_qr_status <> $phone_string)
             {
-                PhoneNumber::where([["user_id",$user->id],['phone_number',$phone_number]])->update(['status'=>0]);                      
+                PhoneNumber::where([["user_id",$user->id],['phone_number',$phone_number]])->update(['status'=>0]);
             }
         }
       }
@@ -213,12 +213,14 @@ class SettingController extends Controller
       $status_register = json_decode($registered_phone,true);
       $message = strval($status_register['message']);
 
+      /* diremark karena dianggap selalu success
       if(stripos($message,'success') === false)
       {
           $arr['status'] = 'error';
           $arr['message'] = 'Phone '.$status_register['message'];
           return $arr;
       }
+      */
 
       if(is_null($phoneNumber)){
         $token = explode(':',$this->getToken($request->phone_number));
