@@ -223,13 +223,14 @@ class SettingController extends Controller
       */
 
       if(is_null($phoneNumber)){
-        $token = explode(':',$this->getToken($request->phone_number));
+        // $token = explode(':',$this->getToken($request->phone_number));
         $phoneNumber = new PhoneNumber();
         $phoneNumber->user_id = $user->id;
         $phoneNumber->phone_number = $request->phone_number;
         $phoneNumber->counter = 0;
         $phoneNumber->status = 0;
-        $phoneNumber->filename = $token[1];
+        // $phoneNumber->filename = $token[1];
+        $phoneNumber->filename = "";
         $phoneNumber->save();
       }
 
@@ -276,22 +277,23 @@ class SettingController extends Controller
       //SCAN QR CODE
       //$string = '+62895342972008_not_your_client';
 
-      $check_connected = $this->check_connected_phone($request);
-      $check = json_decode($check_connected,true);
+      // $check_connected = $this->check_connected_phone($request);
+      // $check_connected = $this->check_connected_phone($request);
+      // $check = json_decode($check_connected,true);
 
       //IF PHONE NUMBER NOT REGISTERED
-      if(preg_match("/\b" .'not_your_client'. "\b/i",$check['status']))
-      {
-          $error = array(
-            'status'=>'error',
-            'phone_number'=>Alert::registered_phone(),
-          );
-          return response()->json($error);
-      } 
+      // if(preg_match("/\b" .'not_your_client'. "\b/i",$check['status']))
+      // {
+          // $error = array(
+            // 'status'=>'error',
+            // 'phone_number'=>Alert::registered_phone(),
+          // );
+          // return response()->json($error);
+      // } 
 
       //IF PHONE NUMBER DIDN'T SCANNED OR VERIFY YET AND DISPLAY QR-CODE
-      if(preg_match("/\b" .'none'. "\b/i",$check['status']) || empty($check['status']))
-      {
+      // if(preg_match("/\b" .'none'. "\b/i",$check['status']) || empty($check['status']))
+      // {
           $qr_code = ApiHelper::get_qr_code($request->phone_number);
 
           if($qr_code == false)
@@ -310,24 +312,24 @@ class SettingController extends Controller
           }
 
           return response()->json($data);
-      }
+      // }
 
       //IF PHONE NUMBER SCANNED OR VERIFY ALREADY
 
-      if($request->phone_number == $check['status'])
-      {
-          $error = array(
-              'status'=>'true',
-              'phone_number'=>Alert::phone_connect(),
-          );
-      }
-      else
-      {
-          $error = array(
-              'status'=>'error',
-              'phone_number'=>Alert::error_verify(),
-          );
-      }
+      // if($request->phone_number == $check['status'])
+      // {
+          // $error = array(
+              // 'status'=>'true',
+              // 'phone_number'=>Alert::phone_connect(),
+          // );
+      // }
+      // else
+      // {
+          // $error = array(
+              // 'status'=>'error',
+              // 'phone_number'=>Alert::error_verify(),
+          // );
+      // }
 
       return response()->json($error);
       
@@ -399,5 +401,25 @@ class SettingController extends Controller
     public function delete_api($wa_number)
     {
         ApiHelper::unreg($wa_number);
+    }
+
+    public function get_key($wa_number)
+    {
+        return ApiHelper::get_key($wa_number);
+    }
+
+    public function get_all_cust()
+    {
+        return ApiHelper::get_all_cust();
+    }
+
+    public function status_nomor($wa_number)
+    {
+        return ApiHelper::status_nomor($wa_number);
+    }
+
+    public function take_screenshot($wa_number)
+    {
+        return ApiHelper::take_screenshot($wa_number);
     }
 }
