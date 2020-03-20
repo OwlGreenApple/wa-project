@@ -403,11 +403,6 @@ class SettingController extends Controller
         ApiHelper::unreg($wa_number);
     }
 
-    public function get_key($wa_number)
-    {
-        return ApiHelper::get_key($wa_number);
-    }
-
     public function get_all_cust()
     {
         return ApiHelper::get_all_cust();
@@ -421,5 +416,15 @@ class SettingController extends Controller
     public function take_screenshot($wa_number)
     {
         return ApiHelper::take_screenshot($wa_number);
+    }
+    
+    public function get_key($wa_number)
+    {
+        return ApiHelper::get_key($wa_number);
+    }
+
+    public function send_message($wa_number,$message,$key)
+    {
+        return ApiHelper::send_message($wa_number,$message,$key);
     }
 }

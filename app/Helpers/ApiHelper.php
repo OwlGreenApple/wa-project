@@ -340,7 +340,7 @@ class ApiHelper
     return $qrcode;
   }
 
-  public function sendMessage($phoneNumber,$message,$key)
+  public static function send_message($phoneNumber,$message,$key)
   {
     $url='http://116.203.92.59/api/send_message';
     $data = array(

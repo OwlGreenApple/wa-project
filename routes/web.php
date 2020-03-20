@@ -95,10 +95,11 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('get-clients', 'SettingController@get_all_client');
   Route::get('check-qr', 'SettingController@check_connected_phone');
   Route::get('instant-delete-phone/{no}', 'SettingController@delete_api');
-  Route::get('get-key/{no}', 'SettingController@get_key');
   Route::get('status-nomor/{no}', 'SettingController@status_nomor');
   Route::get('take-screenshoot/{no}', 'SettingController@take_screenshot');
   Route::get('get-all-cust', 'SettingController@get_all_cust');
+  Route::get('get-key/{no}', 'SettingController@get_key');
+  Route::get('send-message/{wa_number}/{message}/{key}', 'SettingController@send_message');
   // Route::post('edit-phone', 'SettingController@editPhone');
 });
 
