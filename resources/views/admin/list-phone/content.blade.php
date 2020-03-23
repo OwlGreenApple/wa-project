@@ -15,5 +15,8 @@
     <td data-label="Key Woowa">
       {{$phone_number->filename}}
     </td>
+    <td>
+      <a href="{{url('').$phone_number->phone_number}}">open</a>
+    </td>
   </tr>
 @endforeach
