@@ -22,15 +22,27 @@
 
         <form method="GET" action="{{url('list-create')}}">
           @csrf
-          <div class="form-group">
+          <div class="form-group mt-5">
             <input name="listname" value="@if(session('listname')){{ session('listname') }}@endif" type="text" class="form-control custom-form" placeholder="Your List Name"/>
              @error('listname')
                 <span class="error">{{ $message }}</span>
              @enderror
           </div>
 
+          <div class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="is_secure" id="standardRadio" value="0" checked>
+            <label class="form-check-label" for="standardRadio">
+              Standard 
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="is_secure" id="secureRadio" value="1">
+            <label class="form-check-label" for="secureRadio">
+              Secure Auto Reply
+            </label>
+          </div>
 
-          <div class="form-group">
+          <div class="form-group mt-3">
             <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text">@if(session('autoreply')){{ session('autoreply') }}@endif</textarea>
           </div>
 
@@ -49,65 +61,20 @@
         pickerPosition: "right",
         mainPathFolder : "{{url('')}}",
   });
-                
-  $(function(){
-      fancyboxModal();
+  
+  var tempText;
+  $(document).ready(function(){
+    $("body").on("click","#secureRadio",function(){
+      tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
+      
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [username], \n Terima Kasih sudah mendaftar \n Langkah selanjutnya adalah : \n - Reply Chat ini klik [reply_chat] \n - Untuk menerima pesan klik > [Start] \n - Untuk Unsubs klik > [Unsubs]');
+    });
+    $("body").on("click","#standardRadio",function(){
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempText);
+    });
   });
 
-  function fancyboxModal()
-  {
-    $('#fancybox-modal').on('click', function() {
-      $.fancybox.open([
-        {
-          src  : '{{ asset("assets/hint/hint-1.png") }}',
-          opts : {
-            caption : 'Step 1'
-          }
-        },
-        {
-          src  : '{{ asset("assets/hint/hint-2.png") }}',
-          opts : {
-            caption : 'Step 2'
-          }
-        },
-        {
-          src  : '{{ asset("assets/hint/hint-3.png") }}',
-          opts : {
-            caption : 'Step 3'
-          }
-        },
-        {
-          src  : '{{ asset("assets/hint/hint-4.png") }}',
-          opts : {
-            caption : 'Step 4'
-          }
-        },
-        {
-          src  : '{{ asset("assets/hint/hint-5.png") }}',
-          opts : {
-            caption : 'Step 5'
-          }
-        },
-        {
-          src  : '{{ asset("assets/hint/hint-6.png") }}',
-          opts : {
-            caption : 'Step 6'
-          }
-        },
-        {
-          src  : '{{ asset("assets/hint/hint-7.png") }}',
-          opts : {
-            caption : 'Step 7'
-          }
-        },
-        {
-          src  : '{{ asset("assets/hint/hint-8.png") }}',
-          opts : {
-            caption : 'Last Step'
-          }
-        },
-      ]);
-    });
-  }
+
+
 </script>
 @endsection

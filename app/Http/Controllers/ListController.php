@@ -118,12 +118,16 @@ class ListController extends Controller
           ->with('autoreply',$request->autoreply)
           ;
       }
+      
+      // pengecekan error nya klo ga ada [start] [unsubs] [reply_chat]
+      
 
       $list = new UserList;
       $list->user_id = Auth::id();
       $list->name = $this->createRandomListName();
       $list->label = $label;
       $list->phone_number_id = $phone->id;
+      $list->is_secure = $request->is_secure;
       $list->save();
       $listid = $list->id;
       $listname = $list->name;
