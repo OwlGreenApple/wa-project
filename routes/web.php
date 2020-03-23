@@ -166,10 +166,17 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 
   /* APPOINTMENT */
   Route::get('create-apt','AppointmentController@createAppointment');
+  Route::post('save-apt','AppointmentController@saveAppointment');
+  Route::get('display-template-apt','AppointmentController@displayTemplateAppointment');
+  Route::post('save-template-appoinments','AppointmentController@saveTemplateAppointment');
   Route::get('appointment','AppointmentController@index')->name('appointment');
-  Route::get('list-apt','AppointmentController@listAppointment');
+  Route::get('list-apt/{id}','AppointmentController@listAppointment');
+  Route::get('list-table-apt','AppointmentController@listTableAppointments');
+  Route::get('table-apt','AppointmentController@tableAppointment');
   Route::get('form-apt','AppointmentController@formAppointment');
-  Route::get('edit-apt','AppointmentController@editAppointment');
+  Route::get('edit-apt/{id}','AppointmentController@editAppointment');
+  Route::get('edit-appt-template','AppointmentController@editAppointmentTemplate');
+  Route::get('delete-appt-template','AppointmentController@deleteAppointmentTemplate');
 
   // scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');

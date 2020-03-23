@@ -33,16 +33,39 @@
         </tr>
       </thead>
 
-      <tbody>
-        <tr>
-          <td class="text-center">1</td>
-          <td class="text-center">18 Maret 2020</td>
-          <td class="text-center">Ali Mahrus</td>
-          <td class="text-center">6281111111</td>
-          <td class="text-center"><a class="icon-edit"></a></td>
-          <td class="text-center"><a class="icon-cancel"></a></td>
-        </tr> 
-      </tbody>
+      <tbody id="display_data"></tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    display_data();
+  });
+
+  function display_data()
+  {
+    $.ajax({
+      type : 'GET',
+      url : '{{ url("list-table-apt") }}',
+      data : {campaign_id : {!! $campaign_id !!} },
+      dataType : 'html',
+      beforeSend : function(){
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success : function(result)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        $("#display_data").html(result);
+      },
+      error : function(xhr)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        console.log(xhr.responseText);
+      }
+    });
+  }
+</script>
 @endsection

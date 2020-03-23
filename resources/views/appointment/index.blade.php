@@ -9,7 +9,7 @@
   </div>
 
   <div class="act-tel-dashboard-right">
-    <a href="{{url('create-appointment')}}" class="btn btn-custom">Create Appointment</a>
+    <a href="{{url('create-apt')}}" class="btn btn-custom">Create Appointment</a>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -28,7 +28,6 @@
 
       <div class="col-lg-6"></div>
 
-
       <div class="clearfix"></div>
 
     </div>
@@ -42,62 +41,33 @@
         <!-- display appointment -->
         
         
-      <div class="bg-dashboard campaign row">
-          <div class="col-lg-4 pad-fix col-card">
-            <h5>Dr Visit
-                <span>
-                  <a data-link="{{env('APP_URL')}}xyz" class="btn-copy icon-copy"></a>
-                </span>  
-            </h5>                           
-            <div class="notes">
-              <div class="link_wrap">Link From : {{env('APP_URL')}}xyz
-                <span>
-                  <a data-link="{{env('APP_URL')}}xyz" class="btn-copy icon-copy"></a>
-                </span>
-              </div>
-              
-              <div>List : Test List Audience</div>
-            </div>
-            <div class="created">
-              Create On : 10 march 2020
-            </div>
-          </div>
-
-          <div class="col-lg-5 pad-fix mt-4">
-            <div class="row">
-                <div class="col-lg-3 pad-fix cardnumber">
-                &nbsp
-                </div>  
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <a href="{{ url('list-apt') }}" target="_blank">
-                    <div class="big-number">52</div>
-                    <div class="contact">Contact</div>
-                  </a>
-                </div>  
-                <!--<div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">7</div>
-                  <div class="contact">Send</div>
-                </div> 
-                -->
-            </div>  
-          </div>
-
-          <div class="col-lg-3 pad-fix col-button">
-              <a href="{{url('edit-apt')}}" class="btn btn-edit btn-sm" target="_blank"><span class="icon-edit"></span></a>
-              <a href="" class="btn btn-success btn-sm" target="_blank"><span class="icon-export"></span></a>
-              <button type="button" id="2" class="btn btn-danger btn-sm event-del"><span class="icon-delete"></span></button>
-
-          </div>
-      </div>         
-        
-        
-        
-        
       </div>
   </div>
 </div>
 
-
+<!-- Modal Copy Link -->
+<div class="modal fade" id="copy-link" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modaltitle">
+          Copy Link
+        </h5>
+      </div>
+      <div class="modal-body">
+        You have copied the link!
+      </div>
+      <div class="modal-footer" id="foot">
+        <button class="btn btn-primary" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+      
+  </div>
+</div>
 
 <script type="text/javascript">
   /* Datetimepicker */
@@ -123,15 +93,15 @@
       searchAppointment();
       MDTimepicker(); 
       neutralizeClock();
+      copyLink();
   });
 
-//belum jadi
   function displayAppointment()
   {
      $.ajax({
         type : 'GET',
-        url : '{{ route("eventlist") }}',
-        data : {type : 0},
+        url : '{{ url("table-apt") }}',
+        data : {search : 0},
         dataType : 'html',
         beforeSend: function()
         {
@@ -141,7 +111,7 @@
         success : function(result){
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          $("#display_campaign").html(result);
+          $("#display_appointment").html(result);
         },
         error : function(xhr,attributes,throwable){
           $('#loader').hide();
@@ -150,10 +120,28 @@
      });
   }
 
-//belum jadi 
+   function copyLink(){
+      $( "body" ).on("click",".btn-copy",function(e) 
+      {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var link = $(this).attr("data-link");
+
+        var tempInput = document.createElement("input");
+        tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+        tempInput.value = link;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        $('#copy-link').modal('show');
+      });
+    }
+
   function delAppointment()
   {
-    $("body").on("click",".broadcast-del",function(){
+    $("body").on("click",".campaign-del",function(){
       var id = $(this).attr('id');
       var conf = confirm("Are you sure to delete this broadcast?"+"\n"+"WARNING : This cannot be undone");
 
@@ -164,7 +152,6 @@
           url : '{{ url("campaign-del") }}',
           data : {
               id : id,
-              mode : "broadcast"
           },
           beforeSend: function()
           {

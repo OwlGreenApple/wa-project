@@ -12,5 +12,6 @@ class Campaign extends Model
     0 -> Event 
     1 -> Auto Responder 
     2 -> Broadcast 
+    3 -> Appointment
     */
 }

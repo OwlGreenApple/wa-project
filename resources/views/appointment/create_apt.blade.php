@@ -13,6 +13,7 @@
 
 <!-- NUMBER -->
 <div class="container act-tel-apt">
+  <div id="error_db" class="col-lg-12"></div>
   <form id="save_apt">
       
       <div class="form-group row lists">
@@ -63,34 +64,26 @@
     });
 
   $(document).ready(function(){
-    displayOption();
-    displayAddDaysBtn();
-    MDTimepicker();
-    neutralizeClock();
-    saveCampaign();
-    broadcastSchedule();
-    showReminder();
+    //displayOption();
+    //displayAddDaysBtn();
+    //MDTimepicker();
+    //neutralizeClock();
+    saveAppointment();
+    //broadcastSchedule();
+    //showReminder();
   });
 
-  function showReminder()
+  function saveAppointment()
   {
-      $(".board").click(function(){
-        var id = $(this).attr('id');
-
-        $("."+id).slideToggle(1000);
-      });
-  }
-
-  function saveCampaign()
-  {
-    $("#save_campaign").submit(function(e){
+    $("#save_apt").submit(function(e){
       e.preventDefault();
       var data = $(this).serialize();
+      var id;
 
       $.ajax({
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
           type : 'POST',
-          url : '{{url("save-campaign")}}',
+          url : '{{url("save-apt")}}',
           data : data,
           dataType : 'json',
           beforeSend: function()
@@ -100,53 +93,20 @@
           },
           success : function(result){
 
-            if(result.err == 'ev_err')
+            if(result.success == 0)
             {  
                 $('#loader').hide();
                 $('.div-loading').removeClass('background-load');
                 $(".error").show();
-                $(".campaign_name").html(result.campaign_name);
-                $(".list_id").html(result.list_id);
-                $(".event_time").html(result.event_time);
-                $(".day").html(result.day);
-                $(".hour").html(result.hour);
-                $(".msg").html(result.msg);
-            }
-            else if(result.err == 'responder_err')
-            {
-                $('#loader').hide();
-                $('.div-loading').removeClass('background-load');
-                $(".error").show();
-                $(".campaign_name").html(result.campaign_name);
-                $(".list_id").html(result.list_id);
-                $(".day").html(result.day);
-                $(".hour").html(result.hour);
-                $(".msg").html(result.msg);
-            }
-            else if(result.err == 'broadcast_err')
-            {
-                $('#loader').hide();
-                $('.div-loading').removeClass('background-load');
-                $(".error").show();
-                $(".campaign_name").html(result.campaign_name);
-                $(".list_id").html(result.list_id);
-                $(".group_name").html(result.group_name);
-                $(".channel_name").html(result.channel_name);
-                $(".date_send").html(result.date_send);
-                $(".hour").html(result.hour);
-                $(".msg").html(result.msg);
+                $(".error_db").html(result.message);
+                //$(".list_id").html(result.list_id);
             }
             else
             {
                 $(".error").hide();
-                $("input[name='campaign_name']").val('');
-                $("input[name='group_name']").val('');
-                $("input[name='group_name']").val('');
-                $("input[name='channel_name']").val('');
-                $("input[name='date_send']").val('');
-                $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+                id = result.id;
                 alert(result.message);
-                location.href='{{ url("campaign") }}';
+                location.href='{{ url("edit-apt") }}/'+id;
             }
           },
           error : function(xhr,attribute,throwable)
@@ -158,6 +118,15 @@
       });
       //ajax
     });
+  }
+
+  function showReminder()
+  {
+      $(".board").click(function(){
+        var id = $(this).attr('id');
+
+        $("."+id).slideToggle(1000);
+      });
   }
 
   function displayOption(){
