@@ -1,7 +1,13 @@
+<?php 
+use App\User;
+?>
 @foreach($phone_numbers as $phone_number)
   <tr>
     <td data-label="Email">
-      {{$phone_number->email}}
+      <?php 
+        $user = User::find($phone_number->user_id);
+        echo $user->email;
+      ?>
     </td>
     <td data-label="Username">
       {{$phone_number->phone_number}}
@@ -16,7 +22,7 @@
       {{$phone_number->filename}}
     </td>
     <td>
-      <a href="{{url('').$phone_number->phone_number}}">open</a>
+      <a href="{{url('take-screenshoot').'/'.$phone_number->phone_number}}" target="_blank">open</a>
     </td>
   </tr>
 @endforeach
