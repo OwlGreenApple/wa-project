@@ -32,7 +32,17 @@ class SettingController extends Controller
     public function index()
     {
       $user = Auth::user();
-      return view('auth.settings',['user'=>$user]);
+      $is_registered = 0;
+      $phoneNumber = PhoneNumber::
+                      where("user_id",$user->id)
+                      ->first();
+      if (!is_null($phoneNumber)) {
+        $is_registered = 1;
+      }
+      return view('auth.settings',[
+        'user'=>$user,
+        'is_registered'=>$is_registered,
+      ]);
     }
 
     public function settingsUser(Request $request)
@@ -76,10 +86,10 @@ class SettingController extends Controller
             $check_qr_status = ApiHelper::qr_status($phone_number);
             $phone_string = substr($phone_number, 1);
 
-            if($check_qr_status <> $phone_string)
-            {
-                PhoneNumber::where([["user_id",$user->id],['phone_number',$phone_number]])->update(['status'=>0]);
-            }
+            // if($check_qr_status <> $phone_string)
+            // {
+                // PhoneNumber::where([["user_id",$user->id],['phone_number',$phone_number]])->update(['status'=>0]);
+            // }
         }
       }
 
@@ -149,38 +159,6 @@ class SettingController extends Controller
       return response()->json($data);
     }
 
-    public function ChatTelegramNumber($phone_number,$filename)
-    {
-      $curl = curl_init();
-      $data = array(
-          'token'=> env('TOKEN_API'),
-          'phone_number' => $phone_number,
-          'filename'=>$filename,
-      );
-
-      curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/auth-set-phone.php",
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => http_build_query($data),
-        CURLOPT_POST => 1,
-      ));
-
-      $response = curl_exec($curl);
-      $err = curl_error($curl);
-
-      curl_close($curl);
-
-      if ($err) {
-        // echo "cURL Error #:" . $err;
-        $arr['status'] = 'error';
-        $arr['message'] = "Please try to connect again". $err;
-        return $arr;
-      } else {
-        // echo $response."\n";
-      }
-    }
-    
     public function connect_phone(Request $request)
     {
       $user = Auth::user();
@@ -239,61 +217,39 @@ class SettingController extends Controller
       return $arr;
     }
 
-    private function getToken($no_wa)
-    {
-        $url='https://116.203.92.59/api/get_ip_key';
-        $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
-        $data = array(
-          "no_wa" => $no_wa,
-          "key"=>$key,
-        );
-
-        $data_string = json_encode($data);
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, 0);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 360);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($data_string))
-        );
-
-        return curl_exec($ch);
-        //echo $res=curl_exec($ch);
-    }
-
-    public function get_all_client()
-    {
-        return ApiHelper::get_client();
-    }
-    
+    /*
+    * GET QR CODE
+    */
     public function verify_phone(Request $request)
     {
-      //SCAN QR CODE
-      //$string = '+62895342972008_not_your_client';
-
-      // $check_connected = $this->check_connected_phone($request);
-      // $check_connected = $this->check_connected_phone($request);
-      // $check = json_decode($check_connected,true);
-
-      //IF PHONE NUMBER NOT REGISTERED
-      // if(preg_match("/\b" .'not_your_client'. "\b/i",$check['status']))
-      // {
-          // $error = array(
-            // 'status'=>'error',
-            // 'phone_number'=>Alert::registered_phone(),
-          // );
-          // return response()->json($error);
-      // } 
-
-      //IF PHONE NUMBER DIDN'T SCANNED OR VERIFY YET AND DISPLAY QR-CODE
-      // if(preg_match("/\b" .'none'. "\b/i",$check['status']) || empty($check['status']))
-      // {
+      $user = Auth::user();
+      $phoneNumber = PhoneNumber::
+                      where("phone_number",$request->phone_number)
+                      ->where("user_id",$user->id)
+                      ->first();
+                      
+      /*
+      Cek database, klo status masi 0 maka akan request ke woowa 
+      Cek Ready or not (after 3-5 min register phone no)
+      */
+      if ($phoneNumber->status == 0) {
+        $arr = json_decode(ApiHelper::status_nomor($request->phone_number),1);
+        if (!is_null($arr)) {
+          if($arr['status']=="success"){
+            $phoneNumber->status=1;
+            $phoneNumber->save();
+          }
+        }
+        else {
+          $error = array(
+            'status'=>'error',
+            'phone_number'=>Alert::error_verify(),
+          );
+          return response()->json($error);
+        }
+      }
+      
+      if ($phoneNumber->status == 1) {
           $qr_code = ApiHelper::get_qr_code($request->phone_number);
 
           if($qr_code == false)
@@ -310,31 +266,14 @@ class SettingController extends Controller
               'data'=>$qr_code,
             );
           }
-
           return response()->json($data);
-      // }
-
-      //IF PHONE NUMBER SCANNED OR VERIFY ALREADY
-
-      // if($request->phone_number == $check['status'])
-      // {
-          // $error = array(
-              // 'status'=>'true',
-              // 'phone_number'=>Alert::phone_connect(),
-          // );
-      // }
-      // else
-      // {
-          // $error = array(
-              // 'status'=>'error',
-              // 'phone_number'=>Alert::error_verify(),
-          // );
-      // }
-
-      return response()->json($error);
+      }
       
     }
 
+    /*
+    * Confirm QR CODE
+    */
     public function check_connected_phone(Request $request)
     {
         $user_id = Auth::id();
@@ -354,7 +293,7 @@ class SettingController extends Controller
         if($status_connect == $wa_number)
         {
             $data = array(
-              'status'=>1,
+              'status'=>2,
               'counter'=>6,
               'max_counter'=>5000
             );
@@ -403,6 +342,39 @@ class SettingController extends Controller
         ApiHelper::unreg($wa_number);
     }
 
+    private function getToken($no_wa)
+    {
+        $url='https://116.203.92.59/api/get_ip_key';
+        $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
+        $data = array(
+          "no_wa" => $no_wa,
+          "key"=>$key,
+        );
+
+        $data_string = json_encode($data);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_VERBOSE, 0);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 360);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($data_string))
+        );
+
+        return curl_exec($ch);
+        //echo $res=curl_exec($ch);
+    }
+
+    public function get_all_client()
+    {
+        return ApiHelper::get_client();
+    }
+    
     public function get_all_cust()
     {
         return ApiHelper::get_all_cust();
@@ -410,7 +382,13 @@ class SettingController extends Controller
 
     public function status_nomor($wa_number)
     {
-        return ApiHelper::status_nomor($wa_number);
+        $arr = json_decode(ApiHelper::status_nomor($wa_number),1);
+        if (!is_null($arr)) {
+          return $arr['status'];
+        } 
+        else {
+          echo "null";
+        }
     }
 
     public function take_screenshot($wa_number)

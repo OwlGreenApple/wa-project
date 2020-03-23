@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use App\User;
 use App\PhoneNumber;
 use DB;
+use App\Helpers\ApiHelper;
 
 class SendMessage extends Command
 {
@@ -52,34 +53,6 @@ class SendMessage extends Command
       $this->campaignAutoResponder();
     }    
  
-    public function sendMessage($phoneNumber,$message,$key)
-    {
-      //$key='7f75ace4c47239b05141d95139633c350d70aec0b3cd1781';
-      $url='http://116.203.92.59/api/send_message';
-      $data = array(
-        "phone_no"=> $phoneNumber,
-        "key"		=>$key,
-        "message"	=>$message
-      );
-      $data_string = json_encode($data);
-
-      $ch = curl_init($url);
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($ch, CURLOPT_VERBOSE, 0);
-      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
-      curl_setopt($ch, CURLOPT_TIMEOUT, 360);
-      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($data_string))
-      );
-      echo $res=curl_exec($ch);
-      curl_close($ch);
-    }
-
     /* BROADCAST */
     public function campaignBroadcast()
     {
@@ -121,7 +94,7 @@ class SendMessage extends Command
                         $status = 'Sent';
                         $number ++;
 
-                        $this->sendMessage($customer_phone,$message,$key);
+                        ApiHelper::send_message($customer_phone,$message,$key);
                         $this->generateLog($number,$campaign,$id_campaign,$status);
 
                         $phoneNumber->counter --;
@@ -199,7 +172,7 @@ class SendMessage extends Command
 
                 if($adding->lte(Carbon::now()) && $count > 0 && $max_counter > 0)
                 {        
-                    $this->sendMessage($customer_phone,$message,$key);
+                    ApiHelper::send_message($customer_phone,$message,$key);
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
                     $status = 'Sent';
@@ -226,7 +199,7 @@ class SendMessage extends Command
         }
     }
 
-    /* EVENT 
+    /* EVENT */
     public function campaignEvent()
     {
           $idr = null;
@@ -283,7 +256,7 @@ class SendMessage extends Command
                   $message = str_replace('{name}',$row->name,$row->message);
                   $id_reminder = $row->id_reminder;
      
-                  $this->sendMessage($customer_phone,$message,$key);
+                  ApiHelper::send_message($customer_phone,$message,$key);
                   $this->generateLog($number,$campaign,$id_campaign,$status);
 
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
@@ -305,7 +278,7 @@ class SendMessage extends Command
               }//END FOR LOOP EVENT
           }
     }
-    */
+    
 
     public function generateLog($number,$campaign,$id_campaign,$error = null)
     {

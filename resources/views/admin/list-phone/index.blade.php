@@ -67,6 +67,9 @@
               <th>
                 Key WooWA
               </th>
+              <th>
+                Link Screenshoot
+              </th>
             </thead>
             <tbody id="content">
             </tbody>

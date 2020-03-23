@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="text-right">
-                  <button type="button" id="button-connect" class="btn btn-custom">Connect</button>
+                  <button type="button" id="button-connect" class="btn btn-custom" <?php if ($is_registered) { echo "disabled"; } ?>>Connect</button>
                 </div>
             </form>
 
@@ -83,7 +83,7 @@
         </div>
 
         <div class="wrapper verification" id="div-verify">
-            <div class="form-group"><label class="col-sm-12 col-form-label">Sacn this QR code from your <strong>Whatsapp Phone</strong></label></div>
+            <div class="form-group"><label class="col-sm-12 col-form-label">Scan this QR code from your <strong>Whatsapp Phone</strong></label></div>
             <div class="form-group row col-fix">
               <div class="col-lg-6"><div id="qr-code"></div></div>
               <div class="col-lg-6"><div id="timer"></div></h3></div>
@@ -374,7 +374,7 @@
 
             if(result.status == 'error'){
               $('.message').show();
-              $('.message').html(result.phone_number);
+              $('.message').append(result.phone_number);
             }
             else
             {
