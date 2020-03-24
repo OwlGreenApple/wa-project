@@ -168,7 +168,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('create-apt','AppointmentController@createAppointment');
   Route::post('save-apt','AppointmentController@saveAppointment');
   Route::get('display-template-apt','AppointmentController@displayTemplateAppointment');
-  Route::post('save-template-appoinments','AppointmentController@saveTemplateAppointment');
+  Route::post('save-template-appoinments','AppointmentController@saveTemplateAppointment')->middleware('checkeditappt');
   Route::get('appointment','AppointmentController@index')->name('appointment');
   Route::get('list-apt/{id}','AppointmentController@listAppointment');
   Route::get('list-table-apt','AppointmentController@listTableAppointments');

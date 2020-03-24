@@ -76,6 +76,7 @@ class Kernel extends HttpKernel
         'checkimportcsv'=>\App\Http\Middleware\CheckImportCSV::class,
         'checkphone'=>\App\Http\Middleware\CheckPhone::class,
         'checkformappt'=>\App\Http\Middleware\CheckFormAppointment::class,
+        'checkeditappt'=>\App\Http\Middleware\CheckEditAppointmentTemplate::class,
     ];
 
     /**

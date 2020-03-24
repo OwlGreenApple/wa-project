@@ -151,6 +151,9 @@ class AppointmentController extends Controller
     {
         $userid = Auth::id();
         $campaign_id = $request->campaign_id;
+        $listid = Campaign::find($campaign_id)->list_id;
+        $save = false;
+        $count = 0;
 
         if(isset($_POST['day']))
         {
@@ -201,18 +204,97 @@ class AppointmentController extends Controller
         $template_appt->days = $days;
         $template_appt->time_sending = $request->hour;
         $template_appt->message = $request->message;
-
+ 
         try {
           $template_appt->save();
-          $data['success'] = 1;
-          $data['message'] = 'Your schedule template has been created!';
+          $tmp_appt_id = $template_appt->id;
+          $save = true;
         }
         catch(Exception $e)
         {
           $data['success'] = 0;
           $data['message'] = 'Sorry, unable to create schedule template, please try again later';
+          return response()->json($data);
         }
-        return response()->json($data);
+
+        if($save == true)
+        {
+            // TO OBTAIN CUSTOMER FROM PREVIOUS TEMPLATE WITH SAME CAMPAIGN
+            $getcustomer = ReminderCustomers::where([['reminders.campaign_id',$campaign_id]])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('customers.id','reminders.event_time')
+            ->distinct()
+            ->get();
+
+            if($getcustomer->count() > 0)
+            {
+              foreach($getcustomer as $row)
+              {
+                $reminder = new Reminder;
+                $reminder->user_id = $userid;
+                $reminder->list_id = $listid;
+                $reminder->campaign_id = $campaign_id;
+                $reminder->tmp_appt_id = $tmp_appt_id;
+                $reminder->is_event = 2;   
+                $reminder->days = $days;
+                $reminder->hour_time = $request->hour;
+                $reminder->event_time = $row->event_time;
+                $reminder->message = $request->message;
+
+                try {
+                  $reminder->save();
+                  $reminderid[] = $reminder->id;
+                  $customerid[] = $row->id;
+                }
+                catch(Exception $e)
+                {
+                  $data['success'] = 0;
+                  $data['message'] = 'Sorry, unable to create schedule template, please try again later';
+                  return response()->json($data);
+                }
+              }
+            }
+
+            $newcustomer = array_combine($reminderid,$customerid);
+        }
+
+        if(count($newcustomer) > 0)
+        {
+          foreach($newcustomer as $reminder_id=>$customer_id)
+          {
+            $reminder_customer = new ReminderCustomers;
+            $reminder_customer->user_id = $userid;
+            $reminder_customer->list_id = $listid;
+            $reminder_customer->reminder_id = $reminder_id;
+            $reminder_customer->customer_id = $customer_id;
+
+            try {
+              $reminder_customer->save();
+              $count++;
+            }
+            catch(Exception $e)
+            {
+              $data['success'] = 0;
+              $data['message'] = 'Sorry, unable to create schedule template, please try again later';
+              return response()->json($data);
+            }
+          }
+        }
+        else {
+          $data['success'] = 1;
+          $data['message'] = 'Your appointment template has been created!';
+          return response()->json($data);
+        }
+
+        //use count to make sure data inserted on for loop
+        if($count > 0)
+        {
+          $data['success'] = 1;
+          $data['message'] = 'Your appointment template has been created!';
+          return response()->json($data);
+        }
+        
     }
 
     public function editAppointmentTemplate(Request $request)

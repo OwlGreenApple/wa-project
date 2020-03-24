@@ -225,13 +225,11 @@
             if(result.success == 0)
             {  
                 $(".error").show();
-                /* 
-                error validation message
-                $(".day").html();
-                $(".hour").html();
-                $(".msg").html();
-                */
+                $(".day").html(result.day);
+                $(".hour").html(result.hour);
+                $(".msg").html(result.msg);
                 $("#status_db").html(result.message);
+                $("#status_db").hide();
             }
             else
             {
