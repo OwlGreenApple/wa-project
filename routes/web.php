@@ -264,6 +264,8 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 //Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
 Route::post('subscriber/save','CustomerController@saveSubscriber')->middleware('customer')->name('savesubscriber');
 Route::get('test-send-message','CustomerController@testSendMessage');
+Route::get('link/activate/{list_name}/{customer_id}','CustomerController@link_activate');
+Route::get('link/unsubscribe/{list_name}/{customer_id}','CustomerController@link_unsubscribe');
 
 /* SUBSCRIBE */
 Route::get('/{list_name}', 'CustomerController@subscriber');

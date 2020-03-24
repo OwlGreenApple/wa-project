@@ -51,6 +51,9 @@ class SendMessage extends Command
    
       //Auto Responder
       $this->campaignAutoResponder();
+      
+      //Event
+      $this->campaignEvent();
     }    
  
     /* BROADCAST */
@@ -61,6 +64,7 @@ class SendMessage extends Command
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
           ->where("broad_cast_customers.status",0)
+          ->where("customers.status",1)
           ->orderBy('broad_casts.user_id')
           ->get();
 
@@ -129,6 +133,8 @@ class SendMessage extends Command
         $reminder = Reminder::where([
             ['reminder_customers.status','=',0],
             ['reminders.is_event','=',0],
+            ['reminders.status','=',1],
+            ['customers.status','=',1],
             ['customers.created_at','<=',$current_time->toDateTimeString()],
             ])
             ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
@@ -209,6 +215,8 @@ class SendMessage extends Command
           $reminder = Reminder::where([
                   ['reminder_customers.status',0], 
                   ['reminders.is_event',1], 
+                  ['customers.status',1], 
+                  ['reminders.status','=',1],
           ])
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')

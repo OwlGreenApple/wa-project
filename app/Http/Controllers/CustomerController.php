@@ -15,6 +15,7 @@ use App\Sender;
 use App\Additional;
 use App\PhoneNumber;
 use App\Console\Commands\SendWA as SendMessage;
+use App\Helpers\ApiHelper;
 
 class CustomerController extends Controller
 {
@@ -91,7 +92,7 @@ class CustomerController extends Controller
         $listname = $request->listname;
         $req = $request->all();
 
-        $lists = UserList::where('name','=',$listname)->first();
+        $list = UserList::where('name','=',$listname)->first();
         $today = Carbon::now();
         $valid_customer = false;
 
@@ -104,34 +105,61 @@ class CustomerController extends Controller
         }
 
         // Filter to avoid unavailable link 
-        if(is_null($lists)){
+        if(is_null($list)){
             return redirect('/');
         } 
         else {
             $customer = new Customer;
-            $customer->user_id = $lists->user_id;
-            $customer->list_id = $lists->id;
+            $customer->user_id = $list->user_id;
+            $customer->list_id = $list->id;
             $customer->name = $request->subscribername;
             $customer->email = $request->email;
             $customer->telegram_number = $request->phone_number;
             $customer->additional = $addt;
+            if ($list->is_secure) {
+              $customer->status = 0;
+            }
             $customer->save();
 
             $customer_id = $customer->id;
             $customer_join = $customer->created_at;
-        }
 
-        // if customer successful sign up 
-        if($customer->save()){
-           $user_id = $lists->user_id;
-           $list_id = $lists->id;
-           return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
-        } 
-        else {
-          $data['success'] = false;
-          $data['message'] = 'Error-000! Sorry there is something wrong with our system';
+            /*
+            Kalo is_secure maka akan dikirim langsung message wa nya 
+            */
+            if ($list->is_secure) {
+              $phoneNumber = PhoneNumber::where("user_id",$list->user_id)->first();
+              $key = $phoneNumber->filename;
+              
+              $reminder = Reminder::
+                          where("is_event",0)
+                          ->where("days",0)
+                          ->where("list_id",$list->id)
+                          ->first();
+              $message = "";
+              if (!is_null($reminder)){
+                $message = $reminder->message;
+                $message = str_replace( "[Name]" , $request->subscribername, $message);
+                $message = str_replace( "[reply_chat]" , "whatsapp://send/?phone=".$phoneNumber->phone_number."&text=" . "Hi Nama saya ".$request->subscribername.", saya bergabung digroup ini", $message);
+
+                $message = str_replace( "[Start]" , env("APP_URL")."link/activate/".$list->name."/".$customer_id, $message);
+                $message = str_replace( "[Unsubs]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$customer_id, $message);
+              }
+              ApiHelper::send_message($request->phone_number,$message,$key);
+            }
+      
+            // if customer successful sign up 
+            if($customer->save()){
+               $user_id = $list->user_id;
+               $list_id = $list->id;
+               return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
+            } 
+            else {
+              $data['success'] = false;
+              $data['message'] = 'Error-000! Sorry there is something wrong with our system';
+            }
+            return response()->json($data);
         }
-        return response()->json($data);
     }
 
     function addSubscriber($list_id,$customer_id,$customer_join,$user_id)
@@ -210,6 +238,33 @@ class CustomerController extends Controller
     }
 
 
+    public function link_activate($list_name,$customer_id)
+    {
+      $list = UserList::where('name','=',$list_name)->first();
+      $customer = Customer::find(customer_id);
+      if (!is_null($customer)){
+        if ($customer->list_id == $list->id ) {
+          $customer->status = 1;
+          $customer->save();
+        }
+      }
+      return redirect($list->name);
+    }
+
+    public function link_unsubscribe($list_name,$customer_id)
+    {
+      $list = UserList::where('name','=',$list_name)->first();
+      $customer = Customer::find(customer_id);
+      if (!is_null($customer)){
+        if ($customer->list_id == $list->id ) {
+          $customer->status = 1;
+          $customer->save();
+        }
+      }
+      return redirect($list->name);
+    }
+    
+    
     /************************ OLD CODES ************************/
 
     //Reminder

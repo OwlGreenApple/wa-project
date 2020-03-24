@@ -134,7 +134,7 @@ document = window.document || {};
                 autocorrect       : "off",
                 autocapitalize    : "off",
             },
-            mainPathFolder    : null,
+            mainPathFolder    : '/activrespons/assets',
             placeholder       : null,
             emojiPlaceholder  : ":smiley:",
             container         : null,
@@ -1083,9 +1083,10 @@ document = window.document || {};
         //}, self.id === 1); // calcElapsedTime()
     };
 
-    // var get_default_options = getDefaultOptions();
-    var get_options = getOptions();
-    var mainPathFolder = get_options.mainPathFolder;
+    var get_default_options = getDefaultOptions();
+    // var get_options = getOptions();
+    // var mainPathFolder = get_options.mainPathFolder;
+    var mainPathFolder = get_default_options.mainPathFolder;
     var emojioneVersion = window.emojioneVersion || '2.2.7';
     var cdn = { 
         // defaultBase: "https://cdnjs.cloudflare.com/ajax/libs/emojione/",
