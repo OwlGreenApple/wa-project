@@ -173,6 +173,15 @@ class AppointmentController extends Controller
               );
 
               TemplateAppointments::where([['user_id',$userid],['id',$request->is_update]])->update($update);
+
+              $update_reminder = array(
+                'days'=>$days,
+                'hour_time'=>$request->hour,
+                'message'=>$request->message,
+              );
+
+              Reminder::where([['tmp_appt_id',$request->is_update],['user_id',$userid],['campaign_id',$campaign_id]])->update($update_reminder);
+
                $data['success'] = 1;
                $data['message'] = 'Your template appointment has been updated!';
                return response()->json($data);
@@ -242,9 +251,120 @@ class AppointmentController extends Controller
         return response()->json($data);
     }
 
-    function formAppointment()
+    public function formAppointment($campaign_id)
     {
-        return view('appointment.form_apt');
+        $userid = Auth::id();
+        if(empty($campaign_id) || $campaign_id==null)
+        {
+            return redirect('create-apt');
+        }
+
+        $checkid = Campaign::where([['id',$campaign_id],['user_id',$userid]])->first();
+
+        if(is_null($checkid))
+        {
+            return redirect('create-apt');
+        }
+
+        return view('appointment.form_apt',['id'=>$campaign_id,'list_id'=>$checkid->list_id]);
     }
 
+    public function displayCustomerPhone(Request $request)
+    {
+        $phone = $request->phone;
+        $list_id = $request->list_id;
+        $userid = Auth::id();
+
+        $list = UserList::find($list_id);
+        $customer = Customer::where([['user_id',$userid],['list_id','=',$list_id],['telegram_number','=',$phone]])->get();
+
+        return view('appointment.customer_apt',['customer'=>$customer,'url'=>$list->name]);
+    }
+
+    public function saveAppointmentTime(Request $request)
+    {
+        $user_id = Auth::id();
+        $campaign_id = $request->campaign_id;
+        $list_id = $request->list_id;
+        $customer_id = $request->customer_id;
+        $date_send = $request->date_send;
+        $count = 0;
+        $reminderid = array();
+        $appointments = TemplateAppointments::where([['campaign_id',$campaign_id],['user_id',$user_id]])->get();
+
+        if($appointments->count() > 0)
+        {
+            foreach($appointments as $row)
+            {
+              $reminder = new Reminder;
+              $reminder->user_id = $user_id;
+              $reminder->list_id = $list_id;
+              $reminder->campaign_id = $campaign_id;
+              $reminder->tmp_appt_id = $row->id;
+              $reminder->is_event = 2;
+              $reminder->days = $row->days;
+              $reminder->hour_time = $row->time_sending;
+              $reminder->event_time = $date_send;
+              $reminder->message = $row->message;
+
+              try {
+                $reminder->save();
+                $reminderid[] = $reminder->id;
+              }
+              catch(Exception $e)
+              {
+                $result = array(
+                    'success'=>0,
+                    'message'=>'Sorry unable to create appointment, please try again later',
+                );
+                return response()->json($result);
+              }
+            }
+        }
+
+        if(count($reminderid) > 0)
+        {
+           foreach($reminderid as $id)
+           {
+              $reminder_customer = new ReminderCustomers;
+              $reminder_customer->user_id = $user_id;
+              $reminder_customer->list_id = $list_id;
+              $reminder_customer->reminder_id = $id;
+              $reminder_customer->customer_id = $customer_id;
+
+              try {
+                $reminder_customer->save();
+                $count++;
+              }
+              catch(Exception $e)
+              {
+                $result = array(
+                    'success'=>0,
+                    'message'=>'Sorry unable to create appointment, please try again later',
+                );
+                return response()->json($result);
+              }
+           }
+        }
+        else
+        {
+            $result = array(
+                'success'=>0,
+                'message'=>'Sorry unable to create appointment, please try again later',
+            );
+            return response()->json($result);
+        }
+
+        if($count > 0)
+        {
+            $result = array(
+                'success'=>1,
+                'message'=>'Your appointment has been created!',
+            );
+            return response()->json($result);
+        }
+
+    }
+
+/* end of class */
 }

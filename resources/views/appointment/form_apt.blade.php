@@ -42,20 +42,21 @@
       <h3 class="title">Form Appointment Reminder</h3>
 
       <div class="col-md-12 relativ row">
-        <input type="text" class="form-control custom-select-apt" placeholder="Find a contact by phone number">
+        <input id="display_phone" type="text" class="form-control custom-select-apt" placeholder="Find a contact by phone number">
         <span class="icon-search"></span>
-        <span class="error date_send"></span>
 
-        <div class="mt-2"><a class="btn btn-custom btn-sm px-3" href="{{ url('create-apt') }}" target="_blank">Create New Appointment</a></div>
+        <div id="display_data" class="search-result col-lg-12">
+          <!-- ajax live serach result -->
+        </div>
       </div>
 
-        <form>
+      <form id="appt_form">
             <div class="form-group row">
               <label class="col-sm-4 col-form-label">Name</label>
               <label class="col-sm-1 col-form-label">:</label>
               <div class="col-sm-7 text-left row">
-                <input type="password" name="oldpass" class="form-control" />
-                <span class="error oldpass"></span>
+                <input name="customer_name" class="form-control" readonly />
+                <span class="error customer_name"></span>
               </div>
             </div> 
 
@@ -63,8 +64,8 @@
               <label class="col-sm-4 col-form-label">Phone Number</label>
               <label class="col-sm-1 col-form-label">:</label>
               <div class="col-sm-7 text-left row">
-                <input type="password" name="newpass" class="form-control" />
-                <span class="error newpass"></span>
+                <input name="phone_number" class="form-control" readonly />
+                <span class="error phone_number"></span>
               </div>
             </div> 
 
@@ -72,21 +73,23 @@
               <label class="col-sm-4 col-form-label">Choose Appointment Time :</label>
               <label class="col-sm-1 col-form-label">:</label>
               <div class="col-sm-7 relativity text-left row">
-                <input id="datetimepicker-date" type="text" name="date_send" class="form-control custom-select-campaign" />
+                <input autocomplete="off" id="datetimepicker" type="text" name="date_send" class="form-control custom-select-campaign" />
                 <span class="icon-calendar"></span>
                 <span class="error date_send"></span>
               </div>
             </div>
 
+            <div class="text-left error db_error"><!-- internal error --></div>
+
             <div class="text-left mt-4">
-              <button type="submit" class="btn btn-custom px-4">Submit</button>
+              <button id="submit" type="submit" class="btn btn-custom px-4">Submit</button>
             </div>
 
             <div class="text-left marketing">
               <div>Marketing by</div>
               <div><img src="{{asset('assets/img/marketing-logo.png')}}"/></div>
             </div>
-        </form>
+      </form>
 <!-- end container -->    
 </div>
 
@@ -123,405 +126,130 @@
 
 <script type="text/javascript">
 
-  // Jquery Tabs
-  function tabs() {    
-      $('#tabs li a:not(:first)').addClass('inactive');
-      $('.tabs-container').hide();
-      $('.tabs-container:first').show();
-          
-      $('#tabs li a').click(function(){
-        var t = $(this).attr('id');
-        if($(this).hasClass('inactive')){ //this is the start of our condition 
-          $('#tabs li a').addClass('inactive');           
-          $(this).removeClass('inactive');
-          
-          $('.tabs-container').hide();
-          $('#'+ t + 'C').fadeIn('slow');
-        }
-      });
-  }
-  
-  function loadPhoneNumber(){
-    $.ajax({
-      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-      type: 'GET',
-      url: "<?php echo url('/load-phone-number');?>",
-      dataType: 'text',
-      beforeSend: function()
-      {
-        $('#loader').show();
-        $('.div-loading').addClass('background-load');
-      },
-      success: function(result) {
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
+  $(function () {
+      $('#datetimepicker').datetimepicker({
+        format : 'YYYY-MM-DD HH:mm',
+      }); 
+      callAjax();
+      fillPhoneToForm();
+      saveAppointment();
+  });
 
-        var data = jQuery.parseJSON(result);
-        $('#table-phone').html(data.view);
-      },
-      error: function(xhr,attr,throwable){
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-        alert('Sorry cannot load phone list, please call administrator'); 
-      }
-    });
-  }
-
-  $(document).ready(function() {   
-    tabs();
-    loadPhoneNumber();
-    editPhoneNumber();
-    openEditModal();
-    settingUser();
-
-    $('#div-verify').hide();
-    $('.message').hide();
-
-    $('#button-connect').click(function(){
-      var phone_number = $("#phone_number").val();
-      $.ajax({
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        type: 'GET',
-        url: "{{ url('connect-phone') }}",
-        data: $("#form-connect").serialize(),
-        dataType: 'text',
-        beforeSend: function()
-        {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
-        },
-        success: function(result) {
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-
-          var data = jQuery.parseJSON(result);
-          if(data.status == "success") {
-            $('.message').show();
-            $('.message').html('<div class="text-center">'+data.message+" <b><h5><span id='min'></span> : <span id='secs'></span></h5></b></div>");
-            loadPhoneNumber();
-            waitingTime();
-          }
-
-          if(data.status == "error") {
-              $(".phone_number").html(data.phone_number);
-              $('.message').show();
-              $('.message').html(data.message);
-          }
-
-        },
-        error: function(xhr,attr,throwable)
-        {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            alert(xhr.responseText);
-        }
-      });
-      
-    });
-
-    function waitingTime()
-    {
-        var sc = 0;
-        var min = 0;
-        var tm = setInterval(function(){
-            $("#secs").html(sc);
-            $("#min").html('0'+min);
-
-            if(sc < 10)
-            {
-              $("#secs").html('0'+sc);
-            }
-
-            if(sc == 60){
-              min = min + 1;
-              $("#min").html('0'+min);
-              sc = 0;
-              $("#secs").html('0'+sc);
-            }
-
-            if(min == 6)
-            {
-                $("#secs").html('0'+0);
-                clearInterval(tm);
-            }
-
-            sc++;
-        },1000);
+  function delay(callback, ms) {
+    var timer = 0;
+    return function() {
+      var context = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        callback.apply(context, args);
+      }, ms || 0);
     };
+  }
 
-    function getQRCode(phone_number)
-    {
+  function callAjax()
+  {
+      $("#display_phone").keyup(delay(function (e) {
+        var val = $(this).val();
+        $(".search-result").show();
+        displayPhoneSearch(val);
+        //console.log('Time elapsed!', this.value);
+      }, 1500))
+  }
+
+  function displayPhoneSearch(val)
+  {
       $.ajax({
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-          type: 'GET',
-          url: "{{ url('verify-phone') }}",
-          data: {
-            phone_number : phone_number,
-          },
-          dataType: 'json',
-          beforeSend: function()
-          {
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success: function(result) {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-
-            if(result.status == 'error'){
-              $('.message').show();
-              $('.message').html(result.phone_number);
-            }
-            else
-            {
-              $('#div-verify').show();
-              $("#qr-code").html(result.data);
-              countDownTimer(phone_number);
-            }
-            
-            loadPhoneNumber();
-          },
-          error : function(xhr,attr,throwable){
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            console.log(xhr.responseText);
-            alert('Sorry, unable to display QR-CODE, there is something wrong with our server, please try again later')
-          }
-        });
-
-    }
-
-    function countDownTimer(phone_number)
-    {
-      var sec = 25; //countdown timer
-      var word = '<h3>Please scan qr-code before time\'s up :</h3>';
-      var timer = setInterval( function(){
-                
-                if(sec < 1){
-                  clearInterval(timer);
-                  checkQRcode(phone_number);
-                }
-
-                if(sec < 10){
-                  $("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
-                }
-                else
-                {
-                  $("#timer").html(word+'<h4><b>'+sec+'</b></h4>');
-                }
-                sec--;
-            },1000);
-    }
-
-    function checkQRcode(phone_number)
-    {
-      $.ajax({
-        type: 'GET',
-        url: "{{ url('check-qr') }}",
-        data: {
-          no_wa : phone_number,
-        },
-        dataType: 'json',
-        beforeSend: function()
-        {
+        type : 'GET',
+        url : '{{ url("display-customer-phone") }}',
+        data : {phone : val, list_id : {!! $list_id !!} },
+        dataType : 'html',
+        beforeSend : function(){
           $('#loader').show();
           $('.div-loading').addClass('background-load');
         },
-        success: function(result) {
+        success : function(result)
+        {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-
-          $('#div-verify').hide();
-          $("#timer, #qr-code").html('');
-
-          $('.message').show();
-          $('.message').html(result.status);
-          loadPhoneNumber();
+          $("#display_data").html(result);
         },
-        error : function(xhr){
+        error : function(xhr)
+        {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          $('#div-verify').hide();
-          $("#timer, #qr-code").html('');
-
-          alert('Sorry, unable to check if your phone verified, please try again later');
           console.log(xhr.responseText);
         }
       });
-    }
-    
-    $('#button-delete-phone').click(function(){
+  }
+
+  function fillPhoneToForm()
+  {
+    $("body").on("click",".adding-number",function(){
+      var phone = $(this).attr('phone');
+      var customer_name = $(this).attr('cname');
+      var customer_id = $(this).attr('id');
+
+      $("input[name='customer_name']").val(customer_name);
+      $("input[name='phone_number']").val(phone);
+      $("#submit").attr('data-id',customer_id);
+    });
+  }
+
+  function saveAppointment()
+  {
+    $("#appt_form").submit(function(e){
+      e.preventDefault();
+      var customer_id =  $("#submit").attr('data-id');
+      var data = $(this).serializeArray();
+      data.push({name:'list_id', value:{!! $list_id !!}}, {name:'campaign_id',value: {!! $id !!}},{name:'customer_id', value : customer_id} );
+
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        type: 'GET',
-        url: "<?php echo url('/delete-phone');?>",
-        data: {
-          id : $("#id_phone_number").val(),
-        },
-        dataType: 'text',
-        beforeSend: function()
-        {
+        type : 'POST',
+        url : '{{ url("save-appt-time") }}',
+        data : data,
+        dataType : 'json',
+        beforeSend : function(){
           $('#loader').show();
           $('.div-loading').addClass('background-load');
         },
-        success: function(result) {
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-
-          var data = jQuery.parseJSON(result);
-          $('.message').show();
-          $('.message').html(data.message);
-          loadPhoneNumber();
-        }
-      });
-    });
-
-
-    $('body').on("click","#link-resend",function(){
-      var data_tel = $(this).attr('data-phone');
-      var data = {'resend':1,'phone_number':data_tel};
-
-      $.ajax({
-        type: 'GET',
-        url: "{{ url('connect-phone') }}",
-        data: data,
-        dataType: 'json',
-        beforeSend: function()
+        success : function(result)
         {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
-        },
-        success: function(result) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-        
-          if(result.status == "success") {
-            $('.message').show();
-            $('.message').html(result.message);
-            $('#div-verify').show();
-            loadPhoneNumber();
-          }
+          $(".search-result").hide();
 
-          if(result.status == "error") {
-              $(".phone_number").html(data.phone_number);
-          }
-
-        }
-      });
-      
-    });
-
-    $("body").on("click", ".icon-delete", function() {
-      $('#id_phone_number').val($(this).attr('data-id'));
-      $('#confirm-delete').modal('show');
-    });
-
-    $("body").on("click", ".link-verify", function() {
-      var phone_number = $(this).attr('data-phone');
-      $("#phone_number").val(phone_number);
-      getQRCode(phone_number);
-    });
-  });
-
-  function settingUser(){
-    $(".message-settings").hide();
-    $("#user_contact").submit(function(e){
-      e.preventDefault();
-      var data = $(this).serialize();
-
-      $.ajax({
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-          type : 'POST',
-          url : '{{url("save-settings")}}',
-          data : data,
-          dataType : 'json',
-          beforeSend: function()
+          if(result.success == 1)
           {
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success : function(result){
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-
-            if(result.status == 'success'){
-              $(".error").hide();
-              $('.message-settings').show();
-              $('.message-settings').html(result.message);
-            }
-            else if(result.status == 'error')
-            {
-              $(".error").show();
-              $(".user_name").html(result.user_name);
-              $(".user_phone").html(result.user_phone);
-              $(".oldpass").html(result.oldpass);
-              $(".confpass").html(result.confpass);
-              $(".newpass").html(result.newpass);
-            }
-            else {
-              $('.message-settings').show();
-              $('.message-settings').html(result.message);
-            }
-          },error: function(xhr,attribute,throwable){
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
+            alert(result.message);
+            clearForm();
+            $(".error").hide();
           }
-        });
-     });
-  }
-
-  function openEditModal(){
-    $("body").on("click",".btn-edit",function(){
-      var number = $(this).attr('data-number');
-      $("input[name='edit_phone']").val(number);
-      $("#edit-phone").modal();
+          else
+          {
+            $(".error").show();
+            $(".customer_name").html(result.customer_name);
+            $(".phone_number").html(result.phone_number);
+            $(".date_send").html(result.date_send);
+            $(".db_error").html(result.customer_id);
+            $(".db_error").html(result.message);
+          }
+          
+        },
+        error : function(xhr)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
+        }
+      });
     });
   }
 
-  function editPhoneNumber()
+  function clearForm()
   {
-     $(".alert").hide();
-     $("#edit_phone_number").submit(function(e){
-        e.preventDefault();
-        var values = $(this).serialize();
-
-        $.ajax({
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-          type : 'POST',
-          url : '{{url("edit-phone")}}',
-          data : values,
-          dataType : 'json',
-          beforeSend: function()
-          {
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success : function(result){
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-
-            $('.message').show();
-            $('.message').html(result.message);
-
-            if(result.error == 'true'){
-              $(".alert").show();
-              $(".alert").html(result.message);
-            }
-
-            if(result.status == "success") {
-              $('#div-verify').show();
-              loadPhoneNumber();
-
-              $("#phone_number").val(result.phone);
-              $("#edit-phone").modal('hide');
-              $(".alert").hide();
-            }
-          },error: function(xhr,attribute,throwable){
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-          }
-        });
-     });
+      $("input").val('');
+      $("input[name='delivery_time']").val('00:00');
   }
 
 </script>

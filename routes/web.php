@@ -173,10 +173,12 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('list-apt/{id}','AppointmentController@listAppointment');
   Route::get('list-table-apt','AppointmentController@listTableAppointments');
   Route::get('table-apt','AppointmentController@tableAppointment');
-  Route::get('form-apt','AppointmentController@formAppointment');
+  Route::get('form-apt/{id}','AppointmentController@formAppointment');
   Route::get('edit-apt/{id}','AppointmentController@editAppointment');
   Route::get('edit-appt-template','AppointmentController@editAppointmentTemplate');
   Route::get('delete-appt-template','AppointmentController@deleteAppointmentTemplate');
+  Route::get('display-customer-phone','AppointmentController@displayCustomerPhone');
+  Route::post('save-appt-time','AppointmentController@saveAppointmentTime')->middleware('checkformappt');
 
   // scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');

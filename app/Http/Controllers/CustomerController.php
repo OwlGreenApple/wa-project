@@ -145,7 +145,7 @@ class CustomerController extends Controller
           {
               $is_event = $row->is_event;
 
-              if($is_event == 1)
+              if($is_event == 1 || $is_event == 2)
               {
                   $today = Carbon::now()->toDateString();
                   $days = (int)$row->days;

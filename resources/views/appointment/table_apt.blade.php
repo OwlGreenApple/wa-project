@@ -8,7 +8,7 @@
             </span>  
         </h5>                           
         <div class="notes">
-          <a href="{{ url('form-apt') }}">See Form</a>
+          <a href="{{ url('form-apt') }}/{{ $row['campaign_id'] }}">See Form</a>
           <!-- <div class="link_wrap">Link From : {{env('APP_URL')}}{{ $row['url'] }}
             <span>
               <a data-link="{{env('APP_URL')}}{{$row['url']}}" class="btn-copy icon-copy"></a>
