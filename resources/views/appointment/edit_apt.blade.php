@@ -72,6 +72,7 @@
 
         $("#divInput-description-post").emojioneArea({
             pickerPosition: "top",
+            mainPathFolder: "{{ url('/assets') }}",
         });
     });
 
@@ -238,6 +239,7 @@
                 $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
                 $("#status_db").attr('class','status');
                 $("#status_db").html(result.message);
+                $("#cancel").trigger("click");
                 displayAppointment();
             }
           },
