@@ -51,6 +51,12 @@ class SendMessage extends Command
    
       //Auto Responder
       $this->campaignAutoResponder();
+      
+      //Event
+      $this->campaignEvent();
+      
+      //Appointment
+      $this->campaignAppointment();
     }    
  
     /* BROADCAST */
@@ -61,6 +67,7 @@ class SendMessage extends Command
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
           ->where("broad_cast_customers.status",0)
+          ->where("customers.status",1)
           ->orderBy('broad_casts.user_id')
           ->get();
 
@@ -129,6 +136,8 @@ class SendMessage extends Command
         $reminder = Reminder::where([
             ['reminder_customers.status','=',0],
             ['reminders.is_event','=',0],
+            ['reminders.status','=',1],
+            ['customers.status','=',1],
             ['customers.created_at','<=',$current_time->toDateTimeString()],
             ])
             ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
@@ -209,6 +218,92 @@ class SendMessage extends Command
           $reminder = Reminder::where([
                   ['reminder_customers.status',0], 
                   ['reminders.is_event',1], 
+                  ['customers.status',1], 
+                  ['reminders.status','=',1],
+          ])
+          ->join('users','reminders.user_id','=','users.id')
+          ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
+          ->join('customers','customers.id','=','reminder_customers.customer_id')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number')
+          ->get();
+
+          if($reminder->count() > 0)
+          {
+              $number = $count = 0;
+              foreach($reminder as $row)
+              {
+                $id_reminder = $row->id;
+                $event_date = Carbon::parse($row->event_time);
+                $days = (int)$row->days;
+                $hour = $row->hour_time; //hour according user set it to sending
+
+                $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->select('counter','id','filename')->first();
+                $customer_phone = $row->telegram_number;
+                $message = $row->message;
+                $key = $phoneNumber->filename;
+
+                if(!is_null($phoneNumber)){
+                  $count = $phoneNumber->counter;
+                }
+
+                // if the day before / substract 
+                if($days < 0){
+                  $days = abs($days);
+                  $date = $event_date->subDays($days);
+                } else {
+                  $date = $event_date->addDays($days);
+                }
+
+                $time_sending = $date->toDateString().' '.$hour;
+                $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
+
+                // get id reminder for reminder customer
+                if($deliver_time >= 0 && $count > 0){
+                  $number++;
+                  $campaign = 'Event';
+                  $id_campaign = $row->rcs_id;
+                  $status = 'Sent';
+
+                  $message = str_replace('{name}',$row->name,$row->message);
+                  $id_reminder = $row->id_reminder;
+     
+                  ApiHelper::send_message($customer_phone,$message,$key);
+                  $this->generateLog($number,$campaign,$id_campaign,$status);
+
+                  $remindercustomer_update = ReminderCustomers::find($id_campaign);
+                  $remindercustomer_update->status = 1;
+                  $remindercustomer_update->save();
+
+                  $count--;
+                  PhoneNumber::where([['id',$phoneNumber->id]])->update(['counter'=>$count,'max_counter'=>$count]);
+                }
+                else
+                {
+                    $campaign = 'Event';
+                    $id_campaign = $row->rcs_id;
+                    $status = 'Sent';
+                    $this->generateLog($number,$campaign,$id_campaign,$status);
+                    continue;
+                }
+                sleep(10);
+              }//END FOR LOOP EVENT
+          }
+    }
+    
+
+    /* Appointment */
+    public function campaignAppointment()
+    {
+          $idr = null;
+          $event = null;
+          $today = Carbon::now();
+
+          $reminder = Reminder::where([
+                  ['reminder_customers.status',0], 
+                  ['reminders.is_event',2], 
+                  ['reminders.tmp_appt_id',">",0], 
+                  ['customers.status',1], 
+                  ['reminders.status','=',1],
           ])
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')

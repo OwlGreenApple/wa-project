@@ -120,7 +120,26 @@ class ListController extends Controller
       }
       
       // pengecekan error nya klo ga ada [start] [unsubs] [reply_chat]
-      
+      if ($request->is_secure) {
+        if (strpos($request->autoreply, '[reply_chat]') == false) {
+          return redirect('list-form')->with('error_number','Error! String must be contain [reply_chat] ')
+            ->with('listname',$request->listname)
+            ->with('autoreply',$request->autoreply)
+            ;
+        }
+        if (strpos($request->autoreply, '[Start]') == false) {
+          return redirect('list-form')->with('error_number','Error! String must be contain [Start] ')
+            ->with('listname',$request->listname)
+            ->with('autoreply',$request->autoreply)
+            ;
+        }
+        if (strpos($request->autoreply, '[Unsubs]') == false) {
+          return redirect('list-form')->with('error_number','Error! String must be contain [Unsubs] ')
+            ->with('listname',$request->listname)
+            ->with('autoreply',$request->autoreply)
+            ;
+        }
+      }
 
       $list = new UserList;
       $list->user_id = Auth::id();
@@ -144,6 +163,9 @@ class ListController extends Controller
         $reminder->user_id = $user->id;
         $reminder->list_id = $listid;
         $reminder->message = $autoreply;
+        if ($request->is_secure) {
+          $reminder->status = 0;
+        }
         $reminder->save();
       }
 
