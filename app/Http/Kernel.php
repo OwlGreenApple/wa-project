@@ -77,6 +77,7 @@ class Kernel extends HttpKernel
         'checkphone'=>\App\Http\Middleware\CheckPhone::class,
         'checkformappt'=>\App\Http\Middleware\CheckFormAppointment::class,
         'checkeditappt'=>\App\Http\Middleware\CheckEditAppointmentTemplate::class,
+        'save_apt'=>\App\Http\Middleware\CheckCreateAppointment::class,
     ];
 
     /**

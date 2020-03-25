@@ -3,7 +3,7 @@
     <div class="aptform">
       <div class="col-lg-12">
           <div class="board">
-            <div class="left">Reminder {{ $row->days }}</div>
+            <div class="left">Reminder Day : {{ $row->days }}</div>
             <div class="right">
               <a id="{{ $row->id }}" class="icon icon-edit"></a>
               <a id="{{ $row->id }}" class="icon icon-delete"></a>

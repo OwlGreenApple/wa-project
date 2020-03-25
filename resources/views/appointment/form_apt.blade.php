@@ -93,37 +93,6 @@
 <!-- end container -->    
 </div>
 
-<!-- Modal Edit Phone -->
-  <div class="modal fade child-modal" id="edit-phone" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content -->
-      <div class="modal-content">
-        <div class="modal-body">
-            <div class="alert alert-danger"><!-- error --></div>
-            <div class="form-group">
-                 <div class="mb-2">
-                  <form id="edit_phone_number">
-                    <label>Edit Phone Number</label>
-                    <div class="form-group">
-                      <input type="text" class="form-control" name="edit_phone" />
-                    </div>
-                 
-                    <div class="text-right">
-                      <button type="submit" class="btn btn-custom mr-1">Save</button>
-                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                    </div>
-                  </form>
-                </div>
-                
-            </div>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  <!-- End Modal -->
-
 <script type="text/javascript">
 
   $(function () {

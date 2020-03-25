@@ -29,15 +29,32 @@ class AppointmentController extends Controller
     {
         $userid = Auth::id();
         $data = array();
-        $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3]])
+        $search = $request->search;
+
+        if($search == null)
+        {
+            $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3]])
                     ->join('lists','lists.id','=','campaigns.list_id')
                     ->select('campaigns.*','lists.name AS url','lists.label')
                     ->get();
-
+        }
+        else
+        {
+            $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3],['campaigns.name','LIKE','%'.$search.'%']])
+                    ->join('lists','lists.id','=','campaigns.list_id')
+                    ->select('campaigns.*','lists.name AS url','lists.label')
+                    ->get();
+        }
+        
         if($campaigns->count() > 0)
         {
             foreach($campaigns as $row) {
-              $contacts = Customer::where([['user_id',$userid],['list_id',$row->list_id]])->get()->count();
+
+              $contacts = Reminder::where([['reminders.campaign_id',$row->id],['reminders.user_id',$userid]])
+                ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
+                ->select('customer_id')
+                ->distinct()->get()->count();
+                
               $data[] = array(
                 'campaign_id'=>$row->id,
                 'name'=>$row->name,
@@ -50,11 +67,6 @@ class AppointmentController extends Controller
         }
 
         return view('appointment.table_apt',['data'=>$data]);
-
-        /*if($request->search == null)
-        {
-
-        }*/
     }
 
     public function listAppointment($campaign_id)
@@ -135,7 +147,7 @@ class AppointmentController extends Controller
             return redirect('create-apt');
         }
 
-        return view('appointment.edit_apt',['id'=>$id]);
+        return view('appointment.edit_apt',['id'=>$id,'campaign_name'=>$checkid->name]);
     }
 
     public function displayTemplateAppointment(Request $request)
@@ -154,6 +166,7 @@ class AppointmentController extends Controller
         $listid = Campaign::find($campaign_id)->list_id;
         $save = false;
         $count = 0;
+        $reminderid = $customerid = $newcustomer = array();
 
         if(isset($_POST['day']))
         {
@@ -255,8 +268,17 @@ class AppointmentController extends Controller
                 }
               }
             }
+        }
 
-            $newcustomer = array_combine($reminderid,$customerid);
+        if(count($reminderid) > 0 && count($customerid) > 0)
+        {
+          $newcustomer = array_combine($reminderid,$customerid);
+        }
+        else
+        {
+          $data['success'] = 1;
+          $data['message'] = 'Your appointment template has been created!';
+          return response()->json($data);
         }
 
         if(count($newcustomer) > 0)
@@ -280,11 +302,6 @@ class AppointmentController extends Controller
               return response()->json($data);
             }
           }
-        }
-        else {
-          $data['success'] = 1;
-          $data['message'] = 'Your appointment template has been created!';
-          return response()->json($data);
         }
 
         //use count to make sure data inserted on for loop
@@ -402,6 +419,14 @@ class AppointmentController extends Controller
                 return response()->json($result);
               }
             }
+        }  
+        else
+        {
+            $result = array(
+                'success'=>0,
+                'message'=>'Please create <a target="_blank" href="'.url('edit-apt').'/'.$campaign_id.'">message</a> first, then back here',
+            );
+            return response()->json($result);
         }
 
         if(count($reminderid) > 0)
@@ -446,6 +471,61 @@ class AppointmentController extends Controller
             return response()->json($result);
         }
 
+    }
+
+    public function delAppointment(Request $request)
+    {
+        $userid = Auth::id();
+        $id = $request->id;
+        $delcampaign = false;
+        $reminder_id = array();
+
+        try {
+          Campaign::where([['id',$id],['user_id',$userid],['type',3]])->delete();
+          TemplateAppointments::where([['campaign_id',$id],['user_id',$userid]])->delete();
+          $delcampaign = true;
+        }
+        catch(Exception $e)
+        {
+          $data['message'] = 'Sorry unable to delete your please try again later';
+          return response()->json($data);
+        }
+
+        if($delcampaign == true)
+        {
+            $reminder = Reminder::where([['user_id',$userid],['campaign_id',$id],['is_event',2]])->select('id')->get();
+        }
+
+        if($reminder->count() > 0)
+        {
+            foreach($reminder as $row)
+            {
+                $reminder_id[] = $row->id;
+            }
+        }
+        
+        if(count($reminder_id) > 0)
+        {
+            try
+            {
+               foreach($reminder_id as $rid)
+               {
+                  Reminder::where([['user_id',$userid],['id',$rid],['is_event',2]])->delete();
+                  ReminderCustomers::where('reminder_id',$rid)->delete();
+               }
+               $data['message'] = 'Your appointment deleted successfully';
+            }
+            catch(Exception $e)
+            {
+               $data['message'] = 'Sorry unable to delete your please try again later';
+            }
+            return response()->json($data);
+        }
+        else
+        {
+           $data['message'] = 'Your appointment deleted successfully';
+           return response()->json($data);
+        }
     }
 
 /* end of class */
