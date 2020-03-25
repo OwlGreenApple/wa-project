@@ -145,6 +145,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('save-campaign', 'CampaignController@SaveCampaign');
   Route::get('search-campaign', 'CampaignController@searchCampaign');
   Route::get('campaign-del','CampaignController@delCampaign'); 
+  Route::post('edit-campaign-name','CampaignController@editCampaign'); 
   
   /* EVENT */
   Route::get('event-list','EventController@displayEventList')->name('eventlist');
@@ -168,7 +169,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 
   /* APPOINTMENT */
   Route::get('create-apt','AppointmentController@createAppointment');
-  Route::post('save-apt','AppointmentController@saveAppointment');
+  Route::post('save-apt','AppointmentController@saveAppointment')->middleware('save_apt');
   Route::get('display-template-apt','AppointmentController@displayTemplateAppointment');
   Route::post('save-template-appoinments','AppointmentController@saveTemplateAppointment')->middleware('checkeditappt');
   Route::get('appointment','AppointmentController@index')->name('appointment');
@@ -181,6 +182,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('delete-appt-template','AppointmentController@deleteAppointmentTemplate');
   Route::get('display-customer-phone','AppointmentController@displayCustomerPhone');
   Route::post('save-appt-time','AppointmentController@saveAppointmentTime')->middleware('checkformappt');
+  Route::get('appt-del','AppointmentController@delAppointment');
 
   // scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');

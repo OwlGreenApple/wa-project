@@ -58,7 +58,16 @@ class CheckEditAppointmentTemplate
             return response()->json($error);
         }
 
-        //return $next($request);
+
+        //DOUBLE CODE TO AVOID IF VALIDATOR FAILS ASSUMED IF PASS
+        if($get_day == false)
+        {
+            $error['day'] = 'The day registered already, please choose another day!';
+            $error['success'] = 0;
+            return response()->json($error);
+        }
+
+        return $next($request);
     }
 
     public function getDay($campaign_id,$day)
@@ -68,6 +77,10 @@ class CheckEditAppointmentTemplate
         if(!is_null($getday))
         {
           return false;
+        }
+        else
+        {
+          return true;
         }
     }
 }

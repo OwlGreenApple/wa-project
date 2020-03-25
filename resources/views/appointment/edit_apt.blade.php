@@ -5,7 +5,7 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>Add Message To Appointment</h2>
+    <h3 class="campaign">Add Message To : <color>{{ $campaign_name }}</color></h3>
   </div>
 
   <div class="clearfix"></div>

@@ -18,6 +18,7 @@ use App\Rules\CheckDateEvent;
 use App\Rules\CheckValidListID;
 use App\Rules\CheckEventEligibleDate;
 use App\Rules\CheckBroadcastDate;
+use App\Rules\CheckExistIdOnDB;
 use DB;
 use Carbon\Carbon;
 
@@ -388,6 +389,55 @@ class CampaignController extends Controller
 
 
         return response()->json(['message'=>'Your has been deleted successfully']);
+    }
+
+    public function editCampaign(Request $request)
+    {
+        $userid = Auth::id();
+        $campaign_name = $request->campaign_name;
+        $campaign_id = $request->campaign_id;
+
+        $cond = [
+          ['id',$campaign_id],
+          ['user_id',$userid],
+        ];
+
+        $rules = [
+          'campaign_name'=>['required','min:4','max:50'],
+          'campaign_id'=>['required',new CheckExistIdOnDB('campaigns',$cond)],
+        ];
+
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->fails())
+        {
+            $error = $validator->errors();
+            $data = array(
+                'campaign_name'=>$error->first('campaign_name'),
+                'campaign_id'=>$error->first('campaign_id'),
+                'success'=>0,
+            );
+            return response()->json($data);
+        }
+        // END VALIDATOR 
+
+        try {
+          Campaign::where([['id',$campaign_id],['user_id',$userid]])->update(['name'=>$campaign_name]);
+          $data = array(
+            'success'=>1,
+            'id'=>$campaign_id,
+            'campaign_name'=>$campaign_name,
+          );
+        }
+        catch(Exception $e)
+        {
+           $data = array(
+            'success'=>0,
+            'error_server'=>'Sorry, unable to update your campaign name, try again later',
+          );
+        }
+
+        return response()->json($data);
     }
 
 
