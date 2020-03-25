@@ -35,6 +35,8 @@ Route::post('private-list','ApiController@register_list');
 
 Auth::routes();
 
+Route::get('pricing','OrderController@pricing');
+
 /* PROTOTYPE */
 //Route::get('createlists', 'HomeController@formList');
 //Route::get('lists-create', 'HomeController@createList');
