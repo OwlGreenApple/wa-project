@@ -1,40 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Modal Delete Confirmation -->
-<div class="modal fade" id="confirm-delete" role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content content-premiumid">
-      <div class="modal-header header-premiumid">
-        <h5 class="modal-title" id="modaltitle">
-          Confirmation Delete
-        </h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body text-center">
-        <input type="hidden" name="id_phone_number" id="id_phone_number">
-
-        <label><h4>Are you sure want to <i>delete</i> this phone number ?</h4></label>
-        <br><br>
-        <span class="txt-mode"></span>
-        <br>
-        
-        <div class="col-12 mb-4" style="margin-top: 30px">
-          <button class="btn btn-danger btn-block btn-delete-ok" data-dismiss="modal" id="button-delete-phone">
-            Yes, Delete Now
-          </button>
-        </div>
-        
-        <div class="col-12 text-center mb-4">
-          <button class="btn  btn-block btn-delete-ok" data-dismiss="modal">
-            Cancel
-          </button>  
-        </div>
-      </div>
-    </div>   
-  </div>
-</div>
 
 <!-- TOP SECTION -->
 

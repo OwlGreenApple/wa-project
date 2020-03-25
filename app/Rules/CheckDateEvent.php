@@ -50,6 +50,6 @@ class CheckDateEvent implements Rule
      */
     public function message()
     {
-        return 'Event date and time cannot be less than today and current time';
+        return 'Date and time cannot be less than today and current time';
     }
 }

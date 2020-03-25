@@ -6,8 +6,10 @@
       <td class="text-center">{{ $row->event_time }}</td>
       <td class="text-center">{{ $row->name }}</td>
       <td class="text-center">{{ $row->telegram_number }}</td>
-      <td class="text-center"><a class="icon-edit"></a></td>
-      <td class="text-center"><a class="icon-cancel"></a></td>
+      <td class="text-center">
+        <a id="{{ $row->campaign_id }}" data-ev="{{ $row->event_time }}" data-name="{{ $row->name }}" data-phone="{{ $row->telegram_number }}" data-customer-id="{{ $row->id }}" class="icon-edit"></a>
+      </td>
+      <td class="text-center"><a id="{{ $row->campaign_id }}" data-ev="{{ $row->event_time }}" class="icon-cancel"></a></td>
     </tr> 
     {{ $x++ }}
   @endforeach

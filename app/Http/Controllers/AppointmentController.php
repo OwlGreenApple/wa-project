@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use App\UserList;
 use App\Customer;
@@ -13,6 +14,7 @@ use App\Campaign;
 use App\Reminder;
 use App\ReminderCustomers;
 use App\TemplateAppointments;
+use App\Exports\UsersExport;
 
 class AppointmentController extends Controller
 {
@@ -84,20 +86,125 @@ class AppointmentController extends Controller
             return redirect('create-apt');
         }
 
-        return view('appointment.list_apt',['campaign_id'=>$campaign_id]);
+        return view('appointment.list_apt',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name]);
     }
 
     public function listTableAppointments(Request $request)
     {
         $userid = Auth::id();
         $campaign_id = $request->campaign_id;
-        $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid]])
-          ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
-          ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.event_time','customers.name','customers.telegram_number')
-          ->paginate(5);
+        $search = $request->search;
 
+        if($search == null)
+        {
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid]])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
+            ->distinct()
+            ->get();
+        }
+        else
+        {
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['customers.name','LIKE','%'.$search.'%']])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
+            ->distinct()
+            ->get();
+        }
+       
         return view('appointment.list_table_apt',['campaigns'=>$campaigns]);
+    }
+
+    public function listAppointmentEdit(Request $request)
+    {
+        $userid = Auth::id();
+        $customer_name = $request->customer_name;
+        $customer_phone = $request->phone_number;
+        $customer_id = $request->customer_id;
+        $date_send = $request->date_send;
+        $campaign_id = $request->campaign_id;
+        $oldtime = $request->oldtime;
+
+        try{
+          Reminder::where([['campaign_id',$campaign_id],['is_event',2],['user_id',$userid],['event_time',$oldtime]])->update(['event_time'=>$date_send]);
+        }
+        catch(Exception $e)
+        {
+          $status['success'] = 0;
+          $status['message'] = 'Sorry unable to update your appointment, please try again later. -';
+          return response()->json($status);
+        }
+
+        try
+        {
+          $data = [
+            'name'=>$customer_name,
+            'telegram_number'=>$customer_phone,
+          ];
+          Customer::where('id',$customer_id)->update($data);
+          $status['success'] = 1;
+          $status['message'] = 'Your appointment list has been updated!';
+        }
+        catch(Exception $e)
+        {
+          $status['success'] = 0;
+          $status['message'] = 'Sorry unable to update your appointment, please try again later. --';
+        }
+        return response()->json($status);
+    }
+
+    public function listAppointmentDelete(Request $request)
+    {
+        $userid = Auth::id();
+        $campaign_id = $request->campaign_id;
+        $oldtime = $request->oldtime;
+        $reminder_id = [];
+        $count = 0;
+        $get_reminder_id = Reminder::where([['user_id',$userid],['campaign_id',$campaign_id],['event_time',$oldtime]])->select('id')->get();
+
+        if($get_reminder_id->count() > 0)
+        {
+          foreach($get_reminder_id as $row)
+          {
+              $reminder_id[] = $row->id;
+          }
+        }
+        else
+        {
+            $data['success'] = 0;
+            $data['message'] = 'Invalid data!';
+            return response()->json($data);
+        }
+
+        foreach($reminder_id as $id)
+        {
+            try {
+              Reminder::where([['id',$id],['user_id',$userid]])->delete();
+              ReminderCustomers::where([['reminder_id',$id],['user_id',$userid]])->delete();
+              $count++;
+            }
+            catch(Exception $e)
+            {
+              $data['success'] = 0;
+              $data['message'] = 'Sorry unable to delete your list appointment, please try again later';
+              return response()->json($data);
+            }
+        }
+
+        if($count > 0)
+        {
+            $data['success'] = 1;
+            $data['message'] = 'Your list appointment has been deleted';
+            return response()->json($data);
+        }
+        else
+        {
+            $data['success'] = 0;
+            $data['message'] = 'Sorry unable to delete your list appointment, please try again later';
+            return response()->json($data);
+        }
     }
 
     function createAppointment()
@@ -526,6 +633,18 @@ class AppointmentController extends Controller
            $data['message'] = 'Your appointment deleted successfully';
            return response()->json($data);
         }
+    }
+
+    public function exportAppointment($campaign_id){
+        $id_user = Auth::id();
+        $check = Campaign::where('id',$campaign_id)->first();
+
+        if(is_null($check))
+        {
+            return redirect('appointment');
+        }
+
+        return Excel::download(new UsersExport($campaign_id), 'test.csv');
     }
 
 /* end of class */

@@ -764,23 +764,6 @@ class EventController extends Controller
         return response()->json($data);
     }
 
-    public function exportEventSubscriber($id_list){
-        $id_user = Auth::id();
-
-        try{
-            $id_list = decrypt($id_list);
-        }catch(DecryptException $e){
-            return redirect('event');
-        }
-       
-        $customer = Customer::where([['list_id',$id_list],['user_id','=',$id_user]])->get();
-       
-        if(empty($id_list) || empty($id_user) || $customer->count() <= 0){
-            return redirect('event');
-        }
-        return (new UsersExport($id_list))->download('users.csv');
-    }
-
     function importCSVEvent(Request $request)
     {
         $id_list = $request->list_id_import;

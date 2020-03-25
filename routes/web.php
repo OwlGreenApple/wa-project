@@ -173,6 +173,8 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('appointment','AppointmentController@index')->name('appointment');
   Route::get('list-apt/{id}','AppointmentController@listAppointment');
   Route::get('list-table-apt','AppointmentController@listTableAppointments');
+  Route::post('list-edit-apt','AppointmentController@listAppointmentEdit')->middleware('checkeditformappt');
+  Route::get('list-delete-apt','AppointmentController@listAppointmentDelete');
   Route::get('table-apt','AppointmentController@tableAppointment');
   Route::get('form-apt/{id}','AppointmentController@formAppointment');
   Route::get('edit-apt/{id}','AppointmentController@editAppointment');
@@ -181,6 +183,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('display-customer-phone','AppointmentController@displayCustomerPhone');
   Route::post('save-appt-time','AppointmentController@saveAppointmentTime')->middleware('checkformappt');
   Route::get('appt-del','AppointmentController@delAppointment');
+  Route::get('export_csv_appt/{campaign_id}','AppointmentController@exportAppointment');
 
   // scheduled event
   Route::post('addevent','EventController@addEvent')->name('addevent');
@@ -190,7 +193,6 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('updatevent','EventController@updateEvent')->name('updatevent');
   Route::get('deletevents','EventController@delEvent')->name('deletevents');
   Route::get('exportsubscriber','EventController@exportSubscriber')->name('exportsubscriber');
-  Route::get('export_csv/{id_list}','EventController@exportEventSubscriber');
   Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');
 
   Route::get('event','EventController@index')->name('event');
