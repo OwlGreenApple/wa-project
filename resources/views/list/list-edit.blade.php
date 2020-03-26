@@ -587,6 +587,12 @@
 
                   $(".error").delay(2000).fadeOut(5000);
               }
+            },
+            error: function(xhr)
+            {
+               $('#loader').hide();
+               $('.div-loading').removeClass('background-load');
+               console.log(xhr.responseText);
             }
         });
         /*end ajax*/
