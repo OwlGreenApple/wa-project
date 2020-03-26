@@ -66,6 +66,7 @@
                   <label class="col-sm-3 col-form-label">Phone Whatsapp :</label>
                   <div class="col-sm-9">
                     <input type="text" id="phone_number" name="phone_number" class="form-control" />
+                    <span>Please add avatar / image on your WA account.</span>
                     <span class="error phone_number"></span>
                   </div>
                 </div>
