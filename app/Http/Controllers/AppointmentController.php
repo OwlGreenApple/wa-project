@@ -159,10 +159,13 @@ class AppointmentController extends Controller
     {
         $userid = Auth::id();
         $campaign_id = $request->campaign_id;
+        $customer_id = $request->customer_id;
         $oldtime = $request->oldtime;
         $reminder_id = [];
         $count = 0;
-        $get_reminder_id = Reminder::where([['user_id',$userid],['campaign_id',$campaign_id],['event_time',$oldtime]])->select('id')->get();
+        $get_reminder_id = ReminderCustomers::where([['reminder_customers.user_id',$userid],['reminder_customers.customer_id',$customer_id],['reminders.event_time','=',$oldtime]])
+        ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+        ->select('reminders.id')->get();
 
         if($get_reminder_id->count() > 0)
         {
@@ -170,6 +173,7 @@ class AppointmentController extends Controller
           {
               $reminder_id[] = $row->id;
           }
+          $total_reminder_id = count($reminder_id);
         }
         else
         {
@@ -181,8 +185,8 @@ class AppointmentController extends Controller
         foreach($reminder_id as $id)
         {
             try {
-              Reminder::where([['id',$id],['user_id',$userid]])->delete();
               ReminderCustomers::where([['reminder_id',$id],['user_id',$userid]])->delete();
+              Reminder::where([['id',$id],['user_id',$userid]])->delete();
               $count++;
             }
             catch(Exception $e)
@@ -193,18 +197,17 @@ class AppointmentController extends Controller
             }
         }
 
-        if($count > 0)
+        if($count == $total_reminder_id)
         {
             $data['success'] = 1;
             $data['message'] = 'Your list appointment has been deleted';
-            return response()->json($data);
         }
         else
         {
             $data['success'] = 0;
             $data['message'] = 'Sorry unable to delete your list appointment, please try again later';
-            return response()->json($data);
         }
+        return response()->json($data);
     }
 
     function createAppointment()

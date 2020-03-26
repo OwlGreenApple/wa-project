@@ -903,55 +903,6 @@ class ListController extends Controller
         return response()->json($msg);
     }
 
-    public function getPhoneTelegramChatID($listid,$subscriber_phone_number) {
-      $curl = curl_init();
-
-      $list = UserList::where('id',$listid)->first();
-      $phoneNumber = PhoneNumber::find($list->phone_number_id);
-
-      $data = array(
-          'token'=> env('TOKEN_API'),
-          'phone_number' => $phoneNumber->phone_number,
-          'groupname'=>$list->group_name, 
-          'filename'=>env('FILENAME_API').$phoneNumber->id,
-      );
-
-      curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/getChatId-phone.php",
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => http_build_query($data),
-        CURLOPT_POST => 1,
-      ));
-
-      $response = curl_exec($curl);
-      $err = curl_error($curl);
-
-      curl_close($curl);
-
-      if ($err) {
-        echo "cURL Error #:" . $err;
-      } else {
-        // echo $response."\n";
-        $result = json_decode($response,true);
-        //dd($result);
-        $chat_id = 0;
-        foreach($result as $res){
-          if ($res["phone_number"]==$subscriber_phone_number) {
-            $chat_id = $res["id"];
-          }
-        }
-        if ($chat_id == 0){
-          $data['success'] = false;
-          $data['message'] = 'Error-000! Sorry there is something wrong with our system';
-          return response()->json($data);
-        }
-
-        return $chat_id;
-        //$customer->chat_id = $chat_id;
-      }
-    }
-
      /* check random list name */
     public function createRandomListName(){
 

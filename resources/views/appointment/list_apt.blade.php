@@ -237,8 +237,9 @@
   {
     $("body").on("click",".icon-cancel",function(){
       var campaign_id = $(this).attr('id'); 
-      var oldtime = $(this).attr('data-ev'); 
-      var data = {campaign_id : campaign_id, oldtime : oldtime};
+      var customer_id = $(this).attr('data-ev'); 
+      var oldtime = $(this).attr('data-tm'); 
+      var data = {campaign_id : campaign_id, customer_id : customer_id, oldtime : oldtime};
       var warning = confirm('Are you sure to delete this list appointment?'+'\n'+'WARNING : This cannot be undone');
 
       if(warning == true)

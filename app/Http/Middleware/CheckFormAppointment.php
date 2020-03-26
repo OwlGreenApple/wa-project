@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\CheckDateEvent;
 use App\Rules\CheckExistIdOnDB;
+use App\Rules\CheckAvailableDate;
 use App\Rules\TelNumber;
 
 class CheckFormAppointment
@@ -20,7 +21,7 @@ class CheckFormAppointment
      */
     public function handle($request, Closure $next)
     {
-        //dd($request);
+        // dd($request->all());
 
         $user_id = Auth::id();
         $customers =[
@@ -32,7 +33,7 @@ class CheckFormAppointment
         $rules = [
           'customer_name'=>['required','max:50'],
           'phone_number'=>['required',new TelNumber],
-          'date_send'=>['required', new CheckDateEvent],
+          'date_send'=>['required', new CheckDateEvent, new CheckAvailableDate($request->campaign_id,$request->date_send) ],
           'customer_id'=>['required', new CheckExistIdOnDB('customers',$customers)],
         ];
         $validator = Validator::make($request->all(),$rules);
@@ -51,4 +52,5 @@ class CheckFormAppointment
 
         return $next($request);
     }
+
 }

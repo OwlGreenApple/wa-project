@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\CheckDateEvent;
 use App\Rules\CheckExistIdOnDB;
+use App\Rules\CheckAvailableDate;
 use App\Rules\TelNumber;
 
 class CheckEditFormAppointment
@@ -43,7 +44,7 @@ class CheckEditFormAppointment
         $rules = [
           'customer_name'=>['required','max:50'],
           'phone_number'=>['required',new TelNumber],
-          'date_send'=>['required', new CheckDateEvent],
+          'date_send'=>['required', new CheckDateEvent,new CheckAvailableDate($request->campaign_id,$request->date_send)],
           'customer_id'=>['required', new CheckExistIdOnDB('customers',$customers)],
           'campaign_id'=>['required', new CheckExistIdOnDB('campaigns',$campaign)],
           'oldtime'=>['required', new CheckExistIdOnDB('reminders',$reminders)],
