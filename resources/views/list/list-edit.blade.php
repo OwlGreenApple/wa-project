@@ -43,8 +43,14 @@
                   <td>{{ $col->name }}</td>
                   <td>{{ $col->email }}</td>
                   <td>{{ $col->telegram_number }}</td>
-                  <td><a additional="{{ $col->additional }}" class="btn btn-info btn-sm text-white view">View Addtional</a></td>
-                  <td><a id="{{ $col->id }}" class="btn btn-danger btn-sm text-white">Delete</a></td>
+                  <td>
+                    @if( $col->additional <> null)
+                      <a additional="{{ $col->additional }}" class="btn btn-info btn-sm text-white view">View Addtional</a>
+                    @else
+                      -
+                    @endif
+                  </td>
+                  <td><a id="{{ $col->id }}" class="btn btn-danger btn-sm text-white del-customer">Delete</a></td>
                 </tr>
               @endforeach
             </tbody>
@@ -424,6 +430,7 @@
     changeListName();
     dataCustomer();
     customerAttribute();
+    delCustomer();
   });
 
   function open_ck_editor()
@@ -1287,6 +1294,54 @@
       });
       $("#customer_additional").html(box);
     });
+  }
+
+  function delCustomer()
+  {
+      $(".del-customer").click(function(){
+        var url = window.location.href;
+        var id = $(this).attr('id');
+        var warning = confirm('Are you sure to delete this customer?');
+
+        if(warning == true)
+        {
+          $.ajax({
+            type : 'GET',
+            url : '{{ url("list-delete-customer") }}',
+            data : {id_customer : id},
+            dataType : 'json',
+            beforeSend: function()
+            {
+              $('#loader').show();
+              $('.div-loading').addClass('background-load');
+            },
+            success : function(response)
+            {
+              $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
+              alert(response.message);
+
+              if(response.success == 1)
+              {
+                  $('#loader').show();
+                  $('.div-loading').addClass('background-load');
+                  location.href = url;
+              }
+            },
+            error: function(xhr)
+            {
+              $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
+              console.log(xhr.responseText);
+            }
+          })
+        }
+        else
+        {
+            return false;
+        }
+
+      });
   }
 
   /*

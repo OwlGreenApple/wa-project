@@ -870,6 +870,30 @@ class ListController extends Controller
         return response()->json($response);
     }
 
+    public function deleteSubscriber(Request $request)
+    {
+        $userid = Auth::id();
+        $id_customer = $request->id_customer;
+
+        if($id_customer == null)
+        {
+            return redirect('lists');
+        }
+
+        try
+        {
+          Customer::where([['id',$id_customer],['user_id',$userid]])->delete();
+          $data['success'] = 1;
+          $data['message'] = 'Your customer deleted successfully';
+        }
+        catch(Exception $e)
+        {
+          $data['success'] = 0;
+          $data['message'] = 'Failed to delete your customer, please try again later';
+        }
+        return response()->json($data);
+    }
+
     //IMPORT SUBSCRIBER / CUSTOMER INTO CSV
     function importCSVListSubscribers(Request $request)
     {

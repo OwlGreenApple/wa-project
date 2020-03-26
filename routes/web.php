@@ -123,6 +123,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('list-edit/{list_id}','ListController@editList');
   Route::get('list-additional','ListController@additionalList')->name('additionalList');
   Route::get('list-customer','ListController@displaySubscriber');
+  Route::get('list-delete-customer','ListController@deleteSubscriber');
   Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');
   Route::post('list-duplicate','ListController@duplicateList')->name('duplicatelist');
   Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers')->middleware('checkimportcsv');
@@ -187,7 +188,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('appt-del','AppointmentController@delAppointment');
   Route::get('export_csv_appt/{campaign_id}','AppointmentController@exportAppointment');
 
-  // scheduled event
+  // scheduled event --OLD CODES
   Route::post('addevent','EventController@addEvent')->name('addevent');
   Route::get('eventform','EventController@eventForm')->name('eventform');
   Route::get('eventcustomer','EventController@displayEventCustomers')->name('eventcustomer');
