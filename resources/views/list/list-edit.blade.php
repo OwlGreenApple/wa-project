@@ -82,8 +82,8 @@
             <div class="prep1">
               <div class="form-group">
                  <label>Phone Number</label>
-                 <input type="text" name="phone" class="form-control" placeholder="Input your phone number">
-                 <span class="error phone"></span>
+                 <input type="text" name="phone_number" class="form-control" placeholder="Input your phone number">
+                 <span class="error phone_number"></span>
               </div>
             </div>
 
@@ -484,14 +484,14 @@
 
        if(val == 'ph')
         {
-          $("input[name=phone]").prop('disabled',false);
+          $("input[name=phone_number]").prop('disabled',false);
           $("input[name=usertel]").prop('disabled',true);
           $(".cphone").show();
           $(".ctel").hide();
           $("#selectType").val("ph");
         }
         else {
-          $("input[name=phone]").prop('disabled',true);
+          $("input[name=phone_number]").prop('disabled',true);
           $("input[name=usertel]").prop('disabled',false);
           $(".cphone").hide();
           $(".ctel").show();
@@ -579,7 +579,7 @@
                   $(".main").text(result.main);
                   $(".main").text(result.list);
                   $(".email").text(result.email);
-                  $(".phone").text(result.phone);
+                  $(".phone_number").text(result.phone_number);
 
                   if(result.message !== undefined){
                        $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
