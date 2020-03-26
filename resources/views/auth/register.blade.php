@@ -50,7 +50,7 @@
                     </div>
 
                     <div class="form-group">
-                      <label>Handphone Telegram*</label>
+                      <label>Handphone*</label>
                       <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" placeholder="Input Your Phone" required/>
                       @error('phone')
                           <span class="invalid-feedback" role="alert">
