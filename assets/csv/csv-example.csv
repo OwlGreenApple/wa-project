@@ -1,6 +1,5 @@
-"name","telegram number","email","telegram username"
-"Note : if you fill telegram username column, then telegram number will be ignored, fill your data start from cell 4",,,
-,,,
-"import1",,"import@mail.com","alte"
-"import2","+62000000000","import2@mail.com",
-"import4","+62111111111","import3@mail.com","testelegram"
+"name","wa number","email"
+"Start import from col 3",,
+"import1","+62111111111","import@mail.com"
+"import2","+62111111111","import2@mail.com"
+"import4","+62000000000","import3@mail.com"

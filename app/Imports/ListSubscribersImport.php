@@ -35,6 +35,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
     { 
         $data = $rows->toArray();
         $cell = $rules_phone = $rules_username = array();
+        $list_id = $this->id_list;
 
         if(count($data) > 0)
         {
@@ -44,7 +45,6 @@ class ListSubscribersImport implements ToCollection,WithStartRow
                     'name'=>$col[0],
                     'phone'=>$col[1],
                     'email'=>$col[2],
-                    'username'=>$col[3],
                 );
             }
         }
@@ -53,53 +53,33 @@ class ListSubscribersImport implements ToCollection,WithStartRow
             '*.name' => 'name',
             '*.phone' => 'phone',
             '*.email' => 'email',
-            '*.username' => 'telegram username',
         );
 
-        $messages = [
+        /*$messages = [
             'required_if'=>'The :attribute field is required when :other is blank'
-        ];
+        ];*/
 
         $rules = [
            '*.name'=> ['required'],
-           '*.phone'=> ['required_if:*.username,==,'.null.'',new TelegramNumber],
+           '*.phone'=> ['required',new TelegramNumber],
+           // '*.phone'=> ['required_if:*.username,==,'.null.'',new TelegramNumber],
            '*.email'=> ['required','email'],
-           '*.username'=> ['required_if:*.phone,==,'.null.''],
+           //'*.username'=> ['required_if:*.phone,==,'.null.''],
         ];
 
-        $validator = Validator::make($cell,$rules,$messages); 
+        $validator = Validator::make($cell,$rules); 
         $validator->setAttributeNames($niceNames);
         $validator->validate(); 
 
         if(count($rows) > 0)
         {
-            foreach ($rows as $row) {
-                if($row[1] == '' && $row[3] == '')
-                {
-                    continue;
-                }
+            foreach ($rows as $row) 
+            {
+                $row[1] = $this->checkPhone($row[1]);
+                $checkunique = $this->checkUniquePhone($row[1],$row[2],$list_id);
+                $checkuniqueemail = $this->checkUniqueEmail($row[2],$list_id);
 
-                if(empty($row[3]))
-                {
-                    $row[1] = $this->checkPhone($row[1]);
-                    $checkunique = $this->checkUniquePhone($row[1],$row[2]);
-                }
-                else {
-                    $row[1] = 0;
-                    $checkunique = $this->checkUniqueUsername($row[3],$row[2]);
-                }
-
-                
-                $list = new ListController;
-
-                if($row[1] <> null){
-                  $chat_id = $list->getPhoneTelegramChatID($this->id_list,$row[1]);
-                } else {
-                  $chat_id = $list->getChatIDByUsername($phone,$row[3]);
-                }
-                
-
-                if($checkunique == true)
+                if($checkunique == true && $checkuniqueemail == true)
                 {
                   ++$this->rows;
                   Customer::create([
@@ -108,8 +88,6 @@ class ListSubscribersImport implements ToCollection,WithStartRow
                      'name'     => $row[0],
                      'telegram_number'=> $row[1],
                      'email'=> $row[2],
-                     'username' => $row[3],
-                     'chat_id' => $chat_id,
                   ]);
                 }
             }
@@ -123,7 +101,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
 
     public function startRow(): int
     {
-        return 4;
+        return 3;
     }
 
     public function checkPhone($row){
@@ -150,9 +128,9 @@ class ListSubscribersImport implements ToCollection,WithStartRow
         return $row;
     }
 
-    public function checkUniquePhone($number,$email){
-        $telegramnumber = Customer::where([['telegram_number','=',$number],['email','=',$email]])->first();
-        if(is_null($telegramnumber))
+    public function checkUniquePhone($number,$email,$list_id){
+        $phone_number = Customer::where([['list_id',$list_id],['telegram_number','=',$number],['email','=',$email]])->first();
+        if(is_null($phone_number))
         {
            return true;
         }
@@ -161,9 +139,9 @@ class ListSubscribersImport implements ToCollection,WithStartRow
         }
     }
     
-    public function checkUniqueUsername($username,$email){
-        $telegram_username = Customer::where([['username','=',$username],['email','=',$email]])->first();
-        if(is_null($telegram_username))
+    public function checkUniqueEmail($email,$list_id){
+        $email = Customer::where([['email','=',$email],['list_id',$list_id],])->first();
+        if(is_null($email))
         {
            return true;
         }
