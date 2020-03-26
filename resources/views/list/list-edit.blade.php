@@ -579,7 +579,7 @@
                   $(".main").text(result.main);
                   $(".main").text(result.list);
                   $(".email").text(result.email);
-                  $(".phone_number").text(result.phone_number);
+                  $(".phone_number").text(result.phone);
 
                   if(result.message !== undefined){
                        $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
