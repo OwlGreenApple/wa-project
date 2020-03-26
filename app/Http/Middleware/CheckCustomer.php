@@ -28,7 +28,7 @@ class CheckCustomer
     {
         // Build POST request:
         Session::reflash();
-        if(env('APP_ENV') == 'production')
+       /* if(env('APP_ENV') == 'production')
         { 
             $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
             $recaptcha_secret = env('GOOGLE_RECAPTCHA_SECRET_KEY');
@@ -46,7 +46,7 @@ class CheckCustomer
                 $error['captcha'] = 'Error Captcha';
                 return response()->json($error);
             }
-        }
+        }*/
     
         /* Get all data from request and then fetch it in array */
         $req = $request->all();

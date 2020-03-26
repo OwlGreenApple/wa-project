@@ -320,7 +320,7 @@
       $('input[name="reminder_id"]').val("new");
       $('input[name="event_time"]').val("");
       $('select[name="list_id"]').val("");
-      $('textarea[name="message"]').val("");
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
       $("#btn-clear").hide();
     });
   }

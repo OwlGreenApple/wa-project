@@ -256,7 +256,7 @@
       $('select[name="day"]').val($('select[name="day"]').prop("selectedIndex", 0).val());
       $('input[name="hour"]').val("00:00");
       $('select[name="list_id"]').val($('select[name="list_id"]').prop("selectedIndex", 0).val());
-      $('textarea[name="message"]').val("");
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
       $("#btn-clear").hide();
     });
   }
