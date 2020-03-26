@@ -239,6 +239,7 @@
    function deleteList(){
     $('body').on('click',".del",function(){
       var id = $(this).attr('id');
+      var mulr = window.location.href;
       var conf = confirm('Are you sure to delete this list?');
 
       if(conf == true)
@@ -257,7 +258,7 @@
             $('.div-loading').removeClass('background-load');
 
             alert(result.message);
-            displayData();
+            loadPagination(mulr);
           }
         });
       } else {
@@ -270,6 +271,7 @@
   function duplicateList(){
     $("body").on("click",".duplicate",function(){
         var id = $(this).attr('id');
+        var mulr = window.location.href;
         var conf = confirm('Are you want to duplicate this list?');
         
         if(conf == true)
@@ -301,7 +303,7 @@
                  else
                  {
                     alert(result.message);
-                    displayData();
+                    loadPagination(mulr);
                  }
               }
           });
