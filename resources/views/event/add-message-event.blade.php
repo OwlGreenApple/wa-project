@@ -86,6 +86,7 @@
         <div class="col-sm-9 relativity">
           <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
           <span class="icon-calendar"></span>
+          <span class="error event_time"></span>
         </div>
       </div>
 
@@ -103,8 +104,12 @@
 
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Time to send Message :</label>
-        <div class="col-sm-9 relativity inputh">
-          <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
+        <div class="col-sm-9 relativity">
+          <div class="inputh">
+            <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
+          </div>
+          <span class="error day"></span>
+          <span class="error hour"></span>
         </div>
       </div>
 
@@ -112,6 +117,7 @@
         <label class="col-sm-3 col-form-label">Message :</label>
         <div class="col-sm-6">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
+          <span class="error message"></span>
         </div>
       </div>
 
@@ -182,11 +188,16 @@
             {
               alert(result.message);
               $("input[name='event_time']").val('')
-               $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+              $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+              $(".error").hide();
             }
             else
             {
-              alert('Sorry, there is some error on our system, please try again later');
+              $(".error").show();
+              $(".event_time").html(result.event_time);
+              $(".day").html(result.day);
+              $(".hour").html(result.hour);
+              $(".message").html(result.msg);
             }
           },
           error : function(xhr,attribute,throwable)
@@ -296,8 +307,11 @@
       }
       $('input[name="hour"]').val($(this).attr("data-hour_time"));
       $('select[name="list_id"]').val($(this).attr("data-list_id"));
-      $('textarea[name="message"]').val($(this).attr("data-message"));
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText($(this).attr("data-message"));
       $("#btn-clear").show();
+       $('html, body').animate({
+          scrollTop: $(".act-tel-campaign ").offset().top
+      }, 1000);
     });
   }
 
@@ -338,9 +352,7 @@
           $('.div-loading').removeClass('background-load');
 
           var data = jQuery.parseJSON(result);
-          $('.message').show();
-          $('.message').html(data.message);
-          
+          alert(data.message);
           loadEvent();
         }
       });

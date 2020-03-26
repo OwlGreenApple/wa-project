@@ -126,6 +126,7 @@ class CampaignController extends Controller
         
         if(!empty($saveAutoReponder))
         {
+            $data['err'] = 0;
             $data['message'] = $saveAutoReponder;
             return response()->json($data);
         }

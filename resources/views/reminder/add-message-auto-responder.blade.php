@@ -91,6 +91,8 @@
               @endfor
             </select>
             <input name="hour" type="text" class="timepicker form-control col-sm-3" value="00:00" readonly />
+            <div class="error day"></div>
+            <div class="error hour"></div>
           </div>
         </div>
       </div>
@@ -99,6 +101,7 @@
         <label class="col-sm-3 col-form-label">Message :</label>
         <div class="col-sm-6">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
+          <span class="error message"></span>
         </div>
       </div>
 
@@ -151,15 +154,19 @@
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
             
-            if(result.err == undefined)
+            if(result.err == 0)
             {
               alert(result.message);
                $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
                loadAutoResponder();
+               $(".error").hide();
             }
             else
             {
-              alert('Sorry, there is some error on our system, please try again later');
+              $(".error").show();
+              $(".day").html(result.day);
+              $(".hour").html(result.hour);
+              $(".message").html(result.msg);
             }
           },
           error : function(xhr,attribute,throwable)
@@ -234,8 +241,12 @@
       }
       $('input[name="hour"]').val($(this).attr("data-hour_time"));
       $('select[name="list_id"]').val($(this).attr("data-list_id"));
-      $('textarea[name="message"]').val($(this).attr("data-message"));
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText($(this).attr("data-message"));
+      // $('textarea[name="message"]').val($(this).attr("data-message"));
       $("#btn-clear").show();
+      $('html, body').animate({
+          scrollTop: $(".act-tel-campaign ").offset().top
+      }, 1000);
     });
   }
 
@@ -292,8 +303,7 @@
           $('.div-loading').removeClass('background-load');
 
           var data = jQuery.parseJSON(result);
-          $('.message').show();
-          $('.message').html(data.message);
+          alert(data.message);
           loadAutoResponder();
         },
         error : function(xhr){

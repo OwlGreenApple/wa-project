@@ -137,10 +137,10 @@
                 $("input[name='hour']").val(result.time_send);
             }
 
+            $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(result.msg);
             $('html, body').animate({
                 scrollTop: $(".create ").offset().top
             }, 1000);
-            $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(result.msg);
           },
           error : function(xhr)
           {
