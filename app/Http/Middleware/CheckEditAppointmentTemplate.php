@@ -19,7 +19,7 @@ class CheckEditAppointmentTemplate
      */
     public function handle($request, Closure $next)
     {
-        //dd($request->all());
+        // dd($request->all());
         $get_day = true;
         $rules = array(
             'hour'=>['required','date_format:H:i'],

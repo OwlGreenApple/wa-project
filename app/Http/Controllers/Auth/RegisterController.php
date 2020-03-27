@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
-use App\Rules\TelegramNumber;
+use App\Rules\TelNumber;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RegisteredEmail;
 

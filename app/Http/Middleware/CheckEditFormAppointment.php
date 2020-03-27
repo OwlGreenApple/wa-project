@@ -21,7 +21,7 @@ class CheckEditFormAppointment
      */
     public function handle($request, Closure $next)
     {
-        //dd($request);
+        //dd($request->all());
 
         $userid = Auth::id();
         $customers =[

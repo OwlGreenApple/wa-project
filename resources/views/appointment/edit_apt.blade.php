@@ -86,8 +86,6 @@
     MDTimepicker();
     neutralizeClock();
     cancelUpdate();
-    //displayOption();
-    //broadcastSchedule();
   });
 
   function cancelUpdate()
@@ -339,90 +337,5 @@
     });
   }
 
-  function displayOption(){
-    $("input[name='campaign_type']").change(function(){
-        var val = $(this).val();
-        var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
-        var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
-                echo "<option value=".$x.">$x days after event</option>";
-          }?></select>'+
-          '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
-          ;
-
-        if(val == 'event')
-        {
-          $("input[name=event_time]").prop('disabled',false);
-          $("input[name=day_reminder]").prop('disabled',false);
-          $(".event-time").show();
-          $(".reminder").show();
-          //$(".broadcast-type").hide();
-          $(".date-send").hide();
-        }
-        else if(val == 'auto'){
-          $("input[name=event_time]").prop('disabled',true);
-          $(".event-time").hide();
-          $("input[name=day_reminder]").prop('disabled',false);
-          $(".reminder").hide();
-          $(".inputh").html(hplus);
-          //$(".broadcast-type").hide();
-          $(".date-send").hide();
-        }
-        else {
-          $("input[name=event_time]").prop('disabled',true);
-          $("input[name=day_reminder]").prop('disabled',true);
-          $(".event-time").hide();
-          $(".reminder").hide();
-          $(".inputh").html(hday);
-          //$(".broadcast-type").show();
-          $(".date-send").show();
-        }
-
-    });
-  }
-
-  function broadcastSchedule()
-  {
-      $(".broadcast-type").hide();
-      $(".date-send").hide();
-
-      $("#broadcast-schedule").change(function(){
-        var val = $(this).val();
-        var box = '';
-
-        if(val == 0)
-        {
-            $(".lists").show();
-            $("select[name='list_id']").prop('disabled',false);
-            $(".box-schedule").html('');
-        }
-        else if(val == 1)
-        {
-            $(".lists").hide();
-            $("select[name='list_id']").prop('disabled',true);
-
-            box += '<div class="form-group row">';
-            box += '<label class="col-sm-3 col-form-label">Telegram Group Name :</label>';
-            box += '<div class="col-sm-9 relativity">';
-            box += '<input type="text" name="group_name" class="form-control" />';
-            box += '<span class="error group_name"></span>';
-            box += '</div>';
-            box += '</div>';
-            $(".box-schedule").html(box);
-        }
-        else {
-            $(".lists").hide();
-            $("select[name='list_id']").prop('disabled',true);
-
-            box += '<div class="form-group row">';
-            box += '<label class="col-sm-3 col-form-label">Telegram Channel Name :</label>';
-            box += '<div class="col-sm-9 relativity">';
-            box += '<input type="text" name="channel_name" class="form-control" />';
-            box += '<span class="error channel_name"></span>';
-            box += '</div>';
-            box += '</div>';
-            $(".box-schedule").html(box);
-        }
-      });
-  }
 </script>
 @endsection
