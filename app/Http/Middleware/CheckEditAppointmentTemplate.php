@@ -35,11 +35,11 @@ class CheckEditAppointmentTemplate
 
           if($is_update == null)
           {
-              $rules['day'] = ['numeric','min:-90','max:-1', new CheckAppointmentDay($request->campaign_id)];
+              $rules['day'] = ['numeric','min:-30','max:-1', new CheckAppointmentDay($request->campaign_id)];
           }
           else
           {
-              $rules['day'] = ['numeric','min:-90','max:-1'];
+              $rules['day'] = ['numeric','min:-30','max:-1'];
               $get_day = $this->getDay($request->campaign_id,$old_day,$day);
           }
         }

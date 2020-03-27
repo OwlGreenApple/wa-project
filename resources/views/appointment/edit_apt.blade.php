@@ -5,7 +5,8 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h3 class="campaign">Add Message To : <color>{{ $campaign_name }}</color></h3>
+    <h3 class="campaign">Create template for appointment's messages</h3>
+    <h5>Campaign name : <color>{{ $campaign_name }}</color></h5>
   </div>
 
   <div class="clearfix"></div>
@@ -19,12 +20,28 @@
     <form id="save_template_apt" class="aptform">
      <div class="form-group row reminder">
         <label class="col-sm-3 col-form-label">Choose Reminder Time :</label>
-        <div class="col-sm-9 relativity">
-           <select name="schedule" id="schedule" class="custom-select-campaign form-control">
+        <div class="col-sm-9 text-left">
+           <!-- <select name="schedule" id="schedule" class="custom-select-campaign form-control">
               <option value="0">The Day</option>
               <option value="1">H-</option>
            </select>
-           <span class="icon-carret-down-circle"></span>
+           <span class="icon-carret-down-circle"></span> -->
+
+          <div class="form-check form-check-inline">
+            <label class="custom-radio">
+              <input class="form-check-input" type="radio" name="schedule" value="0" checked />
+              <span class="checkmark"></span>
+            </label>
+            <label class="form-check-label">The Day</label>
+          </div>
+
+          <div class="form-check form-check-inline">
+            <label class="custom-radio">
+              <input class="form-check-input" type="radio" name="schedule" value="1" />
+              <span class="checkmark"></span>
+            </label>
+            <label class="form-check-label">H-</label>
+          </div>
         </div>
       </div>
 
@@ -95,7 +112,7 @@
         $('#btn-submit').html('Create Reminder').removeAttr('data-update');
         $('#btn-submit').removeAttr('data-oldtime');
         $('#btn-submit').removeAttr('data-oldday');
-        $("select[name='schedule'] > option[value='0']").prop('selected',true);
+        $("input[name='schedule'][value='0']").prop('checked',true);
         buttonTime(0);
         $("input[name='hour']").val('00:00');
         $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
@@ -126,13 +143,13 @@
 
             if(result.day < 0)
             {
-                $("select[name='schedule'] > option[value='1']").prop('selected',true);
+                $("input[name='schedule'][value='1']").prop('checked',true);
                 buttonTime(1,result.day);
                 $('#btn-submit').attr('data-oldday',result.day);
             }
             else
             {
-                $("select[name='schedule'] > option[value='0']").prop('selected',true);
+                $("input[name='schedule'][value='0']").prop('checked',true);
                 buttonTime(0);
                 $('#btn-submit').attr('data-oldday',0);
             }
@@ -299,7 +316,7 @@
   function displayAddDaysBtn()
    {
       $(".add-day").hide();
-      $("#schedule").change(function(){
+      $("input[name='schedule']").change(function(){
           var val = $(this).val();
           buttonTime(val);
       });
@@ -311,7 +328,7 @@
         var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
         var options = '';
 
-        for(x=-1;x>=-90;x--){
+        for(x=-1;x>=-30;x--){
           if(x == day)
           {
             options += '<option value='+x+' selected>'+x+' days before appointment</option>';
