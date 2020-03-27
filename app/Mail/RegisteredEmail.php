@@ -34,7 +34,7 @@ class RegisteredEmail extends Mailable
     public function build()
     {
         return $this
-        ->from('no-reply@activrespon.com', 'ActivTele')
+        ->from('no-reply@activrespon.com', 'Activrespon')
         ->subject($this->subject)
         ->view('emails.RegisteredEmail')
         ->with($this->password);
