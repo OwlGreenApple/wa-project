@@ -19,21 +19,25 @@ class CheckEditAppointmentTemplate
      */
     public function handle($request, Closure $next)
     {
-        // dd($request->all());
+         // dd($request->all());
         $get_day = true;
+        $old_day = $request->old_day;
+        $old_time = $request->oldtime;
+        $day = $request->day;
+
         $rules = array(
             'hour'=>['required','date_format:H:i'],
             'message'=>['required','max:65000']
         );
 
         if(isset($_POST['day'])){
-            $day = $request->day;
-            $rules['day'] = ['numeric','min:-90','max:-1',new CheckAppointmentDay($request->campaign_id,$day)];
+            $rules['day'] = ['numeric','min:-90','max:-1'];
+            $get_day = $this->getDay($request->campaign_id,$old_day,$day);
         }
         else 
         {
             $day = 0;
-            $get_day = $this->getDay($request->campaign_id,$day);
+            $get_day = $this->getDay($request->campaign_id,$old_day,$day);
         }
 
         $validator = Validator::make($request->all(),$rules);
@@ -46,13 +50,13 @@ class CheckEditAppointmentTemplate
               'success'=>0,
             );
 
-            if($get_day == false)
-            {
-                $error['day'] = 'The day registered already, please choose another day!';
-            }
-            else 
+            if($err->first('day') !== null)
             {
                 $error['day'] = $err->first('day');
+            }
+            elseif($get_day == false)
+            {
+                $error['day'] = 'The day registered already, please choose another day!';
             }
             
             return response()->json($error);
@@ -70,17 +74,35 @@ class CheckEditAppointmentTemplate
         return $next($request);
     }
 
-    public function getDay($campaign_id,$day)
+    public function getDay($campaign_id,$oldday,$new_day)
     {
-       $getday = TemplateAppointments::where([['campaign_id',$campaign_id],['days',$day]])->first();
 
-        if(!is_null($getday))
-        {
-          return false;
-        }
-        else
-        {
-          return true;
-        }
+       if($oldday <> $new_day)
+       {
+          $getday = TemplateAppointments::where([['campaign_id',$campaign_id],['days',$new_day]])->first();
+
+          if(is_null($getday))
+          {
+            return true;
+          }
+          else
+          {
+            return false;
+          }
+       }
+       else 
+       {
+          $getday = TemplateAppointments::where([['campaign_id',$campaign_id],['days',$oldday]])->first();
+          
+          if(is_null($getday))
+          {
+            return false;
+          }
+          else
+          {
+            return true;
+          }
+       }
+        
     }
 }

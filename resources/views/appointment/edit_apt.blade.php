@@ -93,6 +93,8 @@
       $("#cancel").hide();
       $("#cancel").click(function(){
         $('#btn-submit').html('Create Reminder').removeAttr('data-update');
+        $('#btn-submit').removeAttr('data-oldtime');
+        $('#btn-submit').removeAttr('data-oldday');
         $("select[name='schedule'] > option[value='0']").prop('selected',true);
         buttonTime(0);
         $("input[name='hour']").val('00:00');
@@ -104,7 +106,7 @@
   function displayEditTemplateAppt()
   {
       $("body").on("click",".icon-edit",function(){
-        var id = $(this).attr('id');
+        var id = $(this).attr('id'); 
 
         $.ajax({
           type : 'GET',
@@ -117,8 +119,8 @@
           },*/
           success : function(result)
           {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
+           /* $('#loader').hide();
+            $('.div-loading').removeClass('background-load');*/
             $('#btn-submit').html('Update Reminder').attr('data-update',id);
             $("#cancel").show();
 
@@ -126,15 +128,17 @@
             {
                 $("select[name='schedule'] > option[value='1']").prop('selected',true);
                 buttonTime(1,result.day);
-                $("input[name='hour']").val(result.time_send);
+                $('#btn-submit').attr('data-oldday',result.day);
             }
             else
             {
                 $("select[name='schedule'] > option[value='0']").prop('selected',true);
                 buttonTime(0);
-                $("input[name='hour']").val(result.time_send);
+                $('#btn-submit').attr('data-oldday',0);
             }
 
+            $('#btn-submit').attr('data-oldtime',result.time_send);
+            $("input[name='hour']").val(result.time_send);
             $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(result.msg);
             $('html, body').animate({
                 scrollTop: $(".create ").offset().top
@@ -201,9 +205,17 @@
   {
     $("#save_template_apt").submit(function(e){
       e.preventDefault();
-      var is_update = $("#btn-submit").attr('data-update');
+      var is_update = $("#btn-submit").attr('data-update'); 
+      var oldtime = $("#btn-submit").attr('data-oldtime');
+      var oldday = $("#btn-submit").attr('data-oldday');
       var data = $(this).serializeArray();
-      data.push({name:'campaign_id',value : {!! $id !!} },{name : 'is_update', value : is_update});
+
+      data.push(
+        {name:'campaign_id',value : {!! $id !!} },
+        {name : 'is_update', value : is_update},
+        {name:'old_day',value : oldday},
+        {name:'oldtime',value : oldtime},
+      );
 
       $.ajax({
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
