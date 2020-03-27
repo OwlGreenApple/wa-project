@@ -34,7 +34,7 @@ class SendTelegramEmail extends Mailable
     public function build()
     {
         return $this
-        ->from('no-reply@activtele.com', 'ActivTele')
+        ->from('no-reply@activrespon.com', 'ActivTele')
         ->subject($this->subject)
         ->view('emails.test-email')
         ->with($this->emaildata)
