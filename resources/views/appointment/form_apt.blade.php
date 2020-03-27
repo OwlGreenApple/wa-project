@@ -8,7 +8,7 @@
       <h3 class="title">Form Appointment Reminder</h3>
 
       <div class="col-md-12 relativ row">
-        <input id="display_phone" type="text" class="form-control custom-select-apt" placeholder="Find a contact by phone number">
+        <input id="display_phone" type="text" class="form-control custom-select-apt" placeholder="Fill by registered phone number eg : +628xxxx">
         <span class="icon-search"></span>
 
         <div id="display_data" class="search-result col-lg-12">
@@ -83,6 +83,7 @@
 
   function callAjax()
   {
+      $("#appt_form").hide();
       $("#display_phone").keyup(delay(function (e) {
         var val = $(this).val();
         $(".search-result").show();
@@ -127,6 +128,7 @@
       $("input[name='customer_name']").val(customer_name);
       $("input[name='phone_number']").val(phone);
       $("#submit").attr('data-id',customer_id);
+      $("#appt_form").show();
     });
   }
 
@@ -159,6 +161,7 @@
             alert(result.message);
             clearForm();
             $(".error").hide();
+            $("#appt_form").hide();
           }
           else
           {
