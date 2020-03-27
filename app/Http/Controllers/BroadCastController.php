@@ -181,7 +181,7 @@ class BroadCastController extends Controller
               $broadcast_customer_open = BroadCastCustomers::where([['broadcast_id','=',$row->broadcast_id],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
 
               $data[] = array(
-                  'id'=>$row->id,
+                  'id'=>$row->id, //broadcast_id
                   'campaign_id'=>$row->campaign_id,
                   'campaign' => $row->name,
                   'group_name' => $row->group_name,

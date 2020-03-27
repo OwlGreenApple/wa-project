@@ -258,6 +258,7 @@
     $("#duplicate").submit(function(e){
         e.preventDefault();
         var campaign_id = $(this).attr('data');
+        var option_position = $("#campaign_option").val();
 
         var data = $(this).serializeArray();
         data.push({name : 'id', value:campaign_id});
@@ -289,7 +290,16 @@
               alert(result.message);
               $("#modal_duplicate").modal('hide');
               $("#duplicate:input").val('');
-              displayEvent();
+
+              if(option_position == 'all')
+              {
+                displayResult();
+              }
+              else
+              {
+                displayEvent();
+              }
+              
             }
           },
           error : function(xhr,attr,throwable){
@@ -317,6 +327,7 @@
     $("#duplicate_reminder").submit(function(e){
         e.preventDefault();
         var campaign_id = $(this).attr('data');
+        var option_position = $("#campaign_option").val();
 
         var data = $(this).serializeArray();
         data.push({name : 'id', value : campaign_id});
@@ -348,7 +359,15 @@
             alert(result.message);
             $("#modal_duplicate_reminder").modal('hide');
             $("#duplicate_reminder :input").val('');
-            displayAutoResponder();
+
+            if(option_position == 'all')
+            {
+              displayResult();
+            }
+            else
+            {
+              displayAutoResponder();
+            }        
           }
         },
         error : function(xhr,attr,throwable){
@@ -447,6 +466,7 @@
     $("#duplicate_broadcast").submit(function(e){
       e.preventDefault();
       var reminder_id = $(this).attr('data');
+      var option_position = $("#campaign_option").val();
 
       var data = $(this).serializeArray();
       data.push({name : 'id', value : reminder_id});
@@ -483,7 +503,15 @@
             alert(result.message);
             $("#modal_duplicate_broadcast").modal('hide');
             $("#duplicate_broadcast:input").val('');
-            displayBroadcast();
+
+            if(option_position == 'all')
+            {
+              displayResult();
+            }
+            else
+            {
+              displayBroadcast();
+            }
           }
         },
         error : function(xhr,attr,throwable){
@@ -597,16 +625,17 @@
   {
     $("body").on("click",".broadcast-del",function(){
       var id = $(this).attr('id');
+      var option_position = $("#campaign_option").val();
       var conf = confirm("Are you sure to delete this broadcast?"+"\n"+"WARNING : This cannot be undone");
 
       if(conf == true)
       {
         $.ajax({
           type : 'GET',
-          url : '{{ url("campaign-del") }}',
+          url : '{{ url("broadcast-del") }}',
           data : {
               id : id,
-              mode : "broadcast"
+              //mode : "broadcast"
           },
           beforeSend: function()
           {
@@ -616,7 +645,14 @@
           success : function(result)
           {
             alert(result.message);
-            displayBroadcast();
+            if(option_position == 'all')
+            {
+              displayResult();
+            }
+            else
+            {
+              displayBroadcast();
+            }
           },
           error : function(xhr, attr, throwable)
           {
@@ -637,6 +673,7 @@
   {
     $("body").on("click",".responder-del",function(){
       var id = $(this).attr('id');
+      var option_position = $("#campaign_option").val();
       var conf = confirm("Are you sure to delete this auto responder?"+"\n"+"WARNING : This cannot be undone");
 
       if(conf == true)
@@ -656,7 +693,14 @@
           success : function(result)
           {
             alert(result.message);
-            displayAutoResponder();
+            if(option_position == 'all')
+            {
+              displayResult();
+            }
+            else
+            {
+              displayAutoResponder();
+            }
           },
           error : function(xhr, attr, throwable)
           {
@@ -677,6 +721,7 @@
   {
     $("body").on("click",".event-del",function(){
       var id = $(this).attr('id');
+      var option_position = $("#campaign_option").val();
       var conf = confirm("Are you sure to delete this event?"+"\n"+"WARNING : This cannot be undone");
 
       if(conf == true)
@@ -698,7 +743,15 @@
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
             alert(result.message);
-            displayEvent();
+
+            if(option_position == 'all')
+            {
+              displayResult();
+            }
+            else
+            {
+              displayEvent();
+            }
           },
           error : function(xhr, attr, throwable)
           {
