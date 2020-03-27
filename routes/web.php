@@ -123,6 +123,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('list-edit/{list_id}','ListController@editList');
   Route::get('list-additional','ListController@additionalList')->name('additionalList');
   Route::get('list-customer','ListController@displaySubscriber');
+  Route::get('list-table-customer','ListController@listTableCustomer');
   Route::get('list-delete-customer','ListController@deleteSubscriber');
   Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');
   Route::post('list-duplicate','ListController@duplicateList')->name('duplicatelist');

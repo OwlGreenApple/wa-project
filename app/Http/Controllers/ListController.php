@@ -683,8 +683,6 @@ class ListController extends Controller
             return redirect('lists');
         } 
 
-        $customer = Customer::where([['list_id',$listid],['user_id',$userid]])->get();
-
         $data = array(
             'list_label'=>$list->label,
             'list_name'=>$list->name,
@@ -700,7 +698,16 @@ class ListController extends Controller
         $id = $listid;
         $list_id = encrypt($id);
       
-       return view('list.list-edit',['data'=>$data,'label'=>$list->label,'listid'=>$list_id,'url'=>$url,'listname'=>$list->name,'id'=>$id,'customer'=>$customer]);
+       return view('list.list-edit',['data'=>$data,'label'=>$list->label,'listid'=>$list_id,'url'=>$url,'listname'=>$list->name,'id'=>$id]);
+    }
+
+    //DISPLAY AJAX ON PAGE LIST-EDIT TAB CONTACT.
+    public function listTableCustomer(Request $request)
+    {
+        $userid = Auth::id();
+        $listid = $request->list_id;
+        $customer = Customer::where([['list_id',$listid],['user_id',$userid]])->get();
+        return view('list.list-table-customer',['customer'=>$customer]);
     }
 
     //DUPLICATE LIST

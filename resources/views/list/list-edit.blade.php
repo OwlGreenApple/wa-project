@@ -25,40 +25,8 @@
   <div class="tabs-content">
     <!-- TABS 1 -->
     <div class="tabs-container" id="tab1C">
-      <div class="act-tel-tab">
-        @if($customer->count() > 0)
-          <table class="table" id="data-customer">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Additional</th>
-                <th>Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($customer as $col)
-                <tr>
-                  <td>{{ $col->name }}</td>
-                  <td>{{ $col->email }}</td>
-                  <td>{{ $col->telegram_number }}</td>
-                  <td>
-                    @if( $col->additional <> null)
-                      <a additional="{{ $col->additional }}" class="btn btn-info btn-sm text-white view">View Addtional</a>
-                    @else
-                      -
-                    @endif
-                  </td>
-                  <td><a id="{{ $col->id }}" class="btn btn-danger btn-sm text-white del-customer">Delete</a></td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        @else
-          <h2>Add Your Contact</h2>
-          <h6 class="mt-3">From <a id="tab-contact">Add Contact</a> or <a id="tab-form">Form</a></h6>
-        @endif
+      <div class="act-tel-tab" id="customer_list">
+          <!-- display customer list here ... --> 
       </div>
     <!-- end tabs -->  
     </div>
@@ -413,6 +381,7 @@
     csvImport();
     addContact();
     //column -- edit
+    displayCustomer(); 
     displayAdditional();
     updateList();
     delCols();
@@ -431,6 +400,7 @@
     dataCustomer();
     customerAttribute();
     delCustomer();
+    pagination();
   });
 
   function open_ck_editor()
@@ -462,6 +432,7 @@
         $("#tab1").addClass('inactive');
         $("#tab2").removeClass('inactive');
 
+        displayCustomer();
         $('.tabs-container').hide();
         $('#tab2C').fadeIn('slow');
       }); 
@@ -474,6 +445,67 @@
          $('#tab3C').fadeIn('slow');
       });
   }
+
+   //ajax pagination
+  function pagination()
+  {
+      $(".page-item").removeClass('active').removeAttr('aria-current');
+      var mulr = window.location.href;
+      getActiveButtonByUrl(mulr)
+    
+      $('body').on('click', '.pagination .page-link', function (e) {
+          e.preventDefault();
+          var url = $(this).attr('href');
+          window.history.pushState("", "", url);
+          loadPagination(url);
+      });
+  }
+
+  function loadPagination(url) {
+      $.ajax({
+        beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+        url: url
+      }).done(function (data) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          getActiveButtonByUrl(url);
+          $('#display_list').html(data);
+      }).fail(function (xhr,attr,throwable) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert("Sorry, Failed to load data! please contact administrator");
+          console.log(xhr.responseText);
+      });
+  }
+
+  function getActiveButtonByUrl(url)
+  {
+    var page = url.split('?');
+    if(page[1] !== undefined)
+    {
+      var pagevalue = page[1].split('=');
+      $(".page-link").each(function(){
+         var text = $(this).text();
+         if(text == pagevalue[1])
+          {
+            $(this).attr('href',url);
+            $(this).addClass('on');
+          } else {
+            $(this).removeClass('on');
+          }
+      });
+    }
+    else {
+        var mod_url = url+'?page=1';
+        getActiveButtonByUrl(mod_url);
+    }
+  }
+
+  //end ajax pagination
 
   function Choose(){
     $("input[name=usertel]").prop('disabled',true);
@@ -499,6 +531,33 @@
         }
     });
   }
+
+  function displayCustomer()
+  {
+     $.ajax({
+      type : 'GET',
+      url : '{{ url("list-table-customer") }}',
+      data : {list_id : '{{ $id }}' },
+      dataType : 'html',
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success : function(result)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        $("#customer_list").html(result);
+      },
+      error: function(xhr)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        console.log(xhr.responseText);
+      }
+     });
+  }  
 
   function openImport() {
     $(".open_import").click(function(){
@@ -526,6 +585,8 @@
             {
               $('#loader').show();
               $('.div-loading').addClass('background-load');
+               $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
             },
             success : function(result){
               $('#loader').hide();
@@ -573,6 +634,8 @@
               if(result.success == true){
                   alert(result.message);
                   clearField();
+                  $(".error").hide();
+                  displayCustomer();
               } else {
                   $(".error").fadeIn('fast');
                   $(".name").text(result.name);
@@ -597,6 +660,11 @@
         });
         /*end ajax*/
       });
+  }
+
+  function clearField()
+  {
+      $('input[name="subscribername"],input[name="phone_number"],input[name="email"]').val("");
   }
 
   /* Column Additional */
@@ -1304,7 +1372,7 @@
 
   function delCustomer()
   {
-      $(".del-customer").click(function(){
+      $("body").on("click",".del-customer",function(){
         var url = window.location.href;
         var id = $(this).attr('id');
         var warning = confirm('Are you sure to delete this customer?');
@@ -1331,7 +1399,7 @@
               {
                   $('#loader').show();
                   $('.div-loading').addClass('background-load');
-                  location.href = url;
+                  displayCustomer(); 
               }
             },
             error: function(xhr)
