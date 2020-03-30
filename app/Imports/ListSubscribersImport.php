@@ -62,7 +62,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
 
         $rules = [
            '*.name'=> ['required'],
-           '*.phone'=> ['required','not_regex:/^[a-zA-Z][0-9]*$/i'],
+           '*.phone'=> ['required','not_regex:/^[a-zA-Z]*$/i'],
            // '*.phone'=> ['required_if:*.username,==,'.null.'',new TelegramNumber],
            '*.email'=> ['required','email'],
            //'*.username'=> ['required_if:*.phone,==,'.null.''],
