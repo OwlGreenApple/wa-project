@@ -25,13 +25,13 @@ class TelNumberImport implements Rule
      */
     public function passes($attribute, $value)
     {
-        return $this->checkNumber($value);
+        // return $this->checkNumber($value);
+        dd($this->checkNumber($value));
     }
 
     public function checkNumber($value)
     {
-        dd($value);
-    
+        
         if(preg_match("/^0[0-9]*$/i",$value) || !preg_match("/^[+][0-9]/i",$value) || preg_match("/[a-z]/i",$value))
         {
            return false;
