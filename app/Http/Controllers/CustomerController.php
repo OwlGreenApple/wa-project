@@ -14,6 +14,7 @@ use App\BroadCastCustomers;
 use App\Sender;
 use App\Additional;
 use App\PhoneNumber;
+use App\Countries;
 use App\Console\Commands\SendWA as SendMessage;
 use App\Helpers\ApiHelper;
 
@@ -262,6 +263,15 @@ class CustomerController extends Controller
         }
       }
       return redirect($list->name);
+    }
+
+    public function Country(Request $request)
+    {
+        $search = $request->search;
+        $result = str_replace("+", "", $search);
+
+        $countries = Countries::where('name','LIKE','%'.$search.'%')->orWhere('code','=',$result)->get();
+        return view('countries',['data'=>$countries]);
     }
     
     
@@ -614,44 +624,6 @@ class CustomerController extends Controller
             return response()->json($data);
         }
     }
-    
-    public function testSendMessage()
-    {
-      $phoneNumber = PhoneNumber::find(13);
 
-
-      $curl = curl_init();
-      $data = array(
-          'token'=> env('TOKEN_API'),
-          'phone_number' => $phoneNumber->phone_number,
-          // 'username'=>"gungunomni", 
-          // 'chat_id'=>"955127354", 
-          'chat_id'=>"414470148", 
-          'message'=>"new123 test kirim telegram", 
-          'filename'=>$phoneNumber->filename,
-      );
-
-      curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://172.98.193.36/phptdlib/php_examples/sendMessage.php",
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => http_build_query($data),
-        CURLOPT_POST => 1,
-      ));
-
-      $response = curl_exec($curl);
-      $err = curl_error($curl);
-
-      curl_close($curl);
-
-      if ($err) {
-        echo "cURL Error #:" . $err;
-      } else {
-        echo $response."\n";
-        // print_r($response);
-        // return json_decode($response, true);
-      }
-
-    }
 /* end of class */
 }

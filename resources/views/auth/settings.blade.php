@@ -64,10 +64,19 @@
             <form class="wrapper add-contact col-lg-9 pad-fix" id="form-connect">
                 <div class="form-group row col-fix">
                   <label class="col-sm-3 col-form-label">Phone Whatsapp :</label>
-                  <div class="col-sm-9">
-                    <input type="text" id="phone_number" name="phone_number" class="form-control" />
-                    <span>Please add avatar / image on your WA account.</span>
-                    <span class="error phone_number"></span>
+                  <div class="col-sm-9 row">
+                   <!--  <div class="col-lg-3 row relativity">
+                      <input name="code_country" class="form-control custom-select-campaign" value="+62" />
+                      <span class="icon-carret-down-circle"></span>
+                      <span class="error code_country"></span>
+                    </div> -->
+
+                    <div class="col-sm-9">
+                      <input type="text" id="phone_number" name="phone_number" class="form-control" />
+                      <span class="error phone_number"></span>
+                    </div>
+                    <div>Please add avatar / image on your WA account.</div>
+                    <div class="col-lg-12 pad-fix"><ul id="display_countries"><!-- Display country here... --></ul></div>
                   </div>
                 </div>
 
@@ -277,6 +286,8 @@
     editPhoneNumber();
     openEditModal();
     settingUser();
+    codeCountry();
+    putCallCode();
 
     $('#div-verify').hide();
     $('.message').hide();
@@ -323,6 +334,52 @@
       });
       
     });
+
+    function delay(callback, ms) {
+      var timer = 0;
+      return function() {
+        var context = this, args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          callback.apply(context, args);
+        }, ms || 0);
+      };
+    }
+
+    function codeCountry()
+    {
+      $("body").on('keyup focusin',"input[name='code_country']",delay(function(e){
+          var search = $(this).val();
+          $.ajax({
+            type : 'GET',
+            url : '{{ url("countries") }}',
+            data : {'search':search},
+            dataType : 'html',
+            success : function(result)
+            {
+              $("#display_countries").show();
+              $("#display_countries").html(result);
+            },
+            error : function(xhr)
+            {
+              console.log(xhr.responseText);
+            }
+          });
+      },500));
+
+       $("input[name='code_country']").on('focusout',function(){
+          $("input[name='code_country']").val('+62');
+       });
+    }
+
+    function putCallCode()
+    {
+      $("body").on("click",".calling_code",function(){
+        var code = $(this).attr('data-call');
+        $("input[name='code_country']").val(code);
+        $("#display_countries").hide();
+      });
+    }
 
     function waitingTime()
     {
