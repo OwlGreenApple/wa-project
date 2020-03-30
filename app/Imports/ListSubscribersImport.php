@@ -11,7 +11,8 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
-use App\Rules\TelNumber;
+// use App\Rules\TelNumber;
+use App\Rules\TelNumberImport;
 
 use App\Http\Controllers\ListController;
 
@@ -61,7 +62,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
 
         $rules = [
            '*.name'=> ['required'],
-           '*.phone'=> ['required',new TelNumber],
+           '*.phone'=> ['required',new TelNumberImport],
            // '*.phone'=> ['required_if:*.username,==,'.null.'',new TelegramNumber],
            '*.email'=> ['required','email'],
            //'*.username'=> ['required_if:*.phone,==,'.null.''],
