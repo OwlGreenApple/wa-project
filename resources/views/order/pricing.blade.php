@@ -46,7 +46,8 @@
             <div class="div-content w-100 w-100 p-3">
               <span>1 Year </span>
               <span>&nbsp</span>
-              <span id="ayear-price">IDR 2.970.000</span>
+              <span id="6months-price">IDR 2.970.000</span>
+              <span id="description-contact-3">25.000 Contacts</span>
             </div>
           </div>            
         </div>            
@@ -58,7 +59,8 @@
             <div class="div-content w-100 w-100 p-3">
               <span>3 Months </span>
               <span>&nbsp</span>
-              <span id="3month-price">IDR 759.000</span>
+              <span id="3months-price">IDR 759.000</span>
+              <span id="description-contact-3">25.000 Contacts</span>
             </div>
           </div>            
         </div>    
@@ -71,6 +73,7 @@
               <span>1 Month </span>
               <span>&nbsp</span>
               <span id="monthly-price">IDR 275.000</span>
+              <span id="description-contact-3">25.000 Contacts</span>
             </div>
           </div>            
         </div>    
@@ -79,10 +82,10 @@
       <div class="col-1 ">
       </div>
       <div class="col-4 detail-description">
-        <h3>
-          25.000 Kontak / Tahun
+        <h3 id="description-contact-header">
+          25.000 Contacts/6 Months
         </h3>
-        <button type="button" class="btn btn-success form-control" id="choose-price">IDR 2.970.000</button>
+        <button type="button" class="btn btn-lg btn-success form-control" id="choose-price">IDR 2.970.000</button>
         <ul>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
@@ -120,16 +123,16 @@
             <i class="fa fa-check" aria-hidden="true"></i> 
             <span>Google form integration</span>
           </li>
-          <li>
+          <li class="not-1000">
             <i class="fa fa-check" aria-hidden="true"></i> 
             <span>Event Reminder</span>
           </li>
-          <li>
+          <li class="not-1000">
             <i class="fa fa-check" aria-hidden="true"></i> 
             <span>Appointment Reminder</span>
           </li>
         </ul>
-        <button class="btn btn-success button-bottom-buynow form-control">Buy Now<i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+        <button class="btn btn-lg btn-success button-bottom-buynow form-control">Buy Now <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
       </div>
   </div>
 </div>
@@ -143,7 +146,21 @@
   });
   function set_price(){
       if (modePrice==1) {
-        $("#choose-price").html();
+        $("#choose-price").html($("#6months-price").html());
+      }
+      if (modePrice==2) {
+        $("#choose-price").html($("#3months-price").html());
+      }
+      if (modePrice==3) {
+        $("#choose-price").html($("#monthly-price").html());
+      }
+      
+      numOfContact = $(".js-range-slider").val();
+      if (numOfContact == 1000) {
+        $(".not-1000").hide();
+      }
+      else {
+        $(".not-1000").show();
       }
   }
   
@@ -160,10 +177,51 @@
             // console.log($(".js-range-slider").val());
           numOfContact = $(".js-range-slider").val();
           if (numOfContact == 1000) {
-            $("#ayear-price").html();
-            $("#3month-price").html();
-            $("#monthly-price").html();
+            $("#6months-price").html("IDR 1.053.000");
+            $("#3months-price").html("IDR 538.200");
+            $("#monthly-price").html("IDR 195.000");
           }
+          if (numOfContact == 2500) {
+            $("#6months-price").html("IDR 1.485.000");
+            $("#3months-price").html("IDR 759.000");
+            $("#monthly-price").html("IDR 275.000");
+          }
+          if (numOfContact == 5000) {
+            $("#6months-price").html("IDR 1.863.000");
+            $("#3months-price").html("IDR 952.200");
+            $("#monthly-price").html("IDR 345.000");
+          }
+          if (numOfContact == 7500) {
+            $("#6months-price").html("IDR 2.241.000");
+            $("#3months-price").html("IDR 1.145.400");
+            $("#monthly-price").html("IDR 415.000");
+          }
+          if (numOfContact == 15000) {
+            $("#6months-price").html("IDR 2.997.000");
+            $("#3months-price").html("IDR 1.531.800");
+            $("#monthly-price").html("IDR 555.000");
+          }
+          if (numOfContact == 20000) {
+            $("#6months-price").html("IDR 3.753.000");
+            $("#3months-price").html("IDR 1.918.200");
+            $("#monthly-price").html("IDR 695.000");
+          }
+          if (numOfContact == 25000) {
+            $("#6months-price").html("IDR 5.265.000");
+            $("#3months-price").html("IDR 2.691.000");
+            $("#monthly-price").html("IDR 975.000");
+          }
+          if (numOfContact == 50000) {
+            $("#6months-price").html("IDR 6.777.000");
+            $("#3months-price").html("IDR 3.463.800");
+            $("#monthly-price").html("IDR 1.255.000");
+          }
+          if (numOfContact == 75000) {
+            $("#6months-price").html("IDR 12.069.000");
+            $("#3months-price").html("IDR 6.168.600");
+            $("#monthly-price").html("IDR 2.235.000");
+          }
+          set_price();
         }
     });
   }
@@ -173,6 +231,7 @@
       $(".box-pricing").removeClass("selected");
       $(this).addClass("selected");
       modePrice = $(this).attr("data-attr");
+      set_price();
     });
   }
 </script>
