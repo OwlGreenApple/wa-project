@@ -32,7 +32,7 @@ class TelNumberImport implements Rule
     public function checkNumber($value)
     {
         
-        if(preg_match("/^0[0-9]*$/i",$value))
+        if(preg_match("/^0[0-9]*$/i",$value) || !preg_match("/^[+][0-9]/i",$value) || preg_match("/[a-z]/i",$value))
         {
            return false;
         }
