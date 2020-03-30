@@ -62,10 +62,11 @@ class SendMessage extends Command
     /* BROADCAST */
     public function campaignBroadcast()
     {
-        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id")
+        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","customers.*")
           ->join('users','broad_casts.user_id','=','users.id')
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
+          ->join('customers',"customers.id","=","broad_cast_customers.customer_id")
           ->where("broad_cast_customers.status",0)
           ->where("customers.status",1)
           ->orderBy('broad_casts.user_id')
@@ -76,16 +77,15 @@ class SendMessage extends Command
             $number = 0;
             foreach($broadcast as $row)
             {
-                
-                $customers = Customer::where('id',$row->customer_id)->first();
+                // $customers = Customer::where('id',$row->customer_id)->first();
                 $message = $row->message;
-                $customer_phone = $customers->telegram_number;
+                $customer_phone = $row->telegram_number;
                 $phoneNumber = PhoneNumber::find($row->phoneid);
 
-                if(!is_null($customers))
-                {
-                    $message = str_replace('{name}',$customers->name,$row->message);
-                    $chat_id = $customers->chat_id;  
+                // if(!is_null($customers))
+                // {
+                    $message = str_replace('{name}',$row->name,$row->message);
+                    $chat_id = $row->chat_id;  
                     $counter = $phoneNumber->counter;
                     $max_counter = $phoneNumber->max_counter;
                     $key = $phoneNumber->filename;
@@ -121,7 +121,7 @@ class SendMessage extends Command
                         $number ++;
                         $this->generateLog($number,$campaign,$id_campaign,$status);
                     }
-                }
+                // }
                 sleep(10);
             }//END LOOPING
 
