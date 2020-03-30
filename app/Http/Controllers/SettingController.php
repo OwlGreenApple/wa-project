@@ -380,6 +380,17 @@ class SettingController extends Controller
         return ApiHelper::get_all_cust();
     }
 
+    public function qr_status($wa_number)
+    {
+        $arr = json_decode(ApiHelper::qr_status($wa_number),1);
+        if (!is_null($arr)) {
+          return $arr['status'];
+        } 
+        else {
+          echo "null";
+        }
+    }
+
     public function status_nomor($wa_number)
     {
         $arr = json_decode(ApiHelper::status_nomor($wa_number),1);
