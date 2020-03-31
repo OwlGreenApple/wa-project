@@ -2,7 +2,7 @@
 
 @section('content')
 <link href="{{ asset('/assets/css/pricing.css') }}" rel="stylesheet" />
-
+ 
 <!--Plugin CSS file with desired skin-->
 <link rel="stylesheet" href="{{ asset('/assets/ion.rangeSlider-master/css/ion.rangeSlider.min.css') }}"/>
 <!--Plugin JavaScript file-->
@@ -40,7 +40,7 @@
         </div>
         <div class="col-4 ml-0 mr-0 box-pricing p-2 selected" data-attr="1">
           <div class="box-in">
-            <div class="div-header w-100 p-3">
+            <div class="div-header w-100 p-1">
               <h5>Super Value</h5>
             </div>
             <div class="div-content w-100 w-100 p-3">
@@ -53,8 +53,9 @@
         </div>            
         <div class="col-4 ml-0 mr-0 box-pricing p-2 " data-attr="2">
           <div class="box-in">
-            <div class="div-header w-100 p-3">
-              <h5>Best Seller</h5>
+            <div class="div-header w-100 p-1">
+              <i class=""></i> 
+              <h5 class="pl-3">Best Seller</h5>
             </div>
             <div class="div-content w-100 w-100 p-3">
               <span>3 Months </span>
@@ -66,7 +67,7 @@
         </div>    
         <div class="col-4 ml-0 mr-0 box-pricing p-2 " data-attr="3">
           <div class="box-in">
-            <div class="div-header w-100 p-3">
+            <div class="div-header w-100 p-1">
               <h5>Basic</h5>
             </div>
             <div class="div-content w-100 w-100 p-3">
@@ -85,7 +86,7 @@
         <h3 id="description-contact-header">
           25.000 Contacts/6 Months
         </h3>
-        <button type="button" class="btn btn-lg btn-success form-control" id="choose-price">IDR 2.970.000</button>
+        <button type="button" class="btn btn-lg btn-success col-12" id="choose-price">IDR 2.970.000</button>
         <ul>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
@@ -123,16 +124,16 @@
             <i class="fa fa-check" aria-hidden="true"></i> 
             <span>Google form integration</span>
           </li>
-          <li class="not-1000">
-            <i class="fa fa-check" aria-hidden="true"></i> 
+          <li>
+            <i class="not-1000 fa fa-check" aria-hidden="true"></i> 
             <span>Event Reminder</span>
           </li>
-          <li class="not-1000">
-            <i class="fa fa-check" aria-hidden="true"></i> 
+          <li>
+            <i class="not-1000 fa fa-check" aria-hidden="true"></i> 
             <span>Appointment Reminder</span>
           </li>
         </ul>
-        <button class="btn btn-lg btn-success button-bottom-buynow form-control">Buy Now <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+        <button class="btn btn-lg btn-success button-bottom-buynow col-12">Buy Now <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
       </div>
   </div>
 </div>
@@ -157,10 +158,12 @@
       
       numOfContact = $(".js-range-slider").val();
       if (numOfContact == 1000) {
-        $(".not-1000").hide();
+        $(".not-1000").removeClass("fa-check");
+        $(".not-1000").addClass("fa-times");
       }
       else {
-        $(".not-1000").show();
+        $(".not-1000").addClass("fa-check");
+        $(".not-1000").removeClass("fa-times");
       }
   }
   

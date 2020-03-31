@@ -1,5 +1,5 @@
 <?php
-
+ 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -112,6 +112,7 @@ Route::get('checkphone', 'HomeController@checkPhone');
 
 /*** USER ***/
 Route::group(['middleware'=>['auth','web','authsettings']],function(){
+  Route::get('google-form','HomeController@google_form');
 
 	/* LIST */
   Route::get('lists', 'ListController@index');

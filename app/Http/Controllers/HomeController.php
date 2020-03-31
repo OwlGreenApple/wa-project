@@ -91,6 +91,19 @@ class HomeController extends Controller
         return view('home',$data);
     }
 
+    public function google_form()
+    {
+      $user = Auth::user();
+      $key = "";
+      $phoneNumber = PhoneNumber::
+                      where("user_id",$user->id)
+                      ->first();
+      if (!is_null($phoneNumber)) {
+        $key = $phoneNumber->filename;
+      }      
+      return view('google-form',["key"=>$key]);
+    }
+
     public function updateUser(Request $request){
         $user = User::where('id','=',Auth::id())->update(
             [

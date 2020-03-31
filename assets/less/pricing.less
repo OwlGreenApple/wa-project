@@ -10,7 +10,7 @@ html {
 .main-pricing{
   background-color : #e7e9f5;
   border-radius: 25px;
-  margin-top: -360px;
+  margin-top: -455px;
   margin-bottom:75px;
   z-index: 99;
   position: relative;
@@ -36,10 +36,21 @@ html {
     }
     .div-header{
       background-color : #c1c2d6;
+      position:relative;
       h5{
         font-weight: bold;
         text-align : center;
         font-size:23px;
+      }
+      i{
+        display:inline-block;
+        background-image: url(../img/icon-pricing.png);
+        background-size: 32px 32px;
+        width:32px;
+        height:32px;
+        top:0px;
+        left:0px;
+        position:absolute;
       }
     }
     .div-content{
@@ -47,7 +58,7 @@ html {
         display:block;
         font-weight: bold;
         text-align : center;
-        font-size:18px;
+        font-size:16px;
       }
     }
 
@@ -90,10 +101,13 @@ html {
       li{
         padding-left : 20px;
         padding-right : 20px;
-        font-size:18px;
+        font-size:12px;
       }
-      i{
+      .fa-check{
         color : #2eaf6f;
+      }
+      .fa-times{
+        color : #e26254;
       }
     }
   }

@@ -107,17 +107,9 @@
                     <ul class="navbar-nav">
                         <!-- Authentication Links -->
                         @guest
-                            <!--
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                            </li>
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
-                          -->
+
                         @else
+                          @if(!request()->is('pricing'))
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('list-form') || request()->is('list-create') || request()->is('create-campaign') || request()->is('create-apt')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     Create<span class="caret"></span>
@@ -142,23 +134,19 @@
                             
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('appointment')) ? 'active' : '' }}" href="{{ route('appointment') }}">Appointment</a>
-                            </li> 
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('google-form')) ? 'active' : '' }}" href="{{ url('google-form') }}">Google Form</a>
+                            </li>
+                        @endif 
                     </ul>
                     <ul class="navbar-nav mr-auto"><!-- separator --></ul>
+                    @if(!request()->is('pricing'))
                      <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item mr-3">
                            Hi, {{Auth()->user()->name}}
                         </li>
-                        <!--
-                        <li class="nav-item mr-3">
-                           
-                            
-                           <select class="form-control-sm tel-color" name="">
-                             <option>08523193113</option>
-                           </select>
-                            
-                        </li>-->
                          <li class="nav-item cog-pos dropdown">
                            <a id="cogDropdown" class="icon-cog" data-toggle="dropdown"></a>
                            <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="cogDropdown">
@@ -182,6 +170,7 @@
                             </div>
                         </li>
                     </ul>
+                    @endif
                     @endguest
 
                 </div>
