@@ -163,6 +163,7 @@ class SettingController extends Controller
     {
       $user = Auth::user();
       $resend = $request->resend;
+      $phone_number = $request->code_country.$request->phone_number;
 
       //pastikan phone number hanya 1 phone number
       $countphoneNumber = PhoneNumber::where("user_id",$user->id)->first();
@@ -174,7 +175,7 @@ class SettingController extends Controller
 
       //cek phone number uda ada didatabase ngga 
       $phoneNumber = PhoneNumber::
-                      where("phone_number",$request->phone_number)
+                      where("phone_number",$phone_number)
                       ->where("user_id",$user->id)
                       // ->where("status",2)
                       ->first();
@@ -187,7 +188,7 @@ class SettingController extends Controller
 
       //PHONE REGISTER TO API
       $member = User::find($user->id);
-      $registered_phone = ApiHelper::reg($request->phone_number,$member->name);
+      $registered_phone = ApiHelper::reg($phone_number,$member->name);
       $status_register = json_decode($registered_phone,true);
       $message = strval($status_register['message']);
 
@@ -204,7 +205,7 @@ class SettingController extends Controller
         // $token = explode(':',$this->getToken($request->phone_number));
         $phoneNumber = new PhoneNumber();
         $phoneNumber->user_id = $user->id;
-        $phoneNumber->phone_number = $request->phone_number;
+        $phoneNumber->phone_number = $phone_number;
         $phoneNumber->counter = 0;
         $phoneNumber->status = 0;
         // $phoneNumber->filename = $token[1];
@@ -368,11 +369,6 @@ class SettingController extends Controller
 
         return curl_exec($ch);
         //echo $res=curl_exec($ch);
-    }
-
-    public function get_all_client()
-    {
-        return ApiHelper::get_client();
     }
     
     public function get_all_cust()

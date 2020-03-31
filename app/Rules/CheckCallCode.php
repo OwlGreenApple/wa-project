@@ -3,20 +3,18 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
-use App\PhoneNumber;
+use App\Countries;
 
-class AvailablePhoneNumber implements Rule
+class CheckCallCode implements Rule
 {
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-
-    public $calling_code;
-    public function __construct($calling_code)
+    public function __construct()
     {
-        $this->calling_code = $calling_code;
+        //
     }
 
     /**
@@ -28,15 +26,17 @@ class AvailablePhoneNumber implements Rule
      */
     public function passes($attribute, $value)
     {
-        $phone_number = $this->calling_code.$value;
-        $phone = PhoneNumber::where('phone_number',$phone_number)->first();
+        $value = str_replace("+", "", $value);
+        $call = (int)$value;
+        $code = Countries::where('code',$call)->first();
 
-        if(is_null($phone))
+        if(is_null($code))
         {
-          return true;
+            return false;
         }
-        else {
-          return false;
+        else
+        {
+            return true;
         }
     }
 
@@ -47,6 +47,6 @@ class AvailablePhoneNumber implements Rule
      */
     public function message()
     {
-        return 'Sorry this number registered already';
+        return 'Invalid calling code.';
     }
 }

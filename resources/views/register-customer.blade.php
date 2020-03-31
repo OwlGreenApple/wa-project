@@ -22,6 +22,9 @@
     <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/subscribe.css') }}" rel="stylesheet" />
 
+    <!-- Icomoon -->
+    <link href="{{ asset('/assets/icomoon/icomoon.css') }}" rel="stylesheet" />
+
     {!! $pixel !!}
 
     <script src="https://www.google.com/recaptcha/api.js?render=<?php echo env('GOOGLE_RECAPTCHA_SITE_KEY');?>"></script>
@@ -67,8 +70,19 @@
                     <div class="prep1">
                       <div class="form-group">
                           <label>{{ $label_phone }}*</label>
-                          <input type="text" name="phone_number" class="form-control" />
-                          <span class="error phone"></span>
+                          <div class="col-sm-12 row">
+                            <div class="col-lg-3 row relativity">
+                              <input name="code_country" class="form-control custom-select-campaign" value="+62" autocomplete="off" />
+                              <span class="icon-carret-down-circle"></span>
+                              <span class="error code_country"></span>
+                            </div>
+
+                            <div class="col-sm-9">
+                              <input type="text" id="phone_number" name="phone_number" class="form-control" />
+                              <span class="error phone"></span>
+                            </div>
+                            <div class="col-lg-12 pad-fix"><ul id="display_countries"><!-- Display country here... --></ul></div>
+                          </div>
                       </div>
                     </div>
 
@@ -147,115 +161,176 @@
   </main>
  </div>
 
-  <script type="text/javascript">
-
-        $(document).ready(function() {
-            //choose();
-            grecaptcha.ready(function() {
-              grecaptcha.execute("<?php echo env('GOOGLE_RECAPTCHA_SITE_KEY');?>", {action: 'contact_form'}).then(function(token) {
-                  $('#recaptchaResponse').val(token);
-                  console.log(token);
-              });
-            });
-            saveSubscriber();
+<script type="text/javascript">
+  $(document).ready(function() {
+      //choose();
+      grecaptcha.ready(function() {
+        grecaptcha.execute("<?php echo env('GOOGLE_RECAPTCHA_SITE_KEY');?>", {action: 'contact_form'}).then(function(token) {
+            $('#recaptchaResponse').val(token);
+            // console.log(token);
         });
+      });
+      saveSubscriber();
+      codeCountry()
+      putCallCode();
+  });
 
-        function saveSubscriber(){
-            $("#addcustomer").submit(function(e){
-                e.preventDefault();
-                var data = $(this).serialize();
-                //$("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
-                $.ajaxSetup({
-                  headers: {
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                  }
-                });
-                $.ajax({
-                    type : "POST",
-                    url : "{{ route('savesubscriber') }}",
-                    data : data,
-                    beforeSend: function()
-                    {
-                      $('#loader').show();
-                      $('.div-loading').addClass('background-load');
-                    },
-                    success : function(result){
-                      $('#loader').hide();
-                      $('.div-loading').removeClass('background-load');
+    // Display Country
 
-                      if(result.success == true){
-                          $(".modal-body > p").text(result.message);
-                          alert('Your data has stored!');
-                          //getModal();
-                          //setTimeout(function(){location.href= result.wa_link} , 1000);   
-                          // clearField();
-                      } else {
-                          $(".error").html('');
-                          $(".error").fadeIn('slow');
-                          $(".name").text(result.name);
-                          $(".main").text(result.main);
-                          $(".email").text(result.email);
-                          $(".phone").text(result.phone);
-                          $(".captcha").text(result.captcha);
-                          $(".error_list").text(result.list);
+  function delay(callback, ms) {
+    var timer = 0;
+    return function() {
+      var context = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        callback.apply(context, args);
+      }, ms || 0);
+    };
+  }
 
-                          if(result.message !== undefined){
-                               $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
-                          }
-                          $.each(result.data, function(key, value) {
-                              $("."+key).text(value);
-                          })
+  function codeCountry()
+  { 
+    $("input[name='code_country']").click(function(){$("input[name='code_country']").val('');});
 
-                          $(".error").delay(2000).fadeOut(5000);
-                      }
-                    },
-                    error : function(xhr)
-                    {
-                      $('#loader').hide();
-                      $('.div-loading').removeClass('background-load');
-                      console.log(xhr.responseText);
-                    }
-                });
-                /*end ajax*/
-            });
-        }
+    $("body").on('keyup focusin',"input[name='code_country']",delay(function(e){
+        $("input[name='code_country']").removeAttr('update');
+        var search = $(this).val();
+        $.ajax({
+          type : 'GET',
+          url : '{{ url("countries") }}',
+          data : {'search':search},
+          dataType : 'html',
+          success : function(result)
+          {
+            $("#display_countries").show();
+            $("#display_countries").html(result);
+          },
+          error : function(xhr)
+          {
+            console.log(xhr.responseText);
+          }
+        });
+    },500));
 
-        /* Display modal when customer has finished registering */
-        function getModal(){
-            $("#myModal").modal();
-        }
-
-        /* Clear / Empty fields after ajax reach success */
-        function clearField(){
-            $("input:not([name='listid'],[name='listname'])").val('');
-            $(".error").html('');
+     $("input[name='code_country']").on('focusout',delay(function(e){
+        var update = $(this).attr('update');
+        if(update == undefined)
+        {
+          $("input[name='code_country']").val('+62');
+          $("#display_countries").hide();
         }
         
-        /*function choose(){
-          $("input[name=usertel]").prop('disabled',true);
-          $(".ctel").hide();
+     },200));
+  }
 
-          $(".dropdown-item").click(function(){
-             var val = $(this).attr('id');
+  function putCallCode()
+  {
+    $("body").on("click",".calling_code",function(){
+      var code = $(this).attr('data-call');
+      $("input[name='code_country']").attr('update',1);
+      $("input[name='code_country']").val(code);
+      $("#display_countries").hide();
+    });
+  }
+  // End Display Country
 
-             if(val == 'ph')
+  function saveSubscriber(){
+      $("#addcustomer").submit(function(e){
+          e.preventDefault();
+          var data = $(this).serialize();
+          //$("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
+          $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+          });
+          $.ajax({
+              type : "POST",
+              url : "{{ route('savesubscriber') }}",
+              data : data,
+              beforeSend: function()
               {
-                $("input[name=phone]").prop('disabled',false);
-                $("input[name=usertel]").prop('disabled',true);
-                $(".cphone").show();
-                $(".ctel").hide();
-                $("#selectType").val("ph");
-              }
-              else {
-                $("input[name=phone]").prop('disabled',true);
-                $("input[name=usertel]").prop('disabled',false);
-                $(".cphone").hide();
-                $(".ctel").show();
-                $("#selectType").val("tl");
+                $('#loader').show();
+                $('.div-loading').addClass('background-load');
+              },
+              success : function(result){
+                $('#loader').hide();
+                $('.div-loading').removeClass('background-load');
+
+                if(result.success == true){
+                    $(".modal-body > p").text(result.message);
+                    alert('Your data has stored!');
+                    //getModal();
+                    //setTimeout(function(){location.href= result.wa_link} , 1000);   
+                    // clearField();
+                } else {
+                    $(".error").html('');
+                    $(".error").fadeIn('slow');
+                    $(".name").text(result.name);
+                    $(".main").text(result.main);
+                    $(".email").text(result.email);
+                    $(".phone").text(result.phone);
+                    $(".code_country").text(result.code_country);
+                    $(".captcha").text(result.captcha);
+                    $(".error_list").text(result.list);
+
+                    if(result.message !== undefined){
+                         $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
+                    }
+                    $.each(result.data, function(key, value) {
+                        $("."+key).text(value);
+                    })
+
+                    $(".error").delay(5000).fadeOut(5000);
+                }
+              },
+              error : function(xhr)
+              {
+                $('#loader').hide();
+                $('.div-loading').removeClass('background-load');
+                console.log(xhr.responseText);
               }
           });
-        }*/
-    </script>
+          /*end ajax*/
+      });
+  }
+
+  /* Display modal when customer has finished registering */
+  function getModal(){
+      $("#myModal").modal();
+  }
+
+  /* Clear / Empty fields after ajax reach success */
+  function clearField(){
+      $("input:not([name='listid'],[name='listname'])").val('');
+      $(".error").html('');
+  }
+  
+  /*function choose(){
+    $("input[name=usertel]").prop('disabled',true);
+    $(".ctel").hide();
+
+    $(".dropdown-item").click(function(){
+       var val = $(this).attr('id');
+
+       if(val == 'ph')
+        {
+          $("input[name=phone]").prop('disabled',false);
+          $("input[name=usertel]").prop('disabled',true);
+          $(".cphone").show();
+          $(".ctel").hide();
+          $("#selectType").val("ph");
+        }
+        else {
+          $("input[name=phone]").prop('disabled',true);
+          $("input[name=usertel]").prop('disabled',false);
+          $(".cphone").hide();
+          $(".ctel").show();
+          $("#selectType").val("tl");
+        }
+    });
+  }*/
+</script>
 
 </body>
 </html>

@@ -65,11 +65,11 @@
                 <div class="form-group row col-fix">
                   <label class="col-sm-3 col-form-label">Phone Whatsapp :</label>
                   <div class="col-sm-9 row">
-                   <!--  <div class="col-lg-3 row relativity">
+                    <div class="col-lg-3 row relativity">
                       <input name="code_country" class="form-control custom-select-campaign" value="+62" />
                       <span class="icon-carret-down-circle"></span>
                       <span class="error code_country"></span>
-                    </div> -->
+                    </div>
 
                     <div class="col-sm-9">
                       <input type="text" id="phone_number" name="phone_number" class="form-control" />
@@ -316,10 +316,16 @@
             $('.message').html('<div class="text-center">'+data.message+" <b><h5><span id='min'></span> : <span id='secs'></span></h5></b></div>");
             loadPhoneNumber();
             waitingTime();
+            $(".error").hide();
           }
 
           if(data.status == "error") {
+              $(".error").show();
               $(".phone_number").html(data.phone_number);
+              $('.code_country').html(data.code_country);
+          }
+
+          if(data.message !== undefined){
               $('.message').show();
               $('.message').html(data.message);
           }
@@ -335,51 +341,63 @@
       
     });
 
-    function delay(callback, ms) {
-      var timer = 0;
-      return function() {
-        var context = this, args = arguments;
-        clearTimeout(timer);
-        timer = setTimeout(function () {
-          callback.apply(context, args);
-        }, ms || 0);
-      };
-    }
+     // Display Country
 
-    function codeCountry()
-    {
-      $("body").on('keyup focusin',"input[name='code_country']",delay(function(e){
-          var search = $(this).val();
-          $.ajax({
-            type : 'GET',
-            url : '{{ url("countries") }}',
-            data : {'search':search},
-            dataType : 'html',
-            success : function(result)
-            {
-              $("#display_countries").show();
-              $("#display_countries").html(result);
-            },
-            error : function(xhr)
-            {
-              console.log(xhr.responseText);
-            }
-          });
-      },500));
+  function delay(callback, ms) {
+    var timer = 0;
+    return function() {
+      var context = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        callback.apply(context, args);
+      }, ms || 0);
+    };
+  }
 
-       $("input[name='code_country']").on('focusout',function(){
+  function codeCountry()
+  { 
+    $("input[name='code_country']").click(function(){$("input[name='code_country']").val('');});
+
+    $("body").on('keyup focusin',"input[name='code_country']",delay(function(e){
+        $("input[name='code_country']").removeAttr('update');
+        var search = $(this).val();
+        $.ajax({
+          type : 'GET',
+          url : '{{ url("countries") }}',
+          data : {'search':search},
+          dataType : 'html',
+          success : function(result)
+          {
+            $("#display_countries").show();
+            $("#display_countries").html(result);
+          },
+          error : function(xhr)
+          {
+            console.log(xhr.responseText);
+          }
+        });
+    },500));
+
+    $("input[name='code_country']").on('focusout',delay(function(e){
+        var update = $(this).attr('update');
+        if(update == undefined)
+        {
           $("input[name='code_country']").val('+62');
-       });
-    }
+          $("#display_countries").hide();
+        }
+    },200));
+  }
 
-    function putCallCode()
-    {
-      $("body").on("click",".calling_code",function(){
-        var code = $(this).attr('data-call');
-        $("input[name='code_country']").val(code);
-        $("#display_countries").hide();
-      });
-    }
+  function putCallCode()
+  {
+    $("body").on("click",".calling_code",function(){
+      var code = $(this).attr('data-call');
+      $("input[name='code_country']").attr('update',1);
+      $("input[name='code_country']").val(code);
+      $("#display_countries").hide();
+    });
+  }
+  // End Display Country
 
     function waitingTime()
     {

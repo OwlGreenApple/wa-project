@@ -91,6 +91,7 @@ class CustomerController extends Controller
     public function saveSubscriber(Request $request)
     {
         $listname = $request->listname;
+        $phone_number = $request->code_country.$request->phone_number;
         $req = $request->all();
 
         $list = UserList::where('name','=',$listname)->first();
@@ -115,7 +116,7 @@ class CustomerController extends Controller
             $customer->list_id = $list->id;
             $customer->name = $request->subscribername;
             $customer->email = $request->email;
-            $customer->telegram_number = $request->phone_number;
+            $customer->telegram_number = $phone_number;
             $customer->additional = $addt;
             if ($list->is_secure) {
               $customer->status = 0;
@@ -146,7 +147,7 @@ class CustomerController extends Controller
                 $message = str_replace( "[Start]" , env("APP_URL")."link/activate/".$list->name."/".$customer_id, $message);
                 $message = str_replace( "[Unsubs]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$customer_id, $message);
               }
-              ApiHelper::send_message($request->phone_number,$message,$key);
+              ApiHelper::send_message($phone_number,$message,$key);
             }
       
             // if customer successful sign up 
@@ -270,7 +271,7 @@ class CustomerController extends Controller
         $search = $request->search;
         $result = str_replace("+", "", $search);
 
-        $countries = Countries::where('name','LIKE','%'.$search.'%')->orWhere('code','=',$result)->get();
+        $countries = Countries::where('name','LIKE','%'.$search.'%')->orWhere('code','=',$result)->orderBy('name','asc')->get();
         return view('countries',['data'=>$countries]);
     }
     

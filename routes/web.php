@@ -51,13 +51,17 @@ Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//hom
 
 /* Admin */
 Route::group(['middleware'=>['auth','web','is_admin']],function(){
-	Route::get('sendingrate', 'AdminController@SendingRate');
+	/*Route::get('sendingrate', 'AdminController@SendingRate');
   Route::post('savesettings', 'AdminController@SaveSettings');
   Route::get('superadmin', 'AdminController@index');//home.blade
 	Route::get('loginuser/{id_user}', 'AdminController@LoginUser');//home.blade
 	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');//home.blade
-	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');
-  
+	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');*/
+  Route::get('country-code','AdminController@InsertCountry');
+  Route::get('country-show','AdminController@showCountry');
+  Route::get('country-del','AdminController@delCountry');
+  Route::post('save-country','AdminController@saveCountry')->middleware('check_country');
+
   //List User 
   Route::get('/list-user','Admin\UserController@index');
   Route::get('/list-user/load-user','Admin\UserController@load_user');
@@ -91,10 +95,9 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('settings', 'SettingController@index');
   Route::post('save-settings', 'SettingController@settingsUser')->middleware('usersettings');
   Route::get('load-phone-number', 'SettingController@load_phone_number');
-  Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkphone');
+  Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkcall');
   Route::get('verify-phone', 'SettingController@verify_phone')->middleware('checkphone');
   Route::get('delete-phone', 'SettingController@delete_phone');
-  Route::get('get-clients', 'SettingController@get_all_client');
   Route::get('check-qr', 'SettingController@check_connected_phone');
   Route::get('delete-api/{no}', 'SettingController@delete_api');
   Route::get('status-nomor/{no}', 'SettingController@status_nomor');

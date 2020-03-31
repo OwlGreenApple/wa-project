@@ -75,10 +75,12 @@ class Kernel extends HttpKernel
         'checkbroadcastduplicate'=>\App\Http\Middleware\CheckBroadcastDuplicate::class,
         'checkimportcsv'=>\App\Http\Middleware\CheckImportCSV::class,
         'checkphone'=>\App\Http\Middleware\CheckPhone::class,
+        'checkcall'=>\App\Http\Middleware\CheckCallingCode::class,
         'checkformappt'=>\App\Http\Middleware\CheckFormAppointment::class,
         'checkeditformappt'=>\App\Http\Middleware\CheckEditFormAppointment::class,
         'checkeditappt'=>\App\Http\Middleware\CheckEditAppointmentTemplate::class,
         'save_apt'=>\App\Http\Middleware\CheckCreateAppointment::class,
+        'check_country'=>\App\Http\Middleware\CheckCountry::class,
     ];
 
     /**

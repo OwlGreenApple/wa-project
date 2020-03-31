@@ -5,14 +5,16 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Encryption\DecryptException;
-use App\Rules\CheckWANumbers;
 use App\Customer;
 use App\UserList;
 use App\Additional;
-use App\Rules\TelegramNumber;
+use App\Rules\InternationalTel;
 use App\Rules\SubscriberEmail;
 use App\Rules\SubscriberUsername;
 use App\Rules\SubscriberPhone;
+use App\Rules\CheckCallCode;
+use App\Rules\CheckPlusCode;
+use App\Rules\CheckWANumbers;
 use Session;
 
 class CheckCustomer
@@ -64,12 +66,14 @@ class CheckCustomer
             'name'=>$req['subscribername'],
             'email'=>$req['email'],
             'phone_number'=>$req['phone_number'],
+            'code_country'=>$req['code_country']
          );
 
          $rules = [
             'name'=> ['required','min:4','max:190'],
             'email'=> ['required','email','max:190',new SubscriberEmail($id_list)],
-            'phone_number'=> ['required','min:9','max:18',new TelegramNumber, new SubscriberPhone($id_list)],
+            'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
+            'phone_number'=> ['required','min:6','max:18',new InternationalTel, new SubscriberPhone($id_list), new CheckWANumbers($req['code_country'],$id_list)],
          ];
 
         $validator = Validator::make($data,$rules);
@@ -80,6 +84,7 @@ class CheckCustomer
                 'name'=>$error->first('name'),
                 'email'=>$error->first('email'),
                 'phone'=>$error->first('phone_number'),
+                'code_country'=>$error->first('code_country'),
             );
             
             return response()->json($data);
