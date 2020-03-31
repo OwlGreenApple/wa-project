@@ -51,13 +51,17 @@ Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//hom
 
 /* Admin */
 Route::group(['middleware'=>['auth','web','is_admin']],function(){
-	Route::get('sendingrate', 'AdminController@SendingRate');
+	/*Route::get('sendingrate', 'AdminController@SendingRate');
   Route::post('savesettings', 'AdminController@SaveSettings');
   Route::get('superadmin', 'AdminController@index');//home.blade
 	Route::get('loginuser/{id_user}', 'AdminController@LoginUser');//home.blade
 	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');//home.blade
-	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');
-  
+	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');*/
+  Route::get('country-code','AdminController@InsertCountry');
+  Route::get('country-show','AdminController@showCountry');
+  Route::get('country-del','AdminController@delCountry');
+  Route::post('save-country','AdminController@saveCountry')->middleware('check_country');
+
   //List User 
   Route::get('/list-user','Admin\UserController@index');
   Route::get('/list-user/load-user','Admin\UserController@load_user');

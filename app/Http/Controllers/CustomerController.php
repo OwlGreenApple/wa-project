@@ -271,7 +271,7 @@ class CustomerController extends Controller
         $search = $request->search;
         $result = str_replace("+", "", $search);
 
-        $countries = Countries::where('name','LIKE','%'.$search.'%')->orWhere('code','=',$result)->get();
+        $countries = Countries::where('name','LIKE','%'.$search.'%')->orWhere('code','=',$result)->orderBy('name','asc')->get();
         return view('countries',['data'=>$countries]);
     }
     

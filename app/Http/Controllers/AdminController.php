@@ -9,19 +9,91 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
 use App\AdminSetting;
+use App\Countries;
 
 class AdminController extends Controller
 {
+
+    public function InsertCountry()
+    {
+        return view('admin.insert_country');
+    }
+
+    public function saveCountry(Request $request)
+    {
+        $country_name = $request->country_name;
+        $code_country = str_replace("+","",$request->code_country);
+        $update = $request->update;
+
+        if($update == null)
+        {
+          $country = new Countries;
+          $country->name = $country_name;
+          $country->code = $code_country;
+
+          try {
+            $country->save();
+            $data['msg'] = 'Country has been saved';
+          }
+          catch(Exception $e)
+          {
+            $data['msg'] = 'Sorry, unable to save country';
+          }
+          return response()->json($data);
+        }
+        else 
+        {
+          $col = array(
+            'name'=>$country_name,
+            'code'=>$code_country,
+          );
+
+          try {
+              Countries::where('id',$update)->update($col);
+              $data['msg'] = 'Country has been edited';
+          }
+          catch(Exception $e)
+          {
+            $data['msg'] = 'Sorry, unable to update country';
+          }
+          return response()->json($data);
+        }
+    }
+
+    public function showCountry()
+    {
+        $countries = Countries::all();
+        return view('admin.country_table',['country'=>$countries]);
+    }
+
+    public function delCountry(Request $request)
+    {
+        $idcountry = $request->id;
+
+        try{
+          Countries::where('id',$idcountry)->delete();
+          $data['msg'] = 'Country deleted successfully';
+        }
+        catch(Exception $e)
+        {
+          $data['msg'] = 'Country deleted successfully';
+        }
+        return response()->json($data);
+    }
+
+    /*********** OLD CODES ***********/
+
     public function index()
     {
-    	$user = User::where('is_admin',0)->get();
-    	return view('admin.admin',['data'=>$user]);
+      $user = User::where('is_admin',0)->get();
+      return view('admin.admin',['data'=>$user]);
     }
 
     public function LoginUser($id){
-    	Auth::loginUsingId($id, true);
-    	return redirect('home');
+      Auth::loginUsingId($id, true);
+      return redirect('home');
     }
+
 
     public function importCSVPage()
     {

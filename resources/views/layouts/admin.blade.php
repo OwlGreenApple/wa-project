@@ -99,6 +99,9 @@
                             </li> 
                             <li class="nav-item">
                               <a class="nav-link {{ (request()->is('list-phone')) ? 'active' : '' }}" href="{{ url('list-phone') }}">Phone</a>
+                            </li>  
+                            <li class="nav-item">
+                              <a class="nav-link {{ (request()->is('country-code')) ? 'active' : '' }}" href="{{ url('country-code') }}">Insert Country</a>
                             </li> 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

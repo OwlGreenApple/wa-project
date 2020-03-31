@@ -80,6 +80,7 @@ class Kernel extends HttpKernel
         'checkeditformappt'=>\App\Http\Middleware\CheckEditFormAppointment::class,
         'checkeditappt'=>\App\Http\Middleware\CheckEditAppointmentTemplate::class,
         'save_apt'=>\App\Http\Middleware\CheckCreateAppointment::class,
+        'check_country'=>\App\Http\Middleware\CheckCountry::class,
     ];
 
     /**

@@ -72,7 +72,7 @@
                           <label>{{ $label_phone }}*</label>
                           <div class="col-sm-12 row">
                             <div class="col-lg-3 row relativity">
-                              <input name="code_country" class="form-control custom-select-campaign" value="+62" />
+                              <input name="code_country" class="form-control custom-select-campaign" value="+62" autocomplete="off" />
                               <span class="icon-carret-down-circle"></span>
                               <span class="error code_country"></span>
                             </div>

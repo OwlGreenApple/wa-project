@@ -11,7 +11,7 @@
       <div class="row">
         <div class="col-lg-4 col-card">
           <h5>{{$rows->label}}</h5>
-            <div class="link_wrap">Link From : {{env('APP_URL')}}{{$rows->name}}
+            <div class="link_wrap">Link From : <a href="{{env('APP_URL')}}{{$rows->name}}" target="_blank">{{env('APP_URL')}}{{$rows->name}}</a>
               <span>
                 <a data-link="{{env('APP_URL')}}{{ $rows->name }}" class="btn-copy icon-copy"></a>
               </span>
