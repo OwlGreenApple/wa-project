@@ -4,9 +4,12 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Validator;
-use App\Rules\TelNumber;
+use App\Rules\InternationalTel;
+use App\Rules\CheckCallCode;
+use App\Rules\CheckPlusCode;
+use App\Rules\AvailablePhoneNumber;
 
-class CheckPhone
+class CheckCallingCode
 {
     /**
      * Handle an incoming request.
@@ -15,11 +18,11 @@ class CheckPhone
      * @param  \Closure  $next
      * @return mixed
      */
-
     public function handle($request, Closure $next)
     {
         $rules = [
-            'phone_number' => ['required','min:9','max:18',new TelNumber]
+            'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
+            'phone_number' => ['required','min:6','max:18',new InternationalTel,new AvailablePhoneNumber($request->code_country)]
         ];
 
         $validator = Validator::make($request->all(),$rules);
@@ -30,6 +33,7 @@ class CheckPhone
             $error = array(
               'status'=>'error',
               'phone_number'=>$err->first('phone_number'),
+              'code_country'=>$err->first('code_country'),
             );
 
             return response()->json($error);

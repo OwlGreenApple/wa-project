@@ -75,6 +75,7 @@ class Kernel extends HttpKernel
         'checkbroadcastduplicate'=>\App\Http\Middleware\CheckBroadcastDuplicate::class,
         'checkimportcsv'=>\App\Http\Middleware\CheckImportCSV::class,
         'checkphone'=>\App\Http\Middleware\CheckPhone::class,
+        'checkcall'=>\App\Http\Middleware\CheckCallingCode::class,
         'checkformappt'=>\App\Http\Middleware\CheckFormAppointment::class,
         'checkeditformappt'=>\App\Http\Middleware\CheckEditFormAppointment::class,
         'checkeditappt'=>\App\Http\Middleware\CheckEditAppointmentTemplate::class,

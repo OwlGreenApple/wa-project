@@ -91,10 +91,9 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('settings', 'SettingController@index');
   Route::post('save-settings', 'SettingController@settingsUser')->middleware('usersettings');
   Route::get('load-phone-number', 'SettingController@load_phone_number');
-  Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkphone');
+  Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkcall');
   Route::get('verify-phone', 'SettingController@verify_phone')->middleware('checkphone');
   Route::get('delete-phone', 'SettingController@delete_phone');
-  Route::get('get-clients', 'SettingController@get_all_client');
   Route::get('check-qr', 'SettingController@check_connected_phone');
   Route::get('delete-api/{no}', 'SettingController@delete_api');
   Route::get('status-nomor/{no}', 'SettingController@status_nomor');

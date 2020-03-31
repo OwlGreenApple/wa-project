@@ -3,20 +3,17 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
-use App\PhoneNumber;
 
-class AvailablePhoneNumber implements Rule
+class InternationalTel implements Rule
 {
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-
-    public $calling_code;
-    public function __construct($calling_code)
+    public function __construct()
     {
-        $this->calling_code = $calling_code;
+        //
     }
 
     /**
@@ -28,15 +25,12 @@ class AvailablePhoneNumber implements Rule
      */
     public function passes($attribute, $value)
     {
-        $phone_number = $this->calling_code.$value;
-        $phone = PhoneNumber::where('phone_number',$phone_number)->first();
-
-        if(is_null($phone))
+        if(preg_match("/^0[0-9]*$/i",$value) || preg_match("/^[+][0-9]/i",$value) || preg_match("/[a-z]/i",$value))
         {
-          return true;
-        }
+           return false;
+        } 
         else {
-          return false;
+           return true;
         }
     }
 
@@ -47,6 +41,6 @@ class AvailablePhoneNumber implements Rule
      */
     public function message()
     {
-        return 'Sorry this number registered already';
+        return 'Phone numbers must be NOT lead with + , 0 and must be number';
     }
 }

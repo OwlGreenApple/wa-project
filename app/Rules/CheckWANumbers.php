@@ -5,13 +5,10 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
 use App\Customer;
-use App\UserList;
-use Session;
 
  /* 
     To check wa number according on :
-    - list / product
-    - wa number that inserted
+    - wa number that inserted by customer / subscriber.
  */
 
 class CheckWANumbers implements Rule
@@ -21,9 +18,14 @@ class CheckWANumbers implements Rule
      *
      * @return void
      */
-    public function __construct()
+
+    public $call_code;
+    public $list_id;
+
+    public function __construct($call_code,$list_id)
     {
-        //
+        $this->call_code = $call_code;
+        $this->list_id = $list_id;
     }
 
     /**
@@ -35,22 +37,16 @@ class CheckWANumbers implements Rule
      */
     public function passes($attribute, $value)
     {
-        return $this->checkwanumbers($value);
-    }
-
-    public function checkwanumbers($value){
-        //retrieve session from userlist
-        $userlist =  Session::get('userlist');
-        Session::reflash();
-        $get_id_list = UserList::where('name','=',$userlist)->first();
-        $id_user_list = $get_id_list->id;
+        $wa_number = $this->call_code.$value;
+        $list_id =  $this->list_id;
 
         $checkwa = Customer::where([
-                    ['wa_number','=',$value],
-                    ['list_id','=',$id_user_list]
+                    ['telegram_number','=',$wa_number],
+                    ['list_id','=',$list_id]
                     ])->first();
 
-        if(is_null($checkwa)){
+        if(is_null($checkwa))
+        {
             return true;
         } else {
             return false;
@@ -64,6 +60,6 @@ class CheckWANumbers implements Rule
      */
     public function message()
     {
-        return 'Sorry, this number has already been taken..';
+        return 'Sorry, this number has registered already.';
     }
 }
