@@ -43,7 +43,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
             {
                 $cell[] = array(
                     'name'=>$col[0],
-                    'phone'=>ltrim($col[1])ltrim(,
+                    'phone'=>ltrim($col[1]," "),
                     'email'=>$col[2],
                 );
             }
@@ -86,7 +86,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
                      'user_id'  => Auth::id(),
                      'list_id'  => $this->id_list,
                      'name'     => $row[0],
-                     'telegram_number'=>ltrim($row[1]),
+                     'telegram_number'=>ltrim($row[1]," "),
                      'email'=> $row[2],
                   ]);
                 }
