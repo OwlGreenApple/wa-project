@@ -6,6 +6,7 @@
 
     <div class="row justify-content-center">
         <div class="col-md-8">
+            <div id="msg"><!-- message --></div>
             <form id="save_country">
                <div class="form-group">
                   <label>Insert Country Calling Code*</label>
@@ -101,10 +102,15 @@
               $("#submit").prop('disabled',false).html('Insert Country');
             }
 
-            if(result.msg !== undefined)
+            if(result.success == 1)
             {
-              alert(result.msg);
+              $("#msg").html('<div class="alert alert-success">'+result.msg+'</div>');
             }
+            else
+            {
+              $("#msg").html('<div class="alert alert-danger">'+result.msg+'</div>');
+            }
+            $(".alert").delay(5000).fadeOut(2000);
           },
           error : function(xhr)
           {
