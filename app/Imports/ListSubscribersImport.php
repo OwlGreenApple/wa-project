@@ -86,7 +86,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
                      'user_id'  => Auth::id(),
                      'list_id'  => $this->id_list,
                      'name'     => $row[0],
-                     'telegram_number'=> $row[1],
+                     'telegram_number'=> ltrim($row[1]),
                      'email'=> $row[2],
                   ]);
                 }
