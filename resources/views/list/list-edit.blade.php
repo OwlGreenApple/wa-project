@@ -656,13 +656,16 @@
             {
               $('#loader').show();
               $('.div-loading').addClass('background-load');
-               $('#loader').hide();
-              $('.div-loading').removeClass('background-load');
             },
             success : function(result){
               $('#loader').hide();
               $('.div-loading').removeClass('background-load');
               $('input[name="csv_file"]').val('');
+    
+              if(result.success == 1)
+              {
+                  displayCustomer();
+              }
               alert(result.message);
             },
             error: function (xhr, ajaxOptions, thrownError) {

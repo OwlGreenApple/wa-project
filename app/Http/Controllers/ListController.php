@@ -925,11 +925,13 @@ class ListController extends Controller
 
         if($import->getRowCount() > 0)
         {
+            $msg['success'] = 1;
             $msg['message'] = 'Import Successful';
         }
         else
         {
-            $msg['message'] = 'Import Failed';
+            $msg['success'] = 0;
+            $msg['message'] = 'Failed to import, maybe your data had available';
         }
         return response()->json($msg);
     }
