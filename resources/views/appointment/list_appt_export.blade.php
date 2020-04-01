@@ -14,7 +14,7 @@
         <tr>
           <td>{{ $row->event_time }}</td>
           <td>{{ $row->name }}</td>
-          <td>{!! $row->telegram_number !!}</td>
+          <td> {!! $row->telegram_number !!}</td>
         </tr> 
       @endforeach
     @endif
