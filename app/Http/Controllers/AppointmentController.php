@@ -639,6 +639,41 @@ class AppointmentController extends Controller
     }
 
     public function exportAppointment($campaign_id){
+        $userid = Auth::id();
+        $check = Campaign::where('id',$campaign_id)->first();
+        $day = Carbon::now()->toDateString();
+        $filename = 'appointment-'.$check->name.'-'.$day;
+
+        if(is_null($check))
+        {
+            return redirect('appointment');
+        }
+
+        $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid]])
+        ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+        ->join('customers','customers.id','=','reminder_customers.customer_id')
+        ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
+        ->distinct()
+        ->get();
+
+        $data = array(
+            'campaigns'=>$campaigns,
+        );
+       
+        Excel::create($filename, function($excel) use ($data) {
+
+          $excel->sheet('New sheet', function($sheet) use ($data) {
+
+              $sheet->loadView('appointment.list_appt_export', [
+                  'campaigns' => $data['campaigns'],
+              ]);
+
+          });
+
+        })->export('csv');
+    }
+
+   /* public function exportAppointment($campaign_id){
         $id_user = Auth::id();
         $check = Campaign::where('id',$campaign_id)->first();
         $day = Carbon::now()->toDateString();
@@ -650,7 +685,7 @@ class AppointmentController extends Controller
         }
 
         return Excel::download(new UsersExport($campaign_id), $filename);
-    }
+    }*/
 
 /* end of class */
 }

@@ -957,7 +957,50 @@ class ListController extends Controller
     }
 
     // EXPORT SUBSCRIBER / CUSTOMER INTO CSV
-    public function exportListCSVSubscriber($list_id,$import){
+
+    public function exportListCSVSubscriber($list_id,$import)
+    {
+        $userid = Auth::id();
+        $check = UserList::where('id',$list_id)->first();
+
+        if(is_null($check))
+        {
+            return redirect('lists');
+        }
+
+        $day = Carbon::now()->toDateString();
+
+        if($import == 1)
+        {
+          $filename = 'list-'.$check->label.'-'.$day.'-for-import';
+        }
+        else
+        {
+          $filename = 'list-'.$check->label.'-'.$day.'-for-data';
+        }
+
+        $list_subscriber = Customer::query()->where([['list_id',$list_id],['user_id','=',$userid]])->select('name','telegram_number','email')->get();
+
+        $data = array(
+            'import'=>$import,
+            'customer'=>$list_subscriber,
+        );
+       
+        Excel::create($filename, function($excel) use ($data) {
+
+        $excel->sheet('New sheet', function($sheet) use ($data) {
+
+            $sheet->loadView('list.list_subscriber_export', [
+                'import'=>$data['import'],
+                'customer' => $data['customer'],
+            ]);
+
+        });
+
+      })->export('csv');
+    }
+
+    /*public function exportListCSVSubscriber($list_id,$import){
         $id_user = Auth::id();
         $check = UserList::where('id',$list_id)->first();
         $day = Carbon::now()->toDateString();
@@ -977,7 +1020,7 @@ class ListController extends Controller
         }
 
         return Excel::download(new ListSubscribersExport($list_id,$import), $filename);
-    }
+    }*/
 
     /* *************************************** 
         OLD CODES
