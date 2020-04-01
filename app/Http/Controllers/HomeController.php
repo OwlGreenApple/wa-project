@@ -91,6 +91,11 @@ class HomeController extends Controller
         return view('home',$data);
     }
 
+    public function jsonEncode(Request $req)
+    {
+      return json_encode($req->data);
+    }
+
     public function google_form()
     {
       $user = Auth::user();
