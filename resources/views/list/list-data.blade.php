@@ -159,6 +159,7 @@
     $("body").on("click",".open_export",function(){
       var list_id = $(this).attr('id');
       $("#export-contact").modal();
+      $("input[name='status_export'][value="+0+"]").prop('checked',true);
       $("#btn-export").attr('href',"{{url('export_csv_list_subscriber')}}/"+list_id+'/'+0);
       $("#btn-export").attr('list_id',list_id);
     });

@@ -25,7 +25,7 @@ class ImportValidation implements Rule
      */
     public function passes($attribute, $value)
     {
-      if(preg_match("/^0\w.*$/i",$value)) //|| !preg_match("/^\+\d/",$value)
+      if(preg_match("/^0/i",$value) || preg_match("/^[a-Z]$/",$value) || !preg_match("/^\+\d/",$value))
       {
          return false;
       } 
