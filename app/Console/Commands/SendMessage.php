@@ -81,6 +81,7 @@ class SendMessage extends Command
                 $message = $row->message;
                 $customer_phone = $row->telegram_number;
                 $phoneNumber = PhoneNumber::find($row->phoneid);
+                $hour = $row->hour_time; //hour according user set it to sending
 
                 // if(!is_null($customers))
                 // {
@@ -89,6 +90,16 @@ class SendMessage extends Command
                     $counter = $phoneNumber->counter;
                     $max_counter = $phoneNumber->max_counter;
                     $key = $phoneNumber->filename;
+
+                    $time_sending = $date->toDateString().' '.$hour;
+                    $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
+
+                    
+                    if($deliver_time < 0){
+                      //klo blm hour_time di skip dulu
+                      continue;
+                    }
+
 
                     if($counter <= 0 || $max_counter <= 0) {
                         continue;

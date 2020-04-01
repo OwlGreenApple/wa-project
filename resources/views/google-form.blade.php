@@ -2,7 +2,31 @@
 
 @section('content')
 
-  <!-- TOP SECTION -->
+<!-- Modal Copy Link -->
+<div class="modal fade" id="copy-link" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modaltitle">
+          Copy Script
+        </h5>
+      </div>
+      <div class="modal-body">
+        You have copied the script!
+      </div>
+      <div class="modal-footer" id="foot">
+        <button class="btn btn-primary" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+      
+  </div>
+</div>
+
+<!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
     <h2>Google Form Script Generator</h2>
@@ -34,7 +58,7 @@
           </div>
           <div class="form-group mt-3" id="div-result-script">
             <span>Copy All<a data-copy="" class="btn-copy icon-copy"></a></span>
-            <textarea id="text-result-script" class="form-control custom-form text-left" placeholder=""></textarea>
+            <pre id="text-result-script" class="form-control custom-form text-left" placeholder="" ></pre>
           </div>
         </form>
       </div>
@@ -59,13 +83,33 @@
   $(document).ready(function(){
     $("#div-result-script").hide();
     $('body').on('click', '#btn-generate', function (e) {
-      $("#div-result-script").show();
+      // $("#div-result-script").show();
       strWacol = $("#wacol").val();
       strText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
-      //enter diganti \n
-      console.log(strText.replace(/\n/g, "/\n"));
+// strText.replace(/\n/g, "&\n")
+      // console.log(str1+strWacol+str2+str3+strText+str4+strAlgo);
 
-      $("#text-result-script").html(str1+strWacol+str2+str3+strText+str4+strAlgo);
+      // $("#text-result-script").html(str1+strWacol+str2+str3+strText.replace(/\n/g, "&\n")+str4+strAlgo);
+            $.ajax({
+                type : 'GET',
+                url : '{{url("jsonEncode")}}',
+                data : {'data':str1+strWacol+str2+str3+strText+str4+strAlgo},
+                dataType : "text",
+                success : function(txt){
+                    console.log(txt);
+                    var link = txt;
+
+                    var tempInput = document.createElement("input");
+                    tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+                    tempInput.value = link;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(tempInput);
+
+                    $('#copy-link').modal('show');
+                }
+            });      
     });
   });
 
