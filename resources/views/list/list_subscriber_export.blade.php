@@ -16,7 +16,7 @@
       @foreach($customer as $row)
         <tr>
           <td>{{ $row->name }}</td>
-          <td>{{ $row->telegram_number }}</td>
+          <td>&nbsp;{{ $row->telegram_number }}</td>
           <td>{{ $row->email }}</td>
           @if($import == 0)
             <td>
