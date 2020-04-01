@@ -16,7 +16,11 @@
       @foreach($customer as $row)
         <tr>
           <td>{{ $row->name }}</td>
-          <td>{{ $row->telegram_number }}</td>
+          @if(env('APP_ENV') == 'production')
+            <td>+{{ $row->telegram_number }}</td>
+          @else
+            <td>{{ $row->telegram_number }}</td>
+          @endif
           <td>{{ $row->email }}</td>
           @if($import == 0)
             <td>
