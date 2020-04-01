@@ -638,7 +638,8 @@ class AppointmentController extends Controller
         }
     }
 
-    public function exportAppointment($campaign_id){
+    public function exportAppointment($campaign_id)
+    {
         $userid = Auth::id();
         $check = Campaign::where('id',$campaign_id)->first();
         $day = Carbon::now()->toDateString();

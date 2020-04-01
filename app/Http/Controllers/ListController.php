@@ -988,16 +988,16 @@ class ListController extends Controller
        
         Excel::create($filename, function($excel) use ($data) {
 
-        $excel->sheet('New sheet', function($sheet) use ($data) {
+          $excel->sheet('New sheet', function($sheet) use ($data) {
 
-            $sheet->loadView('list.list_subscriber_export', [
-                'import'=>$data['import'],
-                'customer' => $data['customer'],
-            ]);
+              $sheet->loadView('list.list_subscriber_export', [
+                  'import'=>$data['import'],
+                  'customer' => $data['customer'],
+              ]);
 
-        });
+          });
 
-      })->export('csv');
+        })->export('csv');
     }
 
     /*public function exportListCSVSubscriber($list_id,$import){
