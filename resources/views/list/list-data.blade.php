@@ -102,6 +102,46 @@
   </div>
 </div>
 
+<!-- Modal Import Contact -->
+<div class="modal fade child-modal" id="export-contact" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content -->
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="modaltitle">
+          Export Subscriber
+        </h5>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="mb-2">
+            <div class="form-check">
+              <label class="form-check-label">
+                <input type="radio" class="form-controller" name="status_export" value="0" checked/> For Data
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input type="radio" class="form-controller" name="status_export" value="1"/> For Import
+              </label>
+            </div>
+             
+            <div class="text-right">
+              <a id="btn-export" class="btn btn-activ mr-1">Export</a>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    
+  </div>
+</div>
+<!-- End Modal -->
+
 <script type="text/javascript">
 
   $(document).ready(function(){
@@ -111,7 +151,27 @@
     copyLink();
     openTable();
     pagination();
+    openExport();
+    changeExport();
   });
+
+  function openExport() {
+    $("body").on("click",".open_export",function(){
+      var list_id = $(this).attr('id');
+      $("#export-contact").modal();
+      $("#btn-export").attr('href',"{{url('export_csv_list_subscriber')}}/"+list_id+'/'+0);
+      $("#btn-export").attr('list_id',list_id);
+    });
+  }
+
+  function changeExport()
+  {
+    $("input[name='status_export']").change(function(){
+      var val = $(this).val();
+      var list_id = $("#btn-export").attr('list_id');
+      $("#btn-export").attr('href',"{{url('export_csv_list_subscriber')}}/"+list_id+'/'+val);
+    });
+  }
 
   //ajax pagination
   function pagination()

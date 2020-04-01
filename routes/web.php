@@ -135,6 +135,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('list-duplicate','ListController@duplicateList')->name('duplicatelist');
   Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers')->middleware('checkimportcsv');
   Route::post('changelistname','ListController@changeListName');
+  Route::get('export_csv_list_subscriber/{id_list}/{import}','ListController@exportListCSVSubscriber');
 
   /* ADDITIONAL */
   Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');
@@ -202,7 +203,6 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('displayeventschedule','EventController@displayEventSchedule')->name('displayeventschedule');
   Route::post('updatevent','EventController@updateEvent')->name('updatevent');
   Route::get('deletevents','EventController@delEvent')->name('deletevents');
-  Route::get('exportsubscriber','EventController@exportSubscriber')->name('exportsubscriber');
   Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');
 
   Route::get('event','EventController@index')->name('event');
@@ -220,7 +220,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	Route::get('userlist','ListController@userList')->name('userlist');
 	
 	Route::post('exportlistsubscriber','ListController@exportListSubscriber')->name('exportlistsubscriber');
-	Route::get('export_csv_list_subscriber/{id_list}','ListController@exportListCSVSubscriber');
+	
 	*/
 	/* old BroadCast 
 	Route::get('broadcast','BroadCastController@index')->name('broadcast');

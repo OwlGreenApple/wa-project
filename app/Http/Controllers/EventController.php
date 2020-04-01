@@ -751,19 +751,6 @@ class EventController extends Controller
         }
     }
 
-    public function exportSubscriber(Request $request){
-        $iduser = Auth::id();
-        $id_list = $request->id;
-
-        if(!empty($iduser) && !empty($id_list) || is_numeric($id_list))
-        {
-            $data['url'] = url("/export_csv/".$id_list."");
-        } else {
-            $data['url'] = 'You had logout, please login';
-        }
-        return response()->json($data);
-    }
-
     function importCSVEvent(Request $request)
     {
         $id_list = $request->list_id_import;

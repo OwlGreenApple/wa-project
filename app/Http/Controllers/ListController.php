@@ -925,11 +925,13 @@ class ListController extends Controller
 
         if($import->getRowCount() > 0)
         {
+            $msg['success'] = 1;
             $msg['message'] = 'Import Successful';
         }
         else
         {
-            $msg['message'] = 'Import Failed';
+            $msg['success'] = 0;
+            $msg['message'] = 'Failed to import, maybe your data had available';
         }
         return response()->json($msg);
     }
@@ -954,6 +956,28 @@ class ListController extends Controller
         return substr(str_shuffle($permitted_chars), 0, 8);
     }
 
+    // EXPORT SUBSCRIBER / CUSTOMER INTO CSV
+    public function exportListCSVSubscriber($list_id,$import){
+        $id_user = Auth::id();
+        $check = UserList::where('id',$list_id)->first();
+        $day = Carbon::now()->toDateString();
+
+        if($import == 1)
+        {
+          $filename = 'list-'.$check->label.'-'.$day.'-for-import.csv';
+        }
+        else
+        {
+          $filename = 'list-'.$check->label.'-'.$day.'-for-data.csv';
+        }
+
+        if(is_null($check))
+        {
+            return redirect('lists');
+        }
+
+        return Excel::download(new ListSubscribersExport($list_id,$import), $filename);
+    }
 
     /* *************************************** 
         OLD CODES
@@ -1178,20 +1202,6 @@ class ListController extends Controller
         $customer = Customer::where('list_id','=',$id_list)->get();
         $additional = Additional::where('list_id','=',$id_list)->get();
         return view('list.list-customer',['data'=>$customer,'additional'=>$additional,'listid'=>$id_list]);
-    }
-
-    #EXPORT SUBSCRIBER / CUSTOMER INTO CSV
-    public function exportListCSVSubscriber($id_list){
-        $id_user = Auth::id();
-        $customer = Customer::where([['list_id',$id_list],['user_id','=',$id_user]])->get();
-        $listname = Userlist::where([['id',$id_list],['user_id',$id_user]])->first();
-        $today = Date('d-m-Y');
-       
-        if(empty($id_list) || empty($id_user) || $customer->count() <= 0 || is_null($listname)){
-            return redirect('userlist');
-        }
-        $filename = 'subscriber-'.$listname->label.'.csv';
-        return (new ListSubscribersExport($id_list))->download($filename);
     }
 
     #CUSTOMER ADDITIONAL INPUT

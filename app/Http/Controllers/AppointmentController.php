@@ -641,13 +641,15 @@ class AppointmentController extends Controller
     public function exportAppointment($campaign_id){
         $id_user = Auth::id();
         $check = Campaign::where('id',$campaign_id)->first();
+        $day = Carbon::now()->toDateString();
+        $filename = 'appointment-'.$check->name.'-'.$day.'.csv';
 
         if(is_null($check))
         {
             return redirect('appointment');
         }
 
-        return Excel::download(new UsersExport($campaign_id), 'test.csv');
+        return Excel::download(new UsersExport($campaign_id), $filename);
     }
 
 /* end of class */

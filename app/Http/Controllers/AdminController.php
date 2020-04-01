@@ -33,10 +33,12 @@ class AdminController extends Controller
 
           try {
             $country->save();
+            $data['success'] = 1;
             $data['msg'] = 'Country has been saved';
           }
           catch(Exception $e)
           {
+            $data['success'] = 0;
             $data['msg'] = 'Sorry, unable to save country';
           }
           return response()->json($data);
@@ -50,10 +52,12 @@ class AdminController extends Controller
 
           try {
               Countries::where('id',$update)->update($col);
+              $data['success'] = 1;
               $data['msg'] = 'Country has been edited';
           }
           catch(Exception $e)
           {
+            $data['success'] = 0;
             $data['msg'] = 'Sorry, unable to update country';
           }
           return response()->json($data);
@@ -62,7 +66,7 @@ class AdminController extends Controller
 
     public function showCountry()
     {
-        $countries = Countries::all();
+        $countries = Countries::orderBy('name','asc')->get();
         return view('admin.country_table',['country'=>$countries]);
     }
 

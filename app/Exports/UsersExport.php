@@ -17,8 +17,6 @@ use Maatwebsite\Excel\Concerns\FromView;
 class UsersExport implements FromView 
 {
 
-	//use Exportable;
-
 	public function __construct(int $campaign_id)
   {
       $this->campaign_id = $campaign_id;
