@@ -24,7 +24,14 @@
           <td>{{ $row->email }}</td>
           @if($import == 0)
             <td>
-                @php $additional = json_decode($row->additional,true); @endphp
+                @php 
+                  $additional = array(); 
+                  if($row->additional !== null)
+                  {
+                    $additional = json_decode($row->additional,true); 
+                  }
+                @endphp
+
                 @if(count($additional) > 0)
                   @foreach($additional as $label=>$value)
                     {{ $label }} = {{ $value }} <br style="mso-data-placement:same-cell;" />
