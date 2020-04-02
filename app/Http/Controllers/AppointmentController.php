@@ -639,8 +639,10 @@ class AppointmentController extends Controller
         }
     }
 
+
+
     public function exportAppointment($campaign_id){
-        $userid = Auth::id();
+        $id_user = Auth::id();
         $check = Campaign::where('id',$campaign_id)->first();
         $day = Carbon::now()->toDateString();
         $filename = 'appointment-'.$check->name.'-'.$day.'.csv';
@@ -649,6 +651,7 @@ class AppointmentController extends Controller
         {
             return redirect('appointment');
         }
+
 
 
       $data = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid]])
@@ -686,6 +689,7 @@ class AppointmentController extends Controller
 
         // return Excel::download(new UsersExport($campaign_id), $filename);
     }
+
 
 /* end of class */
 }
