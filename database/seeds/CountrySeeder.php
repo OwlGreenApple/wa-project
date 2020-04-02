@@ -1201,9 +1201,500 @@ class CountrySeeder extends Seeder
           'code' => '1-787',
           'created_at' => Carbon::now(),
           'updated_at' => Carbon::now()
+      ]); 
+
+      DB::table('countries')->insert([
+          'name' => 'Qatar',
+          'code' => '974',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Republic of the Congo',
+          'code' => '242',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Reunion',
+          'code' => '262',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Romania',
+          'code' => '40',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Russia',
+          'code' => '7',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Rwanda',
+          'code' => '250',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Saint Barthelemy',
+          'code' => '590',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Saint Helena',
+          'code' => '290',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Saint Kitts and Nevis',
+          'code' => '1-869',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Saint Lucia',
+          'code' => '1-758',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Saint Martin',
+          'code' => '590',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Saint Pierre and Miquelon',
+          'code' => '508',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Saint Vincent and the Grenadines',
+          'code' => '1-784',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Samoa',
+          'code' => '685',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'San Marino',
+          'code' => '378',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Sao Tome and Principe',
+          'code' => '239',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Saudi Arabia',
+          'code' => '966',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Senegal',
+          'code' => '221',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Serbia',
+          'code' => '381',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Seychelles',
+          'code' => '248',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Sierra Leone',
+          'code' => '232',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Singapore',
+          'code' => '65',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Sint Maarten',
+          'code' => '1-721',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Slovakia',
+          'code' => '421',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Slovenia',
+          'code' => '386',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Solomon Islands',
+          'code' => '677',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Somalia',
+          'code' => '252',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'South Africa',
+          'code' => '27',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'South Korea',
+          'code' => '82',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'South Sudan',
+          'code' => '211',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Spain',
+          'code' => '34',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Sri Lanka',
+          'code' => '94',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Sudan',
+          'code' => '249',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Suriname',
+          'code' => '597',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Svalbard and Jan Mayen',
+          'code' => '47',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Swaziland',
+          'code' => '268',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Sweden',
+          'code' => '46',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Switzerland',
+          'code' => '41',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Syria',
+          'code' => '963',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Taiwan',
+          'code' => '886',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Tajikistan',
+          'code' => '992',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Tanzania',
+          'code' => '255',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Thailand',
+          'code' => '66',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Togo',
+          'code' => '228',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Tokelau',
+          'code' => '690',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Tonga',
+          'code' => '676',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Trinidad and Tobago',
+          'code' => '1-868',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Tunisia',
+          'code' => '216',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Turkey',
+          'code' => '90',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Turkmenistan',
+          'code' => '993',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Turks and Caicos Islands',
+          'code' => '1-649',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Tuvalu',
+          'code' => '688',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'U.S. Virgin Islands',
+          'code' => '1-340',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Tuvalu',
+          'code' => '688',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Uganda',
+          'code' => '256',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Ukraine',
+          'code' => '380',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'United Arab Emirates',
+          'code' => '971',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'United Kingdom',
+          'code' => '44',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'United States',
+          'code' => '1',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Uruguay',
+          'code' => '598',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Uzbekistan',
+          'code' => '998',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Vanuatu',
+          'code' => '678',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Vatican',
+          'code' => '379',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Venezuela',
+          'code' => '58',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Vietnam',
+          'code' => '84',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Wallis and Futuna',
+          'code' => '681',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Western Sahara',
+          'code' => '212',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Yemen',
+          'code' => '967',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Zambia',
+          'code' => '260',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
+      ]);
+
+      DB::table('countries')->insert([
+          'name' => 'Zimbabwe',
+          'code' => '263',
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now()
       ]);
 
     }
-
+    
+/* Source : https://countrycode.org/ */
 /*End Class*/
 }

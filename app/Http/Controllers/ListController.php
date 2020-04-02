@@ -979,25 +979,89 @@ class ListController extends Controller
           $filename = 'list-'.$check->label.'-'.$day.'-for-data';
         }
 
-        $list_subscriber = Customer::query()->where([['list_id',$list_id],['user_id','=',$userid]])->select('name','telegram_number','email')->get();
+        $list_subscriber = Customer::query()->where([['list_id',$list_id],['user_id','=',$userid]])->select('name','telegram_number','email','additional')->get();
 
         $data = array(
             'import'=>$import,
-            'customer'=>$list_subscriber,
+            'customers'=>$list_subscriber,
         );
-       
-        Excel::create($filename, function($excel) use ($data) {
 
-          $excel->sheet('New sheet', function($sheet) use ($data) {
+        Excel::create($filename, function($excel) use ($data) 
+        {
+          $excel->sheet('New sheet', function($sheet) use ($data) 
+          {
+              $column[0] = $column[1] = array();
 
-              $sheet->loadView('list.list_subscriber_export', [
-                  'import'=>$data['import'],
-                  'customer' => $data['customer'],
-              ]);
+              if($data['customers']->count() > 0)
+              {
+                if($data['import'] == 1)
+                {
+                  foreach($data['customers'] as $row)
+                  {
+                      $column[] = array(
+                        $row->name,
+                        $row->telegram_number,
+                        $row->email
+                      );
+                  }
+                }
+                else
+                {
+                  foreach($data['customers'] as $row)
+                  {
+                      $column[] = array(
+                        $row->name,
+                        $row->telegram_number,
+                        $row->email,
+                        $this->renderAdditional($row->additional)
+                      ); //end array
+                  } 
+                } // end else 
+              }
 
+              $sheet->fromArray($column, null, 'A1', false, false);
+              $sheet->cell('A1', 'Customer Name'); 
+              $sheet->cell('B1', 'WA Number'); 
+              $sheet->cell('C1', 'Customer Email');
+
+              if($data['import'] == 0)
+              {
+                $sheet->cell('D1', 'Additional'); 
+              } 
+              
           });
+        })->export('xlsx');
+    }
 
-        })->export('csv');
+    public function renderAdditional($addt)
+    {
+       $additional_result = '';
+       $up = 0;
+
+       if($addt <> null || !empty($addt))
+        {
+            $additonal = json_decode($addt,true);
+            $totalstring = count($additonal);
+            foreach($additonal as $label=>$value)
+            {   
+                $up++;
+                $string = $label.' = '.$value;
+
+                if($up == $totalstring)
+                {
+                    $additional_result .= $string;
+                }
+                else
+                {
+                    $additional_result .= $string."\n";
+                }
+            }
+        }
+        else
+        {
+            $additional_result = '-';
+        }
+        return $additional_result;
     }
 
     /*public function exportListCSVSubscriber($list_id,$import){

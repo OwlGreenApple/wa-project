@@ -319,10 +319,11 @@ class SettingController extends Controller
       $wa_number = $phoneNumber->phone_number;
       $delete_api = ApiHelper::unreg($wa_number);
 
-      if($delete_api !== 'success')
+      if($delete_api !== "success")
       {
-        $arr['status'] = 'error';
-        $arr['message'] = "Error! Sorry unable to delete your phone number";
+        $phoneNumber->delete();
+        $arr['status'] = 'success';
+        $arr['message'] = "Your Phone number has deleted!-";
         return $arr;
       }
 

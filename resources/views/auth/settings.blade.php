@@ -314,6 +314,7 @@
           if(data.status == "success") {
             $('.message').show();
             $('.message').html(data.message);
+            $("#button-connect").prop('disabled',true);
             loadPhoneNumber();
             waitingTime();
             $(".error").hide();
@@ -551,6 +552,7 @@
           var data = jQuery.parseJSON(result);
           $('.message').show();
           $('.message').html(data.message);
+          $("#button-connect").prop('disabled',false);
           loadPhoneNumber();
         }
       });
