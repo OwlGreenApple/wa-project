@@ -8,7 +8,7 @@ class Alert
     // (connect_phone)
     public static function one_number(){ return 'Sorry, you can create 1 phone number only';}
     public static function exists_phone(){ return 'Phone Number Already Registered';}
-    public static function connect_success(){ return 'Mohon tunggu 3 - 5 menit kemudian silahkan tekan "klik to verify", mohon untuk tidak me-reload atau menutup browser';}
+    public static function connect_success(){ return '<div class="text-center">Mohon tunggu 3 - 5 menit kemudian silahkan tekan "klik to verify", mohon untuk tidak me-reload atau menutup browser <b><h5><span id="min"></span> : <span id="secs"></span></h5></b></div>';}
 
     // (verify_phone)
     public static function registered_phone(){ return 'Error, nomer WA belum terdaftar';}

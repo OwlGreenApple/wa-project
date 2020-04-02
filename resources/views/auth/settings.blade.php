@@ -310,10 +310,10 @@
           $('.div-loading').removeClass('background-load');
 
           var data = jQuery.parseJSON(result);
-          console.log(data);
+
           if(data.status == "success") {
             $('.message').show();
-            $('.message').html('<div class="text-center">'+data.message+" <b><h5><span id='min'></span> : <span id='secs'></span></h5></b></div>");
+            $('.message').html(data.message);
             loadPhoneNumber();
             waitingTime();
             $(".error").hide();
@@ -341,93 +341,93 @@
       
     });
 
-     // Display Country
+   // Display Country
 
-  function delay(callback, ms) {
-    var timer = 0;
-    return function() {
-      var context = this, args = arguments;
-      clearTimeout(timer);
-      timer = setTimeout(function () {
-        callback.apply(context, args);
-      }, ms || 0);
-    };
-  }
+    function delay(callback, ms) {
+      var timer = 0;
+      return function() {
+        var context = this, args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          callback.apply(context, args);
+        }, ms || 0);
+      };
+    }
 
-  function codeCountry()
-  { 
-    $("input[name='code_country']").click(function(){$("input[name='code_country']").val('');});
+    function codeCountry()
+    { 
+      $("input[name='code_country']").click(function(){$("input[name='code_country']").val('');});
 
-    $("body").on('keyup focusin',"input[name='code_country']",delay(function(e){
-        $("input[name='code_country']").removeAttr('update');
-        var search = $(this).val();
-        $.ajax({
-          type : 'GET',
-          url : '{{ url("countries") }}',
-          data : {'search':search},
-          dataType : 'html',
-          success : function(result)
+      $("body").on('keyup focusin',"input[name='code_country']",delay(function(e){
+          $("input[name='code_country']").removeAttr('update');
+          var search = $(this).val();
+          $.ajax({
+            type : 'GET',
+            url : '{{ url("countries") }}',
+            data : {'search':search},
+            dataType : 'html',
+            success : function(result)
+            {
+              $("#display_countries").show();
+              $("#display_countries").html(result);
+            },
+            error : function(xhr)
+            {
+              console.log(xhr.responseText);
+            }
+          });
+      },500));
+
+      $("input[name='code_country']").on('focusout',delay(function(e){
+          var update = $(this).attr('update');
+          if(update == undefined)
           {
-            $("#display_countries").show();
-            $("#display_countries").html(result);
-          },
-          error : function(xhr)
-          {
-            console.log(xhr.responseText);
+            $("input[name='code_country']").val('+62');
+            $("#display_countries").hide();
           }
-        });
-    },500));
+      },200));
+    }
 
-    $("input[name='code_country']").on('focusout',delay(function(e){
-        var update = $(this).attr('update');
-        if(update == undefined)
-        {
-          $("input[name='code_country']").val('+62');
-          $("#display_countries").hide();
-        }
-    },200));
-  }
-
-  function putCallCode()
-  {
-    $("body").on("click",".calling_code",function(){
-      var code = $(this).attr('data-call');
-      $("input[name='code_country']").attr('update',1);
-      $("input[name='code_country']").val(code);
-      $("#display_countries").hide();
-    });
-  }
+    function putCallCode()
+    {
+      $("body").on("click",".calling_code",function(){
+        var code = $(this).attr('data-call');
+        $("input[name='code_country']").attr('update',1);
+        $("input[name='code_country']").val(code);
+        $("#display_countries").hide();
+      });
+    }
   // End Display Country
 
-    function waitingTime()
-    {
-        var sc = 0;
-        var min = 0;
-        var tm = setInterval(function(){
-            $("#secs").html(sc);
+  function waitingTime()
+  {
+      var sc = 0;
+      var min = 0;
+      var tm = setInterval(function(){
+          $("#secs").html(sc);
+          $("#min").html('0'+min);
+
+          if(sc < 10)
+          {
+            $("#secs").html('0'+sc);
+          }
+
+          if(sc == 60){
+            min = min + 1;
             $("#min").html('0'+min);
+            sc = 0;
+            $("#secs").html('0'+sc);
+          }
 
-            if(sc < 10)
-            {
-              $("#secs").html('0'+sc);
-            }
+          if(min == 6)
+          {
+              $("#secs").html('0'+0);
+              clearInterval(tm);
+          }
 
-            if(sc == 60){
-              min = min + 1;
-              $("#min").html('0'+min);
-              sc = 0;
-              $("#secs").html('0'+sc);
-            }
-
-            if(min == 6)
-            {
-                $("#secs").html('0'+0);
-                clearInterval(tm);
-            }
-
-            sc++;
-        },1000);
-    };
+          sc++;
+      },1000);
+  };
 
     function getQRCode(phone_number)
     {
@@ -477,20 +477,20 @@
       var word = '<h3>Please scan qr-code before time\'s up :</h3>';
       var timer = setInterval( function(){
                 
-                if(sec < 1){
-                  clearInterval(timer);
-                  checkQRcode(phone_number);
-                }
+          if(sec < 1){
+            clearInterval(timer);
+            checkQRcode(phone_number);
+          }
 
-                if(sec < 10){
-                  $("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
-                }
-                else
-                {
-                  $("#timer").html(word+'<h4><b>'+sec+'</b></h4>');
-                }
-                sec--;
-            },1000);
+          if(sec < 10){
+            $("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
+          }
+          else
+          {
+            $("#timer").html(word+'<h4><b>'+sec+'</b></h4>');
+          }
+          sec--;
+      },1000);
     }
 
     function checkQRcode(phone_number)
