@@ -662,23 +662,25 @@ class AppointmentController extends Controller
         $Excel_file = Excel::create($filename, function($excel) use ($data) {
         $excel->sheet('appointment', function($sheet) use ($data) {
         
-          $sheet->cell('B1', 'Date Appointment'); 
-          $sheet->cell('B2', 'Name Contact'); 
-          $sheet->cell('B3', 'WA Contact'); 
+          // $sheet->cell('B1', 'Date Appointment'); 
+          // $sheet->cell('B2', 'Name Contact'); 
+          // $sheet->cell('B3', 'WA Contact'); 
 
-          $cell = 'C';
+          // $cell = 'C';
 
           foreach ($data as $row) {
             if(is_null($row)){
               continue;
             }
+$sheet->appendRow(array( "Date Appointment : ".$row->event_time ));
+$sheet->appendRow(array( "Name Contact : ".$row->name ));
+$sheet->appendRow(array( "WA Contact : ".$row->telegram_number ));
+            // $username = '@'.$row->username;
+            // $sheet->cell($cell.'1', $row->event_time); 
+            // $sheet->cell($cell.'2', $row->name); 
+            // $sheet->cell($cell.'3', $row->telegram_number); 
 
-            $username = '@'.$row->username;
-            $sheet->cell($cell.'1', $row->event_time); 
-            $sheet->cell($cell.'2', $row->name); 
-            $sheet->cell($cell.'3', $row->telegram_number); 
-
-            $cell++;
+            // $cell++;
           }
           
           //$sheet->fromArray($data);
