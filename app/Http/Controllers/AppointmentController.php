@@ -1,5 +1,5 @@
 <?php
-
+ 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -639,7 +639,7 @@ class AppointmentController extends Controller
     }
 
     public function exportAppointment($campaign_id){
-        $id_user = Auth::id();
+        $userid = Auth::id();
         $check = Campaign::where('id',$campaign_id)->first();
         $day = Carbon::now()->toDateString();
         $filename = 'appointment-'.$check->name.'-'.$day.'.csv';
@@ -649,7 +649,41 @@ class AppointmentController extends Controller
             return redirect('appointment');
         }
 
-        return Excel::download(new UsersExport($campaign_id), $filename);
+
+      $data = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid]])
+      ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+      ->join('customers','customers.id','=','reminder_customers.customer_id')
+      ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
+      ->distinct()
+      ->get();        
+
+    $Excel_file = Excel::create($filename, function($excel) use ($data) {
+        $excel->sheet('appointment', function($sheet) use ($data) {
+        
+          $sheet->cell('B1', 'Date Appointment'); 
+          $sheet->cell('B2', 'Name Contact'); 
+          $sheet->cell('B3', 'WA Contact'); 
+
+          $cell = 'C';
+
+          foreach ($data as $row) {
+            if(is_null($row)){
+              continue;
+            }
+
+            $username = '@'.$row->username;
+            $sheet->cell($cell.'1', $row->event_time); 
+            $sheet->cell($cell.'2', $row->name); 
+            $sheet->cell($cell.'3', $row->telegram_number); 
+
+            $cell++;
+          }
+          
+          //$sheet->fromArray($data);
+        });
+      })->download('xlsx');
+
+        // return Excel::download(new UsersExport($campaign_id), $filename);
     }
 
 /* end of class */
