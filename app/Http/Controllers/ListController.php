@@ -1030,7 +1030,7 @@ class ListController extends Controller
               } 
               
           });
-        })->export('xlsx');
+        })->export('csv');
     }
 
     public function renderAdditional($addt)

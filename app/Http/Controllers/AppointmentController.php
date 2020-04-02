@@ -684,7 +684,7 @@ class AppointmentController extends Controller
 
             });
 
-        })->export('xlsx');
+        })->export('csv');
     }
 
 
