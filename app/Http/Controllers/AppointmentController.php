@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Maatwebsite\Excel\Facades\Excel;
+// use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use App\UserList;
 use App\Customer;
@@ -15,6 +15,7 @@ use App\Reminder;
 use App\ReminderCustomers;
 use App\TemplateAppointments;
 use App\Exports\UsersExport;
+use Excel;
 
 class AppointmentController extends Controller
 {
