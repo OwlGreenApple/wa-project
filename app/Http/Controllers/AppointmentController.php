@@ -642,26 +642,24 @@ class AppointmentController extends Controller
 
 
     public function exportAppointment($campaign_id){
-        $id_user = Auth::id();
+        $userid = Auth::id();
         $check = Campaign::where('id',$campaign_id)->first();
         $day = Carbon::now()->toDateString();
-        $filename = 'appointment-'.$check->name.'-'.$day.'.csv';
+        $filename = 'appointment-'.$check->name.'-'.$day;
 
         if(is_null($check))
         {
             return redirect('appointment');
         }
 
+        $data = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid]])
+        ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+        ->join('customers','customers.id','=','reminder_customers.customer_id')
+        ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
+        ->distinct()
+        ->get();        
 
-
-      $data = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid]])
-      ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
-      ->join('customers','customers.id','=','reminder_customers.customer_id')
-      ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
-      ->distinct()
-      ->get();        
-
-    $Excel_file = Excel::create($filename, function($excel) use ($data) {
+        $Excel_file = Excel::create($filename, function($excel) use ($data) {
         $excel->sheet('appointment', function($sheet) use ($data) {
         
           $sheet->cell('B1', 'Date Appointment'); 

@@ -28,9 +28,13 @@ class CheckCountryCode implements Rule
      */
     public function passes($attribute, $value)
     {
-        $value = str_replace("+", "", $value);
-        $call = (int)$value;
+        $call = str_replace("+", "", $value);
         $id_data = $this->id;
+
+        if($call == 1)
+        {
+            return true;
+        }
 
         if($id_data <> null)
         {
