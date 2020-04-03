@@ -82,6 +82,7 @@ class SendMessage extends Command
                 $customer_phone = $row->telegram_number;
                 $phoneNumber = PhoneNumber::find($row->phoneid);
                 $hour = $row->hour_time; //hour according user set it to sending
+                $date = Carbon::parse($row->day_send);
 
                 // if(!is_null($customers))
                 // {
