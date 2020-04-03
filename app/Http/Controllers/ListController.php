@@ -921,29 +921,68 @@ class ListController extends Controller
 
         $file = $request->file('csv_file')->getRealPath();
         $data = Excel::load($file)->get();
+        $count = 0;
+        $rowcolumn = 1;
 
         if($data->count() > 0)
         {
             foreach ($data as $key => $value) 
             {
-              $customer = new Customer;
-              $customer->user_id = $userid;
-              $customer->list_id = $id_list;
-              $customer->name = $value->name;
-              $customer->telegram_number = $value->phone;
-              $customer->email = $value->email;
+              $name = $value->name;
+              $phone = $value->phone;
+              $email = $value->email;
+              $rowcolumn++;
+
+              //FILTER 1
+              $check_valid = $this->checkValid($name,$phone,$email,$rowcolumn);
+             
+              if($check_valid['error'] == 1)
+              {
+                  $err = array(
+                      'success'=>0,
+                      'name'=>$check_valid['name'],
+                      'phone'=>$check_valid['phone'],
+                      'email'=>$check_valid['email']
+                  );
+                  return response()->json($err);
+              }
               
-              try
-              {     
-                $customer->save();
+              //FILTER 2
+              $checkuniquephone = $this->checkUniquePhone($phone,$id_list);
+              $checkuniqueemail = $this->checkUniqueEmail($email,$id_list);
+
+              if($checkuniquephone == true && $checkuniqueemail == true)
+              {
+                $customer = new Customer;
+                $customer->user_id = $userid;
+                $customer->list_id = $id_list;
+                $customer->name = $name;
+                $customer->telegram_number = $phone;
+                $customer->email = $email;
+                
+                try
+                {     
+                  $customer->save();
+                  $count++;
+                }
+                catch(Exception $e)
+                {
+                  $msg['success'] = 0;
+                  $msg['message'] = 'Failed to import,sorry there is something wrong on our server';
+                  return response()->json($msg);
+                }
+              }
+            } // ENDFOREACH
+
+            if($count > 0)
+            {
                 $msg['success'] = 1;
                 $msg['message'] = 'Import Successful';
-              }
-              catch(Exception $e)
-              {
-                $msg['success'] = 0;
-                $msg['message'] = 'Failed to import, maybe your data had available';
-              }
+            }
+            else
+            {
+                $msg['success'] = 1;
+                $msg['message'] = 'Nothing to import, your data on csv had available in our database';
             }
             return response()->json($msg);
         }
@@ -953,6 +992,76 @@ class ListController extends Controller
             $msg['message'] = 'Your file is empty, nothing to import';
             return response()->json($msg);
         }
+    }
+
+    private function checkUniquePhone($number,$list_id)
+    {
+        $userid = Auth::id();
+        $customer = Customer::where([['user_id',$userid],['list_id',$list_id],['telegram_number','=',$number]])->first();
+        if(is_null($customer))
+        {
+           return true;
+        }
+        else {
+           return false;
+        }
+    }
+    
+    private function checkUniqueEmail($email,$list_id)
+    {
+        $userid = Auth::id();
+        $email = Customer::where([['user_id',$userid],['email','=',$email],['list_id',$list_id],])->first();
+        if(is_null($email))
+        {
+           return true;
+        }
+        else {
+           return false;
+        }
+    }
+
+    private function checkValid($name,$phone,$email,$rowerror)
+    {
+        $data = array(
+            'name'=>$name,
+            'phone'=>$phone,
+            'email'=>$email,
+        );
+
+        $rules = [
+          'name'=> 'required',
+          'phone'=> 'required',
+          'email'=>'required',
+        ];
+
+        $validator = Validator::make($data,$rules);
+
+        if($validator->fails())
+        {
+            $errors = $validator->errors();
+
+            $err_name = str_replace("."," ",$errors->first('name'));
+            ($err_name <> null)?$error_name =  $err_name.'on row : '.$rowerror : $error_name='';
+
+            $err_phone = str_replace("."," ",$errors->first('phone'));
+            ($err_phone <> null)?$error_phone =  $err_phone.'on row : '.$rowerror : $error_phone='';
+
+            $err_email = str_replace("."," ",$errors->first('email'));
+            ($err_email <> null)?$error_email = $err_email.'on row : '.$rowerror : $error_email='';
+          
+            $err = array(
+              'error'=>1,
+              'name'=>$error_name,
+              'phone'=>$error_phone,
+              'email'=>$error_email,
+            );
+        }
+        else
+        {
+            $err['error'] = 0;
+        }
+
+        return $err;
     }
 
    /* //IMPORT SUBSCRIBER / CUSTOMER INTO CSV

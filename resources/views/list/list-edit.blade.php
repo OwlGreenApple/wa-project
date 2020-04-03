@@ -666,7 +666,20 @@
               {
                   displayCustomer();
               }
-              alert(result.message);
+              else
+              {   
+                  var errors = '';
+                  var errname, errphone, erremail;
+                  (result.name !== undefined)?errors+=result.name+"\n":errname='';
+                  (result.phone !== undefined)?errors+=result.phone+"\n":errphone='';
+                  (result.email !== undefined)?errors+=result.email:erremail='';
+                  alert(errors);
+              }
+
+              if(result.message !== undefined)
+              {
+                  alert(result.message);
+              }
             },
             error: function (xhr, ajaxOptions, thrownError) {
               $('#loader').hide();
@@ -676,7 +689,7 @@
               for ( var property in err.errors ) {
                 msg += err.errors[property][0]+"\n"; // get message by object name
               }*/
-              alert('Error, sorry unable to import, maybe your csv file is corrupt or wrong data');
+              alert('Error, sorry unable to import, maybe your csv file is corrupt or data unavailable');
               $('input[name="csv_file"]').val('');
               displayCustomer();
             }
