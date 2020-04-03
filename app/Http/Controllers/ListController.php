@@ -901,7 +901,61 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    //IMPORT SUBSCRIBER / CUSTOMER INTO CSV
+    public function importCSVListSubscribers(Request $request)
+    {
+        $id_list = $request->list_id_import;
+        $arr = array();
+        $userid = Auth::id();
+
+        $check = UserList::where([['id',$id_list],['user_id',$userid]])->first();
+        if(is_null($check))
+        {
+            $msg['message'] = 'Invalid List!';
+            return response()->json($msg);
+        }
+
+        $phone = PhoneNumber::where('user_id',$userid)->first();
+        if (is_null($phone)) {
+           return response()->json(['message'=>'Error! Please set your phone number first']);
+        }
+
+        $file = $request->file('csv_file')->getRealPath();
+        $data = Excel::load($file)->get();
+
+        if($data->count() > 0)
+        {
+            foreach ($data as $key => $value) 
+            {
+              $customer = new Customer;
+              $customer->user_id = $userid;
+              $customer->list_id = $id_list;
+              $customer->name = $value->name;
+              $customer->telegram_number = $value->phone;
+              $customer->email = $value->email;
+              
+              try
+              {     
+                $customer->save();
+                $msg['success'] = 1;
+                $msg['message'] = 'Import Successful';
+              }
+              catch(Exception $e)
+              {
+                $msg['success'] = 0;
+                $msg['message'] = 'Failed to import, maybe your data had available';
+              }
+            }
+            return response()->json($msg);
+        }
+        else
+        {
+            $msg['success'] = 1;
+            $msg['message'] = 'Your file is empty, nothing to import';
+            return response()->json($msg);
+        }
+    }
+
+   /* //IMPORT SUBSCRIBER / CUSTOMER INTO CSV
     function importCSVListSubscribers(Request $request)
     {
         $id_list = $request->list_id_import;
@@ -934,7 +988,7 @@ class ListController extends Controller
             $msg['message'] = 'Failed to import, maybe your data had available';
         }
         return response()->json($msg);
-    }
+    }*/
 
      /* check random list name */
     public function createRandomListName(){
@@ -990,12 +1044,12 @@ class ListController extends Controller
         {
           $excel->sheet('New sheet', function($sheet) use ($data) 
           {
-              $column[0] = $column[1] = array();
-
+            
               if($data['customers']->count() > 0)
               {
                 if($data['import'] == 1)
                 {
+                  $column[0] = array();
                   foreach($data['customers'] as $row)
                   {
                       $column[] = array(
@@ -1007,6 +1061,7 @@ class ListController extends Controller
                 }
                 else
                 {
+                  $column[0] = $column[1] = array();
                   foreach($data['customers'] as $row)
                   {
                       $column[] = array(
@@ -1020,13 +1075,19 @@ class ListController extends Controller
               }
 
               $sheet->fromArray($column, null, 'A1', false, false);
-              $sheet->cell('A1', 'Customer Name'); 
-              $sheet->cell('B1', 'WA Number'); 
-              $sheet->cell('C1', 'Customer Email');
 
               if($data['import'] == 0)
               {
+                $sheet->cell('A1', 'Customer Name'); 
+                $sheet->cell('B1', 'WA Number'); 
+                $sheet->cell('C1', 'Customer Email');
                 $sheet->cell('D1', 'Additional'); 
+              }
+              else
+              {
+                $sheet->cell('A1', 'name'); 
+                $sheet->cell('B1', 'phone'); 
+                $sheet->cell('C1', 'email');
               } 
               
           });

@@ -671,13 +671,14 @@
             error: function (xhr, ajaxOptions, thrownError) {
               $('#loader').hide();
               $('.div-loading').removeClass('background-load');
-              var err = eval("(" + xhr.responseText + ")");
+             /* var err = eval("(" + xhr.responseText + ")");
               var msg = '';
               for ( var property in err.errors ) {
                 msg += err.errors[property][0]+"\n"; // get message by object name
-              }
-              alert(msg);
+              }*/
+              alert('Error, sorry unable to import, maybe your csv file is corrupt or wrong data');
               $('input[name="csv_file"]').val('');
+              displayCustomer();
             }
         });/* end ajax */
     });
