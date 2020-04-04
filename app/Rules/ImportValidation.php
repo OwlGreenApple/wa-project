@@ -25,13 +25,26 @@ class ImportValidation implements Rule
      */
     public function passes($attribute, $value)
     {
-      if(preg_match("/^0/i",$value))//|| !preg_match("/^\+\d/",$value)
+      if(preg_match("/^0[0-9]*$/i",$value) || preg_match("/[a-z-A-Z]/i",$value))
       {
          return false;
       } 
       else {
-         return true;
+         return $this->checkPlus($value);
       }
+    }
+
+    public function checkPlus($value)
+    {
+        $check_plus = substr($value,0,1);
+        if($check_plus <> "+")
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     /**
@@ -41,6 +54,6 @@ class ImportValidation implements Rule
      */
     public function message()
     {
-        return 'Phone numbers must be lead with + NOT 0 and must be number.';
+        return 'Please fill in your Phone number column only (ex: +6287881115557 ), do not use "0" at the beginning.';
     }
 }

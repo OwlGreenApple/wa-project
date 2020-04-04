@@ -16,18 +16,109 @@
 
 <div class="container">
   <ul id="tabs" class="row">
-      <li class="col-lg-4"><a id="tab1">Contact</a></li>
+      <li class="col-lg-4"><a id="tab1">Form</a></li>
       <li class="col-lg-4"><a id="tab2">Add Contact</a></li>
-      <li class="col-lg-4"><a id="tab3">Form</a></li>
+      <li class="col-lg-4"><a id="tab3">Contacts</a></li>
   </ul>
 
   <!-- TABS CONTAINER -->
   <div class="tabs-content">
     <!-- TABS 1 -->
     <div class="tabs-container" id="tab1C">
-      <div class="act-tel-tab" id="customer_list">
-          <!-- display customer list here ... --> 
-      </div>
+      <div class="act-tel-tab">
+
+        <div class="wrapper">
+          <div class="form-control col-lg-6 message">
+            <sb>Saved, click to copy link from</sb> <a class="icon-copy"></a>
+          </div>
+        </div>
+
+        <form class="form-contact" id="edit_list">
+          <div class="wrapper">
+            <div class="form-contact">
+              <div class="input-group form-group">
+                  <input type="button" id="open_ck_editor" class="form-control" value="Click to add messages" />
+                  <div class="error list_label col-lg-12 text-left"></div>
+              </div>
+
+              <div class="input-group form-group showeditor">
+                <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
+              </div>
+
+              <div class="input-group form-group">
+                  <input type="text" name="label_name" class="form-control" placeholder="Label Name" value="{{ $data['label_name'] }}"/>
+                  <div class="error label_name col-lg-12 text-left"></div>
+              </div>
+
+              <div class="input-group form-group">
+                  <input type="text" name="label_phone" class="form-control" placeholder="Label Phone" value="{{ $data['label_phone'] }}"/>
+                  <div class="error label_phone col-lg-12 text-left"></div>
+              </div>
+
+              <div class="input-group form-group">
+                  <input type="text" name="label_email" class="form-control" placeholder="Label Email" value="{{ $data['label_email'] }}"/>
+                  <div class="error label_email col-lg-12 text-left"></div>
+              </div>
+            </div><!-- end form contact -->
+          </div><!-- end wrapper -->
+          
+
+           <!-- outer wrapper -->
+          <div class="outer-wrapper">
+            <div class="form-row">
+              <div class="form-group col-md-3 py-2">
+                <h6>Custom Fields</h6>
+              </div>
+
+              <div class="form-group col-md-8">
+                <div class="relativity">
+                   <select id="type_fields" class="form-control custom-select">
+                      <option value="1">Fields</option>
+                      <option value="2">Dropdown</option>
+                   </select>
+                   <span class="icon-carret-down-circle"></span>
+                </div>
+              </div>
+              <div class="form-group col-md-1">
+                <button type="button" class="btn btn-form add-field"><span class="icon-add"></span></button>
+              </div>
+            </div>
+
+            <div id="additional" class="form-row">
+                <!-- additional -->
+            </div>
+
+          </div>
+          <!-- end outer wrapper -->
+
+          <!-- middle wrapper -->
+          <div class="wrapper">
+            <div class="form-group text-left">
+               <label>Pixel</label>
+               <textarea name="pixel" class="form-control"></textarea>
+            </div>
+            
+            <div class="text-right">
+              <button type="submit" class="btn btn-custom">Add Data</button>
+            </div>
+          </div>
+          <!-- end middle wrapper -->
+        </form>
+
+        <!-- last wrapper -->
+        <div class="wrapper">
+          <div class="form-group text-left">
+             <label class="col-md-12 row">FORM URL&nbsp;&nbsp;<a data-link="{{$url}}" class="icon-copy btn-copy"></a></label>
+             <input id="linkcopy" value="{{$url}}" type="text" class="form-control-lg" />
+          </div>
+          
+          <div class="form-group text-left">
+              <label>COPY / PASTE on your Site&nbsp;&nbsp;<a class="structure-form"><span class="icon-copy"></span></a></label>
+              <textarea class="form-control" id="structure-form" readonly="readonly"><iframe src="{{url($listname)}}" style="border:0px #ffffff none;" name="myiFrame" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe></textarea>
+          </div>
+        </div>
+        <!-- end last wrapper -->
+      </div><!-- end actel-tab -->  
     <!-- end tabs -->  
     </div>
 
@@ -38,8 +129,11 @@
           If you want add contact more than 1 please click : "<a class="open_import"><b>import contact</b></a>" <!--or "<b>take from group</b>" if you want -->
         </div>
 
-        <div class="error_message"><!-- error --></div>
-        <div class="main"><!-- error --></div>
+        <div class="wrapper">
+          <div class="error_message"><!-- error --></div>
+          <div class="main"><!-- message --></div>
+        </div>
+
         <form class="wrapper add-contact">
             <div class="form-group">
               <label>Name:</label>
@@ -85,106 +179,16 @@
 
     <!-- TABS 3 -->
     <div class="tabs-container" id="tab3C">
-      <div class="act-tel-tab">
-        <div class="wrapper">
-          <div class="form-control col-lg-6 message">
-            <sb>Saved, click to copy link from</sb> <a class="icon-copy"></a>
-          </div>
-        </div>
-
-        <form class="form-contact" id="edit_list">
-
-          <div class="wrapper">
-            <div class="form-contact">
-              <div class="input-group form-group">
-                  <input type="button" id="open_ck_editor" class="form-control" value="Click to add messages" />
-                  <div class="error list_label col-lg-12 text-left"></div>
-              </div>
-
-              <div class="input-group form-group showeditor">
-                <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
-              </div>
-
-              <div class="input-group form-group">
-                  <input type="text" name="label_name" class="form-control" placeholder="Label Name" value="{{ $data['label_name'] }}"/>
-                  <div class="error label_name col-lg-12 text-left"></div>
-              </div>
-
-              <div class="input-group form-group">
-                  <input type="text" name="label_phone" class="form-control" placeholder="Label Phone" value="{{ $data['label_phone'] }}"/>
-                  <div class="error label_phone col-lg-12 text-left"></div>
-              </div>
-
-              <div class="input-group form-group">
-                  <input type="text" name="label_email" class="form-control" placeholder="Label Email" value="{{ $data['label_email'] }}"/>
-                  <div class="error label_email col-lg-12 text-left"></div>
-              </div>
-          </div>
-          <!-- end wrapper -->
-
-           <!-- outer wrapper -->
-          <div class="outer-wrapper">
-            <div class="form-row">
-              <div class="form-group col-md-3 py-2">
-                <h6>Custom Fields</h6>
-              </div>
-
-              <div class="form-group col-md-8">
-                <div class="relativity">
-                   <select id="type_fields" class="form-control custom-select">
-                      <option value="1">Fields</option>
-                      <option value="2">Dropdown</option>
-                   </select>
-                   <span class="icon-carret-down-circle"></span>
-                </div>
-              </div>
-              <div class="form-group col-md-1">
-                <button type="button" class="btn btn-form add-field"><span class="icon-add"></span></button>
-              </div>
-            </div>
-
-            <div id="additional" class="form-row">
-                <!-- additional -->
-            </div>
-
-          </div>
-          <!-- end outer wrapper -->
-
-          <!-- middle wrapper -->
-          <div class="wrapper">
-            <div class="form-group text-left">
-               <label>Pixel</label>
-               <textarea name="pixel" class="form-control"></textarea>
-            </div>
-            
-            <div class="text-right">
-              <button type="submit" class="btn btn-custom">Add Data</button>
-            </div>
-
-        </form>
-          
-        </div>
-        <!-- end middle wrapper -->
-
-        <!-- last wrapper -->
-        <div class="wrapper">
-          <div class="form-group text-left">
-             <label class="col-md-12 row">FORM URL&nbsp;&nbsp;<a data-link="{{$url}}" class="icon-copy btn-copy"></a></label>
-             <input id="linkcopy" value="{{$url}}" type="text" class="form-control-lg" />
-          </div>
-          
-          <div class="form-group text-left">
-              <label>COPY / PASTE on your Site&nbsp;&nbsp;<a class="structure-form"><span class="icon-copy"></span></a></label>
-              <textarea class="form-control" id="structure-form" readonly="readonly"><iframe src="{{url($listname)}}" style="border:0px #ffffff none;" name="myiFrame" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe></textarea>
-          </div>
-        </div>
-        <!-- end last wrapper -->
-
+      <div class="wrapper del_message"></div>
+      <div class="act-tel-tab" id="customer_list">
+          <!-- display customer list here ... --> 
       </div>
-    <!-- end tabs -->    
+    <!-- end tabs -->  
     </div>
-
+  <!---------- end tab content ------------>    
   </div>
+
+<!------ end container ------->
 </div>
 
 <!-- Modal Import Contact -->
@@ -200,13 +204,13 @@
                     <label>Import Contact</label>
                       <input class="form-control" name="csv_file" type="file" />
                       <input type="hidden" name="list_id_import" value="{{ $id }}" />
-                    <span><i>Please .csv only</i></span>
+                    <span><i>Please .xlsx only</i></span>
 
-                    <div><a href="{{ asset('assets/csv/csv-example.csv') }}">Download Example CSV</a></div>
+                    <div><a href="{{ asset('assets/excel/xlsx-example.xlsx') }}">Download Example XLSX</a></div>
 
                     <div class="text-right">
                       <button type="submit" class="btn btn-custom mr-1">Import</button>
-                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                      <button id="btn_close_import" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                     </div>
                   </form>
                 </div>
@@ -246,7 +250,6 @@
       
     </div>
   </div>
-
 
 <!-- Modal Dropdown -->
   <div class="modal fade child-modal" id="openDropdown" role="dialog">
@@ -389,7 +392,7 @@
     open_ck_editor();
     //Choose();
     openImport();
-    csvImport();
+    excelImport();
     addContact();
     //column -- edit
     displayCustomer(); 
@@ -441,16 +444,15 @@
         }
       });
 
-      $("#tab-contact").click(function(){
+      $("body").on('click','#tab-contact',function(){
         $("#tab1").addClass('inactive');
         $("#tab2").removeClass('inactive');
 
-        displayCustomer();
         $('.tabs-container').hide();
         $('#tab2C').fadeIn('slow');
       }); 
 
-      $("#tab-form").click(function(){
+      $("body").on('click','#tab-form',function(){
          $("#tab1").addClass('inactive');
          $("#tab3").removeClass('inactive');
 
@@ -636,7 +638,7 @@
     });
   }
 
-  function csvImport()
+  function excelImport()
   {
     $("body").on('submit','#importform',function(e){
         e.preventDefault();
@@ -648,23 +650,26 @@
         });
         $.ajax({
             type : 'POST',
-            url : "{{ url('import_csv_list_subscriber') }}",
+            url : "{{ url('import_excel_list_subscriber') }}",
             data : data,
             contentType: false,
             processData: false,
             beforeSend: function()
             {
               $('#loader').show();
-              $('.div-loading').addClass('background-load');
+              $('.div-loading').show().addClass('background-load');
             },
             success : function(result){
+              $('.div-loading').hide().removeClass('background-load');
               $('#loader').hide();
-              $('.div-loading').removeClass('background-load');
               $('input[name="csv_file"]').val('');
     
               if(result.success == 1)
               {
+                  $("#btn_close_import").trigger("click");
                   displayCustomer();
+                  $(".main").html("<div class='alert alert-success'>"+result.message+"</div>");
+                  $("body .alert-success").delay(5000).fadeOut(2000);
               }
               else
               {   
@@ -674,12 +679,14 @@
                   (result.phone !== undefined)?errors+=result.phone+"\n":errphone='';
                   (result.email !== undefined)?errors+=result.email:erremail='';
                   alert(errors);
+
+                  if(result.message !== undefined)
+                  {
+                      $(".error_message").html("<div class='alert alert-danger'>"+result.message+"</div>");
+                  }
               }
 
-              if(result.message !== undefined)
-              {
-                  alert(result.message);
-              }
+              
             },
             error: function (xhr, ajaxOptions, thrownError) {
               $('#loader').hide();
@@ -720,15 +727,15 @@
               $('.div-loading').removeClass('background-load');
 
               if(result.success == true){
-                  alert(result.message);
+                $(".main").html('<div class="alert alert-success text-center">'+result.message+'</div>')
                   clearField();
                   $(".error").hide();
                   displayCustomer();
               } else {
                   $(".error").fadeIn('fast');
                   $(".name").text(result.name);
-                  $(".main").text(result.main);
-                  $(".main").text(result.list);
+                  $(".error_message").text(result.main);
+                  $(".error_message").text(result.list);
                   $(".email").text(result.email);
                   $(".phone_number").text(result.phone);
                   $(".code_country").text(result.code_country);
@@ -1476,20 +1483,20 @@
             beforeSend: function()
             {
               $('#loader').show();
-              $('.div-loading').addClass('background-load');
+              $('.div-loading').show().addClass('background-load');
             },
             success : function(response)
             {
+              $('.div-loading').hide().removeClass('background-load');
               $('#loader').hide();
-              $('.div-loading').removeClass('background-load');
-              alert(response.message);
-
+              $(".del_message").html('<div class="alert alert-success text-center">'+response.message+'</div>');
               if(response.success == 1)
               {
-                  $('#loader').show();
-                  $('.div-loading').addClass('background-load');
+                  /*$('#loader').show();
+                  $('.div-loading').addClass('background-load');*/
                   displayCustomer(); 
               }
+              $("body .alert-success").delay(5000).fadeOut(2000);
             },
             error: function(xhr)
             {

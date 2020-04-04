@@ -38,7 +38,7 @@
 
         <div class="col-lg-2 pad-fix col-button">
           <button type="button" id="{{ $rows->id }}" class="btn btn-warning btn-sm open-table"><span class="icon-eye"></span></button>
-          <a href="{{url('list-edit')}}/{{$rows->id}}" class="btn btn-edit btn-sm" target="_blank"><span class="icon-edit"></span></a>
+          <a href="{{url('list-edit')}}/{{$rows->id}}" class="btn btn-edit btn-sm"><span class="icon-edit"></span></a>
           <a id="{{ $rows->id }}" class="btn btn-primary btn-sm open_export"><span class="icon-export"></span></a>
           <button id="{{$rows->id}}" type="button" class="btn btn-success btn-sm duplicate"><span class="icon-copy-text"></span></button>
           <a type="button" id="{{$rows->id}}" class="btn btn-danger btn-sm del"><span class="icon-delete"></span></a>

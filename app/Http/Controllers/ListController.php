@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ListSubscribersExport;
-use App\Imports\ListSubscribersImport;
+// use App\Exports\ListSubscribersExport;
+// use App\Imports\ListSubscribersImport;
+use App\Rules\ImportValidation;
+use App\External\ExcelValueBinder;
 use App\UserList;
 use App\Customer;
 use App\Sender;
@@ -901,7 +903,7 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    public function importCSVListSubscribers(Request $request)
+    public function importExcelListSubscribers(Request $request)
     {
         $id_list = $request->list_id_import;
         $arr = array();
@@ -920,7 +922,8 @@ class ListController extends Controller
         }
 
         $file = $request->file('csv_file')->getRealPath();
-        $data = Excel::load($file)->get();
+        $binder = new ExcelValueBinder;
+        $data = Excel::setValueBinder($binder)->load($file)->get();
         $count = 0;
         $rowcolumn = 1;
 
@@ -929,7 +932,7 @@ class ListController extends Controller
             foreach ($data as $key => $value) 
             {
               $name = $value->name;
-              $phone = $value->phone;
+              $phone = strval($value->phone);
               $email = $value->email;
               $rowcolumn++;
 
@@ -994,6 +997,8 @@ class ListController extends Controller
         }
     }
 
+
+
     private function checkUniquePhone($number,$list_id)
     {
         $userid = Auth::id();
@@ -1029,9 +1034,9 @@ class ListController extends Controller
         );
 
         $rules = [
-          'name'=> 'required',
-          'phone'=> 'required',
-          'email'=>'required',
+          'name'=> ['required','max:50'],
+          'phone'=> ['required','min:10','max:22',new ImportValidation],
+          'email'=>['required','max:190','email']
         ];
 
         $validator = Validator::make($data,$rules);
@@ -1121,7 +1126,7 @@ class ListController extends Controller
 
     // EXPORT SUBSCRIBER / CUSTOMER INTO CSV
 
-    public function exportListCSVSubscriber($list_id,$import)
+    public function exportListExcelSubscriber($list_id,$import)
     {
         $userid = Auth::id();
         $check = UserList::where('id',$list_id)->first();
@@ -1200,7 +1205,7 @@ class ListController extends Controller
               } 
               
           });
-        })->export('csv');
+        })->export('xlsx');
     }
 
     public function renderAdditional($addt)

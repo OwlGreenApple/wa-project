@@ -30,7 +30,7 @@ class TelNumber implements Rule
 
     public function checkNumber($value)
     {
-        if(preg_match("/^0[0-9]*$/i",$value) || !preg_match("/^[+][0-9]/i",$value) || preg_match("/[a-z]/i",$value))
+        if(preg_match("/^0[0-9]*$/i",$value) || !preg_match("/^\+[0-9]/i",$value) || preg_match("/[a-z-A-Z]/i",$value))
         {
            return false;
         } 
@@ -46,6 +46,6 @@ class TelNumber implements Rule
      */
     public function message()
     {
-        return 'Phone numbers must be lead with + NOT 0 and must be number';
+        return 'Please fill in your Phone number only (ex: 87881115557 ), do not use "0" at the beginning';
     }
 }
