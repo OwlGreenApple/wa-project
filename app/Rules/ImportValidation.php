@@ -36,7 +36,7 @@ class ImportValidation implements Rule
 
     public function checkPlus($value)
     {
-        dd($value);
+        dd(strval($value));
         $check_plus = substr($value,0,1);
 
         if($check_plus <> "+")
