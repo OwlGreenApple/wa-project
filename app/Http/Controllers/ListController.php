@@ -930,9 +930,11 @@ class ListController extends Controller
             foreach ($data as $key => $value) 
             {
               $name = $value->name;
-              $phone = $value->phone;
+              $phone = strval($value->phone);
               $email = $value->email;
               $rowcolumn++;
+
+              dd($phone);
 
               //FILTER 1
               $check_valid = $this->checkValid($name,$phone,$email,$rowcolumn);
@@ -1025,7 +1027,7 @@ class ListController extends Controller
     {
         $data = array(
             'name'=>$name,
-            'phone'=>strval($phone),
+            'phone'=>$phone,
             'email'=>$email,
         );
 
