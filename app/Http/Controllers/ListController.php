@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 // use App\Exports\ListSubscribersExport;
 // use App\Imports\ListSubscribersImport;
 use App\Rules\ImportValidation;
+use App\External\ExcelValueBinder;
 use App\UserList;
 use App\Customer;
 use App\Sender;
@@ -921,7 +922,8 @@ class ListController extends Controller
         }
 
         $file = $request->file('csv_file')->getRealPath();
-        $data = Excel::load($file)->get();
+        $binder = new ExcelValueBinder;
+        $data = Excel::setValueBinder($binder)->load($file)->get();
         $count = 0;
         $rowcolumn = 1;
 
@@ -933,8 +935,6 @@ class ListController extends Controller
               $phone = strval($value->phone);
               $email = $value->email;
               $rowcolumn++;
-
-              dd($phone);
 
               //FILTER 1
               $check_valid = $this->checkValid($name,$phone,$email,$rowcolumn);
@@ -996,6 +996,8 @@ class ListController extends Controller
             return response()->json($msg);
         }
     }
+
+
 
     private function checkUniquePhone($number,$list_id)
     {
