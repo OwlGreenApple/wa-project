@@ -186,9 +186,11 @@ class SettingController extends Controller
           return $arr;
       }
 
+      //new system, didelete dulu baru dieksekusi
+      // ApiHelper::unreg($phone_number);
+
       //PHONE REGISTER TO API
-      $member = User::find($user->id);
-      $registered_phone = ApiHelper::reg($phone_number,$member->name);
+      $registered_phone = ApiHelper::reg($phone_number,$user->name);
       $status_register = json_decode($registered_phone,true);
       $message = strval($status_register['message']);
 
@@ -201,7 +203,7 @@ class SettingController extends Controller
       }
       */
 
-      if(is_null($phoneNumber)){
+      /*new system if(is_null($phoneNumber)){
         // $token = explode(':',$this->getToken($request->phone_number));
         $phoneNumber = new PhoneNumber();
         $phoneNumber->user_id = $user->id;
@@ -211,7 +213,7 @@ class SettingController extends Controller
         // $phoneNumber->filename = $token[1];
         $phoneNumber->filename = "";
         $phoneNumber->save();
-      }
+      }*/
 
       $arr['status'] = 'success';
       $arr['message'] = Alert::connect_success();
@@ -224,21 +226,21 @@ class SettingController extends Controller
     public function verify_phone(Request $request)
     {
       $user = Auth::user();
-      $phoneNumber = PhoneNumber::
+      /*new system $phoneNumber = PhoneNumber::
                       where("phone_number",$request->phone_number)
                       ->where("user_id",$user->id)
-                      ->first();
+                      ->first();*/
                       
       /*
       Cek database, klo status masi 0 maka akan request ke woowa 
       Cek Ready or not (after 3-5 min register phone no)
       */
-      if ($phoneNumber->status == 0) {
+      /*new system if ($phoneNumber->status == 0) {*/
         $arr = json_decode(ApiHelper::status_nomor($request->phone_number),1);
         if (!is_null($arr)) {
           if($arr['status']=="success"){
-            $phoneNumber->status=1;
-            $phoneNumber->save();
+            /*new system $phoneNumber->status=1;
+            $phoneNumber->save();*/
           }
         }
         else {
@@ -248,9 +250,9 @@ class SettingController extends Controller
           );
           return response()->json($error);
         }
-      }
+      //}
       
-      if ($phoneNumber->status == 1) {
+      /*new system if ($phoneNumber->status == 1) {*/
           $qr_code = ApiHelper::get_qr_code($request->phone_number);
 
           if($qr_code == false)
@@ -268,7 +270,7 @@ class SettingController extends Controller
             );
           }
           return response()->json($data);
-      }
+      //}
       
     }
 
@@ -277,8 +279,7 @@ class SettingController extends Controller
     */
     public function check_connected_phone(Request $request)
     {
-        $user_id = Auth::id();
-
+        $user = Auth::user();
         if($request->phone_number <> null)
         {
             $no_wa = $request->phone_number;
@@ -293,14 +294,26 @@ class SettingController extends Controller
         //if status_connect == none which mean phone still not connect
         if($status_connect == $wa_number)
         {
-            $data = array(
+            /* new system $data = array(
               'status'=>2,
               'counter'=>6,
               'max_counter'=>5000
-            );
+            );*/
 
             try{
-              PhoneNumber::where([['user_id',$user_id],['phone_number',$no_wa]])->update($data);
+              // new system PhoneNumber::where([['user_id',$user->id],['phone_number',$no_wa]])->update($data);
+
+              $phoneNumber = new PhoneNumber();
+              $phoneNumber->user_id = $user->id;
+              $phoneNumber->phone_number = $no_wa;
+              $phoneNumber->counter = 0;
+              $phoneNumber->status = 0;
+              $phoneNumber->filename = "";
+              $phoneNumber->status = 2;
+              $phoneNumber->counter = 6;
+              $phoneNumber->max_counter = 5000;
+              $phoneNumber->save();
+
               $response['status'] = 'Congratulations, your phone is connected';
             }catch(Exception $e){
               $response['status'] = 'Sorry, there is some error, please retry to verify your phone';
@@ -391,6 +404,18 @@ class SettingController extends Controller
     public function status_nomor($wa_number)
     {
         $arr = json_decode(ApiHelper::status_nomor($wa_number),1);
+        if (!is_null($arr)) {
+          return $arr['status'];
+        } 
+        else {
+          echo "null";
+        }
+    }
+
+    public function get_qr_code($wa_number)
+    {
+      return ApiHelper::get_qr_code($wa_number);
+        $arr = json_decode(ApiHelper::get_qr_code($wa_number),1);
         if (!is_null($arr)) {
           return $arr['status'];
         } 

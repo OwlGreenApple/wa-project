@@ -36,7 +36,45 @@
   </div>
 </div>
 
-  <!-- TOP SECTION -->
+<!-- Modal Start to connect-->
+<div class="modal fade" id="modal-start-connect" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content content-premiumid">
+      <div class="modal-header header-premiumid">
+        <h5 class="modal-title" id="modaltitle">
+          Connect Your Phone
+        </h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <input type="hidden" name="id_phone_number" id="id_phone_number">
+
+        <label><h4>Before connecting to our server <br>
+        You must have "profile image" at your Whatsapp settings
+        </h4></label>
+        <br><br>
+        <!--<span class="txt-mode"></span>-->
+        <img src="{{url('assets/img/hint-setting.png')}}" class="img img-fluid">
+        <br>
+        
+        <div class="col-12 mb-4" style="margin-top: 30px">
+          <button class="btn btn-danger btn-block" data-dismiss="modal" id="button-start-connect">
+            Start
+          </button>
+        </div>
+        
+        <div class="col-12 text-center mb-4">
+          <a href="" class="" data-dismiss="modal">
+            Cancel
+          </a>  
+        </div>
+      </div>
+    </div>   
+  </div>
+</div>
+
+<!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
     <h2>SETTINGS</h2>
@@ -52,7 +90,6 @@
 
   <!-- TABS CONTAINER -->
   <div class="tabs-content">
-
     <!-- TABS 1 -->
     <div class="tabs-container" id="tab1C">
       <div class="act-tel-settings">
@@ -66,7 +103,7 @@
                   <label class="col-sm-3 col-form-label">Phone Whatsapp :</label>
                   <div class="col-sm-9 row">
                     <div class="col-lg-3 row relativity">
-                      <input name="code_country" class="form-control custom-select-campaign" value="+62" />
+                      <input id="code_country" name="code_country" class="form-control custom-select-campaign" value="+62" />
                       <span class="icon-carret-down-circle"></span>
                       <span class="error code_country"></span>
                     </div>
@@ -75,7 +112,7 @@
                       <input type="text" id="phone_number" name="phone_number" class="form-control" />
                       <span class="error phone_number"></span>
                     </div>
-                    <div>Please add avatar / image on your WA account.</div>
+                    <!--<div>Please add avatar / image on your WA account.</div>-->
                     <div class="col-lg-12 pad-fix"><ul id="display_countries"><!-- Display country here... --></ul></div>
                   </div>
                 </div>
@@ -104,7 +141,7 @@
             </div> -->
         </div>
 
-        <div class="wrapper add-contact table-responsive">
+        <div class="wrapper add-contact table-responsive" id="phone-table">
             <table class="table table-bordered mt-4">
               <thead class="bg-dashboard">
                 <tr>
@@ -291,8 +328,11 @@
 
     $('#div-verify').hide();
     $('.message').hide();
-
-    $('#button-connect').click(function(){
+    $('#phone-table').hide();
+    <?php if ($is_registered) { ?>
+      $('#phone-table').show();
+    <?php } ?>
+    $('#button-start-connect').click(function(){
       var phone_number = $("#phone_number").val();
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -315,7 +355,9 @@
             $('.message').show();
             $('.message').html(data.message);
             $("#button-connect").prop('disabled',true);
-            loadPhoneNumber();
+            $("#phone_number").prop('disabled',true);
+            $("#code_country").prop('disabled',true);
+            // new system loadPhoneNumber();
             waitingTime();
             $(".error").hide();
           }
@@ -339,7 +381,9 @@
             alert(xhr.responseText);
         }
       });
-      
+    });
+    $('#button-connect').click(function(){
+      $("#modal-start-connect").modal();
     });
 
    // Display Country
@@ -399,12 +443,14 @@
       });
     }
   // End Display Country
-
+  var tm,flagtm;
   function waitingTime()
   {
+      var scd = 0;
       var sc = 0;
       var min = 0;
-      var tm = setInterval(function(){
+      flagtm = false;
+      tm = setInterval(function(){
           $("#secs").html(sc);
           $("#min").html('0'+min);
 
@@ -420,6 +466,15 @@
             $("#secs").html('0'+sc);
           }
 
+          if( (scd == 180) || (scd == 233) || (scd == 287) || (scd == 329) || (scd == 359) )
+          {
+            // console.log("new system");
+            if (flagtm == false ) {
+              flagtm = true;
+              getQRCode($("#code_country").val()+$("#phone_number").val());
+            }
+          }
+
           if(min == 6)
           {
               $("#secs").html('0'+0);
@@ -427,6 +482,7 @@
           }
 
           sc++;
+          scd++;
       },1000);
   };
 
@@ -450,17 +506,20 @@
             $('.div-loading').removeClass('background-load');
 
             if(result.status == 'error'){
-              $('.message').show();
-              $('.message').append(result.phone_number);
+              /* new system $('.message').show();
+              $('.message').append(result.phone_number);*/
+              // getQRCode($("#code_country").val()+$("#phone_number").val());
+              console.log(result);
             }
             else
             {
               $('#div-verify').show();
               $("#qr-code").html(result.data);
+              clearInterval(tm);
               countDownTimer(phone_number);
             }
-            
-            loadPhoneNumber();
+            flagtm = false;
+            // new system loadPhoneNumber();
           },
           error : function(xhr,attr,throwable){
             $('#loader').hide();
@@ -472,14 +531,23 @@
 
     }
 
+    var timerCheckQrCode,flagTimerCheckQrCode;
     function countDownTimer(phone_number)
     {
       var sec = 25; //countdown timer
       var word = '<h3>Please scan qr-code before time\'s up :</h3>';
-      var timer = setInterval( function(){
-                
+      flagTimerCheckQrCode=false;
+      timerCheckQrCode = setInterval( function(){
+
+          if( (sec == 20) || (sec == 15) || (sec == 10) || (sec == 1) ) {
+            if (flagTimerCheckQrCode == false ) {
+              flagTimerCheckQrCode = true;
+              checkQRcode(phone_number);
+            }
+          }
+          
           if(sec < 1){
-            clearInterval(timer);
+            clearInterval(timerCheckQrCode);
             checkQRcode(phone_number);
           }
 
@@ -505,27 +573,37 @@
         dataType: 'json',
         beforeSend: function()
         {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
+          /* new system $('#loader').show();
+          $('.div-loading').addClass('background-load');*/
         },
         success: function(result) {
-          $('#loader').hide();
+          /* new system $('#loader').hide();
           $('.div-loading').removeClass('background-load');
 
           $('#div-verify').hide();
-          $("#timer, #qr-code").html('');
+          $("#timer, #qr-code").html('');*/
 
-          $('.message').show();
-          $('.message').html(result.status);
-          loadPhoneNumber();
+          if (result.status!="none"){
+            $('.message').show();
+            $('.message').html(result.status);
+          }  
+          if (result.status=="Congratulations, your phone is connected"){
+            $('#div-verify').hide();
+            $("#timer, #qr-code").html('');
+            $('#phone-table').show();
+            loadPhoneNumber();
+            clearInterval(timerCheckQrCode);
+          }
+          flagTimerCheckQrCode=false;
+          /* new system loadPhoneNumber();*/
         },
         error : function(xhr){
-          $('#loader').hide();
+          /* new system $('#loader').hide();
           $('.div-loading').removeClass('background-load');
           $('#div-verify').hide();
-          $("#timer, #qr-code").html('');
+          $("#timer, #qr-code").html('');*/
 
-          alert('Sorry, unable to check if your phone verified, please try again later');
+          // alert('Sorry, unable to check if your phone verified, please try again later');
           console.log(xhr.responseText);
         }
       });
@@ -553,13 +631,13 @@
           $('.message').show();
           $('.message').html(data.message);
           $("#button-connect").prop('disabled',false);
-          loadPhoneNumber();
+          // new system loadPhoneNumber();
         }
       });
     });
 
 
-    $('body').on("click","#link-resend",function(){
+    /*$('body').on("click","#link-resend",function(){
       var data_tel = $(this).attr('data-phone');
       var data = {'resend':1,'phone_number':data_tel};
 
@@ -591,7 +669,7 @@
         }
       });
       
-    });
+    });*/
 
     $("body").on("click", ".icon-delete", function() {
       $('#id_phone_number').val($(this).attr('data-id'));

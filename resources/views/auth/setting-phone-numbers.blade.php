@@ -14,7 +14,7 @@
         echo '<a href="#" class="link-verify btn btn-success btn-sm" data-phone="'.$phoneNumber->phone_number.'">klik to verify</a>';
       }
       if ($phoneNumber->status == 2) {
-        echo "Connected";
+        echo "Server Connected";
       }
       ?></td>
       <!-- <td class="text-center"><a class="icon icon-edit btn-edit" data-number="{{$phoneNumber->phone_number}}"></a></td> -->
