@@ -18,9 +18,9 @@ class CheckImportCSV
     {
         $ext = $request->file('csv_file')->getClientOriginalExtension();
 
-        if($ext <> 'csv')
+        if($ext <> 'xlsx')
         {
-            return response()->json(['message'=>'File must be .csv extension']);
+            return response()->json(['message'=>'File must be .xlsx extension']);
         }
 
         $validator = Validator::make($request->all(),[

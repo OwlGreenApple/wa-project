@@ -129,9 +129,13 @@
           If you want add contact more than 1 please click : "<a class="open_import"><b>import contact</b></a>" <!--or "<b>take from group</b>" if you want -->
         </div>
 
-        <div class="error_message"><!-- error --></div>
-        <div class="main"><!-- error --></div>
+        <div class="wrapper">
+          <div class="error_message"><!-- error --></div>
+          <div class="main"><!-- message --></div>
+        </div>
+
         <form class="wrapper add-contact">
+            @csrf
             <div class="form-group">
               <label>Name:</label>
               <input type="text" name="subscribername" class="form-control" placeholder="Input Your Name" >
@@ -200,9 +204,9 @@
                     <label>Import Contact</label>
                       <input class="form-control" name="csv_file" type="file" />
                       <input type="hidden" name="list_id_import" value="{{ $id }}" />
-                    <span><i>Please .csv only</i></span>
+                    <span><i>Please .xlsx only</i></span>
 
-                    <div><a href="{{ asset('assets/csv/csv-example.csv') }}">Download Example CSV</a></div>
+                    <div><a href="{{ asset('assets/excel/xlsx-example.xlsx') }}">Download Example XLSX</a></div>
 
                     <div class="text-right">
                       <button type="submit" class="btn btn-custom mr-1">Import</button>
@@ -389,7 +393,7 @@
     open_ck_editor();
     //Choose();
     openImport();
-    csvImport();
+    excelImport();
     addContact();
     //column -- edit
     displayCustomer(); 
@@ -635,7 +639,7 @@
     });
   }
 
-  function csvImport()
+  function excelImport()
   {
     $("body").on('submit','#importform',function(e){
         e.preventDefault();
@@ -647,7 +651,7 @@
         });
         $.ajax({
             type : 'POST',
-            url : "{{ url('import_csv_list_subscriber') }}",
+            url : "{{ url('import_excel_list_subscriber') }}",
             data : data,
             contentType: false,
             processData: false,
@@ -719,15 +723,15 @@
               $('.div-loading').removeClass('background-load');
 
               if(result.success == true){
-                  alert(result.message);
+                $(".main").html('<div class="alert alert-success text-center">'+result.message+'</div>')
                   clearField();
                   $(".error").hide();
                   displayCustomer();
               } else {
                   $(".error").fadeIn('fast');
                   $(".name").text(result.name);
-                  $(".main").text(result.main);
-                  $(".main").text(result.list);
+                  $(".error_message").text(result.main);
+                  $(".error_message").text(result.list);
                   $(".email").text(result.email);
                   $(".phone_number").text(result.phone);
                   $(".code_country").text(result.code_country);

@@ -158,8 +158,9 @@ class CustomerController extends Controller
             } 
             else {
               $data['success'] = false;
-              $data['message'] = 'Error-000! Sorry there is something wrong with our system';
+              $data['message'] = 'Sorry, our system is busy';
             }
+
             return response()->json($data);
         }
     }
@@ -235,7 +236,7 @@ class CustomerController extends Controller
         }
         
         $data['success'] = true;
-        $data['message'] = 'Thank you for join us';
+        $data['message'] = 'Success, your new contact has been added';
         return response()->json($data);
     }
 

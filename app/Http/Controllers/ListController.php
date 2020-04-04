@@ -903,7 +903,7 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    public function importCSVListSubscribers(Request $request)
+    public function importExcelListSubscribers(Request $request)
     {
         $id_list = $request->list_id_import;
         $arr = array();
@@ -1126,7 +1126,7 @@ class ListController extends Controller
 
     // EXPORT SUBSCRIBER / CUSTOMER INTO CSV
 
-    public function exportListCSVSubscriber($list_id,$import)
+    public function exportListExcelSubscriber($list_id,$import)
     {
         $userid = Auth::id();
         $check = UserList::where('id',$list_id)->first();
@@ -1205,7 +1205,7 @@ class ListController extends Controller
               } 
               
           });
-        })->export('csv');
+        })->export('xlsx');
     }
 
     public function renderAdditional($addt)

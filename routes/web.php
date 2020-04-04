@@ -133,9 +133,9 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('list-delete-customer','ListController@deleteSubscriber');
   Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');
   Route::post('list-duplicate','ListController@duplicateList')->name('duplicatelist');
-  Route::post('import_csv_list_subscriber','ListController@importCSVListSubscribers')->middleware('checkimportcsv');
+  Route::post('import_excel_list_subscriber','ListController@importExcelListSubscribers')->middleware('checkimportcsv');
   Route::post('changelistname','ListController@changeListName');
-  Route::get('export_csv_list_subscriber/{id_list}/{import}','ListController@exportListCSVSubscriber');
+  Route::get('export_excel_list_subscriber/{id_list}/{import}','ListController@exportListExcelSubscriber');
 
   /* ADDITIONAL */
   Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');

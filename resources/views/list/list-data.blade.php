@@ -160,7 +160,7 @@
       var list_id = $(this).attr('id');
       $("#export-contact").modal();
       $("input[name='status_export'][value="+0+"]").prop('checked',true);
-      $("#btn-export").attr('href',"{{url('export_csv_list_subscriber')}}/"+list_id+'/'+0);
+      $("#btn-export").attr('href',"{{url('export_excel_list_subscriber')}}/"+list_id+'/'+0);
       $("#btn-export").attr('list_id',list_id);
     });
   }
@@ -170,7 +170,7 @@
     $("input[name='status_export']").change(function(){
       var val = $(this).val();
       var list_id = $("#btn-export").attr('list_id');
-      $("#btn-export").attr('href',"{{url('export_csv_list_subscriber')}}/"+list_id+'/'+val);
+      $("#btn-export").attr('href',"{{url('export_excel_list_subscriber')}}/"+list_id+'/'+val);
     });
   }
 
