@@ -1031,7 +1031,7 @@ class ListController extends Controller
 
         $rules = [
           'name'=> ['required','max:50'],
-          'phone'=> ['required','min:10','max:22','regex:/^\+[0-9]/i',new ImportValidation],
+          'phone'=> ['required','min:10','max:22',new ImportValidation],
           'email'=>['required','max:190','email']
         ];
 

@@ -30,8 +30,21 @@ class ImportValidation implements Rule
          return false;
       } 
       else {
-         return true;
+         return $this->checkPlus($value);
       }
+    }
+
+    public function checkPlus($value)
+    {
+        $check_plus = substr($value,0,1);
+        if($check_plus <> "+")
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     /**
