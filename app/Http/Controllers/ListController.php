@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ListSubscribersExport;
-use App\Imports\ListSubscribersImport;
+// use App\Exports\ListSubscribersExport;
+// use App\Imports\ListSubscribersImport;
+use App\Rules\ImportValidation;
 use App\UserList;
 use App\Customer;
 use App\Sender;
@@ -1029,9 +1030,9 @@ class ListController extends Controller
         );
 
         $rules = [
-          'name'=> 'required',
-          'phone'=> 'required',
-          'email'=>'required',
+          'name'=> ['required','max:50'],
+          'phone'=> ['required','min:10','max:22',new ImportValidation],
+          'email'=>['required','max:190','email']
         ];
 
         $validator = Validator::make($data,$rules);

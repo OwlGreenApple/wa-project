@@ -16,18 +16,109 @@
 
 <div class="container">
   <ul id="tabs" class="row">
-      <li class="col-lg-4"><a id="tab1">Contact</a></li>
+      <li class="col-lg-4"><a id="tab1">Form</a></li>
       <li class="col-lg-4"><a id="tab2">Add Contact</a></li>
-      <li class="col-lg-4"><a id="tab3">Form</a></li>
+      <li class="col-lg-4"><a id="tab3">Contact</a></li>
   </ul>
 
   <!-- TABS CONTAINER -->
   <div class="tabs-content">
     <!-- TABS 1 -->
     <div class="tabs-container" id="tab1C">
-      <div class="act-tel-tab" id="customer_list">
-          <!-- display customer list here ... --> 
-      </div>
+      <div class="act-tel-tab">
+
+        <div class="wrapper">
+          <div class="form-control col-lg-6 message">
+            <sb>Saved, click to copy link from</sb> <a class="icon-copy"></a>
+          </div>
+        </div>
+
+        <form class="form-contact" id="edit_list">
+          <div class="wrapper">
+            <div class="form-contact">
+              <div class="input-group form-group">
+                  <input type="button" id="open_ck_editor" class="form-control" value="Click to add messages" />
+                  <div class="error list_label col-lg-12 text-left"></div>
+              </div>
+
+              <div class="input-group form-group showeditor">
+                <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
+              </div>
+
+              <div class="input-group form-group">
+                  <input type="text" name="label_name" class="form-control" placeholder="Label Name" value="{{ $data['label_name'] }}"/>
+                  <div class="error label_name col-lg-12 text-left"></div>
+              </div>
+
+              <div class="input-group form-group">
+                  <input type="text" name="label_phone" class="form-control" placeholder="Label Phone" value="{{ $data['label_phone'] }}"/>
+                  <div class="error label_phone col-lg-12 text-left"></div>
+              </div>
+
+              <div class="input-group form-group">
+                  <input type="text" name="label_email" class="form-control" placeholder="Label Email" value="{{ $data['label_email'] }}"/>
+                  <div class="error label_email col-lg-12 text-left"></div>
+              </div>
+            </div><!-- end form contact -->
+          </div><!-- end wrapper -->
+          
+
+           <!-- outer wrapper -->
+          <div class="outer-wrapper">
+            <div class="form-row">
+              <div class="form-group col-md-3 py-2">
+                <h6>Custom Fields</h6>
+              </div>
+
+              <div class="form-group col-md-8">
+                <div class="relativity">
+                   <select id="type_fields" class="form-control custom-select">
+                      <option value="1">Fields</option>
+                      <option value="2">Dropdown</option>
+                   </select>
+                   <span class="icon-carret-down-circle"></span>
+                </div>
+              </div>
+              <div class="form-group col-md-1">
+                <button type="button" class="btn btn-form add-field"><span class="icon-add"></span></button>
+              </div>
+            </div>
+
+            <div id="additional" class="form-row">
+                <!-- additional -->
+            </div>
+
+          </div>
+          <!-- end outer wrapper -->
+
+          <!-- middle wrapper -->
+          <div class="wrapper">
+            <div class="form-group text-left">
+               <label>Pixel</label>
+               <textarea name="pixel" class="form-control"></textarea>
+            </div>
+            
+            <div class="text-right">
+              <button type="submit" class="btn btn-custom">Add Data</button>
+            </div>
+          </div>
+          <!-- end middle wrapper -->
+        </form>
+
+        <!-- last wrapper -->
+        <div class="wrapper">
+          <div class="form-group text-left">
+             <label class="col-md-12 row">FORM URL&nbsp;&nbsp;<a data-link="{{$url}}" class="icon-copy btn-copy"></a></label>
+             <input id="linkcopy" value="{{$url}}" type="text" class="form-control-lg" />
+          </div>
+          
+          <div class="form-group text-left">
+              <label>COPY / PASTE on your Site&nbsp;&nbsp;<a class="structure-form"><span class="icon-copy"></span></a></label>
+              <textarea class="form-control" id="structure-form" readonly="readonly"><iframe src="{{url($listname)}}" style="border:0px #ffffff none;" name="myiFrame" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe></textarea>
+          </div>
+        </div>
+        <!-- end last wrapper -->
+      </div><!-- end actel-tab -->  
     <!-- end tabs -->  
     </div>
 
@@ -85,106 +176,15 @@
 
     <!-- TABS 3 -->
     <div class="tabs-container" id="tab3C">
-      <div class="act-tel-tab">
-        <div class="wrapper">
-          <div class="form-control col-lg-6 message">
-            <sb>Saved, click to copy link from</sb> <a class="icon-copy"></a>
-          </div>
-        </div>
-
-        <form class="form-contact" id="edit_list">
-
-          <div class="wrapper">
-            <div class="form-contact">
-              <div class="input-group form-group">
-                  <input type="button" id="open_ck_editor" class="form-control" value="Click to add messages" />
-                  <div class="error list_label col-lg-12 text-left"></div>
-              </div>
-
-              <div class="input-group form-group showeditor">
-                <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
-              </div>
-
-              <div class="input-group form-group">
-                  <input type="text" name="label_name" class="form-control" placeholder="Label Name" value="{{ $data['label_name'] }}"/>
-                  <div class="error label_name col-lg-12 text-left"></div>
-              </div>
-
-              <div class="input-group form-group">
-                  <input type="text" name="label_phone" class="form-control" placeholder="Label Phone" value="{{ $data['label_phone'] }}"/>
-                  <div class="error label_phone col-lg-12 text-left"></div>
-              </div>
-
-              <div class="input-group form-group">
-                  <input type="text" name="label_email" class="form-control" placeholder="Label Email" value="{{ $data['label_email'] }}"/>
-                  <div class="error label_email col-lg-12 text-left"></div>
-              </div>
-          </div>
-          <!-- end wrapper -->
-
-           <!-- outer wrapper -->
-          <div class="outer-wrapper">
-            <div class="form-row">
-              <div class="form-group col-md-3 py-2">
-                <h6>Custom Fields</h6>
-              </div>
-
-              <div class="form-group col-md-8">
-                <div class="relativity">
-                   <select id="type_fields" class="form-control custom-select">
-                      <option value="1">Fields</option>
-                      <option value="2">Dropdown</option>
-                   </select>
-                   <span class="icon-carret-down-circle"></span>
-                </div>
-              </div>
-              <div class="form-group col-md-1">
-                <button type="button" class="btn btn-form add-field"><span class="icon-add"></span></button>
-              </div>
-            </div>
-
-            <div id="additional" class="form-row">
-                <!-- additional -->
-            </div>
-
-          </div>
-          <!-- end outer wrapper -->
-
-          <!-- middle wrapper -->
-          <div class="wrapper">
-            <div class="form-group text-left">
-               <label>Pixel</label>
-               <textarea name="pixel" class="form-control"></textarea>
-            </div>
-            
-            <div class="text-right">
-              <button type="submit" class="btn btn-custom">Add Data</button>
-            </div>
-
-        </form>
-          
-        </div>
-        <!-- end middle wrapper -->
-
-        <!-- last wrapper -->
-        <div class="wrapper">
-          <div class="form-group text-left">
-             <label class="col-md-12 row">FORM URL&nbsp;&nbsp;<a data-link="{{$url}}" class="icon-copy btn-copy"></a></label>
-             <input id="linkcopy" value="{{$url}}" type="text" class="form-control-lg" />
-          </div>
-          
-          <div class="form-group text-left">
-              <label>COPY / PASTE on your Site&nbsp;&nbsp;<a class="structure-form"><span class="icon-copy"></span></a></label>
-              <textarea class="form-control" id="structure-form" readonly="readonly"><iframe src="{{url($listname)}}" style="border:0px #ffffff none;" name="myiFrame" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe></textarea>
-          </div>
-        </div>
-        <!-- end last wrapper -->
-
+      <div class="act-tel-tab" id="customer_list">
+          <!-- display customer list here ... --> 
       </div>
-    <!-- end tabs -->    
+    <!-- end tabs -->  
     </div>
-
+  <!---------- end tab content ------------>    
   </div>
+
+<!------ end container ------->
 </div>
 
 <!-- Modal Import Contact -->
@@ -441,16 +441,15 @@
         }
       });
 
-      $("#tab-contact").click(function(){
+      $("body").on('click','#tab-contact',function(){
         $("#tab1").addClass('inactive');
         $("#tab2").removeClass('inactive');
 
-        displayCustomer();
         $('.tabs-container').hide();
         $('#tab2C').fadeIn('slow');
       }); 
 
-      $("#tab-form").click(function(){
+      $("body").on('click','#tab-form',function(){
          $("#tab1").addClass('inactive');
          $("#tab3").removeClass('inactive');
 
