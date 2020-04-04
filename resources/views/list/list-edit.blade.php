@@ -18,7 +18,7 @@
   <ul id="tabs" class="row">
       <li class="col-lg-4"><a id="tab1">Form</a></li>
       <li class="col-lg-4"><a id="tab2">Add Contact</a></li>
-      <li class="col-lg-4"><a id="tab3">Contact</a></li>
+      <li class="col-lg-4"><a id="tab3">Contacts</a></li>
   </ul>
 
   <!-- TABS CONTAINER -->
@@ -135,7 +135,6 @@
         </div>
 
         <form class="wrapper add-contact">
-            @csrf
             <div class="form-group">
               <label>Name:</label>
               <input type="text" name="subscribername" class="form-control" placeholder="Input Your Name" >
@@ -180,6 +179,7 @@
 
     <!-- TABS 3 -->
     <div class="tabs-container" id="tab3C">
+      <div class="wrapper del_message"></div>
       <div class="act-tel-tab" id="customer_list">
           <!-- display customer list here ... --> 
       </div>
@@ -210,7 +210,7 @@
 
                     <div class="text-right">
                       <button type="submit" class="btn btn-custom mr-1">Import</button>
-                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                      <button id="btn_close_import" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                     </div>
                   </form>
                 </div>
@@ -250,7 +250,6 @@
       
     </div>
   </div>
-
 
 <!-- Modal Dropdown -->
   <div class="modal fade child-modal" id="openDropdown" role="dialog">
@@ -658,16 +657,19 @@
             beforeSend: function()
             {
               $('#loader').show();
-              $('.div-loading').addClass('background-load');
+              $('.div-loading').show().addClass('background-load');
             },
             success : function(result){
+              $('.div-loading').hide().removeClass('background-load');
               $('#loader').hide();
-              $('.div-loading').removeClass('background-load');
               $('input[name="csv_file"]').val('');
     
               if(result.success == 1)
               {
+                  $("#btn_close_import").trigger("click");
                   displayCustomer();
+                  $(".main").html("<div class='alert alert-success'>"+result.message+"</div>");
+                  $("body .alert-success").delay(5000).fadeOut(2000);
               }
               else
               {   
@@ -677,12 +679,14 @@
                   (result.phone !== undefined)?errors+=result.phone+"\n":errphone='';
                   (result.email !== undefined)?errors+=result.email:erremail='';
                   alert(errors);
+
+                  if(result.message !== undefined)
+                  {
+                      $(".error_message").html("<div class='alert alert-danger'>"+result.message+"</div>");
+                  }
               }
 
-              if(result.message !== undefined)
-              {
-                  alert(result.message);
-              }
+              
             },
             error: function (xhr, ajaxOptions, thrownError) {
               $('#loader').hide();
@@ -1479,20 +1483,20 @@
             beforeSend: function()
             {
               $('#loader').show();
-              $('.div-loading').addClass('background-load');
+              $('.div-loading').show().addClass('background-load');
             },
             success : function(response)
             {
+              $('.div-loading').hide().removeClass('background-load');
               $('#loader').hide();
-              $('.div-loading').removeClass('background-load');
-              alert(response.message);
-
+              $(".del_message").html('<div class="alert alert-success text-center">'+response.message+'</div>');
               if(response.success == 1)
               {
-                  $('#loader').show();
-                  $('.div-loading').addClass('background-load');
+                  /*$('#loader').show();
+                  $('.div-loading').addClass('background-load');*/
                   displayCustomer(); 
               }
+              $("body .alert-success").delay(5000).fadeOut(2000);
             },
             error: function(xhr)
             {
