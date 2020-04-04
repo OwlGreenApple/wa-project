@@ -1025,7 +1025,7 @@ class ListController extends Controller
     {
         $data = array(
             'name'=>$name,
-            'phone'=>$phone,
+            'phone'=>strval($phone),
             'email'=>$email,
         );
 
