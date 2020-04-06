@@ -138,7 +138,7 @@ class ReminderController extends Controller
         {
            foreach($campaign as $row)
            {
-              $reminder = Reminder::where([['campaign_id', $row->id],['is_event',0],['status',1]])->first();
+              $reminder = Reminder::where([['campaign_id', $row->id],['is_event',0],['tmp_appt_id',0],['status',1]])->first();
 
               if(!is_null($reminder))
               {

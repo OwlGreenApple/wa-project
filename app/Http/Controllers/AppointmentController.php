@@ -53,10 +53,17 @@ class AppointmentController extends Controller
         {
             foreach($campaigns as $row) {
 
-              $contacts = Reminder::where([['reminders.campaign_id',$row->id],['reminders.user_id',$userid]])
+              /*$contacts = Reminder::where([['reminders.campaign_id',$row->id],['reminders.user_id',$userid]])
                 ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
                 ->select('customer_id')
-                ->distinct()->get()->count();
+                ->distinct()->get()->count();*/
+
+              $contacts = ReminderCustomers::where([['reminders.campaign_id',$row->id],['reminders.is_event',2],['reminders.user_id',$userid]])
+              ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+              ->join('customers','customers.id','=','reminder_customers.customer_id')
+              ->select('reminders.event_time')
+              ->distinct()
+              ->get()->count();
                 
               $data[] = array(
                 'campaign_id'=>$row->id,
@@ -238,7 +245,7 @@ class AppointmentController extends Controller
       catch(Exception $e)
       {
         $data['success'] = 0;
-        $data['message'] = 'Error, Sorry Your appointment fail to create, try again later';
+        $data['message'] = 'Sorry currently our server is too busy, please try again later';
       }
       return response()->json($data);
     }
@@ -481,12 +488,12 @@ class AppointmentController extends Controller
 
     public function displayCustomerPhone(Request $request)
     {
-        $phone = $request->phone;
+        $src = $request->value;
         $list_id = $request->list_id;
         $userid = Auth::id();
 
         $list = UserList::find($list_id);
-        $customer = Customer::where([['user_id',$userid],['list_id','=',$list_id],['telegram_number','=',$phone]])->get();
+        $customer = Customer::where([['user_id',$userid],['list_id','=',$list_id],['name','LIKE','%'.$src.'%']])->orWhere('telegram_number','LIKE','%'.$src.'%')->get();
 
         return view('appointment.customer_apt',['customer'=>$customer,'url'=>$list->name]);
     }

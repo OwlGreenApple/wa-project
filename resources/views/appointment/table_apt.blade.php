@@ -35,7 +35,7 @@
       </div>
 
       <div class="col-lg-3 pad-fix col-button">
-          <a class="btn btn-warning btn-sm text-white" href="{{ url('form-apt') }}/{{ $row['campaign_id'] }}" target="_blank"><span class="icon-eye"></span></a>
+          <a class="btn btn-custom btn-sm text-white mt-0" href="{{ url('form-apt') }}/{{ $row['campaign_id'] }}" target="_blank">Create appointment</a>
           <a href="{{url('edit-apt')}}/{{ $row['campaign_id'] }}" class="btn btn-edit btn-sm" target="_blank"><span class="icon-edit"></span></a>
           <a href="{{url('export_csv_appt')}}/{{ $row['campaign_id'] }}" class="btn btn-success btn-sm"><span class="icon-export"></span></a>
           <button type="button" id="{{ $row['campaign_id'] }}" class="btn btn-danger btn-sm appt-del"><span class="icon-delete"></span></button>

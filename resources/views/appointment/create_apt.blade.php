@@ -5,7 +5,7 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>Create For Appointment</h2>
+    <h2>SETUP Appointment</h2>
   </div>
 
   <div class="clearfix"></div>
@@ -32,7 +32,7 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Name Of Appointment :</label>
+        <label class="col-sm-3 col-form-label">Name of appointment :</label>
         <div class="col-sm-9">
           <input type="text" name="name_app" class="form-control" />
           <span class="error name_app"></span>
@@ -40,7 +40,7 @@
       </div>
 
       <div class="text-right">
-        <button class="btn btn-custom">Create Appointment</button>
+        <button class="btn btn-custom">SAVE</button>
       </div>
   </form>
 
@@ -72,12 +72,13 @@
           },
           success : function(result){
 
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+
             if(result.success == 0)
             {  
-                $('#loader').hide();
-                $('.div-loading').removeClass('background-load');
                 $(".error").show();
-                $(".error_db").html(result.message);
+                $("#error_db").html('<div class="alert alert-danger">'+result.message+'</div>');
                 $(".list_id").html(result.list_id);
                 $(".name_app").html(result.name_app);
             }
@@ -85,8 +86,11 @@
             {
                 $(".error").hide();
                 id = result.id;
-                alert(result.message);
-                location.href='{{ url("edit-apt") }}/'+id;
+                $("#error_db").html('<div class="alert alert-success">'+result.message+'</div>');
+                //alert(result.message);
+                setTimeout(function(){
+                  location.href='{{ url("edit-apt") }}/'+id;
+                },1000);
             }
           },
           error : function(xhr,attribute,throwable)

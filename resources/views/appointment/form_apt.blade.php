@@ -5,10 +5,10 @@
 <!-- TOP SECTION -->
 
 <div class="container act-tel-apt wrapper">
-      <h3 class="title">Form Appointment Reminder</h3>
+      <h3 class="title">CREATE APPOINTMENT</h3>
 
       <div class="col-md-12 relativ row">
-        <input id="display_phone" type="text" class="form-control custom-select-apt" placeholder="Fill by registered phone number eg : +628xxxx">
+        <input id="display_phone" type="text" class="form-control custom-select-apt" placeholder="Fill by registered phone number eg : +628xxxx or by name">
         <span class="icon-search"></span>
 
         <div id="display_data" class="search-result col-lg-12">
@@ -86,10 +86,19 @@
       $("#appt_form").hide();
       $("#display_phone").keyup(delay(function (e) {
         var val = $(this).val();
-        $(".search-result").show();
-        displayPhoneSearch(val);
+        $("#display_data").html('').hide();
+        
+        if(val.length !== 0)
+        {
+          $(".search-result").show();
+          displayPhoneSearch(val);
+        } 
+        else
+        {
+          return false;
+        } 
         //console.log('Time elapsed!', this.value);
-      }, 1500))
+      }, 800))
   }
 
   function displayPhoneSearch(val)
@@ -97,7 +106,7 @@
       $.ajax({
         type : 'GET',
         url : '{{ url("display-customer-phone") }}',
-        data : {phone : val, list_id : {!! $list_id !!} },
+        data : {value : val, list_id : {!! $list_id !!} },
         dataType : 'html',
         beforeSend : function(){
           $('#loader').show();
@@ -129,6 +138,7 @@
       $("input[name='phone_number']").val(phone);
       $("#submit").attr('data-id',customer_id);
       $("#appt_form").show();
+      $("#display_data").html('').hide();
     });
   }
 

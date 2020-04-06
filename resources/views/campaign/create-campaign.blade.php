@@ -30,10 +30,10 @@
 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio1" value="event" checked />
+              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio3" value="broadcast" checked/>
               <span class="checkmark"></span>
             </label>
-            <label class="form-check-label" for="inlineRadio1">Event</label>
+            <label class="form-check-label" for="inlineRadio3">Broadcast</label>
           </div>
 
           <div class="form-check form-check-inline">
@@ -46,11 +46,18 @@
 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio3" value="broadcast" />
+              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio1" value="event" />
               <span class="checkmark"></span>
             </label>
-            <label class="form-check-label" for="inlineRadio3">Broadcast</label>
+            <label class="form-check-label" for="inlineRadio1">Event</label>
           </div>
+
+          <div class="form-check-inline">
+            <label class="custom-radio">
+              <a class="fa fa-question-circle" aria-hidden="true"></a>
+            </label>
+          </div>
+          
           <!-- -->
         </div>
       </div>
@@ -84,7 +91,7 @@
         </div>
       </div>
 
-      <div class="box-schedule"></div>
+      <!-- <div class="box-schedule"></div> -->
 
       <div class="form-group row date-send">
         <label class="col-sm-3 col-form-label">Date Send :</label>
@@ -155,9 +162,11 @@
    $(function () {
         $('#datetimepicker').datetimepicker({
           format : 'YYYY-MM-DD HH:mm',
+          minDate: new Date()
         }); 
 
         $('#datetimepicker-date').datetimepicker({
+          minDate: new Date(), 
           format : 'YYYY-MM-DD',
         });
 
@@ -169,11 +178,12 @@
 
   $(document).ready(function(){
     displayOption();
+    openingPageType();
+    displayInfo();
     displayAddDaysBtn();
     MDTimepicker();
     neutralizeClock();
     saveCampaign();
-    broadcastSchedule();
   });
 
   function saveCampaign()
@@ -240,7 +250,7 @@
                 $("input[name='channel_name']").val('');
                 $("input[name='date_send']").val('');
                 $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
-                alert(result.message);
+                // alert(result.message);
                 location.href='{{ url("campaign") }}';
             }
           },
@@ -256,50 +266,118 @@
   }
 
   function displayOption(){
-    $("input[name='campaign_type']").change(function(){
+    $("input[name='campaign_type']").on('change',function(){
         var val = $(this).val();
-        var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
-        var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
-                echo "<option value=".$x.">$x days after event</option>";
-          }?></select>'+
-          '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
-          ;
+        displayFormCampaign(val);
+    });
+  }
 
-        if(val == 'event')
-        {
-          $("input[name=event_time]").prop('disabled',false);
-          $("input[name=day_reminder]").prop('disabled',false);
-          $(".event-time").show();
-          $(".reminder").show();
-          //$(".broadcast-type").hide();
-          $(".date-send").hide();
-        }
-        else if(val == 'auto'){
-          $("input[name=event_time]").prop('disabled',true);
-          $(".event-time").hide();
-          $("input[name=day_reminder]").prop('disabled',false);
-          $(".reminder").hide();
-          $(".inputh").html(hplus);
-          //$(".broadcast-type").hide();
-          $(".date-send").hide();
-        }
-        else {
-          $("input[name=event_time]").prop('disabled',true);
-          $("input[name=day_reminder]").prop('disabled',true);
-          $(".event-time").hide();
-          $(".reminder").hide();
-          $(".inputh").html(hday);
-          //$(".broadcast-type").show();
-          $(".date-send").show();
-        }
+  function openingPageType()
+  {
+    var radio_option = $("input[name='campaign_type'] checked").val();
+    console.log(radio_option);
+    displayFormCampaign(radio_option);
+  }
+
+  function displayFormCampaign(val)
+  {
+      var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
+      var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
+              echo "<option value=".$x.">$x days after event</option>";
+        }?></select>'+
+        '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+        ;
+
+      if(val == 'event')
+      {
+        $("input[name=event_time]").prop('disabled',false);
+        $("input[name=day_reminder]").prop('disabled',false);
+        $(".event-time").show();
+        $(".reminder").show();
+        //$(".broadcast-type").hide();
+        $(".date-send").hide();
+      }
+      else if(val == 'auto'){
+        $("input[name=event_time]").prop('disabled',true);
+        $(".event-time").hide();
+        $("input[name=day_reminder]").prop('disabled',false);
+        $(".reminder").hide();
+        $(".inputh").html(hplus);
+        //$(".broadcast-type").hide();
+        $(".date-send").hide();
+      }
+      else {
+        $("input[name=event_time]").prop('disabled',true);
+        $("input[name=day_reminder]").prop('disabled',true);
+        $(".event-time").hide();
+        $(".reminder").hide();
+        $(".date-send").show();
+        $(".inputh").html(hday);
+        //$(".broadcast-type").show();
+      }
+  }
+
+  function displayInfo()
+  {
+    $(".fa-question-circle").popover(
+      {
+        title : 'Info Campaign Type:',
+        html: true,
+        trigger: 'click hover',
+        content : 'Broadcast <br/> Auto Responder <br/> Event',
+      }
+    )
+  }
+
+  function displayAddDaysBtn()
+  {
+    $(".add-day").hide();
+    $("#schedule").change(function(){
+      var val = $(this).val();
+
+      var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
+
+      var hmin = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=-90;$x<=-1;$x++) {
+            echo "<option value=".$x.">$x days before event</option>";
+      }?></select>'+
+      '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+      ;
+
+      var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
+            echo "<option value=".$x.">$x days after event</option>";
+      }?></select>'+
+      '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+      ;
+
+      if(val == 0){
+        $(".inputh").html(hday);
+      } else if(val == 1) {
+         $(".inputh").html(hmin);
+      } else {
+         $(".inputh").html(hplus);
+      }
 
     });
   }
 
-  function broadcastSchedule()
+  function MDTimepicker(){
+    $("body").on('focus','.timepicker',function(){
+        $(this).mdtimepicker({
+          format: 'hh:mm',
+        });
+    });
+  }
+
+  /* prevent empty col if user click cancel on clock */
+  function neutralizeClock(){
+     $("body").on("click",".mdtp__button.cancel",function(){
+        $(".timepicker").val('00:00');
+    });
+  }
+
+  /*function broadcastSchedule()
   {
       $(".broadcast-type").hide();
-      $(".date-send").hide();
 
       $("#broadcast-schedule").change(function(){
         var val = $(this).val();
@@ -339,52 +417,6 @@
             $(".box-schedule").html(box);
         }
       });
-  }
-
-   function displayAddDaysBtn()
-     {
-        $(".add-day").hide();
-        $("#schedule").change(function(){
-          var val = $(this).val();
-
-          var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
-
-          var hmin = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=-90;$x<=-1;$x++) {
-                echo "<option value=".$x.">$x days before event</option>";
-          }?></select>'+
-          '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
-          ;
-
-          var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
-                echo "<option value=".$x.">$x days after event</option>";
-          }?></select>'+
-          '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
-          ;
-
-          if(val == 0){
-            $(".inputh").html(hday);
-          } else if(val == 1) {
-             $(".inputh").html(hmin);
-          } else {
-             $(".inputh").html(hplus);
-          }
-
-        });
-     }
-
-    function MDTimepicker(){
-      $("body").on('focus','.timepicker',function(){
-          $(this).mdtimepicker({
-            format: 'hh:mm',
-          });
-      });
-    }
-
-    /* prevent empty col if user click cancel on clock */
-    function neutralizeClock(){
-       $("body").on("click",".mdtp__button.cancel",function(){
-          $(".timepicker").val('00:00');
-      });
-    }
+  }*/
 </script>
 @endsection
