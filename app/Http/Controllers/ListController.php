@@ -90,6 +90,62 @@ class ListController extends Controller
       return view('list.list');
     }
 
+    public function save_auto_reply(Request $request)
+    {
+			$user = Auth::user();
+			
+			$list = UserList::find($request->idlist);
+			if (!is_null($list)) {
+				if ($list->user_id<>$user->id) {
+					//not authorize
+					return response()->json([
+						"status"=>"error",
+						"message"=>"not authorize",
+					]);
+				}
+			}
+			
+      // pengecekan error nya klo ga ada [START] [UNSUBS] [REPLY_CHAT]
+      if ($request->is_secure) {
+        if (strpos($request->autoreply, '[REPLY_CHAT]') == false) {
+					return response()->json([
+						"status"=>"error",
+						"message"=>"Error! String must be contain [REPLY_CHAT] ",
+					]);
+				}
+        if (strpos($request->autoreply, '[START]') == false) {
+					return response()->json([
+						"status"=>"error",
+						"message"=>"Error! String must be contain [START] ",
+					]);
+        }
+        if (strpos($request->autoreply, '[UNSUBS]') == false) {
+					return response()->json([
+						"status"=>"error",
+						"message"=>"Error! String must be contain [UNSUBS] ",
+					]);
+        }
+      }
+			
+			$reminder = Reminder::where('user_id',$user->id)
+										->where('list_id',$request->idlist)
+										->where('days',0)
+										->where('is_event',0)
+										->first();
+      //AUTO REPLY
+      if(!is_null($reminder)){
+        $reminder->message = $request->autoreply;
+        if ($request->is_secure) {
+          $reminder->status = 0;
+        }
+        $reminder->save();
+      }
+			return response()->json([
+				"status"=>"success",
+				"message"=>"data save",
+			]);
+		}
+		
     public function createList(Request $request)
     {
       $user = Auth::user();
@@ -121,22 +177,22 @@ class ListController extends Controller
           ;
       }
       
-      // pengecekan error nya klo ga ada [start] [unsubs] [reply_chat]
+      // pengecekan error nya klo ga ada [START] [UNSUBS] [REPLY_CHAT]
       if ($request->is_secure) {
-        if (strpos($request->autoreply, '[reply_chat]') == false) {
-          return redirect('list-form')->with('error_number','Error! String must be contain [reply_chat] ')
+        if (strpos($request->autoreply, '[REPLY_CHAT]') == false) {
+          return redirect('list-form')->with('error_number','Error! String must be contain [REPLY_CHAT] ')
             ->with('listname',$request->listname)
             ->with('autoreply',$request->autoreply)
             ;
         }
-        if (strpos($request->autoreply, '[Start]') == false) {
-          return redirect('list-form')->with('error_number','Error! String must be contain [Start] ')
+        if (strpos($request->autoreply, '[START]') == false) {
+          return redirect('list-form')->with('error_number','Error! String must be contain [START] ')
             ->with('listname',$request->listname)
             ->with('autoreply',$request->autoreply)
             ;
         }
-        if (strpos($request->autoreply, '[Unsubs]') == false) {
-          return redirect('list-form')->with('error_number','Error! String must be contain [Unsubs] ')
+        if (strpos($request->autoreply, '[UNSUBS]') == false) {
+          return redirect('list-form')->with('error_number','Error! String must be contain [UNSUBS] ')
             ->with('listname',$request->listname)
             ->with('autoreply',$request->autoreply)
             ;
@@ -559,7 +615,8 @@ class ListController extends Controller
         $additionaldropdown = null;
         $data['additionalerror'] = false;
 
-        $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
+        // $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
+        $lists = UserList::find($id)->update([
             'label_name'=>$label_name,
             'label_phone'=>$label_phone,
             'label_email'=>$label_email,
@@ -1501,7 +1558,7 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    #display field after update
+    //display field after update
     public function displayAjaxAdditional(Request $request){
         $id = $request->id;
         $additional = Additional::where('list_id',$id)->get();
@@ -1515,7 +1572,7 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    #display field after update
+    //display field after update
     public function editDropfields(Request $request){
         $parent_id = $request->id;
         $additional = Additional::where('id_parent',$parent_id)->get();

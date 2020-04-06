@@ -16,9 +16,10 @@
 
 <div class="container">
   <ul id="tabs" class="row">
-      <li class="col-lg-4"><a id="tab1">Form</a></li>
-      <li class="col-lg-4"><a id="tab2">Add Contact</a></li>
-      <li class="col-lg-4"><a id="tab3">Contacts</a></li>
+      <li class="col-lg-3"><a id="tab1">Form</a></li>
+      <li class="col-lg-3"><a id="tab2">Add Contact</a></li>
+      <li class="col-lg-3"><a id="tab3">Contacts</a></li>
+      <li class="col-lg-3"><a id="tab4">Auto Reply</a></li>
   </ul>
 
   <!-- TABS CONTAINER -->
@@ -184,6 +185,44 @@
           <!-- display customer list here ... --> 
       </div>
     <!-- end tabs -->  
+    </div>
+		
+    <!-- TABS 4 -->
+    <div class="tabs-container" id="tab4C">
+      <div class="act-tel-tab">
+
+        <div class="wrapper">
+          <div class="form-control col-lg-6 message">
+            <sb>Saved, click to copy link from</sb> <a class="icon-copy"></a>
+          </div>
+        </div>
+
+				<form>
+					<input type="hidden" name="idlist">
+          <div class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="is_secure" id="standardRadio" value="0" checked>
+            <label class="form-check-label" for="standardRadio">
+              Standard 
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="is_secure" id="secureRadio" value="1">
+            <label class="form-check-label" for="secureRadio">
+              Secure Auto Reply
+            </label>
+          </div>
+
+          <div class="form-group mt-3">
+            <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text">@if(session('autoreply')){{ session('autoreply') }}@endif</textarea>
+          </div>
+          <div class="text-right">
+            <button class="btn btn-custom" id="btn-save-autoreply">Save</button>
+          </div>
+				</form>
+
+        <!-- end last wrapper -->
+      </div><!-- end actel-tab -->  
+     <!-- end tabs -->  
     </div>
   <!---------- end tab content ------------>    
   </div>
@@ -417,8 +456,66 @@
     pagination();
     codeCountry();
     putCallCode();
+		autoReplyButton();
+		saveAutoReply()();
   });
 
+  function saveAutoReply()
+  {
+		$("body").on("click","#btn-save-autoreply",function(){
+
+             $.ajax({
+								headers: {
+										'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+								}
+								type : 'POST',
+                url : '{{url("save-auto-reply")}}',
+                data : data,
+                dataType : "json",
+                beforeSend: function()
+                {
+                  $('#loader').show();
+                  $('.div-loading').addClass('background-load');
+                },
+                success : function(result){
+                   $('#loader').hide();
+                   $('.div-loading').removeClass('background-load');
+
+
+                   if(result.error == undefined)
+                   {
+                      $(".list_label").html('');
+                      alert(result.message);
+                      //displayAjaxCols(result.listid);
+                      displayAdditional();
+                   }
+                   else if(result.additionalerror == true)
+                   {
+                      alert(result.message);
+                   }
+                   else
+                   {
+                      $(".label_name").html(result.label_name);
+                      $(".label_phone").html(result.label_phone);
+                      $(".label_email").html(result.label_email);
+                   }
+                }
+            });		
+		});
+	}
+	
+  function autoReplyButton()
+  {
+    $("body").on("click","#secureRadio",function(){
+      tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
+      
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [NAME], \n Terima Kasih sudah mendaftar \n Langkah selanjutnya adalah : \n - Reply Chat ini klik [REPLY_CHAT] \n - Untuk menerima pesan klik > [START] \n - Untuk Unsubs klik > [UNSUBS]');
+    });
+    $("body").on("click","#standardRadio",function(){
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempText);
+    });
+	}
+	
   function open_ck_editor()
   {
       $(".showeditor").hide();

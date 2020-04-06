@@ -631,6 +631,7 @@
           $('.message').show();
           $('.message').html(data.message);
           $("#button-connect").prop('disabled',false);
+          $("#phone_number").val("");
           // new system loadPhoneNumber();
         }
       });

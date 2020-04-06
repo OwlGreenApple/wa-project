@@ -153,6 +153,7 @@
     pagination();
     openExport();
     changeExport();
+    $('[data-toggle="tooltip"]').tooltip()
   });
 
   function openExport() {

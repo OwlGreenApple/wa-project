@@ -137,6 +137,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('import_excel_list_subscriber','ListController@importExcelListSubscribers')->middleware('checkimportcsv');
   Route::post('changelistname','ListController@changeListName');
   Route::get('export_excel_list_subscriber/{id_list}/{import}','ListController@exportListExcelSubscriber');
+  Route::post('save-auto-reply','ListController@save_auto_reply');
 
   /* ADDITIONAL */
   Route::post('insertoptions','ListController@insertOptions')->name('insertoptions');

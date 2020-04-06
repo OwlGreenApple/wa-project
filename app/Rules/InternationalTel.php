@@ -41,6 +41,7 @@ class InternationalTel implements Rule
      */
     public function message()
     {
-        return 'Phone numbers must be NOT lead with + , 0 and must be number';
+        return "Phone numbers can't be started with + or 0 ";
     }
 }
+  

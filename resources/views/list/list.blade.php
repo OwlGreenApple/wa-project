@@ -5,7 +5,7 @@
   <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2>DASHBOARD</h2>
+    <h2>List</h2>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -67,7 +67,7 @@
     $("body").on("click","#secureRadio",function(){
       tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
       
-      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [Name], \n Terima Kasih sudah mendaftar \n Langkah selanjutnya adalah : \n - Reply Chat ini klik [reply_chat] \n - Untuk menerima pesan klik > [Start] \n - Untuk Unsubs klik > [Unsubs]');
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [NAME], \n Terima Kasih sudah mendaftar \n Langkah selanjutnya adalah : \n - Reply Chat ini klik [REPLY_CHAT] \n - Untuk menerima pesan klik > [START] \n - Untuk Unsubs klik > [UNSUBS]');
     });
     $("body").on("click","#standardRadio",function(){
       $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempText);

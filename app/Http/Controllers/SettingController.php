@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+ 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -336,14 +336,14 @@ class SettingController extends Controller
       {
         $phoneNumber->delete();
         $arr['status'] = 'success';
-        $arr['message'] = "Your Phone number has deleted!-";
+        $arr['message'] = "The phone number has been deleted";
         return $arr;
       }
 
       try{
         $phoneNumber->delete();
         $arr['status'] = 'success';
-        $arr['message'] = "Your Phone number has deleted";
+        $arr['message'] = "The phone number has been deleted";
       }catch(Exception $e){
         $arr['status'] = 'error';
         $arr['message'] = "Error! Sorry unable to delete your phone number";
