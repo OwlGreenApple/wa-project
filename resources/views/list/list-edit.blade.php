@@ -6,10 +6,8 @@
 <div class="container act-tel-list-data">
 
   <div class="left">
-    <h2>{{$label}}&nbsp;</h2>
-    <input type="text" name="list_label" class="form-control" placeholder="Input List name" value="{{$label}}"/>
-    <div class="error list_label col-lg-12 text-left"></div>
-    <div class="text-left"><a id="list_name" class="btn btn-activ btn-sm mt-2">Change list name</a></div>
+     <h2>List Name : <span class="listname">{{$label}}</span></h2>
+     <span><a id="edit_list_name" class="btn btn-activ icon-edit"></a></span>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -20,6 +18,7 @@
       <li class="col-lg-3"><a id="tab2">Add Contact</a></li>
       <li class="col-lg-3"><a id="tab3">Contacts</a></li>
       <li class="col-lg-3"><a id="tab4">Auto Reply</a></li>
+
   </ul>
 
   <!-- TABS CONTAINER -->
@@ -32,6 +31,8 @@
           <div class="form-control col-lg-6 message">
             <sb>Saved, click to copy link from</sb> <a class="icon-copy"></a>
           </div>
+
+          <div class="alerts"><!-- --></div>
         </div>
 
         <form class="form-contact" id="edit_list">
@@ -39,7 +40,6 @@
             <div class="form-contact">
               <div class="input-group form-group">
                   <input type="button" id="open_ck_editor" class="form-control" value="Click to add messages" />
-                  <div class="error list_label col-lg-12 text-left"></div>
               </div>
 
               <div class="input-group form-group showeditor">
@@ -127,7 +127,7 @@
     <div class="tabs-container" id="tab2C">
       <div class="act-tel-tab">
         <div class="form-control wrapper message mimport">
-          If you want add contact more than 1 please click : "<a class="open_import"><b>import contact</b></a>" <!--or "<b>take from group</b>" if you want -->
+          If you want add contact more than 1 please click : "<a class="open_import"><b>import contacts</b></a>" <!--or "<b>take from group</b>" if you want -->
         </div>
 
         <div class="wrapper">
@@ -240,12 +240,12 @@
             <div class="form-group">
                  <div class="mb-2">
                   <form id="importform">
-                    <label>Import Contact</label>
+                    <label>Import Contacts</label>
                       <input class="form-control" name="csv_file" type="file" />
                       <input type="hidden" name="list_id_import" value="{{ $id }}" />
-                    <span><i>Please .xlsx only</i></span>
+                    <span><i>Upload .xlsx file only</i></span>
 
-                    <div><a href="{{ asset('assets/excel/xlsx-example.xlsx') }}">Download Example XLSX</a></div>
+                    <div><a href="{{ asset('assets/excel/xlsx-example.xlsx') }}">Download Sample XLSX File Here</a></div>
 
                     <div class="text-right">
                       <button type="submit" class="btn btn-custom mr-1">Import</button>
@@ -408,6 +408,32 @@
   </div>
 </div>
 
+<!-- Modal Edit List Name -->
+<div class="modal fade" id="display_edit_list_name" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modaltitle">
+          Edit List Name
+        </h5>
+      </div>
+      <div class="modal-body">
+         <input type="text" name="list_label" class="form-control" placeholder="Input List name" value="{{$label}}"/>
+          <div class="error list_label col-lg-12 text-left"></div>
+      </div>
+      <div class="modal-footer" id="foot">
+        <button id="list_name" class="btn btn-activ">Change list name</button>
+        <button class="btn btn-danger" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+      
+  </div>
+</div>
+
 <script type="text/javascript">
 
   /* CKEditor */
@@ -428,6 +454,7 @@
 
   $(document).ready(function() {    
     tabs();
+    display_edit_list_name();
     open_ck_editor();
     //Choose();
     openImport();
@@ -523,6 +550,13 @@
         $(".showeditor").slideToggle(1000);
       });
   }
+
+  function display_edit_list_name()
+  {
+    $("#edit_list_name").click(function(){
+      $("#display_edit_list_name").modal();
+    });
+  } 
 
   // Jquery Tabs
   function tabs() {    
@@ -965,7 +999,6 @@
              // all data
              var data = {
                 id : {!! $id !!},
-                //list_label : $("input[name='list_label']").val(),
                 label_name : $("input[name='label_name']").val(),
                 label_phone : $("input[name='label_phone']").val(),
                 label_email : $("input[name='label_email']").val(),
@@ -998,13 +1031,12 @@
                    if(result.error == undefined)
                    {
                       $(".list_label").html('');
-                      alert(result.message);
-                      //displayAjaxCols(result.listid);
+                      $(".alerts").html('<div class="alert alert-custom">'+result.message+'</div>');
                       displayAdditional();
                    }
                    else if(result.additionalerror == true)
                    {
-                      alert(result.message);
+                      $(".alerts").html('<div class="alert alert-danger">'+result.message+'</div>');
                    }
                    else
                    {
@@ -1523,11 +1555,11 @@
           success : function(result){
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
-            alert(result.response);
-
+            //alert(result.response);
             if(result.status == 'success')
             {
-              $(".act-tel-list-data h2").html(list_label);
+              $(".act-tel-list-data h2 .listname").html(list_label);
+              $("#display_edit_list_name").modal('hide');
             }
           },
           error : function(xhr){

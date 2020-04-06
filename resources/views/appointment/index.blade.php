@@ -5,11 +5,11 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h2 class="campaign">List Appointment Reminder</h2>
+    <h2 class="campaign">Appointments List</h2>
   </div>
 
   <div class="act-tel-dashboard-right">
-    <a href="{{url('create-apt')}}" class="btn btn-custom">Create Appointment</a>
+    <h5><a class="act-tel-apt-create" href="{{url('create-apt')}}">SETUP APPOINTMENT TEMPLATE</a></h5>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -18,7 +18,7 @@
   <div class="act-tel-tab">
     <div class="row">
       <div class="input-group col-lg-4">
-          <input type="text" class="form-control-lg col-lg-10 search-box" placeholder="Find a list by name" >
+          <input type="text" class="form-control-lg col-lg-10 search-box" placeholder="Find appointment" >
           <span class="input-group-append">
             <div class="btn search-icon">
                 <span class="icon-search"></span>

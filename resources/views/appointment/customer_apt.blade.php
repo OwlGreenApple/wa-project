@@ -2,7 +2,7 @@
     <ul>
        @foreach($customer as $row)
       	<li>
-          <a id="{{ $row->id }}" cname="{{ $row->name }}" phone="{{ $row->telegram_number }}" class="adding-number">{{ $row->telegram_number }}</a>
+          <a id="{{ $row->id }}" cname="{{ $row->name }}" phone="{{ $row->telegram_number }}" class="adding-number">{{ $row->name }} -- {{ $row->telegram_number }}</a>
         </li>
        @endforeach
     </ul>

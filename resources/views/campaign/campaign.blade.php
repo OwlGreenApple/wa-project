@@ -644,7 +644,7 @@
           },
           success : function(result)
           {
-            alert(result.message);
+            // alert(result.message);
             if(option_position == 'all')
             {
               displayResult();
@@ -692,7 +692,7 @@
           },
           success : function(result)
           {
-            alert(result.message);
+            // alert(result.message);
             if(option_position == 'all')
             {
               displayResult();

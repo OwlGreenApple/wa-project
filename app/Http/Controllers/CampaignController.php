@@ -19,6 +19,7 @@ use App\Rules\CheckValidListID;
 use App\Rules\CheckEventEligibleDate;
 use App\Rules\CheckBroadcastDate;
 use App\Rules\CheckExistIdOnDB;
+use App\Rules\EligibleTime;
 use DB;
 use Carbon\Carbon;
 
@@ -59,7 +60,7 @@ class CampaignController extends Controller
             'campaign_name'=>['required','max:50'],
             'list_id'=>['required',new CheckValidListID],
             'event_time'=>['required',new CheckDateEvent,new CheckEventEligibleDate($request->day)],
-            'hour'=>['required','date_format:H:i'],
+            'hour'=>['required','date_format:H:i',new EligibleTime($request->event_time)],
             'message'=>['required','max:4095']
         );
 
@@ -96,7 +97,6 @@ class CampaignController extends Controller
       
       if($campaign == 'auto')
       {   
-
         /* Validator */
         $rules = array(
             'campaign_name'=>['required','max:50'],
@@ -138,7 +138,7 @@ class CampaignController extends Controller
           'campaign_name'=>['required','max:50'],
           'list_id'=>['required', new CheckValidListID],
           'date_send'=>['required',new CheckBroadcastDate],
-          'hour'=>['required','date_format:H:i'],
+          'hour'=>['required','date_format:H:i',new EligibleTime($request->date_send)],
           'message'=>['required','max:4095'],
         );
 
@@ -214,7 +214,7 @@ class CampaignController extends Controller
 
         if($search == null)
         {
-          $campaign = Campaign::where('campaigns.user_id',$userid)
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
                       ->leftJoin('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
@@ -222,7 +222,7 @@ class CampaignController extends Controller
         }
         else
         {
-          $campaign = Campaign::where([['name','like','%'.$search.'%'],['userid',$userid]]) 
+          $campaign = Campaign::where([['name','like','%'.$search.'%'],['userid',$userid],['campaigns.type','<',3]]) 
                       ->leftJoin('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
@@ -272,11 +272,11 @@ class CampaignController extends Controller
                 {
                     if($row->type == 0)
                     {
-                        $reminder = Reminder::where([['campaign_id',$row->id],['is_event',1]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
+                        $reminder = Reminder::where([['campaign_id',$row->id],['is_event',1],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
                     }
                     else {
-                        $reminder = Reminder::where([['campaign_id',$row->id],['is_event',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
-                    }
+                        $reminder = Reminder::where([['campaign_id',$row->id],['is_event',0],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
+                    } 
 
                     if(!is_null($reminder))
                     {
