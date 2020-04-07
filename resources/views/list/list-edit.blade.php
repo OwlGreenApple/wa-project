@@ -483,50 +483,50 @@
     codeCountry();
     putCallCode();
 		autoReplyButton();
-		saveAutoReply()();
+		saveAutoReply();
   });
 
   function saveAutoReply()
   {
 		$("body").on("click","#btn-save-autoreply",function(){
 
-             $.ajax({
-								headers: {
-										'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-								}
-								type : 'POST',
-                url : '{{url("save-auto-reply")}}',
-                data : data,
-                dataType : "json",
-                beforeSend: function()
-                {
-                  $('#loader').show();
-                  $('.div-loading').addClass('background-load');
-                },
-                success : function(result){
-                   $('#loader').hide();
-                   $('.div-loading').removeClass('background-load');
+       $.ajax({
+					headers: {
+							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+					},
+					type : 'POST',
+          url : '{{url("save-auto-reply")}}',
+          data : data,
+          dataType : "json",
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result){
+             $('#loader').hide();
+             $('.div-loading').removeClass('background-load');
 
 
-                   if(result.error == undefined)
-                   {
-                      $(".list_label").html('');
-                      alert(result.message);
-                      //displayAjaxCols(result.listid);
-                      displayAdditional();
-                   }
-                   else if(result.additionalerror == true)
-                   {
-                      alert(result.message);
-                   }
-                   else
-                   {
-                      $(".label_name").html(result.label_name);
-                      $(".label_phone").html(result.label_phone);
-                      $(".label_email").html(result.label_email);
-                   }
-                }
-            });		
+             if(result.error == undefined)
+             {
+                $(".list_label").html('');
+                $(".main").html("<div class='alert alert-success'>"+result.message+"</div>");
+                displayAdditional();
+             }
+             else if(result.additionalerror == true)
+             {
+                $(".main").html("<div class='alert alert-danger'>"+result.message+"</div>");
+             }
+             else
+             {
+                $(".label_name").html(result.label_name);
+                $(".label_phone").html(result.label_phone);
+                $(".label_email").html(result.label_email);
+             }
+            $("body .alert").delay(5000).fadeOut(2000); 
+          }
+      });		
 		});
 	}
 	
