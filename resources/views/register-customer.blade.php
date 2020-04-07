@@ -94,8 +94,8 @@
 
                     @if(count($additional) > 0)
                       @foreach($additional as $is_optional=>$row)
-                        <div class="form-group">
-                            @foreach($row as $name=>$val)
+                          @foreach($row as $name=>$val)
+                          <div class="form-group">
                               @if($is_optional > 0)
                                 <label>{{$name}}*</label>
                               @else
@@ -104,18 +104,19 @@
                            
                             @foreach($val as $key=>$col)
                                 @if($key == 0)
-                                     <input type="text" class="form-control" name="data[{{$name}}]" />
+                                   <input type="text" class="form-control" name="data[{{$name}}]" />
                                 @else
-                                    <select name="data[{{$name}}]" class="form-control">
-                                        @foreach($col as $opt)
-                                            <option value="{{$opt}}">{{$opt}}</option>
-                                        @endforeach
-                                    </select>
+                                  <select class="form-control" name="data[{{$name}}]">
+                                      @foreach($col as $opt)
+                                          <option value="{{$opt}}">{{$opt}}</option>
+                                      @endforeach
+                                  </select>
                                 @endif
                             @endforeach
-                            <span class="error {{$name}}"></span>
-                       </div>
+                             <span class="error {{$name}}"></span>
+                            </div>
                         @endforeach
+                        <!-- -->
                       @endforeach
                     @endif
 

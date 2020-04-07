@@ -125,6 +125,8 @@ document = window.document || {};
             document.selection.createRange().pasteHTML(html);
         }
     }
+
+    var url = window.location.hostname;
     var getDefaultOptions = function () {
         return $.fn.emojioneArea && $.fn.emojioneArea.defaults ? $.fn.emojioneArea.defaults : {
             attributes: {
@@ -134,7 +136,7 @@ document = window.document || {};
                 autocorrect       : "off",
                 autocapitalize    : "off",
             },
-            mainPathFolder    : 'https://localhost/activrespons/assets',
+            mainPathFolder    : "https://localhost/activrespons/assets",
             placeholder       : null,
             emojiPlaceholder  : ":smiley:",
             container         : null,
