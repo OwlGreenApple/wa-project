@@ -69,6 +69,10 @@
     <link href="{{ asset('/assets/fancybox/jquery.fancybox.min.css') }}" rel="stylesheet" />
     <script type="text/javascript" src="{{ asset('/assets/fancybox/jquery.fancybox.min.js') }}"></script> 
 
+    <!-- Intl Dialing Code -->
+    <link href="{{ asset('/assets/intl-tel-input/css/intlTelInput.min.css') }}" rel="stylesheet" />
+    <script type="text/javascript" src="{{ asset('/assets/intl-tel-input/js/intlTelInput.js') }}"></script> 
+
     <!-- Main Styles -->
     <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/dashboard.css') }}" rel="stylesheet" />

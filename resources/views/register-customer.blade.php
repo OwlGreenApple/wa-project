@@ -22,6 +22,10 @@
     <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/subscribe.css') }}" rel="stylesheet" />
 
+     <!-- Intl Dialing Code -->
+    <link href="{{ asset('/assets/intl-tel-input/css/intlTelInput.min.css') }}" rel="stylesheet" />
+    <script type="text/javascript" src="{{ asset('/assets/intl-tel-input/js/intlTelInput.js') }}"></script> 
+
     <!-- Icomoon -->
     <link href="{{ asset('/assets/icomoon/icomoon.css') }}" rel="stylesheet" />
 
@@ -71,6 +75,14 @@
                       <div class="form-group">
                           <label>{{ $label_phone }}*</label>
                           <div class="col-sm-12 row">
+                            <input class="form-control" id="phone" name="phone_number" type="tel">
+                            <span class="error phone"></span>
+                          </div>
+                      </div>
+
+                      <!-- <div class="form-group">
+                          <label>{{ $label_phone }}*</label>
+                          <div class="col-sm-12 row">
                             <div class="col-lg-3 row relativity">
                               <input name="code_country" class="form-control custom-select-campaign" value="+62" autocomplete="off" />
                               <span class="icon-carret-down-circle"></span>
@@ -81,9 +93,9 @@
                               <input type="text" id="phone_number" name="phone_number" class="form-control" />
                               <span class="error phone"></span>
                             </div>
-                            <div class="col-lg-12 pad-fix"><ul id="display_countries"><!-- Display country here... --></ul></div>
+                            <div class="col-lg-12 pad-fix"><ul id="display_countries"><!-- Display country here... </ul></div>
                           </div>
-                      </div>
+                      </div> -->
                     </div>
 
                     <div class="form-group">
@@ -162,6 +174,7 @@
   </main>
  </div>
 
+<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
   $(document).ready(function() {
       //choose();
@@ -172,9 +185,15 @@
         });
       });
       saveSubscriber();
-      codeCountry()
+      //codeCountry()
       putCallCode();
+      fixWidthPhoneInput();
   });
+
+  function fixWidthPhoneInput()
+  {
+    $(".iti").addClass('w-100');
+  }
 
     // Display Country
 
@@ -238,8 +257,10 @@
   function saveSubscriber(){
       $("#addcustomer").submit(function(e){
           e.preventDefault();
-          var data = $(this).serialize();
-          //$("#submit").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
+          var code_country = $(".iti__selected-flag").attr('data-code');
+          var data = $(this).serializeArray();
+          data.push({name:'code_country', value:code_country});
+
           $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

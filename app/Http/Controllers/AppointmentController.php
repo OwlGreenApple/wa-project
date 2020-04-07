@@ -79,8 +79,34 @@ class AppointmentController extends Controller
         return view('appointment.table_apt',['data'=>$data]);
     }
 
-    public function listAppointment($campaign_id)
+    public function listAppointment($campaign_id,$active)
     {
+        /*
+          1 = Active
+          0 = inactive
+        */
+
+        ($active == 0 || $active == 1)?$invalid = false : $invalid = true;
+
+        if($invalid == true)
+        {
+           return redirect('create-apt');
+        }
+
+        if($invalid == false)
+        {
+          if($active == 1)
+          {
+             $active = true;
+             $page = url("list-table-apt");
+          }
+          else
+          {
+             $active = false;
+             $page = url("list-table-apt-inactiv");
+          }
+        }
+
         $userid = Auth::id();
         if(empty($campaign_id) || $campaign_id==null)
         {
@@ -94,7 +120,7 @@ class AppointmentController extends Controller
             return redirect('create-apt');
         }
 
-        return view('appointment.list_apt',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name]);
+        return view('appointment.list_apt',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'page'=>$page]);
     }
 
     public function listTableAppointments(Request $request)
@@ -105,7 +131,7 @@ class AppointmentController extends Controller
 
         if($search == null)
         {
-            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid]])
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['reminders.status',1]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
             ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
@@ -114,7 +140,7 @@ class AppointmentController extends Controller
         }
         else
         {
-            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['customers.name','LIKE','%'.$search.'%']])
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['customers.name','LIKE','%'.$search.'%'],['reminders.status',1]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
             ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
@@ -122,7 +148,35 @@ class AppointmentController extends Controller
             ->get();
         }
        
-        return view('appointment.list_table_apt',['campaigns'=>$campaigns]);
+        return view('appointment.list_table_apt',['campaigns'=>$campaigns,'active'=>true]);
+    }
+
+    public function listTableAppointmentInActive(Request $request)
+    {
+        $userid = Auth::id();
+        $campaign_id = $request->campaign_id;
+        $search = $request->search;
+
+        if($search == null)
+        {
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['reminders.status',0]])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+            ->distinct()
+            ->get();
+        }
+        else
+        {
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['customers.name','LIKE','%'.$search.'%'],['reminders.status',0]])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+            ->distinct()
+            ->get();
+        }
+       
+        return view('appointment.list_table_apt',['campaigns'=>$campaigns,'active'=>false]);
     }
 
     public function listAppointmentEdit(Request $request)

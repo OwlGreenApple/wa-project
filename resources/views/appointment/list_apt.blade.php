@@ -4,8 +4,9 @@
 
   <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
-  <div class="act-tel-dashboard-left">
-    <h2>LIST Appointment User : {{ $campaign_name }}</h2>
+  <div class="act-tel-dashboard-left act-tel-apt-create">
+    <h2>List Users</h2>
+    <h3>Appointment Name : {{ $campaign_name }}</h3>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -22,6 +23,14 @@
 </div>
 
 <div class="container act-tel-apt">
+    <div class="row col-lg-5">
+
+      <div class="col-lg-6 pad-fix"><a href="{{ url('list-apt') }}/{!! $campaign_id !!}/1" @if($active == true)class="act-tel-apt-create" @endif>Active appointments</a></div>
+
+      <div class="col-lg-6 pad-fix"><a href="{{ url('list-apt') }}/{!! $campaign_id !!}/0" @if($active == false)class="act-tel-apt-create" @endif>Inactive appointments</a></div>
+
+    </div>
+
     <table id="list_appointment" class="table table-bordered mt-4">
       <thead class="bg-dashboard">
         <tr>
@@ -29,7 +38,7 @@
           <th width="20%" class="text-center">Date Appointment</th>
           <th width="30%" class="text-center">Name Contact</th>
           <th width="30%" class="text-center">WA Contact</th>
-          <th width="10%" colspan="2" class="text-center">Action</th>
+          <th width="10%" colspan="2" class="text-center">@if($active == true) Action @else Status @endif</th>
         </tr>
       </thead>
 
@@ -110,7 +119,7 @@
   {
     $.ajax({
       type : 'GET',
-      url : '{{ url("list-table-apt") }}',
+      url : '{{ $page }}',
       data : {campaign_id : {!! $campaign_id !!}, search : query },
       dataType : 'html',
       beforeSend : function(){
