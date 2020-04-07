@@ -55,7 +55,7 @@
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Type Campaign :</label>
         <div class="col-sm-9 py-2">
-          <strong>Auto Responder</strong>
+          <strong>Auto Schedule</strong>
         </div>
       </div>
 
@@ -98,7 +98,16 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Message :</label>
+        <label class="col-sm-3 col-form-label">Message :
+					<span class="tooltipstered" title="<div class='panel-heading'>Message</div><div class='panel-content'>
+						You can use this as 'Personalization field' <br>
+						[NAME] <br>
+						[PHONE] <br>
+						[WA] <br>
+						</div>">
+						<i class="fa fa-question-circle "></i>
+					</span>
+				</label>
         <div class="col-sm-6">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
           <span class="error message"></span>

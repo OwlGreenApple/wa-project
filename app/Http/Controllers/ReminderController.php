@@ -78,7 +78,7 @@ class ReminderController extends Controller
                 } 
             }
         } else {
-            return 'Your reminder has been set!';
+            return 'Your Auto schedule has been set!';
         }
 
         if(count($datacustomer) > 0)
@@ -106,12 +106,12 @@ class ReminderController extends Controller
         }
         else
         { 
-            return 'Your reminder has been set!';
+            return 'Your Auto schedule has been set!';
         }
 
         // If successful insert data into reminder customer 
         if($remindercustomer->save()){
-            return 'Your reminder has been set!!';
+            return 'Your Auto schedule has been set!!';
         } else {
             return 'Error!! failed to set reminder for customer';
         }

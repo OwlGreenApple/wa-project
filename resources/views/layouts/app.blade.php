@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Activwa') }}</title>
+    <title>{{ config('app.name', 'Activrespon') }}</title>
 
    <!-- Scripts -->
     <script src="{{ asset('/assets/js/jquery-3.2.1.min.js') }}"></script>
@@ -36,7 +36,7 @@
     <!-- Emoji -->
     <link href="{{ asset('/assets/emoji/css/emojionearea.min.css') }}" rel="stylesheet"> 
     <script type="text/javascript" src="{{ asset('/assets/emoji/js/prettify.js') }}"></script>
-    @if (env('APP_ENV') == 'local')
+    @if (env('APP_ENV')=='local')
     <script type="text/javascript" src="{{ asset('/assets/emoji/js/emojionearea.js') }}"></script>
     @else
     <script type="text/javascript" src="{{ asset('/assets/emoji/js/emojionearea-production.js') }}"></script>
@@ -85,6 +85,10 @@
     <link href="{{ asset('/assets/css/jquery-tabs.css') }}" rel="stylesheet" />
     <!-- Jquery Custom Select -->
     <link href="{{ asset('/assets/css/custom-select.css') }}" rel="stylesheet" />
+
+		<!-- Tooltips -->
+		<script type="text/javascript" src="{{asset('/assets/tooltipster/dist/js/tooltipster.bundle.min.js')}}"></script>
+		<link rel="stylesheet" type="text/css" href="{{asset('/assets/tooltipster/dist/css/tooltipster.bundle.min.css')}}" />
 
 </head>
 <body>
@@ -201,6 +205,12 @@
         $(window).on('load', function() { 
           $("#div-loading").hide();
         });   
+			$(document).ready(function() {
+				$('.tooltipstered').tooltipster({
+					contentAsHTML: true,
+					trigger: 'ontouchstart' in window || navigator.maxTouchPoints ? 'click' : 'hover',
+				});
+			});
     </script>
 
 </body>

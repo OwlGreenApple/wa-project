@@ -25,7 +25,14 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Campaign :</label>
+        <label class="col-sm-3 col-form-label">Campaign :
+                    <span class="tooltipstered" title="<div class='panel-heading'>Campaign type</div><div class='panel-content'>
+										Broadcast <br>
+										Auto Responder <br>
+										Event
+                    </div>">
+                      <i class="fa fa-question-circle "></i>
+                    </span></label>
         <div class="col-sm-9">
 
           <div class="form-check form-check-inline">
@@ -142,7 +149,16 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Message :</label>
+        <label class="col-sm-3 col-form-label">Message :
+					<span class="tooltipstered" title="<div class='panel-heading'>Message</div><div class='panel-content'>
+						You can use this as 'Personalization field' <br>
+						[NAME] <br>
+						[PHONE] <br>
+						[WA] <br>
+						</div>">
+						<i class="fa fa-question-circle "></i>
+					</span>
+				</label>
         <div class="col-sm-6">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
           <span class="error msg"></span>
@@ -179,7 +195,6 @@
   $(document).ready(function(){
     displayOption();
     openingPageType();
-    displayInfo();
     displayAddDaysBtn();
     MDTimepicker();
     neutralizeClock();
@@ -282,22 +297,31 @@
   function displayFormCampaign(val)
   {
       var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
-      var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
+
+
+      if(val == 'event')
+      {
+				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
               echo "<option value=".$x.">$x days after event</option>";
         }?></select>'+
         '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
         ;
 
-      if(val == 'event')
-      {
         $("input[name=event_time]").prop('disabled',false);
         $("input[name=day_reminder]").prop('disabled',false);
         $(".event-time").show();
         $(".reminder").show();
+        $(".inputh").html(hplus);
         //$(".broadcast-type").hide();
         $(".date-send").hide();
       }
       else if(val == 'auto'){
+				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
+              echo "<option value=".$x.">$x days after subscribed</option>";
+        }?></select>'+
+        '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+        ;
+
         $("input[name=event_time]").prop('disabled',true);
         $(".event-time").hide();
         $("input[name=day_reminder]").prop('disabled',false);
@@ -315,18 +339,6 @@
         $(".inputh").html(hday);
         //$(".broadcast-type").show();
       }
-  }
-
-  function displayInfo()
-  {
-    $(".fa-question-circle").popover(
-      {
-        title : 'Info Campaign Type:',
-        html: true,
-        trigger: 'click hover',
-        content : 'Broadcast <br/> Auto Responder <br/> Event',
-      }
-    )
   }
 
   function displayAddDaysBtn()
