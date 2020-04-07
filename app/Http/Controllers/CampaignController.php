@@ -303,6 +303,7 @@ class CampaignController extends Controller
                             'id'=>$row->id,
                             'campaign_name'=>$row->name,
                             'sending'=>Date('M d, Y',strtotime($event_time)),
+														'sending_time' => Date('h:i',strtotime($row->hour_time)),
                             'label'=>$row->label,
                             'created_at'=>Date('M d, Y',strtotime($row->created_at)),
                             'total_message' => $reminder_customer->total_message,
@@ -314,16 +315,17 @@ class CampaignController extends Controller
                           // AUTORESPONDER
                           if($days > 1)
                           {
-                              $message = 'days from subscriber join on your list';
+                              $message = 'Days from after Subscribed';
                           }
                           else{
-                              $message = 'day from subscriber join on your list';
+                              $message = 'Day from after Subscribed';
                           }
                           $data[] = array(
                             'type'=>1,
                             'id'=>$row->id,
                             'campaign_name' => $row->name,
                             'sending' => $days.' '.$message,
+														'sending_time' => Date('h:i',strtotime($row->hour_time)),
                             'label' => $row->label,
                             'created_at' => Date('M d, Y',strtotime($row->created_at)),
                             'total_message' => $reminder_customer->total_message,

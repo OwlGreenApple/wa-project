@@ -8,7 +8,8 @@
           <h5>{{ $row['campaign'] }}</h5>
           <div class="notes">
             <div>Type Campaign : <color><span class="gr">Broadcast</span></color></div>
-            <div>Date Send : <b>{{ $row['day_send'] }}</b></div>
+            <div>Schedule post : <b>{{ $row['day_send'] }}</b></div>
+            <div>Time : <b>{{ $row['sending'] }}</b></div>
             @if($row['label'] !== null)
               <div>List : {{ $row['label'] }}</div>
             @elseif($row['label'] == null && $row['group_name'] !== null)
@@ -18,7 +19,7 @@
             @endif
           </div>
           <div class="created">
-            Create On : {{ $row['created_at'] }}
+            Created On : {{ $row['created_at'] }}
           </div>
         </div>
 
@@ -51,8 +52,8 @@
           <!--
             <button id="{{ $row['id'] }}" type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
           -->
-          <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm broadcast_duplicate"><span class="icon-copy-text"></span></button>
-          <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm broadcast-del"><span class="icon-delete"></span></button>
+          <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm broadcast_duplicate" data-toggle="tooltip" data-placement="top" title="Button Duplicate"><span class="icon-copy-text"></span></button>
+          <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm broadcast-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
         </div>
       </div> 
 
@@ -65,13 +66,14 @@
               @if($row['type'] == 0)
                 <div>Type Campaign : <color>Event</color></div>
               @elseif($row['type'] == 1)
-                <div>Type Campaign : <color><span class="og">Auto Responder</span></color></div>
+                <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div>
               @endif
-              <div>Date Send : <b>{{ $row['sending'] }}</b></div>
+              <div>Schedule post : <b>{{ $row['sending'] }}</b></div>
+              <div>Time : <b>{{ $row['sending_time'] }}</b></div>
               <div>List : {{ $row['label'] }}</div>
             </div>
             <div class="created">
-              Create On : {{ $row['created_at'] }}
+              Created On : {{ $row['created_at'] }}
             </div>
           </div>
 
@@ -101,14 +103,14 @@
             <a href="{{url('report-reminder')}}" id="{{ $row['id'] }}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></a>
             -->  
             @if($row['type'] == 0)
-              <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm event_duplicate"><span class="icon-copy-text"></span></button>
-              <button type="button" id="{{ $row['id'] }}" class="btn btn-danger btn-sm event-del"><span class="icon-delete"></span></button>
+              <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm event_duplicate" data-toggle="tooltip" data-placement="top" title="Button Duplicate"><span class="icon-copy-text"></span></button>
+              <button type="button" id="{{ $row['id'] }}" class="btn btn-danger btn-sm event-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
               <div>
                 <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">Add Message</a>
               </div>
             @elseif($row['type'] == 1)
               <!-- <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm responder_duplicate"><span class="icon-copy-text"></span></button> -->
-              <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm responder-del"><span class="icon-delete"></span></button>
+              <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm responder-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
               <div>
                 <a href="{{url('add-message-auto-responder').'/'.$row['id']}}" class="btn btn-custom">Add Message</a>
               </div>

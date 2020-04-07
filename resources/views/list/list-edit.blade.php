@@ -94,7 +94,13 @@
           <!-- middle wrapper -->
           <div class="wrapper">
             <div class="form-group text-left">
-               <label>Add Script ?</label>
+               <label>Add Script 
+                    <span class="tooltipstered" title="<div class='panel-heading'>Media Sosial</div><div class='panel-content'>
+										Add your FB Pixel / Google retargeting script here
+                    </div>">
+                      <i class="fa fa-question-circle "></i>
+                    </span>
+								</label>
                <textarea name="pixel" class="form-control"></textarea>
             </div>
             
