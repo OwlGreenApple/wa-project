@@ -26,7 +26,6 @@
     <!-- TABS 1 -->
     <div class="tabs-container" id="tab1C">
       <div class="act-tel-tab">
-
         <div class="wrapper">
           <div class="form-control col-lg-6 message">
             <sb>Saved, click to copy link from</sb> <a class="icon-copy"></a>
@@ -39,7 +38,7 @@
           <div class="wrapper">
             <div class="form-contact">
               <div class="input-group form-group">
-                  <input type="button" id="open_ck_editor" class="form-control" value="Click to add messages" />
+                  <input type="button" id="open_ck_editor" class="form-control" value='Create "Form Header"' />
               </div>
 
               <div class="input-group form-group showeditor">
@@ -95,12 +94,12 @@
           <!-- middle wrapper -->
           <div class="wrapper">
             <div class="form-group text-left">
-               <label>Pixel</label>
+               <label>Add Script ?</label>
                <textarea name="pixel" class="form-control"></textarea>
             </div>
             
             <div class="text-right">
-              <button type="submit" class="btn btn-custom">Add Data</button>
+              <button type="submit" class="btn btn-custom">Save Form</button>
             </div>
           </div>
           <!-- end middle wrapper -->
