@@ -518,7 +518,6 @@
              else if(result.additionalerror == true)
              {
                 $(".main").html("<div class='alert alert-danger'>"+result.message+"</div>");
-                alert(result.message);
              }
              else
              {
