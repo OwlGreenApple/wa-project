@@ -1,3 +1,16 @@
+var filename = window.location.href;
+var url = filename.split('/');
+var path;
+
+if(url[2] == 'localhost')
+{
+    path = 'https://localhost/'+url[3]+'/assets';
+}
+else
+{
+    path = 'assets';
+}
+
 var input = document.querySelector("#phone");
 window.intlTelInput(input, {
   customPlaceholder : function(selectedCountryPlaceholder, selectedCountryData){
@@ -18,19 +31,19 @@ window.intlTelInput(input, {
   dropdownContainer: document.body,
   // excludeCountries: ["us"],
   // formatOnDisplay: false,
-  // geoIpLookup: function(callback) {
-  //   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-  //     var countryCode = (resp && resp.country) ? resp.country : "";
-  //     callback(countryCode);
-  //   });
-  // },
+ /* initialCountry: "auto",
+  geoIpLookup: function(callback) {
+    $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+      var countryCode = (resp && resp.country) ? resp.country : "";
+      callback(countryCode);
+    });
+  },*/
   // hiddenInput: "full_number",
-  // initialCountry: "auto",
   // localizedCountries: { 'de': 'Deutschland' },
   // nationalMode: false,
   // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-  // placeholderNumberType: "MOBILE",
+  placeholderNumberType: "MOBILE",
   // preferredCountries: ['cn', 'jp'],
   // separateDialCode: true,
-  utilsScript: "assets/intl-tel-input/js/utils.js",
+  utilsScript: path+"/intl-tel-input/js/utils.js",
 });

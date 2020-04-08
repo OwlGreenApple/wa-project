@@ -32,7 +32,8 @@
 										Event
                     </div>">
                       <i class="fa fa-question-circle "></i>
-                    </span></label>
+                    </span>
+        </label>
         <div class="col-sm-9">
 
           <div class="form-check form-check-inline">
@@ -57,12 +58,6 @@
               <span class="checkmark"></span>
             </label>
             <label class="form-check-label" for="inlineRadio1">Event</label>
-          </div>
-
-          <div class="form-check-inline">
-            <label class="custom-radio">
-              <a class="fa fa-question-circle" aria-hidden="true"></a>
-            </label>
           </div>
           
           <!-- -->
@@ -290,7 +285,6 @@
   function openingPageType()
   {
     var radio_option = $("input[name='campaign_type'] checked").val();
-    console.log(radio_option);
     displayFormCampaign(radio_option);
   }
 

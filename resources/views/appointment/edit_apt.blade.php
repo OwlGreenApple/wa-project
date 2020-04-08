@@ -5,8 +5,8 @@
 <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
-    <h3 class="campaign">Create template for appointment's messages</h3>
-    <h5>Campaign name : <color>{{ $campaign_name }}</color></h5>
+    <h3 class="campaign">Setup template messages</h3>
+    <h5>Appointment name : <color>{{ $campaign_name }}</color></h5>
   </div>
 
   <div class="clearfix"></div>
@@ -19,7 +19,7 @@
 
     <form id="save_template_apt" class="aptform">
      <div class="form-group row reminder">
-        <label class="col-sm-3 col-form-label">Choose Reminder Time :</label>
+        <label class="col-sm-3 col-form-label">Send message on :</label>
         <div class="col-sm-9 text-left">
            <!-- <select name="schedule" id="schedule" class="custom-select-campaign form-control">
               <option value="0">The Day</option>
@@ -32,7 +32,7 @@
               <input class="form-check-input" type="radio" name="schedule" value="0" checked />
               <span class="checkmark"></span>
             </label>
-            <label class="form-check-label">The Day</label>
+            <label class="form-check-label">Appointment day</label>
           </div>
 
           <div class="form-check form-check-inline">
@@ -40,13 +40,13 @@
               <input class="form-check-input" type="radio" name="schedule" value="1" />
               <span class="checkmark"></span>
             </label>
-            <label class="form-check-label">H-</label>
+            <label class="form-check-label">x Days before appointment</label>
           </div>
         </div>
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Time to send Message :</label>
+        <label class="col-sm-3 col-form-label">Time scheduled at :</label>
         <div class="col-sm-9 relativity">
           <span class="inputh">
             <input name="hour" type="text" class="timepicker form-control" value="00:00" readonly />
@@ -57,7 +57,17 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Message :</label>
+        <label class="col-sm-3 col-form-label">Message :  <span class="tooltipstered" title="<div class='panel-heading'>Info personalization field</div><div class='panel-content'>
+                    [NAME] <br>
+                    [PHONE] <br>
+                    [EMAIL] <br/>
+                    ADD new personalization for date & time appointment : <br/>
+                    [DATE-APT] <br/>
+                    [TIME-APT] 
+                    </div>">
+                    <i class="fa fa-question-circle "></i>
+                    </span>
+        </label>
         <div class="col-sm-9">
           <textarea name="message" id="divInput-description-post" class="form-control text-left"></textarea>
           <span class="error msg"></span>
@@ -65,7 +75,7 @@
       </div>
 
       <div class="text-right col-sm-12">
-        <button type="submit" id="btn-submit" class="btn btn-custom">Create Reminder</button>
+        <button type="submit" id="btn-submit" class="btn btn-custom">Save</button>
         <button type="button" id="cancel" class="btn btn-danger">Cancel</button>
       </div>
     </form>

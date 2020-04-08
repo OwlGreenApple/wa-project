@@ -52,13 +52,17 @@ class ListController extends Controller
       return view('list.list-data',['lists'=>$lists,'paginate'=>$lists]);
     }
 
-    public function displaySubscriber(Request $request)
+    public function ListContacts($list_id)
     {
        $userid = Auth::id();
-       $list_id = $request->list_id;
-       $data = array();
+       $lists = UserList::where([['id',$list_id],['user_id',$userid]])->first();
+       if(is_null($lists))
+       {
+          return redirect('lists');
+       }
+
        $customer = Customer::where([['user_id',$userid],['list_id',$list_id],['status',1]])->get();
-       return view('list.list-customer',['contact'=>$customer]);
+       return view('list.list-customer',['contact'=>$customer,'label'=>$lists->label]);
     }
 
     public function dataList(Request $request){

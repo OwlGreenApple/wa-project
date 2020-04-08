@@ -37,7 +37,7 @@
         </div>
 
         <div class="col-lg-2 pad-fix col-button">
-          <button type="button" id="{{ $rows->id }}" class="btn btn-warning btn-sm open-table" data-toggle="tooltip" data-placement="top" title="Button Subscriber"><span class="icon-eye"></span></button>
+          <a href="{{url('list-contacts')}}/{{$rows->id}}" target="_blank" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Button Subscriber"><span class="icon-eye"></span></a>
           <a href="{{url('list-edit')}}/{{$rows->id}}" class="btn btn-edit btn-sm"><span class="icon-edit" data-toggle="tooltip" data-placement="top" title="Button Edit"></span></a>
           <a id="{{ $rows->id }}" class="btn btn-primary btn-sm open_export" data-toggle="tooltip" data-placement="top" title="Button Export"><span class="icon-export"></span></a>
           <button id="{{$rows->id}}" type="button" class="btn btn-success btn-sm duplicate" data-toggle="tooltip" data-placement="top" title="Button Duplicate" ><span class="icon-copy-text"></span></button>

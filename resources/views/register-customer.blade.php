@@ -76,6 +76,7 @@
                           <label>{{ $label_phone }}*</label>
                           <div class="col-sm-12 row">
                             <input class="form-control" id="phone" name="phone_number" type="tel">
+                            <span class="error code_country"></span>
                             <span class="error phone"></span>
                           </div>
                       </div>
@@ -160,11 +161,11 @@
 
         <!-- Modal content-->
         <div class="modal-content">
-          <div class="modal-header">
+          <!-- <div class="modal-header">
             <h4 class="modal-title">Thank You</h4>
-          </div>
-          <div class="modal-body">
-            <p><!-- message here --></p>
+          </div> -->
+          <div class="modal-body text-center">
+            Your data has stored!
           </div>
         </div>
 
@@ -185,8 +186,8 @@
         });
       });
       saveSubscriber();
-      //codeCountry()
-      putCallCode();
+      /*//codeCountry()
+      putCallCode();*/
       fixWidthPhoneInput();
   });
 
@@ -281,9 +282,8 @@
 
                 if(result.success == true){
                     $(".modal-body > p").text(result.message);
-                    alert('Your data has stored!');
-                    //getModal();
-                    //setTimeout(function(){location.href= result.wa_link} , 1000);   
+                    $("#myModal").modal();
+                    setTimeout(function(){$("#myModal").modal('hide')} , 1500);   
                     // clearField();
                 } else {
                     $(".error").html('');
@@ -315,11 +315,6 @@
           });
           /*end ajax*/
       });
-  }
-
-  /* Display modal when customer has finished registering */
-  function getModal(){
-      $("#myModal").modal();
   }
 
   /* Clear / Empty fields after ajax reach success */

@@ -151,14 +151,15 @@
               <div class="form-group">
                  <label>Phone Number</label>
                  <div class="col-sm-12 row">
-                    <div class="col-lg-3 row relativity">
+                   <!--  <div class="col-lg-3 row relativity">
                       <input name="code_country" class="form-control custom-select-campaign" value="+62" autocomplete="off" />
                       <span class="icon-carret-down-circle"></span>
                       <span class="error code_country"></span>
-                    </div>
+                    </div> -->
 
-                    <div class="col-sm-9">
-                      <input type="text" id="phone_number" name="phone_number" class="form-control" />
+                    <div class="col-sm-12 row">
+                      <input type="text" id="phone" name="phone_number" class="form-control" />
+                      <span class="error code_country"></span>
                       <span class="error phone_number"></span>
                     </div>
                     <div class="col-lg-12 pad-fix"><ul id="display_countries"><!-- Display country here... --></ul></div>
@@ -439,8 +440,8 @@
   </div>
 </div>
 
+<script src="{{ url('assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
-
   /* CKEditor */
   CKEDITOR.replace( 'editor1',{
       allowedContent: true,
@@ -486,11 +487,17 @@
     customerAttribute();
     delCustomer();
     pagination();
-    codeCountry();
-    putCallCode();
+   /* codeCountry();
+    putCallCode();*/
 		autoReplyButton();
 		saveAutoReply();
+    fixWidthPhoneInput();
   });
+
+  function fixWidthPhoneInput()
+  {
+    $(".iti").addClass('w-100');
+  }
 
   function saveAutoReply()
   {
@@ -843,7 +850,10 @@
   function addContact(){
     $(".add-contact").submit(function(e){
         e.preventDefault();
-        var data = $(this).serialize();
+        var code_country = $(".iti__selected-flag").attr('data-code');
+        var data = $(this).serializeArray();
+        data.push({name:'code_country', value:code_country});
+
         $.ajaxSetup({
           headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
