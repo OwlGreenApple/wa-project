@@ -78,7 +78,7 @@ class SendMessage extends Command
             foreach($broadcast as $row)
             {
                 // $customers = Customer::where('id',$row->customer_id)->first();
-                $message = $row->message;
+                $customer_message = $row->message;
                 $customer_phone = $row->telegram_number;
                 $phoneNumber = PhoneNumber::find($row->phoneid);
                 $hour = $row->hour_time; //hour according user set it to sending
@@ -86,7 +86,7 @@ class SendMessage extends Command
 
                 // if(!is_null($customers))
                 // {
-                    $message = str_replace('{name}',$row->name,$row->message);
+                    $message = $this->replaceMessage($customer_message,$row->name,$row->email,$customer_phone);
                     $chat_id = $row->chat_id;  
                     $counter = $phoneNumber->counter;
                     $max_counter = $phoneNumber->max_counter;
@@ -101,12 +101,11 @@ class SendMessage extends Command
                       continue;
                     }
 
-
-                    if($counter <= 0 || $max_counter <= 0) {
+                    if($counter <= 0) {
                         continue;
                     }
 
-                    if($counter > 0 && $max_counter > 0)
+                    if($counter > 0)
                     {
                         $campaign = 'broadcast';
                         $id_campaign = $row->bccsid;
@@ -117,7 +116,11 @@ class SendMessage extends Command
                         $this->generateLog($number,$campaign,$id_campaign,$status);
 
                         $phoneNumber->counter --;
-                        $phoneNumber->max_counter --;
+
+                        if($max_counter > 0)
+                        {
+                          $phoneNumber->max_counter --;
+                        }
                         $phoneNumber->save();
                         
                         $broadcastCustomer = BroadCastCustomers::find($row->bccsid);
@@ -156,7 +159,7 @@ class SendMessage extends Command
             ->join('users','reminders.user_id','=','users.id')
             ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','reminders.id AS rid','reminders.user_id AS userid')
+            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid')
             ->get();
 
         $number = $count = $max_counter = 0;
@@ -174,7 +177,9 @@ class SendMessage extends Command
 
                 $key = $phoneNumber->filename;
                 $customer_phone = $col->telegram_number;
-                $message = $col->message;
+                $customer_message = $col->message;
+                $customer_name = $col->name;
+                $customer_mail = $col->email;
 
                 $hour_time = $col->hour_time;
                 $day_reminder = $col->days; // how many days
@@ -187,12 +192,13 @@ class SendMessage extends Command
                 $adding = Carbon::parse($adding_with_hour);         
                 $number++;
 
-                if($count <= 0 || $max_counter <= 0){
+                if($count <= 0 ){
                   continue;
                 }
 
                 if($adding->lte(Carbon::now()) && $count > 0 && $max_counter > 0)
                 {        
+                    $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
                     ApiHelper::send_message($customer_phone,$message,$key);
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
@@ -204,7 +210,10 @@ class SendMessage extends Command
                     $remindercustomer_update->save();
 
                     $count = $count - 1;
-                    $max_counter = $max_counter - 1;
+                    if($max_counter > 0)
+                    {
+                        $max_counter = $max_counter - 1;
+                    }
                     PhoneNumber::where('id',$phoneNumber->id)->update(['counter'=>$count, 'max_counter'=>$max_counter]);
                 }
                 else 
@@ -236,7 +245,7 @@ class SendMessage extends Command
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email')
           ->get();
 
           if($reminder->count() > 0)
@@ -251,7 +260,6 @@ class SendMessage extends Command
 
                 $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->select('counter','id','filename')->first();
                 $customer_phone = $row->telegram_number;
-                $message = $row->message;
                 $key = $phoneNumber->filename;
 
                 if(!is_null($phoneNumber)){
@@ -275,10 +283,9 @@ class SendMessage extends Command
                   $campaign = 'Event';
                   $id_campaign = $row->rcs_id;
                   $status = 'Sent';
-
-                  $message = str_replace('{name}',$row->name,$row->message);
                   $id_reminder = $row->id_reminder;
-     
+                  
+                  $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
                   ApiHelper::send_message($customer_phone,$message,$key);
                   $this->generateLog($number,$campaign,$id_campaign,$status);
 
@@ -335,8 +342,10 @@ class SendMessage extends Command
 
                 $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->select('counter','id','filename')->first();
                 $customer_phone = $row->telegram_number;
-                $message = $row->message;
+                $customer_message = $row->message;
                 $key = $phoneNumber->filename;
+                $date_appt = $row->event_time;
+                $time_appt = $row->hour_time;
 
                 if(!is_null($phoneNumber)){
                   $count = $phoneNumber->counter;
@@ -360,7 +369,7 @@ class SendMessage extends Command
                   $id_campaign = $row->rcs_id;
                   $status = 'Sent';
 
-                  $message = str_replace('{name}',$row->name,$row->message);
+                  $message = replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt);
                   $id_reminder = $row->id_reminder;
      
                   ApiHelper::send_message($customer_phone,$message,$key);
@@ -407,6 +416,33 @@ class SendMessage extends Command
        
     }
 
+    public function replaceMessage($customer_message,$name,$email,$phone)
+    {
+     
+      $replace_target = array(
+        '[NAME]','[EMAIL]','[PHONE]'
+      );
+
+      $replace = array(
+        $name,$email,$phone
+      );
+      $message = str_replace($replace_target,$replace,$customer_message);
+      return $message;
+    }
+
+    public function replaceMessageAppointment($customer_message,$name,$email,$phone,$date_appt,$time_appt)
+    {
+        $replace_target = array(
+          '[NAME]','[EMAIL]','[PHONE]','[DATE-APT]','[TIME-APT]'
+        );
+
+        $replace = array(
+          $name,$email,$phone,$date_appt,$time_appt
+        );
+
+        $message = str_replace($replace_target,$replace,$customer_message);
+        return $message;
+    }
 
 /* End command class */    
 }
