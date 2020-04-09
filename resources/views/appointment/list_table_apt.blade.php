@@ -19,7 +19,7 @@
           <td colspan="6" class="text-center">Currently no data available</td>
       </tr>
     @endif
-@else
+@else <!-- inactive -->
     @if($campaigns->count() > 0)
       {{ $x =1 }}
       @foreach($campaigns as $row)
@@ -29,12 +29,12 @@
           <td class="text-center">{{ $row->name }}</td>
           <td class="text-center">{{ $row->telegram_number }}</td>
           <td colspan="2" class="text-center">
-            @if($row->status == 0)
-              Pending
-            @elseif($row->status == 1)
+            @if($row->status == 1)
               Success
+            @elseif($row->status == 2)
+              <span class="act-tel-apt-create">Phone Offline</span> 
             @else
-              <span class="act-tel-apt-create">Fail</span>
+              <span class="act-tel-apt-create">Phone Not Available</span>
             @endif
           </td>
         </tr> 

@@ -4,9 +4,9 @@
 
   <!-- TOP SECTION -->
 <div class="container act-tel-dashboard">
-  <div class="act-tel-dashboard-left act-tel-apt-create">
+  <div class="act-tel-dashboard-left">
     <h2>List Users</h2>
-    <h3>Appointment Name : {{ $campaign_name }}</h3>
+    <h4>Appointment Name : {{ $campaign_name }}</h4>
   </div>
   <div class="clearfix"></div>
 </div>

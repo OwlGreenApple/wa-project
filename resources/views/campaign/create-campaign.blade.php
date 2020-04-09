@@ -295,22 +295,23 @@
 
       if(val == 'event')
       {
-				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
+				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=30;$x++) {
               echo "<option value=".$x.">$x days after event</option>";
         }?></select>'+
         '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
         ;
 
+        $('select[name="schedule"] > option[value="0"]').prop('selected',true);
         $("input[name=event_time]").prop('disabled',false);
         $("input[name=day_reminder]").prop('disabled',false);
         $(".event-time").show();
         $(".reminder").show();
-        $(".inputh").html(hplus);
+        $(".inputh").html(hday);
         //$(".broadcast-type").hide();
         $(".date-send").hide();
       }
       else if(val == 'auto'){
-				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
+				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=30;$x++) {
               echo "<option value=".$x.">$x days after subscribed</option>";
         }?></select>'+
         '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'

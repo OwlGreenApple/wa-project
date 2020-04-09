@@ -19,7 +19,7 @@ class CheckPhone
     public function handle($request, Closure $next)
     {
         $rules = [
-            'phone_number' => ['required','min:9','max:18',new TelNumber]
+            'phone_number' => ['required','min:6','max:18',new TelNumber]
         ];
 
         $validator = Validator::make($request->all(),$rules);

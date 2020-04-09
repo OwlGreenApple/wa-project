@@ -12,6 +12,5 @@ class ReminderCustomers extends Model
 		1 = sent / success
 		2 = phone offline
 		3 = error / no-number
-		4 = disable or deleted list
     */
 }

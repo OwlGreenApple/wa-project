@@ -21,7 +21,7 @@
             &nbsp
             </div>  
             <div class="col-lg-3 pad-fix cardnumber">
-              <a class="contacts" href="{{ url('list-apt') }}/{{ $row['campaign_id'] }}" target="_blank">
+              <a class="contacts" href="{{ url('list-apt') }}/{{ $row['campaign_id'] }}/1" target="_blank">
                 <div class="big-number">{{$row['contacts']}}</div>
                 <div class="contact">Contact</div>
               </a>
