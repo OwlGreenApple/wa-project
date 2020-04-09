@@ -102,14 +102,15 @@
                 <div class="form-group row col-fix">
                   <label class="col-sm-3 col-form-label">Phone Whatsapp :</label>
                   <div class="col-sm-9 row">
-                    <div class="col-lg-3 row relativity">
+                   <!--  <div class="col-lg-3 row relativity">
                       <input id="code_country" name="code_country" class="form-control custom-select-campaign" value="+62" />
                       <span class="icon-carret-down-circle"></span>
                       <span class="error code_country"></span>
                     </div>
-
-                    <div class="col-sm-9">
-                      <input type="text" id="phone_number" name="phone_number" class="form-control" />
+ -->
+                    <div class="col-sm-12">
+                      <input type="text" id="phone" name="phone_number" class="form-control" />
+                      <span class="error code_country"></span>
                       <span class="error phone_number"></span>
                     </div>
                     <!--<div>Please add avatar / image on your WA account.</div>-->
@@ -271,6 +272,7 @@
   </div>
   <!-- End Modal -->
 
+<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
 
   // Jquery Tabs
@@ -323,9 +325,10 @@
     editPhoneNumber();
     openEditModal();
     settingUser();
-    codeCountry();
-    putCallCode();
+    //codeCountry();
+    //putCallCode();
 
+    $(".iti").addClass('w-100');
     $('#div-verify').hide();
     $('.message').hide();
     $('#phone-table').hide();
@@ -334,11 +337,15 @@
     <?php } ?>
     $('#button-start-connect').click(function(){
       var phone_number = $("#phone_number").val();
+      var code_country = $(".iti__selected-flag").attr('data-code');
+      var dataphone = $("#form-connect").serializeArray();
+      dataphone.push({name:'code_country', value:code_country});
+
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         type: 'GET',
         url: "{{ url('connect-phone') }}",
-        data: $("#form-connect").serialize(),
+        data: dataphone,
         dataType: 'text',
         beforeSend: function()
         {

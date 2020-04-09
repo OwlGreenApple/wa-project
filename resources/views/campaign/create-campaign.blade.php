@@ -32,7 +32,8 @@
 										Event
                     </div>">
                       <i class="fa fa-question-circle "></i>
-                    </span></label>
+                    </span>
+        </label>
         <div class="col-sm-9">
 
           <div class="form-check form-check-inline">
@@ -57,12 +58,6 @@
               <span class="checkmark"></span>
             </label>
             <label class="form-check-label" for="inlineRadio1">Event</label>
-          </div>
-
-          <div class="form-check-inline">
-            <label class="custom-radio">
-              <a class="fa fa-question-circle" aria-hidden="true"></a>
-            </label>
           </div>
           
           <!-- -->
@@ -290,7 +285,6 @@
   function openingPageType()
   {
     var radio_option = $("input[name='campaign_type'] checked").val();
-    console.log(radio_option);
     displayFormCampaign(radio_option);
   }
 
@@ -301,22 +295,23 @@
 
       if(val == 'event')
       {
-				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
+				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=30;$x++) {
               echo "<option value=".$x.">$x days after event</option>";
         }?></select>'+
         '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
         ;
 
+        $('select[name="schedule"] > option[value="0"]').prop('selected',true);
         $("input[name=event_time]").prop('disabled',false);
         $("input[name=day_reminder]").prop('disabled',false);
         $(".event-time").show();
         $(".reminder").show();
-        $(".inputh").html(hplus);
+        $(".inputh").html(hday);
         //$(".broadcast-type").hide();
         $(".date-send").hide();
       }
       else if(val == 'auto'){
-				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
+				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=30;$x++) {
               echo "<option value=".$x.">$x days after subscribed</option>";
         }?></select>'+
         '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'

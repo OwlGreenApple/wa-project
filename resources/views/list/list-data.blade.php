@@ -79,18 +79,7 @@
         </h5>
       </div>
       <div class="modal-body">
-        <table id="datasubscriber" class="table table-responsive" style="width : 100%">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama</th>
-              <th>Phone</th>
-              <th>Username</th>
-              <!--<th>Email</th>-->
-            </tr>
-          </thead>
-          <tbody id="data-customer"></tbody>
-        </table> 
+       
       </div>
       <div class="modal-footer" id="foot">
         <button class="btn btn-primary" data-dismiss="modal">
@@ -149,7 +138,6 @@
     deleteList();
     duplicateList();
     copyLink();
-    openTable();
     pagination();
     openExport();
     changeExport();
@@ -235,45 +223,6 @@
   }
 
   //end ajax pagination
-
-  function openTable(){
-      $("body").on("click",".open-table",function(){
-        var id = $(this).attr('id');
-        $("#table-data").modal();
-        $.ajax({
-          type : 'GET',
-          url : '{{ url("list-customer") }}',
-          data : {list_id : id},
-          dataType : 'html',
-          success : function(result)
-          {
-            $("#data-customer").html(result);
-          },
-          error : function(xhr,attr,throwable)
-          {
-            alert(xhr.responseText);
-          }
-        });
-      });
-  }
-
-  function table(){
-      $("#datasubscriber").DataTable({
-          'pageLength': 5,
-          'processing': true,
-          'serverSide': true,
-          'serverMethod': 'get',
-          'ajax': {
-              'url':'{{ url("list-customer") }}'
-          },
-          'columns': [
-             { data: 'name' },
-             { data: 'phone' },
-             { data: 'username' },
-             { data: 'email' },
-          ]
-      });
-  }
 
   function searchList(){
     $(".search-icon").click(function(){

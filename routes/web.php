@@ -132,7 +132,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('list-search','ListController@searchList')->name('searchlist');
   Route::get('list-edit/{list_id}','ListController@editList');
   Route::get('list-additional','ListController@additionalList')->name('additionalList');
-  Route::get('list-customer','ListController@displaySubscriber');
+  Route::get('list-contacts/{list_id}','ListController@ListContacts');
   Route::get('list-table-customer','ListController@listTableCustomer');
   Route::get('list-delete-customer','ListController@deleteSubscriber');
   Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');
@@ -162,11 +162,14 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('edit-campaign-name','CampaignController@editCampaign'); 
   
   /* EVENT */
-  Route::get('event-list','EventController@displayEventList')->name('eventlist');
   Route::get('event-del','EventController@delEvent');
   Route::post('event-duplicate','EventController@duplicateEvent')->middleware('checkeventduplicate');
   Route::get('load-event','EventController@loadEvent');
   Route::get('delete-event','EventController@deleteEvent');
+
+  //not used anymore (EVENT)
+  Route::get('event-list','EventController@displayEventList')->name('eventlist');
+  ////////////////////////////////////////////////
 
   /* REMINDER */
   Route::get('reminder-list','ReminderController@displayReminderList')->name('reminderlist');
@@ -187,8 +190,9 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('display-template-apt','AppointmentController@displayTemplateAppointment');
   Route::post('save-template-appoinments','AppointmentController@saveTemplateAppointment')->middleware('checkeditappt');
   Route::get('appointment','AppointmentController@index')->name('appointment');
-  Route::get('list-apt/{id}','AppointmentController@listAppointment');
+  Route::get('list-apt/{id}/{active}','AppointmentController@listAppointment');
   Route::get('list-table-apt','AppointmentController@listTableAppointments');
+  Route::get('list-table-apt-inactiv','AppointmentController@listTableAppointmentInActive');
   Route::post('list-edit-apt','AppointmentController@listAppointmentEdit')->middleware('checkeditformappt');
   Route::get('list-delete-apt','AppointmentController@listAppointmentDelete');
   Route::get('table-apt','AppointmentController@tableAppointment');

@@ -209,12 +209,21 @@ class CampaignController extends Controller
     {
         $userid = Auth::id();
         $search = $request->search;
+        $type = $request->type;
         $data = array();
 
 
-        if($search == null)
+        if($search == null && $type == null)
         {
           $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
+                      ->leftJoin('lists','lists.id','=','campaigns.list_id')
+                      ->orderBy('campaigns.id','desc')
+                      ->select('campaigns.*','lists.label')
+                      ->get();
+        }
+        elseif($type <> null)
+        { 
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',$type]])
                       ->leftJoin('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
@@ -236,9 +245,9 @@ class CampaignController extends Controller
                 if($row->type == 2) 
                 {
                   $broadcast = BroadCast::where('campaign_id',$row->id)->first();
-
-                  $lists = UserList::where([['id',$broadcast->list_id]])->first();
-
+                  $list_id = $row->list_id;
+                  $lists = UserList::find($list_id);
+                  
                   if(!is_null($lists))
                   {
                       $label = $lists->label;
@@ -261,7 +270,7 @@ class CampaignController extends Controller
                       'group_name' => $broadcast->group_name,
                       'channel' => $broadcast->channel,
                       'day_send' => Date('M d, Y',strtotime($broadcast->day_send)),
-                      'sending' => Date('h:i',strtotime($broadcast->hour_time)),
+                      'sending' => Date('H:i',strtotime($broadcast->hour_time)),
                       'label' => $label,
                       'created_at' => Date('M d, Y',strtotime($row->created_at)),
                       'total_message' => $broadcast_customer->total_message,
@@ -295,7 +304,7 @@ class CampaignController extends Controller
                             }
                           else
                           {
-                            $event_time = Carbon::parse($reminder->event_time)->addDays($days);
+                              $event_time = Carbon::parse($reminder->event_time)->addDays($days);
                           }
 
                           $data[] = array(
@@ -303,7 +312,7 @@ class CampaignController extends Controller
                             'id'=>$row->id,
                             'campaign_name'=>$row->name,
                             'sending'=>Date('M d, Y',strtotime($event_time)),
-														'sending_time' => Date('h:i',strtotime($row->hour_time)),
+                            'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
                             'label'=>$row->label,
                             'created_at'=>Date('M d, Y',strtotime($row->created_at)),
                             'total_message' => $reminder_customer->total_message,
@@ -325,7 +334,7 @@ class CampaignController extends Controller
                             'id'=>$row->id,
                             'campaign_name' => $row->name,
                             'sending' => $days.' '.$message,
-														'sending_time' => Date('h:i',strtotime($row->hour_time)),
+                            'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
                             'label' => $row->label,
                             'created_at' => Date('M d, Y',strtotime($row->created_at)),
                             'total_message' => $reminder_customer->total_message,
