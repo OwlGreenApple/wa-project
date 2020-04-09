@@ -11,7 +11,8 @@
           <td class="text-center">
             <a id="{{ $row->campaign_id }}" data-ev="{{ $row->event_time }}" data-name="{{ $row->name }}" data-phone="{{ $row->telegram_number }}" data-customer-id="{{ $row->id }}" class="icon-edit"></a>
           </td>
-          <td class="text-center"><a id="{{ $row->campaign_id }}" data-tm="{{ $row->event_time }}" data-ev="{{ $row->id }}" class="icon-cancel"></a></td>
+          <td class="text-center"><a id="{{ $row->rid }}" class="icon-cancel"></a></td> 
+          <!-- <td class="text-center"><a id="{{ $row->campaign_id }}" data-tm="{{ $row->event_time }}" data-ev="{{ $row->id }}" class="icon-cancel"></a></td> -->
         </tr> 
         {{ $x++ }}
       @endforeach
@@ -35,8 +36,10 @@
               Success
             @elseif($row->status == 2)
               <span class="act-tel-apt-create">Phone Offline</span> 
-            @else
+            @elseif($row->status == 3)
               <span class="act-tel-apt-create">Phone Not Available</span>
+            @else
+              <span class="act-tel-apt-create">Cancelled</span>
             @endif
           </td>
         </tr> 

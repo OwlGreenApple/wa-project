@@ -129,7 +129,7 @@ class AppointmentController extends Controller
             $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminders.id AS rid')
             // ->distinct()
             ->get();
         }
@@ -138,7 +138,7 @@ class AppointmentController extends Controller
             $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['customers.name','LIKE','%'.$search.'%'],['reminder_customers.status','=',0]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminders.id AS rid')
             ->get();
         }
        
@@ -212,6 +212,26 @@ class AppointmentController extends Controller
     public function listAppointmentDelete(Request $request)
     {
         $userid = Auth::id();
+        $id = $request->reminder_id;
+
+        try {
+          ReminderCustomers::where([['reminder_id',$id],['user_id',$userid]])->update(['status'=>4]);
+          //Reminder::where([['id',$id],['user_id',$userid]])->update(['status'=>0]);
+          $data['success'] = 1;
+          $data['message'] = 'Your list appointment has been cancelled';
+        }
+        catch(Exception $e)
+        {
+          $data['success'] = 0;
+          $data['message'] = 'Sorry unable to cancel your list appointment, please try again later';
+        }
+
+        return response()->json($data);
+    }
+
+    /*public function listAppointmentDelete(Request $request)
+    {
+        $userid = Auth::id();
         $campaign_id = $request->campaign_id;
         $customer_id = $request->customer_id;
         $oldtime = $request->oldtime;
@@ -239,14 +259,14 @@ class AppointmentController extends Controller
         foreach($reminder_id as $id)
         {
             try {
-              ReminderCustomers::where([['reminder_id',$id],['user_id',$userid]])->delete();
-              Reminder::where([['id',$id],['user_id',$userid]])->delete();
+              ReminderCustomers::where([['reminder_id',$id],['user_id',$userid]])->update(['status'=>4]);
+              Reminder::where([['id',$id],['user_id',$userid]])->update(['status'=>0]);
               $count++;
             }
             catch(Exception $e)
             {
               $data['success'] = 0;
-              $data['message'] = 'Sorry unable to delete your list appointment, please try again later';
+              $data['message'] = 'Sorry unable to cancel your list appointment, please try again later';
               return response()->json($data);
             }
         }
@@ -254,15 +274,15 @@ class AppointmentController extends Controller
         if($count == $total_reminder_id)
         {
             $data['success'] = 1;
-            $data['message'] = 'Your list appointment has been deleted';
+            $data['message'] = 'Your list appointment has been cancelled';
         }
         else
         {
             $data['success'] = 0;
-            $data['message'] = 'Sorry unable to delete your list appointment, please try again later';
+            $data['message'] = 'Sorry unable to cancel your list appointment, please try again later';
         }
         return response()->json($data);
-    }
+    }*/
 
     function createAppointment()
     {

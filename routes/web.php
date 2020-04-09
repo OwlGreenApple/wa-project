@@ -179,6 +179,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('broadcast-list','BroadCastController@displayBroadCast')->name('broadcastlist'); 
   Route::get('broadcast-del','BroadCastController@delBroadcast'); 
   Route::get('broadcast-check','BroadCastController@checkBroadcastType'); 
+  Route::post('broadcast-update','BroadCastController@updateBroadcast')->middleware('checkbroadcastduplicate'); 
   Route::post('broadcast-duplicate','BroadCastController@duplicateBroadcast')->middleware('checkbroadcastduplicate'); 
 
   /* APPOINTMENT */

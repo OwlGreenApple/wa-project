@@ -209,25 +209,86 @@
   </div>
   <!-- End Modal -->
 
+  <!-- Modal Edit Broadcast -->
+  <div class="modal fade child-modal" id="modal_edit_broadcast" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        
+        <div class="modal-body">
+            <div class="msg col-lg-12 mb-2"><!-- --></div>
+            <div class="form-group">
+                 <div class="mb-2 act-tel-campaign">
+                  <form id="edit_broadcast">
+                    
+                    <div class="form-group">
+                      <label>Campaign Name :</label>
+                      <input type="text" class="form-control" name="campaign_name" />
+                      <span class="error campaign_name"></span>
+                    </div>
+
+                    <div class="form-group"> 
+                      <label>Date Send :</label>
+                      <div class="relativity">
+                        <input id="date_send" type="text" name="date_send" class="form-control custom-select-campaign" />
+                        <span class="icon-calendar"></span>
+                      </div>
+                      <span class="error event_time"></span>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Time to send Message :</label>
+                      <div class="relativity"> 
+                        <input name="hour" id="time_sending" type="text" class="timepicker form-control" value="00:00" />
+                        <span class="error time_sending"></span>
+                      </div>
+                    </div>
+
+                     <div class="form-group">
+                      <label>Message :</label>
+                      <textarea name="edit_message" id="edit_message" class="form-control"></textarea>
+                      <span class="error edit_message"></span>
+                     </div>
+                 
+                    <div class="text-right">
+                      <button id="broadcast_edit" type="submit" class="btn btn-custom mr-1">Save</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                  </form>
+                </div>
+               
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
 <script type="text/javascript">
 
   /* Datetimepicker */
   $(function () {
       $('#datetimepicker').datetimepicker({
         format : 'YYYY-MM-DD HH:mm',
-      }); 
+        minDate : new Date()
+      });
 
-      $('#datetimepicker-date').datetimepicker({
+      $('#datetimepicker-date, #date_send').datetimepicker({
         format : 'YYYY-MM-DD',
+        minDate : new Date()
       }); 
 
-      $("#divInput-description-post").emojioneArea({
-            pickerPosition: "right",
-            mainPathFolder : "{{url('')}}",
+      $("#divInput-description-post, #edit_message").emojioneArea({
+          pickerPosition: "right",
+          mainPathFolder : "{{url('')}}",
       });
   });
 
   $(document).ready(function(){
+      editBroadcast();
+      updateBroadcast();
       displayResult();
       displayCampaign();
       delBroadcast();
@@ -243,6 +304,79 @@
       MDTimepicker(); 
       neutralizeClock();
   });
+
+  function editBroadcast()
+  {
+    $("body").on("click",".edit_campaign",function(){
+       
+        var id = $(this).attr('id');
+        var name = $(this).attr('data-name');
+        var date = $(this).attr('data-date');
+        var time = $(this).attr('data-time');
+        var message = $(this).attr('data-message');
+          
+        $("#broadcast_edit").attr('broadcast_id',id);
+        $("input[name='campaign_name']").val(name);
+        $("input[name='date_send']").val(date);
+        $("#time_sending").val(time);
+        $("#edit_message").emojioneArea()[0].emojioneArea.setText(message);
+        $("#modal_edit_broadcast").modal();
+    });
+  }
+
+  function updateBroadcast()
+  {
+    $("#edit_broadcast").submit(function(e){
+      e.preventDefault();
+     
+      var broadcast_id = $("#broadcast_edit").attr('broadcast_id');
+      var data = $(this).serializeArray();
+      data.push({name : 'broadcast_id', value:broadcast_id},{name : 'is_update', value : 1});
+
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'POST',
+        url: "{{ url('broadcast-update') }}",
+        data: data,
+        dataType: 'json',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          if(result.success == 0)
+          { 
+            $(".error").show();  
+            $(".campaign_name").html(result.campaign_name);
+            $(".time_sending").html(result.time_sending);
+            $(".edit_message").html(result.edit_message);
+            $(".event_time").html(result.event_time);
+            $(".msg").html('<div class="alert alert-danger">'+result.broadcast_id+'</div>')
+
+            if(result.msg !== undefined)
+            {
+              $(".msg").html('<div class="alert alert-danger">'+result.msg+'</div>')
+            }
+          }
+          else
+          {
+            $(".error").hide();
+            $(".msg").html('<div class="alert alert-success">'+result.msg+'</div>');
+          }
+        },
+        error : function(xhr,attr,throwable){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          $(".error").hide();
+          alert(xhr.responseText);
+        }
+      });
+    });
+  }
 
   function duplicateEventForm()
   {
@@ -287,7 +421,7 @@
             else
             {
               $(".error").hide();
-              alert(result.message);
+              // alert(result.message);
               $("#modal_duplicate").modal('hide');
               $("#duplicate:input").val('');
 
@@ -297,7 +431,7 @@
               }
               else
               {
-                displayEvent();
+                displayResult(null,0);
               }
               
             }
@@ -356,7 +490,7 @@
           else
           {
             $(".error").hide();
-            alert(result.message);
+            // alert(result.message);
             $("#modal_duplicate_reminder").modal('hide');
             $("#duplicate_reminder :input").val('');
 
@@ -366,7 +500,7 @@
             }
             else
             {
-              displayAutoResponder();
+              displayResult(null,1);
             }        
           }
         },
@@ -500,7 +634,7 @@
           else
           {
             $(".error").hide();
-            alert(result.message);
+            // alert(result.message);
             $("#modal_duplicate_broadcast").modal('hide');
             $("#duplicate_broadcast:input").val('');
 
@@ -510,7 +644,7 @@
             }
             else
             {
-              displayBroadcast();
+              displayResult(null,2)
             }
           }
         },
@@ -585,7 +719,7 @@
   }
 
   function MDTimepicker(){
-    $("body").on('focus','.timepicker',function(){
+    $("body").on('focus','.timepicker, #time_sending',function(){
         $(this).mdtimepicker({
           format: 'hh:mm',
         });
