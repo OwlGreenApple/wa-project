@@ -5,6 +5,7 @@
         <tr>
           <td class="text-center">{{ $x }}</td>
           <td class="text-center">{{ $row->event_time }}</td>
+          <td class="text-center">{{ abs($row->days) }}</td>
           <td class="text-center">{{ $row->name }}</td>
           <td class="text-center">{{ $row->telegram_number }}</td>
           <td class="text-center">
@@ -26,6 +27,7 @@
         <tr>
           <td class="text-center">{{ $x }}</td>
           <td class="text-center">{{ $row->event_time }}</td>
+          <td class="text-center">{{ abs($row->days) }}</td>
           <td class="text-center">{{ $row->name }}</td>
           <td class="text-center">{{ $row->telegram_number }}</td>
           <td colspan="2" class="text-center">

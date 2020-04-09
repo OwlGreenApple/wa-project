@@ -126,20 +126,19 @@ class AppointmentController extends Controller
 
         if($search == null)
         {
-            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['reminder_customers.status',0]])
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
-            ->distinct()
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id')
+            // ->distinct()
             ->get();
         }
         else
         {
-            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['customers.name','LIKE','%'.$search.'%'],['reminder_customers.status',0]])
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['customers.name','LIKE','%'.$search.'%'],['reminder_customers.status','=',0]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id')
-            ->distinct()
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id')
             ->get();
         }
        
@@ -157,7 +156,7 @@ class AppointmentController extends Controller
             $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['reminder_customers.status','>',0]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
             ->get();
         }
         else
@@ -165,7 +164,7 @@ class AppointmentController extends Controller
             $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['customers.name','LIKE','%'.$search.'%'],['reminder_customers.status','>',0]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
             ->get();
         }
        

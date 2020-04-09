@@ -36,6 +36,7 @@
         <tr>
           <th width="10%" class="text-center">No</th>
           <th width="20%" class="text-center">Date Appointment</th>
+          <th width="20%" class="text-center">xDays Before Send</th>
           <th width="30%" class="text-center">Name Contact</th>
           <th width="30%" class="text-center">WA Contact</th>
           <th width="10%" colspan="2" class="text-center">@if($active == true) Action @else Status @endif</th>
