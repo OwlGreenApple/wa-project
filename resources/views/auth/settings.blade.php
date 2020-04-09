@@ -51,7 +51,7 @@
         <input type="hidden" name="id_phone_number" id="id_phone_number">
 
         <label><h4>Before connecting to our server <br>
-        You must have "profile image" at your Whatsapp settings
+        You must have <b>"profile image"</b> at your Whatsapp settings
         </h4></label>
         <br><br>
         <!--<span class="txt-mode"></span>-->
@@ -109,7 +109,7 @@
                     </div>
  -->
                     <div class="col-sm-12">
-                      <input type="text" id="phone" name="phone_number" class="form-control" />
+                      <input type="text" id="phone_number" name="phone_number" class="form-control" />
                       <span class="error code_country"></span>
                       <span class="error phone_number"></span>
                     </div>
@@ -478,7 +478,7 @@
             // console.log("new system");
             if (flagtm == false ) {
               flagtm = true;
-              getQRCode($("#code_country").val()+$("#phone_number").val());
+              getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone_number").val());
             }
           }
 
@@ -515,7 +515,7 @@
             if(result.status == 'error'){
               /* new system $('.message').show();
               $('.message').append(result.phone_number);*/
-              // getQRCode($("#code_country").val()+$("#phone_number").val());
+              // getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone_number").val());
               console.log(result);
             }
             else
