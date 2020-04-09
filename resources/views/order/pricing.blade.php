@@ -44,9 +44,9 @@
               <h5>Super Value</h5>
             </div>
             <div class="div-content w-100 w-100 p-3">
-              <span>1 Year </span>
+              <span>6 Months </span>
               <span>&nbsp</span>
-              <span id="6months-price">IDR 2.970.000</span>
+              <span id="6months-price">IDR 1.053.000</span>
               <span id="description-contact-3">25.000 Contacts</span>
             </div>
           </div>            
@@ -60,7 +60,7 @@
             <div class="div-content w-100 w-100 p-3">
               <span>3 Months </span>
               <span>&nbsp</span>
-              <span id="3months-price">IDR 759.000</span>
+              <span id="3months-price">IDR 538.200</span>
               <span id="description-contact-3">25.000 Contacts</span>
             </div>
           </div>            
@@ -73,7 +73,7 @@
             <div class="div-content w-100 w-100 p-3">
               <span>1 Month </span>
               <span>&nbsp</span>
-              <span id="monthly-price">IDR 275.000</span>
+              <span id="monthly-price">IDR 195.000</span>
               <span id="description-contact-3">25.000 Contacts</span>
             </div>
           </div>            
@@ -133,7 +133,9 @@
             <span>Appointment Reminder</span>
           </li>
         </ul>
+				<a id="link-checkout">
         <button class="btn btn-lg btn-success button-bottom-buynow col-12">Buy Now <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+				</a>
       </div>
   </div>
 </div>
@@ -141,10 +143,110 @@
 <script type="text/javascript">
   var modePrice;
   $(document).ready(function(){
+		$("#link-checkout").attr("href","<?php echo url('checkout/3'); ?>");
     slider_init();
     box_pricing_click();
     set_price();
+		check_package();
   });
+	function check_package(){
+		if (modePrice==1) {
+			if (numOfContact == 1000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/3'); ?>");
+			}
+			if (numOfContact == 2500) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/6'); ?>");
+			}
+			if (numOfContact == 5000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/9'); ?>");
+			}
+			if (numOfContact == 7500) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/12'); ?>");
+			}
+			if (numOfContact == 10000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/15'); ?>");
+			}
+			if (numOfContact == 15000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/18'); ?>");
+			}
+			if (numOfContact == 20000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/21'); ?>");
+			}
+			if (numOfContact == 25000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/24'); ?>");
+			}
+			if (numOfContact == 50000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/27'); ?>");
+			}
+			if (numOfContact == 75000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/30'); ?>");
+			}
+		}
+		if (modePrice==2) {
+			if (numOfContact == 1000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/2'); ?>");
+			}
+			if (numOfContact == 2500) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/5'); ?>");
+			}
+			if (numOfContact == 5000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/8'); ?>");
+			}
+			if (numOfContact == 7500) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/11'); ?>");
+			}
+			if (numOfContact == 10000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/14'); ?>");
+			}
+			if (numOfContact == 15000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/17'); ?>");
+			}
+			if (numOfContact == 20000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/20'); ?>");
+			}
+			if (numOfContact == 25000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/23'); ?>");
+			}
+			if (numOfContact == 50000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/26'); ?>");
+			}
+			if (numOfContact == 75000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/29'); ?>");
+			}
+		}
+		if (modePrice==3) {
+			if (numOfContact == 1000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/1'); ?>");
+			}
+			if (numOfContact == 2500) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/4'); ?>");
+			}
+			if (numOfContact == 5000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/7'); ?>");
+			}
+			if (numOfContact == 7500) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/10'); ?>");
+			}
+			if (numOfContact == 10000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/13'); ?>");
+			}
+			if (numOfContact == 15000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/16'); ?>");
+			}
+			if (numOfContact == 20000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/19'); ?>");
+			}
+			if (numOfContact == 25000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/22'); ?>");
+			}
+			if (numOfContact == 50000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/25'); ?>");
+			}
+			if (numOfContact == 75000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/28'); ?>");
+			}
+		}
+	}
   function set_price(){
       if (modePrice==1) {
         $("#choose-price").html($("#6months-price").html());
@@ -165,6 +267,7 @@
         $(".not-1000").addClass("fa-check");
         $(".not-1000").removeClass("fa-times");
       }
+			
   }
   
   function slider_init(){
@@ -199,32 +302,38 @@
             $("#3months-price").html("IDR 1.145.400");
             $("#monthly-price").html("IDR 415.000");
           }
-          if (numOfContact == 15000) {
+          if (numOfContact == 10000) {
             $("#6months-price").html("IDR 2.997.000");
             $("#3months-price").html("IDR 1.531.800");
             $("#monthly-price").html("IDR 555.000");
           }
-          if (numOfContact == 20000) {
+          if (numOfContact == 15000) {
             $("#6months-price").html("IDR 3.753.000");
             $("#3months-price").html("IDR 1.918.200");
             $("#monthly-price").html("IDR 695.000");
           }
-          if (numOfContact == 25000) {
+          if (numOfContact == 20000) {
             $("#6months-price").html("IDR 5.265.000");
             $("#3months-price").html("IDR 2.691.000");
             $("#monthly-price").html("IDR 975.000");
           }
-          if (numOfContact == 50000) {
+          if (numOfContact == 25000) {
             $("#6months-price").html("IDR 6.777.000");
             $("#3months-price").html("IDR 3.463.800");
             $("#monthly-price").html("IDR 1.255.000");
           }
-          if (numOfContact == 75000) {
+          if (numOfContact == 50000) {
             $("#6months-price").html("IDR 12.069.000");
             $("#3months-price").html("IDR 6.168.600");
             $("#monthly-price").html("IDR 2.235.000");
           }
+          if (numOfContact == 75000) {
+            $("#6months-price").html("IDR 23.409.000");
+            $("#3months-price").html("IDR 11.964.600");
+            $("#monthly-price").html("IDR 4.335.000");
+          }
           set_price();
+					check_package();
         }
     });
   }
@@ -235,6 +344,7 @@
       $(this).addClass("selected");
       modePrice = $(this).attr("data-attr");
       set_price();
+			check_package();
     });
   }
 </script>
