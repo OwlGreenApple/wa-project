@@ -51,7 +51,7 @@
         <input type="hidden" name="id_phone_number" id="id_phone_number">
 
         <label><h4>Before connecting to our server <br>
-        You must have "profile image" at your Whatsapp settings
+        You must have <b>"Profile Image"</b> at your Whatsapp settings
         </h4></label>
         <br><br>
         <!--<span class="txt-mode"></span>-->
@@ -336,7 +336,7 @@
       $('#phone-table').show();
     <?php } ?>
     $('#button-start-connect').click(function(){
-      var phone_number = $("#phone_number").val();
+      var phone_number = $("#phone").val();
       var code_country = $(".iti__selected-flag").attr('data-code');
       var dataphone = $("#form-connect").serializeArray();
       dataphone.push({name:'code_country', value:code_country});
@@ -362,7 +362,7 @@
             $('.message').show();
             $('.message').html(data.message);
             $("#button-connect").prop('disabled',true);
-            $("#phone_number").prop('disabled',true);
+            $("#phone").prop('disabled',true);
             $("#code_country").prop('disabled',true);
             // new system loadPhoneNumber();
             waitingTime();
@@ -478,7 +478,7 @@
             // console.log("new system");
             if (flagtm == false ) {
               flagtm = true;
-              getQRCode($("#code_country").val()+$("#phone_number").val());
+              getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
             }
           }
 
@@ -515,7 +515,7 @@
             if(result.status == 'error'){
               /* new system $('.message').show();
               $('.message').append(result.phone_number);*/
-              // getQRCode($("#code_country").val()+$("#phone_number").val());
+              // getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
               console.log(result);
             }
             else
@@ -638,7 +638,7 @@
           $('.message').show();
           $('.message').html(data.message);
           $("#button-connect").prop('disabled',false);
-          $("#phone_number").val("");
+          $("#phone").val("");
           // new system loadPhoneNumber();
         }
       });
@@ -686,7 +686,7 @@
 
     $("body").on("click", ".link-verify", function() {
       var phone_number = $(this).attr('data-phone');
-      $("#phone_number").val(phone_number);
+      $("#phone").val(phone_number);
       getQRCode(phone_number);
     });
   });
@@ -780,7 +780,7 @@
               $('#div-verify').show();
               loadPhoneNumber();
 
-              $("#phone_number").val(result.phone);
+              $("#phone").val(result.phone);
               $("#edit-phone").modal('hide');
               $(".alert").hide();
             }

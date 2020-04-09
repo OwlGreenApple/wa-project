@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class Coupon extends Model
 {
-    protected $table = 'orders';
+    protected $table = 'coupons';
     protected $connection = 'mysql2';
 }

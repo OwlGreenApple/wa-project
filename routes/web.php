@@ -36,6 +36,9 @@ Route::post('private-list','ApiController@register_list');
 Auth::routes();
 
 Route::get('pricing','OrderController@pricing');
+Route::get('checkout/{id}','OrderController@checkout');
+Route::get('thankyou','OrderController@thankyou');
+Route::post('/check-coupon','OrderController@check_coupon');
 
 /* PROTOTYPE */
 //Route::get('createlists', 'HomeController@formList');
