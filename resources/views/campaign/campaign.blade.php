@@ -533,25 +533,77 @@
             displayResult();
           }
           else if(val == 0){
-            displayEvent();
+            displayResult(null,val);
+            // displayEvent();
           }
           else if(val == 1)
           {
-            displayAutoResponder();
+            displayResult(null,val);
+            // displayAutoResponder();
           }
           else 
           {
-            displayBroadcast();
+            displayResult(null,2);
           }
           
       });
+  }
+
+  function searchCampaign()
+  {
+      $(".search-icon").click(function(){
+        var search = $(".search-box").val();
+        displayResult(search);
+      });
+  }
+
+  function displayResult(query,type)
+  {
+    $.ajax({
+      type : 'GET',
+      url : '{{ url("search-campaign") }}',
+      data : {'search' : query, 'type':type},
+      dataType : 'html',
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success : function(result)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        $("#display_campaign").html(result);
+      },
+      error : function(xhr, attr, throwable)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        console.log(xhr.responseText);
+      }
+    });
+  }
+
+  function MDTimepicker(){
+    $("body").on('focus','.timepicker',function(){
+        $(this).mdtimepicker({
+          format: 'hh:mm',
+        });
+    });
+  }
+
+  /* prevent empty col if user click cancel on clock */
+  function neutralizeClock(){
+     $("body").on("click",".mdtp__button.cancel",function(){
+        $(".timepicker").val('00:00');
+    });
   }
 
   function displayEvent()
   {
      $.ajax({
         type : 'GET',
-        url : '{{ route("eventlist") }}',
+        // url : '{{ route("eventlist") }}',
         data : {type : 0},
         dataType : 'html',
         beforeSend: function()
@@ -767,56 +819,6 @@
       }
     });
   }
-
-  function searchCampaign()
-  {
-      $(".search-icon").click(function(){
-        var search = $(".search-box").val();
-        displayResult(search);
-      });
-  }
-
-  function displayResult(query)
-  {
-      $.ajax({
-          type : 'GET',
-          url : '{{ url("search-campaign") }}',
-          data : {'search' : query},
-          dataType : 'html',
-          beforeSend: function()
-          {
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success : function(result)
-          {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            $("#display_campaign").html(result);
-          },
-          error : function(xhr, attr, throwable)
-          {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            console.log(xhr.responseText);
-          }
-        });
-  }
-
-  function MDTimepicker(){
-      $("body").on('focus','.timepicker',function(){
-          $(this).mdtimepicker({
-            format: 'hh:mm',
-          });
-      });
-    }
-
-    /* prevent empty col if user click cancel on clock */
-    function neutralizeClock(){
-       $("body").on("click",".mdtp__button.cancel",function(){
-          $(".timepicker").val('00:00');
-      });
-    }
 
 </script>
 @endsection

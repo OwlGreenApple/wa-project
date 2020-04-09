@@ -209,12 +209,21 @@ class CampaignController extends Controller
     {
         $userid = Auth::id();
         $search = $request->search;
+        $type = $request->type;
         $data = array();
 
 
-        if($search == null)
+        if($search == null && $type == null)
         {
           $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
+                      ->leftJoin('lists','lists.id','=','campaigns.list_id')
+                      ->orderBy('campaigns.id','desc')
+                      ->select('campaigns.*','lists.label')
+                      ->get();
+        }
+        elseif($type <> null)
+        { 
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',$type]])
                       ->leftJoin('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
@@ -295,7 +304,7 @@ class CampaignController extends Controller
                             }
                           else
                           {
-                            $event_time = Carbon::parse($reminder->event_time)->addDays($days);
+                              $event_time = Carbon::parse($reminder->event_time)->addDays($days);
                           }
 
                           $data[] = array(
@@ -303,7 +312,7 @@ class CampaignController extends Controller
                             'id'=>$row->id,
                             'campaign_name'=>$row->name,
                             'sending'=>Date('M d, Y',strtotime($event_time)),
-                            'sending_time' => Date('h:i',strtotime($row->hour_time)),
+                            'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
                             'label'=>$row->label,
                             'created_at'=>Date('M d, Y',strtotime($row->created_at)),
                             'total_message' => $reminder_customer->total_message,
@@ -325,7 +334,7 @@ class CampaignController extends Controller
                             'id'=>$row->id,
                             'campaign_name' => $row->name,
                             'sending' => $days.' '.$message,
-                            'sending_time' => Date('h:i',strtotime($row->hour_time)),
+                            'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
                             'label' => $row->label,
                             'created_at' => Date('M d, Y',strtotime($row->created_at)),
                             'total_message' => $reminder_customer->total_message,

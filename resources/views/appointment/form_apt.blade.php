@@ -59,11 +59,29 @@
 <!-- end container -->    
 </div>
 
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <!-- <div class="modal-header">
+        <h4 class="modal-title">Thank You</h4>
+      </div> -->
+      <div class="modal-body text-center">
+          <span class="popup_modal_message"></span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script type="text/javascript">
 
   $(function () {
       $('#datetimepicker').datetimepicker({
         format : 'YYYY-MM-DD HH:mm',
+        minDate: new Date()
       }); 
       callAjax();
       fillPhoneToForm();
@@ -168,10 +186,15 @@
 
           if(result.success == 1)
           {
-            alert(result.message);
+            $(".popup_modal_message").html(result.message);
+            $("#myModal").modal();
+            
             clearForm();
             $(".error").hide();
             $("#appt_form").hide();
+            setTimeout(function(){
+              $("#myModal").modal('hide');
+            },1500);
           }
           else
           {

@@ -159,11 +159,14 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('edit-campaign-name','CampaignController@editCampaign'); 
   
   /* EVENT */
-  Route::get('event-list','EventController@displayEventList')->name('eventlist');
   Route::get('event-del','EventController@delEvent');
   Route::post('event-duplicate','EventController@duplicateEvent')->middleware('checkeventduplicate');
   Route::get('load-event','EventController@loadEvent');
   Route::get('delete-event','EventController@deleteEvent');
+
+  //not used anymore (EVENT)
+  Route::get('event-list','EventController@displayEventList')->name('eventlist');
+  ////////////////////////////////////////////////
 
   /* REMINDER */
   Route::get('reminder-list','ReminderController@displayReminderList')->name('reminderlist');
