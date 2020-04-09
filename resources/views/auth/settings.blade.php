@@ -109,7 +109,7 @@
                     </div>
  -->
                     <div class="col-sm-12">
-                      <input type="text" id="phone_number" name="phone_number" class="form-control" />
+                      <input type="text" id="phone" name="phone_number" class="form-control" />
                       <span class="error code_country"></span>
                       <span class="error phone_number"></span>
                     </div>
@@ -336,7 +336,7 @@
       $('#phone-table').show();
     <?php } ?>
     $('#button-start-connect').click(function(){
-      var phone_number = $("#phone_number").val();
+      var phone_number = $("#phone").val();
       var code_country = $(".iti__selected-flag").attr('data-code');
       var dataphone = $("#form-connect").serializeArray();
       dataphone.push({name:'code_country', value:code_country});
@@ -362,7 +362,7 @@
             $('.message').show();
             $('.message').html(data.message);
             $("#button-connect").prop('disabled',true);
-            $("#phone_number").prop('disabled',true);
+            $("#phone").prop('disabled',true);
             $("#code_country").prop('disabled',true);
             // new system loadPhoneNumber();
             waitingTime();
@@ -478,7 +478,7 @@
             // console.log("new system");
             if (flagtm == false ) {
               flagtm = true;
-              getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone_number").val());
+              getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
             }
           }
 
@@ -515,7 +515,7 @@
             if(result.status == 'error'){
               /* new system $('.message').show();
               $('.message').append(result.phone_number);*/
-              // getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone_number").val());
+              // getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
               console.log(result);
             }
             else
@@ -638,7 +638,7 @@
           $('.message').show();
           $('.message').html(data.message);
           $("#button-connect").prop('disabled',false);
-          $("#phone_number").val("");
+          $("#phone").val("");
           // new system loadPhoneNumber();
         }
       });
@@ -686,7 +686,7 @@
 
     $("body").on("click", ".link-verify", function() {
       var phone_number = $(this).attr('data-phone');
-      $("#phone_number").val(phone_number);
+      $("#phone").val(phone_number);
       getQRCode(phone_number);
     });
   });
@@ -780,7 +780,7 @@
               $('#div-verify').show();
               loadPhoneNumber();
 
-              $("#phone_number").val(result.phone);
+              $("#phone").val(result.phone);
               $("#edit-phone").modal('hide');
               $(".alert").hide();
             }
