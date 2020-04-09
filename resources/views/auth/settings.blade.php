@@ -51,7 +51,7 @@
         <input type="hidden" name="id_phone_number" id="id_phone_number">
 
         <label><h4>Before connecting to our server <br>
-        You must have <b>"profile image"</b> at your Whatsapp settings
+        You must have <b>"Profile Image"</b> at your Whatsapp settings
         </h4></label>
         <br><br>
         <!--<span class="txt-mode"></span>-->
