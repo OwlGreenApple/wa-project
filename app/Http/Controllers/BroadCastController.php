@@ -199,6 +199,49 @@ class BroadCastController extends Controller
       return view('broadcast.broadcast',['broadcast'=>$data]);
     }
 
+    public function updateBroadcast(Request $request)
+    {
+        $user_id = Auth::id();
+        $broadcast_id = $request->broadcast_id;
+        $campaign_name = $request->campaign_name;
+        $date_send = $request->date_send;
+        $time_sending = $request->hour;
+        $message = $request->edit_message;
+
+        $broadcast = BroadCast::find($broadcast_id);
+        $broadcast->day_send = $date_send;
+        $broadcast->hour_time = $time_sending;
+        $broadcast->message = $message;
+        $campaign_id = $broadcast->campaign_id;
+
+        try
+        {
+            $broadcast->save();
+        }
+        catch(Exception $e)
+        {
+            $data['msg'] = 'Failed to update broadcast, our server is too busy';
+            $data['success'] = 0;
+            return response()->json($data);
+        }
+
+        $campaign = Campaign::find($campaign_id);
+        $campaign->name = $campaign_name;
+
+        try
+        {
+            $campaign->save();
+            $data['msg'] = 'Broadcast updated successfully.';
+            $data['success'] = 1;
+        }
+        catch(Exception $e)
+        {
+            $data['msg'] = 'Failed to update broadcast, our server is too busy.-';
+            $data['success'] = 0;
+        }
+        return response()->json($data);
+    }
+
     public function delBroadcast(Request $request)
     {
         $user_id = Auth::id();
@@ -288,7 +331,8 @@ class BroadCastController extends Controller
           $broadcast->save();
           $broadcastnewID = $broadcast->id;
         }
-        else if(empty($list_id) && !empty($broadcast_group_name))
+
+        /*else if(empty($list_id) && !empty($broadcast_group_name))
         {
           $broadcast->user_id = $user_id;
           $broadcast->list_id = $list_id;
@@ -309,7 +353,7 @@ class BroadCastController extends Controller
           $broadcast->hour_time = $broadcast_sending;
           $broadcast->message = $broadcast_message;
           $broadcast->save();
-        }
+        }*/
 
         if($broadcast->save() && $list_id > 0)
         { 

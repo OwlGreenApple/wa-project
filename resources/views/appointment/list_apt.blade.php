@@ -34,10 +34,10 @@
     <table id="list_appointment" class="table table-bordered mt-4">
       <thead class="bg-dashboard">
         <tr>
-          <th width="10%" class="text-center">No</th>
+          <th width="5%" class="text-center">No</th>
           <th width="20%" class="text-center">Date Appointment</th>
-          <th width="20%" class="text-center">xDays Before Send</th>
-          <th width="30%" class="text-center">Name Contact</th>
+          <th width="10%" class="text-center">xDays Before Send</th>
+          <th width="25%" class="text-center">Name Contact</th>
           <th width="30%" class="text-center">WA Contact</th>
           <th width="10%" colspan="2" class="text-center">@if($active == true) Action @else Status @endif</th>
         </tr>
@@ -108,6 +108,7 @@
   $(document).ready(function(){
     $('#datetimepicker').datetimepicker({
         format : 'YYYY-MM-DD HH:mm',
+        minDate : new Date()
     }); 
     display_data();
     searchData();
@@ -246,10 +247,12 @@
   function deleteAppointment()
   {
     $("body").on("click",".icon-cancel",function(){
-      var campaign_id = $(this).attr('id'); 
+      /*var campaign_id = $(this).attr('id'); 
       var customer_id = $(this).attr('data-ev'); 
       var oldtime = $(this).attr('data-tm'); 
-      var data = {campaign_id : campaign_id, customer_id : customer_id, oldtime : oldtime};
+      var data = {campaign_id : campaign_id, customer_id : customer_id, oldtime : oldtime};*/
+      var reminder_id = $(this).attr('id');
+      var data = {'reminder_id' : reminder_id}
       var warning = confirm('Are you sure to delete this list appointment?'+'\n'+'WARNING : This cannot be undone');
 
       if(warning == true)

@@ -107,7 +107,7 @@
                       <span class="icon-carret-down-circle"></span>
                       <span class="error code_country"></span>
                     </div>
- -->
+                    -->
                     <div class="col-sm-12">
                       <input type="text" id="phone" name="phone_number" class="form-control" />
                       <span class="error code_country"></span>

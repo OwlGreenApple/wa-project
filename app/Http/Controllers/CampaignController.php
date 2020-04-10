@@ -212,7 +212,6 @@ class CampaignController extends Controller
         $type = $request->type;
         $data = array();
 
-
         if($search == null && $type == null)
         {
           $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
@@ -269,12 +268,14 @@ class CampaignController extends Controller
                       'campaign' => $row->name,
                       'group_name' => $broadcast->group_name,
                       'channel' => $broadcast->channel,
+                      'date_send' => $broadcast->day_send,
                       'day_send' => Date('M d, Y',strtotime($broadcast->day_send)),
                       'sending' => Date('H:i',strtotime($broadcast->hour_time)),
                       'label' => $label,
                       'created_at' => Date('M d, Y',strtotime($row->created_at)),
                       'total_message' => $broadcast_customer->total_message,
                       'sent_message' => $broadcast_customer_open->total_sending_message,
+                      'messages' => $broadcast->message,
                   );
                 }
                 else //REMINDER

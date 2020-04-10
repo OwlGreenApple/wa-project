@@ -49,9 +49,7 @@
         </div>
 
         <div class="col-lg-3 pad-fix col-button">
-          <!--
-            <button id="{{ $row['id'] }}" type="button" class="btn btn-warning btn-sm"><span class="icon-eye"></span></button>
-          -->
+          <a id="{{ $row['id'] }}" data-name="{{ $row['campaign'] }}" data-date="{{ $row['date_send'] }}" data-message="{{ $row['messages'] }}" data-time="{{ $row['sending'] }}" type="button" class="btn btn-activ btn-sm edit_campaign"><span class="icon-edit"></span></a>
           <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm broadcast_duplicate" data-toggle="tooltip" data-placement="top" title="Button Duplicate"><span class="icon-copy-text"></span></button>
           <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm broadcast-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
         </div>
