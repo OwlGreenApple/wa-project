@@ -290,9 +290,18 @@ class SettingController extends Controller
         }
 
         $wa_number = substr($no_wa, 1);
+				$flag_status = false;
         $status_connect = ApiHelper::qr_status($no_wa);
         //if status_connect == none which mean phone still not connect
-        if($status_connect == $wa_number)
+				if($status_connect == $wa_number){
+					$flag_status = true;
+				}
+				if (is_array($status_connect)) {
+					if ($status_connect["status"]=="phone_offline") {
+						$flag_status = true;
+					}
+				}
+        if($lag_status)
         {
             /* new system $data = array(
               'status'=>2,
