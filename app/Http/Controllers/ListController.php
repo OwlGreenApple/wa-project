@@ -1017,6 +1017,12 @@ class ListController extends Controller
 
               if($checkuniquephone == true && $checkuniqueemail == true)
               {
+
+                if(substr($phone,0,1) <> '+')
+                {
+                    $phone = '+'.$phone;
+                }
+
                 $customer = new Customer;
                 $customer->user_id = $userid;
                 $customer->list_id = $id_list;
@@ -1227,9 +1233,15 @@ class ListController extends Controller
                   $column[0] = array();
                   foreach($data['customers'] as $row)
                   {
+                      $phone = $row->telegram_number;
+                      if(substr($phone,0,1) == '+')
+                      {
+                          $phone = str_replace("+", "", $phone);
+                      }
+
                       $column[] = array(
                         $row->name,
-                        $row->telegram_number,
+                        $phone,
                         $row->email
                       );
                   }
@@ -1239,9 +1251,15 @@ class ListController extends Controller
                   $column[0] = $column[1] = array();
                   foreach($data['customers'] as $row)
                   {
+                      $phone = $row->telegram_number;
+                      if(substr($phone,0,1) == '+')
+                      {
+                          $phone = str_replace("+", "", $phone);
+                      }
+
                       $column[] = array(
                         $row->name,
-                        $row->telegram_number,
+                        $phone,
                         $row->email,
                         $this->renderAdditional($row->additional)
                       ); //end array

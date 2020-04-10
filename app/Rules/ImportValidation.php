@@ -30,11 +30,12 @@ class ImportValidation implements Rule
          return false;
       } 
       else {
-         return $this->checkPlus($value);
+         return true;
+         // return $this->checkPlus($value);
       }
     }
 
-    public function checkPlus($value)
+   /* public function checkPlus($value)
     {
         $check_plus = substr($value,0,1);
         if($check_plus <> "+")
@@ -46,7 +47,7 @@ class ImportValidation implements Rule
             return true;
         }
     }
-
+*/
     /**
      * Get the validation error message.
      *
@@ -54,6 +55,6 @@ class ImportValidation implements Rule
      */
     public function message()
     {
-        return 'Please fill in your Phone number column only (ex: +6287881115557 ), do not use "0" at the beginning.';
+        return 'Please fill in your Phone number column only (ex: 6287881115557 ), do not use "0" at the beginning.';
     }
 }

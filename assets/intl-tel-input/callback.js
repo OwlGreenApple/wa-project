@@ -41,7 +41,7 @@ window.intlTelInput(input, {
   // hiddenInput: "full_number",
   // localizedCountries: { 'de': 'Deutschland' },
   // nationalMode: false,
-  // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+  onlyCountries: ['us', 'gb', 'sg', 'au', 'id','my'],
   placeholderNumberType: "MOBILE",
   // preferredCountries: ['cn', 'jp'],
   // separateDialCode: true,
