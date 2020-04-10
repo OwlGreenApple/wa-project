@@ -522,6 +522,7 @@
             {
               $('#div-verify').show();
               $("#qr-code").html(result.data);
+							$(window).scrollTop(700);
               clearInterval(tm);
               countDownTimer(phone_number);
             }
@@ -555,7 +556,6 @@
           
           if(sec < 1){
             clearInterval(timerCheckQrCode);
-            checkQRcode(phone_number);
           }
 
           if(sec < 10){
