@@ -301,7 +301,7 @@ class SettingController extends Controller
 						$flag_status = true;
 					}
 				}
-        if($lag_status)
+        if($flag_status)
         {
             /* new system $data = array(
               'status'=>2,
