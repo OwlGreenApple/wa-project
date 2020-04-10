@@ -1,7 +1,5 @@
 var filename = window.location.href;
 var url = filename.split('/');
-
-console.log(url);
 var path;
 
 if(url[2] == 'localhost')
@@ -10,7 +8,7 @@ if(url[2] == 'localhost')
 }
 else
 {
-    path = 'assets';
+    path = 'https://'+url[2]+'/'+url[3]+'/assets';
 }
 
 var input = document.querySelector("#phone");
