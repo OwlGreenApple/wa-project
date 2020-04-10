@@ -1,5 +1,7 @@
 var filename = window.location.href;
 var url = filename.split('/');
+
+console.log(url);
 var path;
 
 if(url[2] == 'localhost')
