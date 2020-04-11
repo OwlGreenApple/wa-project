@@ -1,19 +1,5 @@
 @extends('layouts.app')
 @section('content')
-<?php 
-  use App\Coupon;
-  $showPackage = false;
-  if (is_numeric($id)){
-    $showPackage = true;
-  }
-  $coupon = Coupon::where('kodekupon',$id)
-            ->first();
-  if (!is_null($coupon)){
-    if(($coupon->valid_to=='') || ($coupon->valid_to=='expired-membership') || ($coupon->valid_to=='all') ){
-      $showPackage = true;
-    }
-  }
-?>
 <link rel="stylesheet" href="{{asset('assets/css/checkout.css')}}">
 
 <div class="container" style="margin-top:50px; margin-bottom:100px">
@@ -30,9 +16,9 @@
           @endif
 
           <?php if (Auth::check()) {?>
-          <form method="POST" action="{{url('confirm-payment')}}">
+          <form method="POST" action="{{url('submit-checkout')}}">
             <?php } else {?>
-            <form method="POST" action="{{url('register-payment')}}">
+            <form method="POST" action="{{url('submit-checkout-register')}}">
               <?php }?>
               {{ csrf_field() }}
               <input type="hidden" id="price" name="price">
@@ -217,7 +203,7 @@
               </div>
               <div class="form-group">
                 <div class="col-12 col-md-12">
-                  <input type="submit" name="submit" id="submit" class="col-md-12 col-12 btn btn-primary bsub btn-block" value="Order Sekarang" @if(substr($id,0,7)=='special') style="background-color:#ff0000!important;" @endif/>
+                  <input type="submit" name="submit" id="submit" class="col-md-12 col-12 btn btn-primary bsub btn-block" value="Order Sekarang"/>
                 </div>
               </div>
             </form>
@@ -298,26 +284,11 @@
   }
   
   $(document).ready(function() {
-    <?php 
-    if($showPackage){
-    ?>
-      $( "#select-auto-manage" ).change(function() {
-        var price = $(this).find("option:selected").attr("data-price");
-        var namapaket = $(this).find("option:selected").attr("data-paket");
-
-        $("#price").val(price);
-        $("#namapaket").val(namapaket);
-        // $('#kupon').val("");
-        // check_kupon();
-      });
-      $( "#select-auto-manage" ).change();
-    <?php } ?>
     $("body").on("click", ".btn-kupon", function() {
       check_kupon();
     });
 
-    $("#kupon").val("<?php if (!is_numeric($id)) { echo $id; } ?>");
-    // $(".btn-kupon").trigger("click");
+    $(".btn-kupon").trigger("click");
   });
     
 </script>

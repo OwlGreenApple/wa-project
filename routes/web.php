@@ -39,6 +39,8 @@ Route::get('pricing','OrderController@pricing');
 Route::get('checkout/{id}','OrderController@checkout');
 Route::get('thankyou','OrderController@thankyou');
 Route::post('/check-coupon','OrderController@check_coupon');
+Route::post('/submit-checkout-register','OrderController@submit_checkout_register');
+Route::post('/submit-checkout','OrderController@submit_checkout');
 
 /* PROTOTYPE */
 //Route::get('createlists', 'HomeController@formList');
