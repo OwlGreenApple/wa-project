@@ -29,6 +29,7 @@ window.intlTelInput(input, {
   // autoHideDialCode: false,
   // autoPlaceholder: "off",
   dropdownContainer: document.body,
+  pageHiddenInput : url[4],
   // excludeCountries: ["us"],
   // formatOnDisplay: false,
  /* initialCountry: "auto",

@@ -26,13 +26,13 @@
 
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Campaign :
-                    <span class="tooltipstered" title="<div class='panel-heading'>Campaign type</div><div class='panel-content'>
-										Broadcast <br>
-										Auto Responder <br>
-										Event
-                    </div>">
-                      <i class="fa fa-question-circle "></i>
-                    </span>
+          <span class="tooltipstered" title="<div class='panel-heading'>Campaign type</div><div class='panel-content'>
+					Broadcast <br>
+					Auto Responder <br>
+					Event
+          </div>">
+            <i class="fa fa-question-circle "></i>
+          </span>
         </label>
         <div class="col-sm-9">
 
