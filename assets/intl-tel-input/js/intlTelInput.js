@@ -87,6 +87,8 @@
             geoIpLookup: null,
             // inject a hidden input with this name, and on submit, populate it with the result of getNumber
             hiddenInput: "",
+            //chose whic page use hidden input
+            pageHiddenInput: "",
             // initial country
             initialCountry: "",
             // localized country names e.g. { 'de': 'Deutschland' }
@@ -343,6 +345,7 @@
                     var wrapper = this._createEl("div", {
                         "class": parentClass
                     });
+
                     this.telInput.parentNode.insertBefore(wrapper, this.telInput);
                     this.flagsContainer = this._createEl("div", {
                         "class": "iti__flag-container"
@@ -368,6 +371,12 @@
                         this.dropdownArrow = this._createEl("div", {
                             "class": "iti__arrow"
                         }, this.selectedFlag);
+
+                        //custom
+                        this.customDialCode = this._createEl("div", {
+                            "id": "iti_custom"
+                        }, this.selectedFlag);
+
                         // country dropdown: preferred countries, then divider, then all countries
                         this.countryList = this._createEl("ul", {
                             "class": "iti__country-list iti__hide",
@@ -394,9 +403,11 @@
                             this.flagsContainer.appendChild(this.countryList);
                         }
                     }
+
                     if (this.options.hiddenInput) {
                         var hiddenInputName = this.options.hiddenInput;
                         var name = this.telInput.getAttribute("name");
+
                         if (name) {
                             var i = name.lastIndexOf("[");
                             // if input name contains square brackets, then give the hidden input the same name,
@@ -405,12 +416,14 @@
                         }
                         this.hiddenInput = this._createEl("input", {
                             type: "hidden",
-                            name: hiddenInputName
+                            name: hiddenInputName,
+                            id : "hidden_country_code"
                         });
                         wrapper.appendChild(this.hiddenInput);
                     }
                 }
-            }, {
+            }, 
+            {
                 key: "_appendListItems",
                 value: function _appendListItems(countries, className) {
                     // we create so many DOM elements, it is faster to build a temp string
@@ -463,11 +476,13 @@
                             this.telInput.value = "+".concat(this.selectedCountryData.dialCode);
                         }
                     }
+
                     // NOTE: if initialCountry is set to auto, that will be handled separately
                     // format - note this wont be run after _updateDialCode as that's only called if no val
                     if (val) this._updateValFromNumber(val);
                 }
-            }, {
+            }, 
+            {
                 key: "_initListeners",
                 value: function _initListeners() {
                     this._initKeyListeners();
@@ -916,6 +931,13 @@
                     // modified code
                     var data_code = "+".concat(this.selectedCountryData.dialCode);
                     this.selectedFlag.setAttribute("data-code", data_code);
+                    document.getElementById('iti_custom').innerHTML=data_code;
+
+                     // for hidden input
+                    if(this.options.pageHiddenInput == 'register')
+                    {
+                        document.getElementById('hidden_country_code').value=data_code;
+                    }
 
                     if (this.options.separateDialCode) {
                         var dialCode = this.selectedCountryData.dialCode ? "+".concat(this.selectedCountryData.dialCode) : "";
@@ -942,6 +964,7 @@
                             this.countryList.setAttribute("aria-activedescendant", nextItem.getAttribute("id"));
                         }
                     }
+
                     // return if the flag has changed or not
                     return prevCountry.iso2 !== countryCode;
                 }
@@ -990,7 +1013,8 @@
                         this._triggerCountryChange();
                     }
                 }
-            }, {
+            }, 
+            {
                 key: "_closeDropdown",
                 value: function _closeDropdown() {
                     this.countryList.classList.add("iti__hide");

@@ -50,9 +50,21 @@
                     </div>
 
                     <div class="form-group">
-                      <label>Handphone*</label>
-                      <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" placeholder="Input Your Phone" required/>
+                      <label>Handphone* <span class="tooltipstered" title="<div class='panel-heading'>Message</div><div class='panel-content'>
+                            Fill with your phone number without 0 or country code<br/>
+                            For example : 8123456789, (201)5555555
+                          </div>">
+                          <i class="fa fa-question-circle "></i>
+                        </span>
+                      </label>
+                      <input type="text" id="phone" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" required/>
                       @error('phone')
+                          <span class="invalid-feedback" role="alert">
+                              <strong>{{ $message }}</strong>
+                          </span>
+                      @enderror
+                      <input id="hidden_country_code" type="hidden" class="form-control @error('phone') is-invalid @enderror" name="code_country" />
+                      @error('code_country')
                           <span class="invalid-feedback" role="alert">
                               <strong>{{ $message }}</strong>
                           </span>
@@ -93,7 +105,7 @@
                     <div class="text-left">
                       <button id="btn-register" type="submit" class="btn btn-custom btn-lg">REGISTER</button>
                     </div>
-                    <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
+                    <input type="hidden" name="recaptcha_response" id="recaptchaResponse" readonly="readonly"/>
                 </form>
 
                 <hr class="mt-5" />
@@ -106,11 +118,18 @@
     </div>
 </div>
 
+<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 <script>
   $(document).ready(function(){
       agreement();
       checkCheckBox();
+      fixLayoutInputPhoneCountry();
   });
+
+  function fixLayoutInputPhoneCountry()
+  {
+      $(".iti").addClass('w-100');
+  }
 
   function agreement(){
     $("input[name=agreement]").click(function(){

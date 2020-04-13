@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
-use App\Rules\TelNumber;
+use App\Rules\CheckPlusCode;
+use App\Rules\CheckCallCode;
+use App\Rules\InternationalTel;
+use App\Rules\AvailablePhoneNumber;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RegisteredEmail;
 
@@ -68,11 +71,12 @@ class RegisterController extends Controller
             $error['error_phone'] = 'Error Captcha';
             return response()->json($error);
         }*/
-      
+
         return Validator::make($data, [
             'username' => ['required','string','max:255'],
             'email' => ['required','string', 'email', 'max:255', 'unique:users'],
-            'phone' => ['required','max:18',new TelNumber],
+            'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
+            'phone' => ['required','max:18','min:6','max:18',new InternationalTel,new AvailablePhoneNumber($data['code_country'])]
             //'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -91,13 +95,16 @@ class RegisterController extends Controller
         $user = User::create([
           'name' => $data['username'],
           'email' => $data['email'],
-          'phone_number'=>$data['phone'],
+          'phone_number'=>$data['code_country'].$data['phone'],
           'password' => Hash::make($generated_password),
           'gender'=>$data['gender']
         ]);
            
-        Mail::to($data['email'])->send(new RegisteredEmail($generated_password));
-         
+        if(env('APP_ENV') <> 'local')
+        {
+          Mail::to($data['email'])->send(new RegisteredEmail($generated_password));
+        }
+
         return $user;
     }
 }
