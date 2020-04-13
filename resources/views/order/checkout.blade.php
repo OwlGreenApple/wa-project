@@ -32,10 +32,10 @@
                           Basic - 1.000 Kontak - IDR 195.000,-/30 hari
                         </option>
                         <option class="" data-price="538200" data-paket="bestseller1" value="2" <?php if ($id==2) echo "selected" ; ?>>
-                          Best Seller - 1.000 Kontak - IDR 538.200,-/180 hari 
+                          Best Seller - 1.000 Kontak - IDR 538.200,-/90 hari 
                         </option>
                         <option class="" data-price="1053000" data-paket="supervalue1" value="3" <?php if ($id==3) echo "selected" ; ?>>
-                          Super Value - 1.000 Kontak - IDR 1.053.000,-/365 hari 
+                          Super Value - 1.000 Kontak - IDR 1.053.000,-/180 hari 
                         </option>
 
                         <option class="">
@@ -46,10 +46,10 @@
                           Basic - 2.500 Kontak - IDR 275.000,-/30 hari
                         </option>
                         <option class="" data-price="759000" data-paket="bestseller2" value="5" <?php if ($id==5) echo "selected" ; ?>>
-                          Best Seller - 2.500 Kontak - IDR 759.000,-/180 hari 
+                          Best Seller - 2.500 Kontak - IDR 759.000,-/90 hari 
                         </option>
                         <option class="" data-price="1485000" data-paket="supervalue2" value="6" <?php if ($id==6) echo "selected" ; ?>>
-                          Super Value - 2.500 Kontak - IDR 1.485.000,-/365 hari 
+                          Super Value - 2.500 Kontak - IDR 1.485.000,-/180 hari 
                         </option>
 												
                         <option class="">
@@ -60,10 +60,10 @@
                           Basic - 5.000 Kontak - IDR 345.000,-/30 hari
                         </option>
                         <option class="" data-price="952200" data-paket="bestseller3" value="8" <?php if ($id==8) echo "selected" ; ?>>
-                          Best Seller - 5.000 Kontak - IDR 952.200,-/180 hari 
+                          Best Seller - 5.000 Kontak - IDR 952.200,-/90 hari 
                         </option>
                         <option class="" data-price="1863000" data-paket="supervalue3" value="9" <?php if ($id==9) echo "selected" ; ?>>
-                          Super Value - 5.000 Kontak - IDR 1.863.000,-/365 hari 
+                          Super Value - 5.000 Kontak - IDR 1.863.000,-/180 hari 
                         </option>
 												
                         <option class="">
@@ -74,10 +74,10 @@
                           Basic - 7.500 Kontak - IDR 415.000,-/30 hari
                         </option>
                         <option class="" data-price="1145400" data-paket="bestseller4" value="11" <?php if ($id==11) echo "selected" ; ?>>
-                          Best Seller - 7.500 Kontak - IDR 1.145.400,-/180 hari 
+                          Best Seller - 7.500 Kontak - IDR 1.145.400,-/90 hari 
                         </option>
                         <option class="" data-price="2241000" data-paket="supervalue4" value="12" <?php if ($id==12) echo "selected" ; ?>>
-                          Super Value - 7.500 Kontak - IDR 2.241.000,-/365 hari 
+                          Super Value - 7.500 Kontak - IDR 2.241.000,-/180 hari 
                         </option>
 												
                         <option class="">
@@ -88,10 +88,10 @@
                           Basic - 10.000 Kontak - IDR 555.000,-/30 hari
                         </option>
                         <option class="" data-price="1531800" data-paket="bestseller5" value="14" <?php if ($id==14) echo "selected" ; ?>>
-                          Best Seller - 10.000 Kontak - IDR 1.531.800,-/180 hari 
+                          Best Seller - 10.000 Kontak - IDR 1.531.800,-/90 hari 
                         </option>
                         <option class="" data-price="2997000" data-paket="supervalue5" value="15" <?php if ($id==15) echo "selected" ; ?>>
-                          Super Value - 10.000 Kontak - IDR 2.997.000,-/365 hari 
+                          Super Value - 10.000 Kontak - IDR 2.997.000,-/180 hari 
                         </option>
 												
                         <option class="">
@@ -102,10 +102,10 @@
                           Basic - 15.000 Kontak - IDR 695.000,-/30 hari
                         </option>
                         <option class="" data-price="1918200" data-paket="bestseller6" value="17" <?php if ($id==17) echo "selected" ; ?>>
-                          Best Seller - 15.000 Kontak - IDR 1.918.200,-/180 hari 
+                          Best Seller - 15.000 Kontak - IDR 1.918.200,-/90 hari 
                         </option>
                         <option class="" data-price="3753000" data-paket="supervalue6" value="18" <?php if ($id==18) echo "selected" ; ?>>
-                          Super Value - 15.000 Kontak - IDR 3.753.000,-/365 hari 
+                          Super Value - 15.000 Kontak - IDR 3.753.000,-/180 hari 
                         </option>
 												
                         <option class="">
@@ -116,10 +116,10 @@
                           Basic - 20.000 Kontak - IDR 975.000,-/30 hari
                         </option>
                         <option class="" data-price="2691000" data-paket="bestseller7" value="20" <?php if ($id==20) echo "selected" ; ?>>
-                          Best Seller - 20.000 Kontak - IDR 2.691.200,-/180 hari 
+                          Best Seller - 20.000 Kontak - IDR 2.691.200,-/90 hari 
                         </option>
                         <option class="" data-price="5265000" data-paket="supervalue7" value="21" <?php if ($id==21) echo "selected" ; ?>>
-                          Super Value - 20.000 Kontak - IDR 5.265.000,-/365 hari 
+                          Super Value - 20.000 Kontak - IDR 5.265.000,-/180 hari 
                         </option>
 												
                         <option class="">
@@ -130,38 +130,10 @@
                           Basic - 25.000 Kontak - IDR 1.255.000,-/30 hari
                         </option>
                         <option class="" data-price="3463800" data-paket="bestseller8" value="23" <?php if ($id==23) echo "selected" ; ?>>
-                          Best Seller - 25.000 Kontak - IDR 3.463.800,-/180 hari 
+                          Best Seller - 25.000 Kontak - IDR 3.463.800,-/90 hari 
                         </option>
                         <option class="" data-price="6777000" data-paket="supervalue8" value="24" <?php if ($id==24) echo "selected" ; ?>>
-                          Super Value - 25.000 Kontak - IDR 6.777.000,-/365 hari 
-                        </option>
-												
-                        <option class="">
-                          -----------------------------------------------------------------------------------------------------------------
-                        </option>
-												
-                        <option class="" data-price="2235000" data-paket="basic9" value="25" <?php if ($id==25) echo "selected" ; ?>>
-                          Basic - 50.000 Kontak - IDR 2.235.000,-/30 hari
-                        </option>
-                        <option class="" data-price="6168600" data-paket="bestseller9" value="26" <?php if ($id==26) echo "selected" ; ?>>
-                          Best Seller - 50.000 Kontak - IDR 6.168.600,-/180 hari 
-                        </option>
-                        <option class="" data-price="12069000" data-paket="supervalue9" value="27" <?php if ($id==27) echo "selected" ; ?>>
-                          Super Value - 50.000 Kontak - IDR 12.069.000,-/365 hari 
-                        </option>
-												
-                        <option class="">
-                          -----------------------------------------------------------------------------------------------------------------
-                        </option>
-												
-                        <option class="" data-price="4335000" data-paket="basic10" value="28" <?php if ($id==28) echo "selected" ; ?>>
-                          Basic - 75.000 Kontak - IDR 4.335.000,-/30 hari
-                        </option>
-                        <option class="" data-price="11964600" data-paket="bestseller10" value="29" <?php if ($id==29) echo "selected" ; ?>>
-                          Best Seller - 75.000 Kontak - IDR 11.964.600,-/180 hari 
-                        </option>
-                        <option class="" data-price="23409000" data-paket="supervalue10" value="30" <?php if ($id==30) echo "selected" ; ?>>
-                          Super Value - 75.000 Kontak - IDR 23.409.000,-/365 hari 
+                          Super Value - 25.000 Kontak - IDR 6.777.000,-/180 hari 
                         </option>
 												
                   </select>

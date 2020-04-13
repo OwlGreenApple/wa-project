@@ -244,6 +244,65 @@ class OrderController extends Controller
   }
   
 
+  public function index_order(){
+    //halaman order user
+    return view('order.index');
+  }
   
+  //upload bukti TT 
+  public function confirm_payment_order(Request $request){
+    $user = Auth::user();
+    //konfirmasi pembayaran user
+    $order = Order::find($request->id_confirm);
+    $folder = $user->email.'/buktibayar';
+
+    if($order->status==0)
+    {
+      $order->status = 1;
+
+      if($request->hasFile('buktibayar'))
+      {
+        // $path = Storage::putFile('bukti',$request->file('buktibayar'));
+        $dir = 'bukti_bayar/'.explode(' ',trim($user->name))[0].'-'.$user->id;
+        $filename = $order->no_order.'.jpg';
+        Storage::disk('s3')->put($dir."/".$filename, file_get_contents($request->file('buktibayar')), 'public');
+        $order->buktibayar = $dir."/".$filename;
+        
+      } else {
+        // $arr['status'] = 'error';
+        // $arr['message'] = 'Upload file buktibayar terlebih dahulu';
+        // return $arr;
+        $pathUrl = str_replace(url('/'), '', url()->previous());
+        return redirect($pathUrl)->with("error", "Upload file buktibayar terlebih dahulu");
+      }  
+      $order->keterangan = $request->keterangan;
+      $order->save();
+
+      // $arr['status'] = 'success';
+      // $arr['message'] = 'Konfirmasi pembayaran berhasil';
+    } else {
+      // $arr['status'] = 'error';
+      // $arr['message'] = 'Order telah atau sedang dikonfirmasi oleh admin';
+        $pathUrl = str_replace(url('/'), '', url()->previous());
+        return redirect($pathUrl)->with("error", "Order telah atau sedang dikonfirmasi oleh admin.");
+    }
+
+    // return $arr;
+    return view('pricing.thankyou-confirm-payment');
+  }
+
+  public function load_order(Request $request){
+    //halaman order user
+    $orders = Order::where('user_id',Auth::user()->id)
+                ->orderBy('created_at','desc')
+                ->paginate(15);
+                //->get();
+    $arr['view'] = (string) view('order.content')
+                      ->with('orders',$orders);
+    $arr['pager'] = (string) view('order.pagination')
+                      ->with('orders',$orders); 
+    return $arr;
+  }
+
 /* end class */
 }
