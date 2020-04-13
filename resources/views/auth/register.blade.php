@@ -63,7 +63,7 @@
                               <strong>{{ $message }}</strong>
                           </span>
                       @enderror
-                      <input id="hidden_country_code" type="hidden" class="form-control @error('phone') is-invalid @enderror" name="code_country" />
+                      <input id="hidden_country_code" type="hidden" class="form-control @error('code_country') is-invalid @enderror" name="code_country" />
                       @error('code_country')
                           <span class="invalid-feedback" role="alert">
                               <strong>{{ $message }}</strong>

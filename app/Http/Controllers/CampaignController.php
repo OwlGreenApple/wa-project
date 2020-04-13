@@ -368,9 +368,64 @@ class CampaignController extends Controller
         return view('campaign.campaign-search',['data'=>$data]);
     }
 
-    public function reportReminder()
+    public function listCampaign($campaign_id,$is_event,$active)
     {
-      return view('campaign.report-reminder');
+        /*
+          1 = Active
+          0 = inactive
+        */
+
+        $userid = Auth::id();
+        ($is_event == 0 || $is_event == 1 || $is_event == 'broadcast')?$invalid = false : $invalid = true;
+
+        if($invalid == true)
+        {
+           return redirect('create-campaign');
+        }
+
+        ($active == 0 || $active == 1)?$invalid = false : $invalid = true;
+
+        if($invalid == true)
+        {
+           return redirect('create-campaign');
+        }
+
+        if(empty($campaign_id) || $campaign_id==null)
+        {
+            return redirect('create-campaign');
+        }
+
+        $checkid = Campaign::where([['id',$campaign_id],['user_id',$userid]])->first();
+
+        if(is_null($checkid))
+        {
+            return redirect('create-campaign');
+        }
+
+        if($invalid == false)
+        {
+          if($active == 1)
+          {
+            $active = true;
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminders.id AS rid')
+            // ->distinct()
+            ->get();
+          }
+          else
+          {
+            $active = false;
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','>',0]])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+            ->get();
+          }
+        }
+
+        return view('campaign.list_campaign',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'campaigns'=>$campaigns,'is_event'=>$is_event]);
     }
 
     public function delCampaign(Request $request)
@@ -401,7 +456,7 @@ class CampaignController extends Controller
         }
 
 
-        return response()->json(['message'=>'Your has been deleted successfully']);
+        return response()->json(['message'=>'Your campaign has been deleted successfully']);
     }
 
     public function editCampaign(Request $request)

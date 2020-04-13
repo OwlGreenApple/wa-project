@@ -31,7 +31,9 @@
                   <div class="contact">Message</div>
                 </div>  
                 <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">{{ $row['sent_message'] }}</div>
+                  <div class="big-number">
+                    <a href="{{url('list-campaign').'/'.$row['id'].'/broadcast/1'}}">{{ $row['sent_message'] }}</a>
+                  </div>
                   <div class="contact">Send</div>
                 </div> 
               @endif
@@ -63,11 +65,11 @@
             <div class="notes">
               @if($row['type'] == 0)
                 <div>Type Campaign : <color>Event</color></div>
+                <div>Schedule post : <b>{{ $row['sending'] }}</b></div>
+                <div>Time : <b>{{ $row['sending_time'] }}</b></div>
               @elseif($row['type'] == 1)
                 <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div>
               @endif
-              <div>Schedule post : <b>{{ $row['sending'] }}</b></div>
-              <div>Time : <b>{{ $row['sending_time'] }}</b></div>
               <div>List : {{ $row['label'] }}</div>
             </div>
             <div class="created">
@@ -78,11 +80,23 @@
           <div class="col-lg-5 pad-fix mt-4">
             <div class="row">
                 <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">{{ $row['total_message'] }}</div>
+                  <div class="big-number">
+                    @if($row['type'] == 0)
+                      <a href="{{url('add-message-event').'/'.$row['id']}}">{{ $row['total_message'] }}</a>
+                    @elseif($row['type'] == 1)
+                      <a href="{{url('add-message-auto-responder').'/'.$row['id']}}">{{ $row['total_message'] }}</a>
+                    @endif
+                  </div>
                   <div class="contact">Message</div>
                 </div>  
                 <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">{{ $row['sent_message'] }}</div>
+                  <div class="big-number">
+                    @if($row['type'] == 0)
+                      <a href="{{url('list-campaign').'/'.$row['id'].'/1/1'}}">{{ $row['sent_message'] }}</a>
+                    @elseif($row['type'] == 1)
+                      <a href="{{url('list-campaign').'/'.$row['id'].'/0/1'}}">{{ $row['sent_message'] }}</a>
+                    @endif
+                  </div>
                   <div class="contact">Send</div>
                 </div> 
                 <!--<div class="col-lg-3 pad-fix cardnumber">

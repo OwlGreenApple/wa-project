@@ -4,8 +4,13 @@
       @foreach($campaigns as $row)
         <tr>
           <td class="text-center">{{ $x }}</td>
-          <td class="text-center">{{ $row->event_time }}</td>
-          <td class="text-center">H-{{ abs($row->days) }}</td>
+          @if($is_event == 1)
+            <td class="text-center">{{ $row->event_time }}</td>
+            <td class="text-center">H{{ $row->days }}</td>
+          @endif
+          @if($is_event == 0)
+            <td class="text-center">H+{{ abs($row->days) }}</td>
+          @endif
           <td class="text-center">{{ $row->name }}</td>
           <td class="text-center">{{ $row->telegram_number }}</td>
           <td class="text-center">
@@ -27,8 +32,13 @@
       @foreach($campaigns as $row)
         <tr>
           <td class="text-center">{{ $x }}</td>
-          <td class="text-center">{{ $row->event_time }}</td>
-          <td class="text-center">H-{{ abs($row->days) }}</td>
+          @if($is_event == 1)
+            <td class="text-center">{{ $row->event_time }}</td>
+            <td class="text-center">H{{ $row->days }}</td>
+          @endif
+          @if($is_event == 0)
+            <td class="text-center">H+{{ abs($row->days) }}</td>
+          @endif
           <td class="text-center">{{ $row->name }}</td>
           <td class="text-center">{{ $row->telegram_number }}</td>
           <td colspan="2" class="text-center">

@@ -6,7 +6,7 @@
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
     <h2>List Users</h2>
-    <h4>Appointment Name : {{ $campaign_name }}</h4>
+    <h4>Campaign Name : {{ $campaign_name }}</h4>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -26,19 +26,24 @@
     <div class="col-lg-12">
       <div class="row col-lg-5">
 
-        <div class="col-lg-3 pad-fix"><a href="{{ url('list-apt') }}/{!! $campaign_id !!}/1" @if($active == true)class="act-tel-apt-create" @endif>QUEUE</a></div>
+        <div class="col-lg-3 pad-fix"><a href="{{ url('list-campaign') }}/{!! $campaign_id !!}/{{ $is_event }}/1" @if($active == true)class="act-tel-apt-create" @endif>QUEUE</a></div>
 
-        <div class="col-lg-3 pad-fix"><a href="{{ url('list-apt') }}/{!! $campaign_id !!}/0" @if($active == false)class="act-tel-apt-create" @endif>DELIVERED</a></div>
+        <div class="col-lg-3 pad-fix"><a href="{{ url('list-campaign') }}/{!! $campaign_id !!}/{{ $is_event }}/0" @if($active == false)class="act-tel-apt-create" @endif>DELIVERED</a></div>
 
       </div>
 
       <div class="mt-4">
-        <table id="list_appointment" class="display" style="width : 100%">
+        <table id="list_campaign" class="display w-100">
           <thead class="bg-dashboard">
             <tr>
               <th class="text-center">No</th>
-              <th class="text-center">Date Appointment</th>
-              <th class="text-center">H-</th>
+              @if($is_event == 1)
+              <th class="text-center">Date Event</th>
+              <th class="text-center">H</th>
+              @endif
+              @if($is_event == 0)
+              <th class="text-center">H+</th>
+              @endif
               <th class="text-center">Name Contact</th>
               <th class="text-center">WA Contact</th>
               @if($active == true)
@@ -51,7 +56,7 @@
           </thead>
 
           <tbody>
-             @include('appointment.list_table_apt')
+             @include('campaign.list_table_campaign')
           </tbody>
         </table>
       </div>
@@ -66,7 +71,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modaltitle">
-          Edit Appointment
+          Edit Campaign
         </h5>
       </div>
 
@@ -123,7 +128,7 @@
         minDate : new Date()
     }); 
     // display_data();
-    searchData();
+    // searchData();
     openEditForm();
     editContactAppointment();
     deleteAppointment();
@@ -132,7 +137,7 @@
 
   function tableData()
   {
-    $("#list_appointment").DataTable({
+    $("#list_campaign").DataTable({
       "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
     });
   }

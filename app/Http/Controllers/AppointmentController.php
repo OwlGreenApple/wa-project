@@ -88,20 +88,6 @@ class AppointmentController extends Controller
            return redirect('create-apt');
         }
 
-        if($invalid == false)
-        {
-          if($active == 1)
-          {
-             $active = true;
-             $page = url("list-table-apt");
-          }
-          else
-          {
-             $active = false;
-             $page = url("list-table-apt-inactiv");
-          }
-        }
-
         $userid = Auth::id();
         if(empty($campaign_id) || $campaign_id==null)
         {
@@ -115,10 +101,35 @@ class AppointmentController extends Controller
             return redirect('create-apt');
         }
 
-        return view('appointment.list_apt',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'page'=>$page]);
+        if($invalid == false)
+        {
+          if($active == 1)
+          {
+            $active = true;
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminders.id AS rid')
+            // ->distinct()
+            ->get();
+            // $page = url("list-table-apt");
+          }
+          else
+          {
+            $active = false;
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['reminder_customers.status','>',0]])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+            ->get();
+             // $page = url("list-table-apt-inactiv");
+          }
+        }
+
+        return view('appointment.list_apt',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'campaigns'=>$campaigns]);
     }
 
-    public function listTableAppointments(Request $request)
+    /*public function listTableAppointments(Request $request)
     {
         $userid = Auth::id();
         $campaign_id = $request->campaign_id;
@@ -143,9 +154,9 @@ class AppointmentController extends Controller
         }
        
         return view('appointment.list_table_apt',['campaigns'=>$campaigns,'active'=>true]);
-    }
+    }*/
 
-    public function listTableAppointmentInActive(Request $request)
+    /*public function listTableAppointmentInActive(Request $request)
     {
         $userid = Auth::id();
         $campaign_id = $request->campaign_id;
@@ -169,7 +180,7 @@ class AppointmentController extends Controller
         }
        
         return view('appointment.list_table_apt',['campaigns'=>$campaigns,'active'=>false]);
-    }
+    }*/
 
     public function listAppointmentEdit(Request $request)
     {
