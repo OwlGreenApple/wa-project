@@ -175,12 +175,7 @@
 			if (numOfContact == 25000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/24'); ?>");
 			}
-			if (numOfContact == 50000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/27'); ?>");
-			}
-			if (numOfContact == 75000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/30'); ?>");
-			}
+
 		}
 		if (modePrice==2) {
 			if (numOfContact == 1000) {
@@ -206,12 +201,6 @@
 			}
 			if (numOfContact == 25000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/23'); ?>");
-			}
-			if (numOfContact == 50000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/26'); ?>");
-			}
-			if (numOfContact == 75000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/29'); ?>");
 			}
 		}
 		if (modePrice==3) {
@@ -239,12 +228,6 @@
 			if (numOfContact == 25000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/22'); ?>");
 			}
-			if (numOfContact == 50000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/25'); ?>");
-			}
-			if (numOfContact == 75000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/28'); ?>");
-			}
 		}
 	}
   function set_price(){
@@ -271,7 +254,7 @@
   }
   
   function slider_init(){
-    var custom_values = [1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000, 50000, 75000];
+    var custom_values = [1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000];
     $(".js-range-slider").ionRangeSlider({
         grid: true,
         step:100,
@@ -321,16 +304,6 @@
             $("#6months-price").html("IDR 6.777.000");
             $("#3months-price").html("IDR 3.463.800");
             $("#monthly-price").html("IDR 1.255.000");
-          }
-          if (numOfContact == 50000) {
-            $("#6months-price").html("IDR 12.069.000");
-            $("#3months-price").html("IDR 6.168.600");
-            $("#monthly-price").html("IDR 2.235.000");
-          }
-          if (numOfContact == 75000) {
-            $("#6months-price").html("IDR 23.409.000");
-            $("#3months-price").html("IDR 11.964.600");
-            $("#monthly-price").html("IDR 4.335.000");
           }
           set_price();
 					check_package();
