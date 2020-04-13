@@ -15,45 +15,45 @@ use App\Ads;
 use App\AdsHistory;
 
 use App\Helpers\Helper;
-use Carbon, Crypt;
-use Auth,Mail,Validator,Storage,DateTime;
+use Carbon\Carbon;
+use Auth,Mail,Validator,Storage,DateTime,Crypt;
 
 class OrderController extends Controller
 {   
   public function cekharga($namapaket, $price){
     //cek paket dengan harga
     $paket = array(
-      'basic1' => 155000,
-      'bestseller1' => 195000,
-      'supervalue1' => 1020000,
+      'basic1' => 195000,
+      'bestseller1' => 538200,
+      'supervalue1' => 1053000,
 			
-      'basic2' => 155000,
-      'bestseller2' => 195000,
-      'supervalue2' => 1020000,
+      'basic2' => 275000,
+      'bestseller2' => 759000,
+      'supervalue2' => 1485000,
 			
-      'basic3' => 155000,
-      'bestseller3' => 195000,
-      'supervalue3' => 1020000,
+      'basic3' => 345000,
+      'bestseller3' => 952000,
+      'supervalue3' => 1863000,
 			
-      'basic4' => 155000,
-      'bestseller4' => 195000,
-      'supervalue4' => 1020000,
+      'basic4' => 415000,
+      'bestseller4' => 1145400,
+      'supervalue4' => 2241000,
 			
-      'basic5' => 155000,
-      'bestseller5' => 195000,
-      'supervalue5' => 1020000,
+      'basic5' => 555000,
+      'bestseller5' => 1531800,
+      'supervalue5' => 2997000,
 			
-      'basic6' => 155000,
-      'bestseller6' => 195000,
-      'supervalue6' => 1020000,
+      'basic6' => 695000,
+      'bestseller6' => 1918200,
+      'supervalue6' => 3753000,
 			
-      'basic7' => 155000,
-      'bestseller7' => 195000,
-      'supervalue7' => 1020000,
+      'basic7' => 975000,
+      'bestseller7' => 2691000,
+      'supervalue7' => 5265000,
 			
-      'basic8' => 155000,
-      'bestseller8' => 195000,
-      'supervalue8' => 1020000,
+      'basic8' => 1255000,
+      'bestseller8' => 3463800,
+      'supervalue8' => 6777000,
 			
       'basic9' => 155000,
       'bestseller9' => 195000,
@@ -228,17 +228,19 @@ class OrderController extends Controller
 			"kuponid"=> $kuponid,
 			"price"=> $request->price,
 			"diskon"=> $diskon,
-		]
+		];
 		
 		$order = Order::create_order($data);
 
-    return view('pricing.thankyou')->with(array(
+    return view('order.thankyou')->with(array(
               'order'=>$order,    
             ));
   }
 
   public function thankyou(Request $request){
-    return view('order.thankyou');
+    return view('order.thankyou')->with(array(
+              'order'=>null,    
+            ));
   }
   
 

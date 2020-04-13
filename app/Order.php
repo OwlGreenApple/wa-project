@@ -5,29 +5,30 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Order;
 
-use Carbon, Mail, DB;
+use Carbon\Carbon;
+use Mail, DB;
 
 class Order extends Model
 {
   protected $table = 'orders';
   protected $connection = 'mysql2';
 
-	public function create_order($data){
+	public static function create_order($data){
     //unique code 
     $unique_code = mt_rand(1, 1000);
+		$user = $data['user'];
 
     $dt = Carbon::now();
     $order = new Order;
-    $str = 'OML'.$dt->format('ymdHi');
-    $order_number = $this->autoGenerateID($order, 'no_order', $str, 3, '0');
+    $str = 'ACT'.$dt->format('ymdHi');
+    $order_number = Order::autoGenerateID($order, 'no_order', $str, 3, '0');
     $order->no_order = $order_number;
     $order->user_id = $user->id;
-    $order->package =$request->namapaket;
-    $order->jmlpoin=0;
-    $order->coupon_id = $kuponid;
-    $order->total = $request->price + $unique_code;
-    $order->discount = $diskon;
-    $order->grand_total = $request->price - $diskon + $unique_code;
+    $order->package =$data['namapaket'];
+    $order->coupon_id = $data['kuponid'];
+    $order->total = $data['price'] + $unique_code;
+    $order->discount = $data['diskon'];
+    $order->grand_total = $data['price'] - $data['diskon'] + $unique_code;
     $order->status = 0;
     $order->buktibayar = "";
     $order->keterangan = "";
@@ -38,7 +39,7 @@ class Order extends Model
       $emaildata = [
           'order' => $order,
           'user' => $user,
-          'nama_paket' => $request->namapaket,
+          'nama_paket' => $data['namapaket'],
           'no_order' => $order_number,
       ];
       Mail::send('emails.order', $emaildata, function ($message) use ($user,$order_number) {

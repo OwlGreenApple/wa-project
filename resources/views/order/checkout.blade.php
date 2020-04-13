@@ -288,7 +288,17 @@
       check_kupon();
     });
 
-    $(".btn-kupon").trigger("click");
+		$( "#select-auto-manage" ).change(function() {
+			var price = $(this).find("option:selected").attr("data-price");
+			var namapaket = $(this).find("option:selected").attr("data-paket");
+
+			$("#price").val(price);
+			$("#namapaket").val(namapaket);
+			// $('#kupon').val("");
+			// check_kupon();
+		});
+		$( "#select-auto-manage" ).change();
+		$(".btn-kupon").trigger("click");
   });
     
 </script>

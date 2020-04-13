@@ -244,7 +244,7 @@ class CustomerController extends Controller
     public function link_activate($list_name,$customer_id)
     {
       $list = UserList::where('name','=',$list_name)->first();
-      $customer = Customer::find(customer_id);
+      $customer = Customer::find($customer_id);
       if (!is_null($customer)){
         if ($customer->list_id == $list->id ) {
           $customer->status = 1;
@@ -257,7 +257,7 @@ class CustomerController extends Controller
     public function link_unsubscribe($list_name,$customer_id)
     {
       $list = UserList::where('name','=',$list_name)->first();
-      $customer = Customer::find(customer_id);
+      $customer = Customer::find($customer_id);
       if (!is_null($customer)){
         if ($customer->list_id == $list->id ) {
           $customer->status = 1;
