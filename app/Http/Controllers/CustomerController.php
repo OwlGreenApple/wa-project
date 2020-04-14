@@ -176,11 +176,11 @@ class CustomerController extends Controller
               $data['message'] = 'Sorry, our system is busy';
             }
 
-						if ($list->is_secure) {
+						// if ($list->is_secure) {
 							$newcustomer = Customer::find($customer->id);
 							$newcustomer->status = 0;
 							$newcustomer->save();
-						}
+						// }
             return response()->json($data);
         }
     }
