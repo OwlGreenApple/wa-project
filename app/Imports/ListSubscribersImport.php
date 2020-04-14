@@ -88,6 +88,7 @@ class ListSubscribersImport implements ToCollection,WithStartRow
                      'name'     => $row[0],
                      'telegram_number'=>ltrim($row[1]," "),
                      'email'=> $row[2],
+                     'status'=> 1,
                   ]);
                 }
             }
