@@ -9,6 +9,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Activrespon') }}</title>
+		<!-- Icon -->
+		<link rel='shortcut icon' type='image/png' href="{{ asset('assets/img/favicon.png') }}">
 
    <!-- Scripts -->
     <script src="{{ asset('/assets/js/jquery-3.2.1.min.js') }}"></script>
