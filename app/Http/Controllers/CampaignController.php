@@ -445,10 +445,15 @@ class CampaignController extends Controller
         $is_event = $request->is_event;
         $userid = Auth::id();
 
-        // dd($start.'--'.$length);
-
         if($active == 1)
         {
+          $total_page = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
+          ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+          ->join('customers','customers.id','=','reminder_customers.customer_id')
+          ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
+          ->get()
+          ->count();
+
           $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
           ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
@@ -507,7 +512,7 @@ class CampaignController extends Controller
         $result['draw'] =  $draw;
         $result['data'] =  $data;
         $result['recordsTotal'] = $campaigns->count();
-        $result['recordsFiltered'] = 4;
+        $result['recordsFiltered'] = $total_page;
 
         return response()->json($result);
     }

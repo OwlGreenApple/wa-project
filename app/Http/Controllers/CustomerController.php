@@ -164,23 +164,21 @@ class CustomerController extends Controller
             // if customer successful sign up 
             if($customer->save()){
                $newcustomer = $customer->id;
-               $update_customer = Customer::find($newcustomer);
-               $update_customer->status = 0;
-               $update_customer->save();
                $user_id = $list->user_id;
                $list_id = $list->id;
-               return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
+
+              if($list->is_secure) {
+                $newcustomer = Customer::find($customer->id);
+                $newcustomer->status = 0;
+                $newcustomer->save();
+              }
+              
+              return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
             } 
             else {
               $data['success'] = false;
               $data['message'] = 'Sorry, our system is busy';
             }
-
-						// if ($list->is_secure) {
-							$newcustomer = Customer::find($customer->id);
-							$newcustomer->status = 0;
-							$newcustomer->save();
-						// }
             return response()->json($data);
         }
     }
