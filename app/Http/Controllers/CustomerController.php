@@ -163,7 +163,6 @@ class CustomerController extends Controller
       
             // if customer successful sign up 
             if($customer->save()){
-               $newcustomer = $customer->id;
                $user_id = $list->user_id;
                $list_id = $list->id;
 
@@ -278,7 +277,7 @@ class CustomerController extends Controller
       $customer = Customer::find($customer_id);
       if (!is_null($customer)){
         if ($customer->list_id == $list->id ) {
-          $customer->status = 1;
+          $customer->status = 0;
           $customer->save();
         }
       }

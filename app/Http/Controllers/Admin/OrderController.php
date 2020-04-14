@@ -9,11 +9,6 @@ use App\Group;
 use App\Save;
 use App\Coupon;
 use App\Order;
-use App\UserLog;
-use App\Notification;
-use App\Ads;
-use App\AdsHistory;
-
 use App\Helpers\Helper;
 use Carbon, Crypt;
 use Auth,Mail,Validator,Storage,DateTime;
@@ -24,8 +19,9 @@ class OrderController extends Controller
     //halaman list order admin
     $orders = Order::join(env('DB_DATABASE').'.users','orders.user_id','users.id')  
                 ->select('orders.*','users.email')
-                ->orderBy('created_at','descend')
+                ->orderBy('created_at','desc')
                 ->get();
+		// dd($orders);
     $arr['view'] = (string) view('admin.list-order.content')
                       ->with('orders',$orders);
     /*$arr['pager'] = (string) view('admin.list-order.pagination')
@@ -102,34 +98,12 @@ class OrderController extends Controller
         $formattedDate = $valid->format('Y-m-d H:i:s');
     }
 
-    $userlog = new UserLog;
-    $userlog->user_id = $user->id;
-    $userlog->type = 'membership';
-    $userlog->value = $type;
-    $userlog->keterangan = 'Confirm Order '.$order->package.'. From '.$user->membership.'('.$formattedDate.') to '.$type.'('.$formattedDate.')';
-   // $userlog->keterangan = 'Order '.$order->package.'. From '.$user->membership.'('.$user->valid_until.') to '.$type.'('.$formattedDate.')';
-    $userlog->save();
 
     $user->valid_until = $valid;
     $user->is_member = 1;
     $user->save();
     $order->save();
 
-    if(substr($order->package,0,6) === "Top Up"){
-      $ads = Ads::find($order->ads_id);
-
-      $adshistory = new AdsHistory;
-      $adshistory->user_id = $order->user_id;
-      $adshistory->ads_id = $ads->id;
-      $adshistory->credit_before = $ads->credit;
-      $adshistory->credit_after = $ads->credit + $order->jmlpoin;
-      $adshistory->jml_credit = $order->jmlpoin;
-      $adshistory->description = 'top up';
-      $adshistory->save();
-
-      $ads->credit = $ads->credit + $order->jmlpoin;
-      $ads->save();
-    }
 
     $emaildata = [
       'order' => $order,
@@ -137,9 +111,9 @@ class OrderController extends Controller
     ];
 
     Mail::send('emails.confirm-order', $emaildata, function ($message) use ($user,$order) {
-      $message->from('no-reply@omnilinkz.com', 'Omnilinkz');
+      $message->from('no-reply@activrespon.com', 'Activrespon');
       $message->to($user->email);
-      $message->subject('[Omnilinkz] Konfirmasi Order'.$order->no_order);
+      $message->subject('[Activrespon] Konfirmasi Order'.$order->no_order);
     });
 
     $arr['status'] = 'success';

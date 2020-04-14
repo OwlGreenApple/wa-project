@@ -4,21 +4,6 @@
 <script type="text/javascript">
   var table;
 
-  $(document).ready(function() {
-    table = $('#myTable').DataTable({
-                responsive : true,
-                destroy: true,
-                "order": [],
-            });
-    $.fn.dataTable.moment( 'ddd, DD MMM YYYY' );
-
-    refresh_page();
-
-    // $('.formatted-date').datepicker({
-    //   dateFormat: 'yy/mm/dd',
-    // });
-  });
-
   function refresh_page(){
     table.destroy();
     $.ajax({
@@ -272,5 +257,20 @@
     currentPage = $(this).attr('href');
     refresh_page();
   });
+  $(document).ready(function() {
+    table = $('#myTable').DataTable({
+                responsive : true,
+                destroy: true,
+                "order": [],
+            });
+    // $.fn.dataTable.moment( 'ddd, DD MMM YYYY' );
+
+    refresh_page();
+
+    // $('.formatted-date').datepicker({
+    //   dateFormat: 'yy/mm/dd',
+    // });
+  });
+
 </script>
 @endsection
