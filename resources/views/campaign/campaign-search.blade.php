@@ -65,8 +65,8 @@
             <div class="notes">
               @if($row['type'] == 0)
                 <div>Type Campaign : <color>Event</color></div>
-                <div>Schedule post : <b>{{ $row['sending'] }}</b></div>
-                <div>Time : <b>{{ $row['sending_time'] }}</b></div>
+              <!--   <div>Schedule post : <b>{{ $row['sending'] }}</b></div>
+                <div>Time : <b>{{ $row['sending_time'] }}</b></div> -->
               @elseif($row['type'] == 1)
                 <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div>
               @endif
@@ -79,34 +79,43 @@
 
           <div class="col-lg-5 pad-fix mt-4">
             <div class="row">
+               <!--  <div class="col-lg-3 pad-fix cardnumber">
+                  <div class="big-number">100</div>
+                  <div class="contact">Opened</div>
+                </div> -->
+
+                <div class="col-lg-4 pad-fix cardnumber">
+                  <div class="big-number">
+                     @if($row['type'] == 0)
+                      <a href="{{url('add-message-event').'/'.$row['id']}}">{{ $row['total_template'] }}</a>
+                    @elseif($row['type'] == 1)
+                      <a href="{{url('add-message-auto-responder').'/'.$row['id']}}">{{ $row['total_template'] }}</a>
+                    @endif
+                  </div>
+                  <div class="contact">Total Template</div>
+                </div>
+
                 <div class="col-lg-3 pad-fix cardnumber">
                   <div class="big-number">
                     @if($row['type'] == 0)
-                      <a href="{{url('add-message-event').'/'.$row['id']}}">{{ $row['total_message'] }}</a>
+                      <a href="{{url('list-campaign').'/'.$row['id'].'/1/1'}}">{{ $row['total_message'] }}</a>
                     @elseif($row['type'] == 1)
-                      <a href="{{url('add-message-auto-responder').'/'.$row['id']}}">{{ $row['total_message'] }}</a>
+                      <a href="{{url('list-campaign').'/'.$row['id'].'/0/1'}}">{{ $row['total_message'] }}</a>
                     @endif
                   </div>
-                  <div class="contact">Message</div>
+                  <div class="contact">Queue</div>
                 </div>  
                 <div class="col-lg-3 pad-fix cardnumber">
                   <div class="big-number">
                     @if($row['type'] == 0)
-                      <a href="{{url('list-campaign').'/'.$row['id'].'/1/1'}}">{{ $row['sent_message'] }}</a>
+                      <a href="{{url('list-campaign').'/'.$row['id'].'/1/0'}}">{{ $row['sent_message'] }}</a>
                     @elseif($row['type'] == 1)
-                      <a href="{{url('list-campaign').'/'.$row['id'].'/0/1'}}">{{ $row['sent_message'] }}</a>
+                      <a href="{{url('list-campaign').'/'.$row['id'].'/0/0'}}">{{ $row['sent_message'] }}</a>
                     @endif
                   </div>
-                  <div class="contact">Send</div>
+                  <div class="contact">Delivered</div>
                 </div> 
-                <!--<div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">100</div>
-                  <div class="contact">Opened</div>
-                </div>
-                <div class="col-lg-3 pad-fix cardnumber">
-                  <div class="big-number">100%</div>
-                  <div class="contact">Open Rate</div>
-                </div>-->
+                
             </div>  
           </div>
 
@@ -118,13 +127,13 @@
               <button type="button" id="{{ $row['id'] }}"  class="btn btn-success btn-sm event_duplicate" data-toggle="tooltip" data-placement="top" title="Button Duplicate"><span class="icon-copy-text"></span></button>
               <button type="button" id="{{ $row['id'] }}" class="btn btn-danger btn-sm event-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
               <div>
-                <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">Add Message</a>
+                <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">Add / Edit</a>
               </div>
             @elseif($row['type'] == 1)
               <!-- <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm responder_duplicate"><span class="icon-copy-text"></span></button> -->
               <button id="{{ $row['id'] }}" type="button" class="btn btn-danger btn-sm responder-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
               <div>
-                <a href="{{url('add-message-auto-responder').'/'.$row['id']}}" class="btn btn-custom">Add Message</a>
+                <a href="{{url('add-message-auto-responder').'/'.$row['id']}}" class="btn btn-custom">Add / Edit</a>
               </div>
             @endif
 

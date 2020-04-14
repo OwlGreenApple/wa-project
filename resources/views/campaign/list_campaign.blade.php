@@ -47,7 +47,7 @@
               <th class="text-center">Name Contact</th>
               <th class="text-center">WA Contact</th>
               @if($active == true)
-                <th class="text-center">Edit</th>
+                <!-- <th class="text-center">Edit</th> -->
                 <th class="text-center">Delete</th>
               @else
                 <th class="text-center">Status</th>
@@ -130,8 +130,8 @@
     // display_data();
     // searchData();
     openEditForm();
-    editContactAppointment();
-    deleteAppointment();
+    // editContactAppointment();
+    deleteCampaign();
     tableData();
   });
 
@@ -239,7 +239,7 @@
 
         if(result.success == 1)
         {
-            alert(result.message);
+            // alert(result.message);
             $("#edit_appt").modal('hide');
             $(".error").hide();
             display_data();
@@ -269,20 +269,16 @@
     });
   }
 
-  function deleteAppointment()
+  function deleteCampaign()
   {
     $("body").on("click",".icon-cancel",function(){
-      /*var campaign_id = $(this).attr('id'); 
-      var customer_id = $(this).attr('data-ev'); 
-      var oldtime = $(this).attr('data-tm'); 
-      var data = {campaign_id : campaign_id, customer_id : customer_id, oldtime : oldtime};*/
-      var reminder_id = $(this).attr('id');
-      var data = {'reminder_id' : reminder_id}
-      var warning = confirm('Are you sure to delete this list appointment?'+'\n'+'WARNING : This cannot be undone');
+      var reminder_customer_id = $(this).attr('id');
+      var data = {'reminder_customer_id' : reminder_customer_id}
+      var warning = confirm('Are you sure to cancel this user?'+'\n'+'WARNING : This cannot be undone');
 
       if(warning == true)
       {
-          exDeleteAppointment(data);
+          exDeleteCampaign(data);
       }
       else
       {
@@ -292,11 +288,11 @@
     });
   }
 
-  function exDeleteAppointment(data)
+  function exDeleteCampaign(data)
   {
     $.ajax({
       type : 'GET',
-      url : '{{ url("list-delete-apt") }}',
+      url : '{{ url("list-delete-campaign") }}',
       data : data,
       dataType : 'json',
       beforeSend : function(){
@@ -307,11 +303,15 @@
       {
         $('#loader').hide();
         $('.div-loading').removeClass('background-load');
-        alert(result.message);
+        // alert(result.message);
 
         if(result.success == 1)
         {
-            display_data();
+            //display_data();
+        }
+        else
+        {
+            alert('Unable to cancel your campaign, sorry our server is too busy.');
         }
         
       },

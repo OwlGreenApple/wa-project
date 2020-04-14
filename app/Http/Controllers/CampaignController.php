@@ -292,9 +292,11 @@ class CampaignController extends Controller
                     {
                         $days = (int)$reminder->days;
 
-                        $reminder_customer = ReminderCustomers::where('reminder_id','=',$reminder->id)->select(DB::raw('COUNT("id") AS total_message'))->first();
+                        $reminder_customer = ReminderCustomers::where([['reminder_id','=',$reminder->id],['status',0]])->select(DB::raw('COUNT("id") AS total_message'))->first();
 
                         $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$reminder->id],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+
+                        $total_template = Reminder::where('campaign_id',$row->id)->get()->count();
 
                         if($row->type == 0)
                         {
@@ -316,6 +318,7 @@ class CampaignController extends Controller
                             'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
                             'label'=>$row->label,
                             'created_at'=>Date('M d, Y',strtotime($row->created_at)),
+                            'total_template' => $total_template,
                             'total_message' => $reminder_customer->total_message,
                             'sent_message' => $reminder_customer_open->total_sending_message
                           );
@@ -338,6 +341,7 @@ class CampaignController extends Controller
                             'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
                             'label' => $row->label,
                             'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                            'total_template' => $total_template,
                             'total_message' => $reminder_customer->total_message,
                             'sent_message' => $reminder_customer_open->total_sending_message,
                           );
@@ -410,7 +414,7 @@ class CampaignController extends Controller
             $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminders.id AS rid')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
             // ->distinct()
             ->get();
           }
@@ -508,6 +512,25 @@ class CampaignController extends Controller
         return response()->json($data);
     }
 
+    public function listDeleteCampaign(Request $request)
+    {
+        $userid = Auth::id();
+        $reminder_customer_id = $request->reminder_customer_id;
+        $reminder_customer = ReminderCustomers::find($reminder_customer_id);
+
+        try
+        {
+            $reminder_customer->status = 4;
+            $reminder_customer->save();
+            $data['success'] = 1;
+        }
+        catch(Exception $e)
+        {
+            $data['success'] = 0;
+        }
+
+        return response()->json($data);
+    }
 
 /* end controller */
 }

@@ -1013,9 +1013,9 @@ class ListController extends Controller
               
               //FILTER 2
               $checkuniquephone = $this->checkUniquePhone($phone,$id_list);
-              $checkuniqueemail = $this->checkUniqueEmail($email,$id_list);
+              // $checkuniqueemail = $this->checkUniqueEmail($email,$id_list);
 
-              if($checkuniquephone == true && $checkuniqueemail == true)
+              if($checkuniquephone == true)
               {
 
                 if(substr($phone,0,1) <> '+')
@@ -1103,7 +1103,7 @@ class ListController extends Controller
         $rules = [
           'name'=> ['required','max:50'],
           'phone'=> ['required','min:10','max:22',new ImportValidation],
-          'email'=>['required','max:190','email']
+          'email'=>['max:190']
         ];
 
         $validator = Validator::make($data,$rules);
