@@ -163,7 +163,6 @@ class CustomerController extends Controller
       
             // if customer successful sign up 
             if($customer->save()){
-               $newcustomer = $customer->id;
                $user_id = $list->user_id;
                $list_id = $list->id;
 
