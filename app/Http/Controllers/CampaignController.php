@@ -507,7 +507,7 @@ class CampaignController extends Controller
         $result['draw'] =  $draw;
         $result['data'] =  $data;
         $result['recordsTotal'] = $campaigns->count();
-        $result['recordsFiltered'] = $campaigns->count();
+        $result['recordsFiltered'] = 4;
 
         return response()->json($result);
     }

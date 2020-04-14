@@ -146,7 +146,7 @@
   function tableAjax()
   {
     $("#list_campaign").DataTable({
-      "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
+      "lengthMenu": [ 1,10, 25, 50, 75, 100, 250, 500 ],
       "processing": true,
       "serverSide": true,
       "ajax": {

@@ -164,8 +164,9 @@ class CustomerController extends Controller
             // if customer successful sign up 
             if($customer->save()){
                $newcustomer = $customer->id;
-               $newcustomer->status = 0;
-               $newcustomer->save();
+               $update_customer = Customer::find($newcustomer);
+               $update_customer->status = 0;
+               $update_customer->save();
                $user_id = $list->user_id;
                $list_id = $list->id;
                return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
