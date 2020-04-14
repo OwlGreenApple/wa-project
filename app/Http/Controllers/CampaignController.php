@@ -259,7 +259,7 @@ class CampaignController extends Controller
                   $broadcast_customer = BroadCastCustomers::where('broadcast_id','=',$broadcast->id)
                 ->select(DB::raw('COUNT("id") AS total_message'))->first();
 
-                  $broadcast_customer_open = BroadCastCustomers::where([['broadcast_id','=',$broadcast->id],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+                  $broadcast_customer_open = BroadCastCustomers::where([['broadcast_id','=',$broadcast->id],['status','>',0]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
 
                   $data[] = array(
                       'type'=>2,
@@ -280,6 +280,7 @@ class CampaignController extends Controller
                 }
                 else //REMINDER
                 {
+                    $total_message = 0;
                     if($row->type == 0)
                     {
                         $reminder = Reminder::where([['campaign_id',$row->id],['is_event',1],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
@@ -294,7 +295,9 @@ class CampaignController extends Controller
 
                         $reminder_customer = ReminderCustomers::where([['reminder_id','=',$reminder->id],['status',0]])->select(DB::raw('COUNT("id") AS total_message'))->first();
 
-                        $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$reminder->id],['status',1]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
+                        $total_message += $reminder_customer->total_message;
+
+                        $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$reminder->id],['status','>',0]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
 
                         $total_template = Reminder::where('campaign_id',$row->id)->get()->count();
 
@@ -319,7 +322,7 @@ class CampaignController extends Controller
                             'label'=>$row->label,
                             'created_at'=>Date('M d, Y',strtotime($row->created_at)),
                             'total_template' => $total_template,
-                            'total_message' => $reminder_customer->total_message,
+                            'total_message' => $total_message,
                             'sent_message' => $reminder_customer_open->total_sending_message
                           );
                         }
@@ -454,26 +457,77 @@ class CampaignController extends Controller
           ->get()
           ->count();
 
-          $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
-          ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
-          ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
-          ->take($length)
-          ->skip($start)
-          ->orderBy('reminder_customers.id',$dir)
-          // ->distinct()
-          ->get();
+          // QUEUE
+          if($search == null)
+          {
+             $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
+              ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+              ->join('customers','customers.id','=','reminder_customers.customer_id')
+              ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
+              ->take($length)
+              ->skip($start)
+              ->orderBy('reminder_customers.id',$dir)
+              // ->distinct()
+              ->get();
+          }
+          else
+          {
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
+              ->where(function($query) use($search){
+                $query->where('customers.name','LIKE','%'.$search.'%')
+                ->orWhere('reminders.event_time','LIKE','%'.$search.'%')
+                ->orWhere('reminders.days','=',$search)
+                ->orWhere('customers.telegram_number','=',$search)
+                ;
+              }) 
+              ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+              ->join('customers','customers.id','=','reminder_customers.customer_id')
+              ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
+              ->take($length)
+              ->skip($start)
+              ->orderBy('reminder_customers.id',$dir)
+              // ->distinct()
+              ->get();
+          }
         }
         else
         {
-          $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','>',0]])
+          // DELIVERED
+           $total_page = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','>',0]])
           ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
           ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
-         /* ->take($start)
-          ->skip($length)*/
-          ->orderBy('reminder_customers.id',$dir)
-          ->get();
+          ->get()->count();
+
+          if($search == null)
+          {
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','>',0]])
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+            ->take($length)
+            ->skip($start)
+            ->orderBy('reminder_customers.id',$dir)
+            ->get();
+          }
+          else
+          {
+            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','>',0]])
+             ->where(function($query) use($search){
+                $query->orWhere('customers.name','LIKE','%'.$search.'%')
+                ->orWhere('reminders.event_time','=',$search)
+                ->orWhere('reminders.days','=',$search)
+                ->orWhere('customers.telegram_number','=',$search)
+                ;
+            }) 
+            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+            ->join('customers','customers.id','=','reminder_customers.customer_id')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+            ->take($length)
+            ->skip($start)
+            ->orderBy('reminder_customers.id',$dir)
+            ->get();
+          }
         }
 
         $data = array();
@@ -482,29 +536,107 @@ class CampaignController extends Controller
             $number = 1;
             if($active == 1)
             {
-              foreach($campaigns as $rows)
+
+              if($is_event == 1)
               {
-                  $data[] = array(
-                    0=>$number,
-                    1=>$rows->event_time,
-                    2=>$rows->days,
-                    3=>$rows->name,
-                    4=>$rows->telegram_number,
-                    5=>'<a id="{{ $rows->rcid }}" class="icon-cancel"></a>',
-                  );
-                  $number++;
+                // EVENT
+                foreach($campaigns as $rows)
+                {
+                    $data[] = array(
+                      0=>$number,
+                      1=>$rows->event_time,
+                      2=>'H'.$rows->days,
+                      3=>$rows->name,
+                      4=>$rows->telegram_number,
+                      5=>'<a id='.$rows->rcid.' class="icon-cancel"></a>',
+                    );
+                    $number++;
+                }
               }
+              else
+              {
+                // AUTORESPONDER
+                foreach($campaigns as $rows)
+                {
+                    $data[] = array(
+                      0=>$number,
+                      1=>'H'.$rows->days,
+                      2=>$rows->name,
+                      3=>$rows->telegram_number,
+                      4=>'<a id='.$rows->rcid.' class="icon-cancel"></a>',
+                    );
+                    $number++;
+                }
+              }
+              
             }
             else
             {
-              foreach($campaigns as $rows)
+              // DELIVERED
+              if($is_event == 1)
               {
-                  $data[] = array(
-                    'no'=>$number,
-                    'No'=>$number,
-                  );
-                  $number++;
+                 foreach($campaigns as $rows)
+                 {
+                    if($rows->status == 1)
+                    {
+                      $status = 'Success';
+                    }
+                    elseif($rows->status == 2)
+                    {
+                      $status = 'Phone Offline';
+                    }
+                    elseif($rows->status == 3)
+                    {
+                      $status = 'Phone Not Available';
+                    }
+                    else
+                    {
+                      $status = 'Cancelled';
+                    }
+
+                    $data[] = array(
+                      0=>$number,
+                      1=>$rows->event_time,
+                      2=>'H'.$rows->days,
+                      3=>$rows->name,
+                      4=>$rows->telegram_number,
+                      5=>$status,
+                    );
+                    $number++;
+                 } //ENDFOREACH
               }
+              else
+              {
+                 foreach($campaigns as $rows)
+                 {
+                    if($rows->status == 1)
+                    {
+                      $status = 'Success';
+                    }
+                    elseif($rows->status == 2)
+                    {
+                      $status = 'Phone Offline';
+                    }
+                    elseif($rows->status == 3)
+                    {
+                      $status = 'Phone Not Available';
+                    }
+                    else
+                    {
+                      $status = 'Cancelled';
+                    }
+
+                    $data[] = array(
+                      0=>$number,
+                      1=>'H'.$rows->days,
+                      2=>$rows->name,
+                      3=>$rows->telegram_number,
+                      4=>$status,
+                    );
+                    $number++;
+                 } //ENDFOREACH
+              }
+             
             }
            
         }

@@ -55,11 +55,14 @@
             </tr>
           </thead>
 
+           @if($campaigns->count() > 0)
           <tbody>
-             
+             @include('campaign.list_table_campaign')
           </tbody>
+           @endif
         </table>
       </div>
+     
 
     </div>
 </div>
@@ -132,8 +135,7 @@
     openEditForm();
     // editContactAppointment();
     deleteCampaign();
-    // tableData();
-    tableAjax();
+    tableData();
   });
 
   function tableData()
@@ -146,7 +148,8 @@
   function tableAjax()
   {
     $("#list_campaign").DataTable({
-      "lengthMenu": [ 1,10, 25, 50, 75, 100, 250, 500 ],
+      "destroy":true,
+      "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
       "processing": true,
       "serverSide": true,
       "ajax": {
@@ -156,7 +159,10 @@
             "campaign_id": "{!! $campaign_id !!}",
             "is_event": "{{ $is_event }}",
         }
-      }
+      },
+      'columnDefs': [
+          { className: "text-center", targets: "_all" },
+      ],
     });
   }
 
@@ -252,6 +258,7 @@
       },
       success : function(result)
       {
+        var table = $("#list_campaign").DataTable();
         $('#loader').hide();
         $('.div-loading').removeClass('background-load');
 
@@ -260,7 +267,8 @@
             // alert(result.message);
             $("#edit_appt").modal('hide');
             $(".error").hide();
-            display_data();
+            table.destroy();
+            tableAjax();
         }
         else
         {
@@ -321,11 +329,12 @@
       {
         $('#loader').hide();
         $('.div-loading').removeClass('background-load');
-        // alert(result.message);
+        var table = $("#list_campaign").DataTable();
 
         if(result.success == 1)
         {
-            //display_data();
+            table.destroy();
+            tableAjax();
         }
         else
         {
