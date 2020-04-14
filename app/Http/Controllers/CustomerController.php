@@ -277,7 +277,7 @@ class CustomerController extends Controller
       $customer = Customer::find($customer_id);
       if (!is_null($customer)){
         if ($customer->list_id == $list->id ) {
-          $customer->status = 1;
+          $customer->status = 0;
           $customer->save();
         }
       }
