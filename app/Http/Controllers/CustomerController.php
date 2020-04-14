@@ -111,18 +111,29 @@ class CustomerController extends Controller
             return redirect('/');
         } 
         else {
-            $customer = new Customer;
-            $customer->user_id = $list->user_id;
-            $customer->list_id = $list->id;
-            $customer->name = $request->subscribername.$list->is_secure;
-            $customer->email = $request->email;
-            $customer->telegram_number = $phone_number;
-            $customer->additional = $addt;
+            // $customer = new Customer;
+            // $customer->user_id = $list->user_id;
+            // $customer->list_id = $list->id;
+            // $customer->name = $request->subscribername;
+            // $customer->email = $request->email;
+            // $customer->telegram_number = $phone_number;
+            // $customer->additional = $addt;
+            // if ($list->is_secure) {
+              // $customer->status = 0;
+            // }
+            // $customer->save();
+						$status = 1;
             if ($list->is_secure) {
-              $customer->status = 0;
+              $status = 0;
             }
-            $customer->save();
-
+            $customer = Customer::create([
+                     'user_id'  => $list->user_id,
+                     'list_id'  => $list->id,
+                     'name'     => $request->subscribername,
+                     'telegram_number'=>$phone_number,
+                     'email'=> $request->email,
+                     'status'=> $status,
+            ]);
             $customer_id = $customer->id;
             $customer_join = $customer->created_at;
 
