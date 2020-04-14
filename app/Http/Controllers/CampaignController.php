@@ -432,6 +432,86 @@ class CampaignController extends Controller
         return view('campaign.list_campaign',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'campaigns'=>$campaigns,'is_event'=>$is_event]);
     }
 
+    public function getCampaignAjaxTable(Request $request)
+    {
+        $draw = $request->draw;
+        $search = $request->search['value'];
+        $start = $request->start;
+        $length = $request->length;
+        $order = $request->order[0]['column'];
+        $dir = $request->order[0]['dir'];
+        $active = $request->active;
+        $campaign_id = $request->campaign_id;
+        $is_event = $request->is_event;
+        $userid = Auth::id();
+
+        // dd($start.'--'.$length);
+
+        if($active == 1)
+        {
+          $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
+          ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+          ->join('customers','customers.id','=','reminder_customers.customer_id')
+          ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
+          ->take($length)
+          ->skip($start)
+          ->orderBy('reminder_customers.id',$dir)
+          // ->distinct()
+          ->get();
+        }
+        else
+        {
+          $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','>',0]])
+          ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+          ->join('customers','customers.id','=','reminder_customers.customer_id')
+          ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+         /* ->take($start)
+          ->skip($length)*/
+          ->orderBy('reminder_customers.id',$dir)
+          ->get();
+        }
+
+        $data = array();
+        if($campaigns->count() > 0)
+        {
+            $number = 1;
+            if($active == 1)
+            {
+              foreach($campaigns as $rows)
+              {
+                  $data[] = array(
+                    0=>$number,
+                    1=>$rows->event_time,
+                    2=>$rows->days,
+                    3=>$rows->name,
+                    4=>$rows->telegram_number,
+                    5=>'<a id="{{ $rows->rcid }}" class="icon-cancel"></a>',
+                  );
+                  $number++;
+              }
+            }
+            else
+            {
+              foreach($campaigns as $rows)
+              {
+                  $data[] = array(
+                    'no'=>$number,
+                    'No'=>$number,
+                  );
+                  $number++;
+              }
+            }
+           
+        }
+
+        $result['draw'] =  $draw;
+        $result['data'] =  $data;
+        $result['recordsTotal'] = $campaigns->count();
+        $result['recordsFiltered'] = $campaigns->count();
+
+        return response()->json($result);
+    }
+
     public function delCampaign(Request $request)
     {
         $user_id = Auth::id();

@@ -56,7 +56,7 @@
           </thead>
 
           <tbody>
-             @include('campaign.list_table_campaign')
+             
           </tbody>
         </table>
       </div>
@@ -132,13 +132,31 @@
     openEditForm();
     // editContactAppointment();
     deleteCampaign();
-    tableData();
+    // tableData();
+    tableAjax();
   });
 
   function tableData()
   {
     $("#list_campaign").DataTable({
       "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
+    });
+  }
+
+  function tableAjax()
+  {
+    $("#list_campaign").DataTable({
+      "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
+      "processing": true,
+      "serverSide": true,
+      "ajax": {
+        "url" : "{{ url('list-datatable-campaign') }}",
+        "data": {
+            "active": "{{ $active }}", 
+            "campaign_id": "{!! $campaign_id !!}",
+            "is_event": "{{ $is_event }}",
+        }
+      }
     });
   }
 
