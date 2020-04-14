@@ -114,13 +114,13 @@ class CustomerController extends Controller
             $customer = new Customer;
             $customer->user_id = $list->user_id;
             $customer->list_id = $list->id;
-            $customer->name = $request->subscribername;
+            $customer->name = $request->subscribername.$list->is_secure;
             $customer->email = $request->email;
             $customer->telegram_number = $phone_number;
             $customer->additional = $addt;
-            if ($list->is_secure==1) {
+            // if ($list->is_secure) {
               $customer->status = 0;
-            }
+            // }
             $customer->save();
 
             $customer_id = $customer->id;
