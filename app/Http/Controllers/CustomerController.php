@@ -118,7 +118,7 @@ class CustomerController extends Controller
             $customer->email = $request->email;
             $customer->telegram_number = $phone_number;
             $customer->additional = $addt;
-            if ($list->is_secure) {
+            if ($list->is_secure==1) {
               $customer->status = 0;
             }
             $customer->save();

@@ -90,6 +90,10 @@
         <ul>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
+            <span id="message-per-month">10.000 messages / a month </span>
+          </li>
+          <li>
+            <i class="fa fa-check" aria-hidden="true"></i> 
             <span>Broadcast Schedule</span>
           </li>
           <li>
@@ -269,41 +273,49 @@
             $("#6months-price").html("IDR 1.053.000");
             $("#3months-price").html("IDR 538.200");
             $("#monthly-price").html("IDR 195.000");
+            $("#message-per-month").html("10.000 messages / a month ");
           }
           if (numOfContact == 2500) {
             $("#6months-price").html("IDR 1.485.000");
             $("#3months-price").html("IDR 759.000");
             $("#monthly-price").html("IDR 275.000");
+            $("#message-per-month").html("25.000 messages / a month ");
           }
           if (numOfContact == 5000) {
             $("#6months-price").html("IDR 1.863.000");
             $("#3months-price").html("IDR 952.200");
             $("#monthly-price").html("IDR 345.000");
+            $("#message-per-month").html("40.000 messages / a month ");
           }
           if (numOfContact == 7500) {
             $("#6months-price").html("IDR 2.241.000");
             $("#3months-price").html("IDR 1.145.400");
             $("#monthly-price").html("IDR 415.000");
+            $("#message-per-month").html("60.000 messages / a month ");
           }
           if (numOfContact == 10000) {
             $("#6months-price").html("IDR 2.997.000");
             $("#3months-price").html("IDR 1.531.800");
             $("#monthly-price").html("IDR 555.000");
+            $("#message-per-month").html("80.000 messages / a month ");
           }
           if (numOfContact == 15000) {
             $("#6months-price").html("IDR 3.753.000");
             $("#3months-price").html("IDR 1.918.200");
             $("#monthly-price").html("IDR 695.000");
+            $("#message-per-month").html("120.000 messages / a month ");
           }
           if (numOfContact == 20000) {
             $("#6months-price").html("IDR 5.265.000");
             $("#3months-price").html("IDR 2.691.000");
             $("#monthly-price").html("IDR 975.000");
+            $("#message-per-month").html("160.000 messages / a month ");
           }
           if (numOfContact == 25000) {
             $("#6months-price").html("IDR 6.777.000");
             $("#3months-price").html("IDR 3.463.800");
             $("#monthly-price").html("IDR 1.255.000");
+            $("#message-per-month").html("200.000 messages / a month ");
           }
           set_price();
 					check_package();

@@ -288,7 +288,7 @@ class OrderController extends Controller
     }
 
     // return $arr;
-    return view('pricing.thankyou-confirm-payment');
+    return view('order.thankyou-confirm-payment');
   }
 
   public function load_order(Request $request){
