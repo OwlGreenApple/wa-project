@@ -151,15 +151,15 @@ class CustomerController extends Controller
             }
       
             // if customer successful sign up 
-            if($customer->save()){
+            // if($customer->save()){
                $user_id = $list->user_id;
                $list_id = $list->id;
                return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
-            } 
-            else {
-              $data['success'] = false;
-              $data['message'] = 'Sorry, our system is busy';
-            }
+            // } 
+            // else {
+              // $data['success'] = false;
+              // $data['message'] = 'Sorry, our system is busy';
+            // }
 
             return response()->json($data);
         }
