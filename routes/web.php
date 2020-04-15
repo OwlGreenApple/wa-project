@@ -175,6 +175,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('search-campaign', 'CampaignController@searchCampaign');
   Route::get('campaign-del','CampaignController@delCampaign'); 
   Route::get('list-campaign/{id}/{isevent}/{active}','CampaignController@listCampaign'); 
+  Route::get('list-broadcast-campaign','CampaignController@listBroadcastCampaign'); 
   Route::get('list-delete-campaign','CampaignController@listDeleteCampaign'); 
   Route::get('list-datatable-campaign','CampaignController@getCampaignAjaxTable'); 
   Route::post('edit-campaign-name','CampaignController@editCampaign'); 

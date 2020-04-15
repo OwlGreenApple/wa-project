@@ -33,95 +33,42 @@
       </div>
 
       <div class="mt-4">
-        <table id="list_campaign" class="display w-100">
-          <thead class="bg-dashboard">
-            <tr>
-              <th class="text-center">No</th>
-              @if($is_event == 1)
-              <th class="text-center">Date Event</th>
-              <th class="text-center">H</th>
-              @endif
-              @if($is_event == 0)
-              <th class="text-center">H+</th>
-              @endif
-              <th class="text-center">Name Contact</th>
-              <th class="text-center">WA Contact</th>
-              @if($active == true)
-                <!-- <th class="text-center">Edit</th> -->
-                <th class="text-center">Delete</th>
-              @else
-                <th class="text-center">Status</th>
-              @endif
-            </tr>
-          </thead>
+        @if($is_event == 'broadcast')
+          <div id="broadcast_table"></div>
+        @else
+          <table id="list_campaign" class="display w-100">
+            <thead class="bg-dashboard">
+              <tr>
+                <th class="text-center">No</th>
+                @if($is_event == 1)
+                <th class="text-center">Date Event</th>
+                <th class="text-center">H</th>
+                @endif
+                @if($is_event == 0)
+                <th class="text-center">H+</th>
+                @endif
+                <th class="text-center">Name Contact</th>
+                <th class="text-center">WA Contact</th>
+                @if($active == 1)
+                  <!-- <th class="text-center">Edit</th> -->
+                  <th class="text-center">Delete</th>
+                @else
+                  <th class="text-center">Status</th>
+                @endif
+              </tr>
+            </thead>
 
-           @if($campaigns->count() > 0)
-          <tbody>
-             @include('campaign.list_table_campaign')
-          </tbody>
-           @endif
-        </table>
+             @if($campaigns->count() > 0)
+            <tbody>
+               @include('campaign.list_table_campaign')
+            </tbody>
+             @endif
+          </table>
+        @endif
       </div>
      
 
     </div>
-</div>
-
-<!-- Modal Delete Confirmation -->
-<div class="modal fade" id="edit_appt" role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modaltitle">
-          Edit Campaign
-        </h5>
-      </div>
-
-      <div class="modal-body col-lg-12">
-        <form id="appt_form">
-            <div class="form-group row">
-              <label class="col-sm-4 col-form-label">Name</label>
-              <label class="col-sm-1 col-form-label">:</label>
-              <div class="col-sm-7 text-left row">
-                <input name="customer_name" class="form-control" />
-                <span class="error customer_name"></span>
-              </div>
-            </div> 
-
-            <div class="form-group row">
-              <label class="col-sm-4 col-form-label">Phone Number</label>
-              <label class="col-sm-1 col-form-label">:</label>
-              <div class="col-sm-7 text-left row">
-                <input name="phone_number" class="form-control" />
-                <span class="error phone_number"></span>
-              </div>
-            </div> 
-
-            <div class="form-group row">
-              <label class="col-sm-4 col-form-label">Choose Appointment Time :</label>
-              <label class="col-sm-1 col-form-label">:</label>
-              <div class="col-sm-7 relativity text-left row">
-                <input autocomplete="off" id="datetimepicker" type="text" name="date_send" class="form-control custom-select-campaign" />
-                <span class="icon-calendar"></span>
-                <span class="error date_send"></span>
-              </div>
-            </div>
-
-            <input type="hidden" name="campaign_id" />
-            <span class="error campaign_id"></span>
-            <span class="error db_error"><!-- internal error --></span>
-
-            <div class="text-right">
-              <button id="button" type="submit" class="btn btn-warning mr-1">Save</button>
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-            </div>
-        </form>
-
-      </div>
-
-    </div>   
-  </div>
 </div>
 
 <script type="text/javascript">
@@ -130,10 +77,7 @@
         format : 'YYYY-MM-DD HH:mm',
         minDate : new Date()
     }); 
-    // display_data();
-    // searchData();
-    openEditForm();
-    // editContactAppointment();
+    display_broadcast_data();
     deleteCampaign();
     tableData();
   });
@@ -166,12 +110,12 @@
     });
   }
 
-  function display_data(query)
+  function display_broadcast_data()
   {
     $.ajax({
       type : 'GET',
-      url : 'test',
-      data : {campaign_id : {!! $campaign_id !!}, search : query },
+      url : '{{ url("list-broadcast-campaign") }}',
+      data : {campaign_id : {!! $campaign_id !!}, active : {!! $active !!} },
       dataType : 'html',
       beforeSend : function(){
         $('#loader').show();
@@ -181,7 +125,7 @@
       {
         $('#loader').hide();
         $('.div-loading').removeClass('background-load');
-        $("#display_data").html(result);
+        $("#broadcast_table").html(result);
       },
       error : function(xhr)
       {
@@ -203,103 +147,23 @@
     };
   }
 
-  function searchData()
-  {
-     $(".search-box").keyup(delay(function(){
-        var query = $(this).val();
-        display_data(query);
-     },1000));
-  }
-
-  function openEditForm()
-  {
-    $("body").on('click','.icon-edit',function(){
-      var id = $(this).attr('id');
-      var date = $(this).attr('data-ev');
-      var customer = $(this).attr('data-name');
-      var phone = $(this).attr('data-phone');
-      var customer_id = $(this).attr('data-customer-id');
-
-      $("input[name='customer_name']").val(customer);
-      $("input[name='phone_number']").val(phone);
-      $("input[name='date_send']").val(date);
-      $("input[name='campaign_id']").val(id);
-      $("#button").attr('csid',customer_id);
-      $("#button").attr('oldtime',date);
-      $(".error").hide();
-      $("#edit_appt").modal();
-    });
-  }
-
-  function editContactAppointment()
-  {
-      $("#appt_form").submit(function(e){
-          e.preventDefault();
-          var data = $(this).serializeArray();
-          data.push(
-            {name:'customer_id', value:$("#button").attr('csid')},
-            {name:'oldtime', value:$("#button").attr('oldtime')},
-          )
-          saveEditForm(data);
-      });
-  }
-
-  function saveEditForm(data)
-  {
-    $.ajax({
-      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-      type : 'POST',
-      url : '{{ url("list-edit-apt") }}',
-      data : data,
-      dataType : 'json',
-      beforeSend : function(){
-        $('#loader').show();
-        $('.div-loading').addClass('background-load');
-      },
-      success : function(result)
-      {
-        var table = $("#list_campaign").DataTable();
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-
-        if(result.success == 1)
-        {
-            // alert(result.message);
-            $("#edit_appt").modal('hide');
-            $(".error").hide();
-            table.destroy();
-            tableAjax();
-        }
-        else
-        {
-            $(".error").show();
-            $(".customer_name").html(result.customer_name);
-            $(".phone_number").html(result.phone_number);
-            $(".date_send").html(result.date_send);
-            $(".campaign_id").html(result.campaign_id);
-            $(".db_error").html(result.customer_id);
-            $(".db_error").html(result.oldtime);
-            if(result.message !== undefined)
-            {
-                alert(result.message);
-            }
-        }
-        
-      },
-      error : function(xhr)
-      {
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-        console.log(xhr.responseText);
-      }
-    });
-  }
-
   function deleteCampaign()
   {
     $("body").on("click",".icon-cancel",function(){
-      var reminder_customer_id = $(this).attr('id');
-      var data = {'reminder_customer_id' : reminder_customer_id}
+      var is_broadcast = $(this).attr('data-broadcast');
+      var data;
+
+      if(is_broadcast == 1)
+      {
+        var broadcast_customer_id = $(this).attr('id');
+        data = {'broadcast_customer_id' : broadcast_customer_id, 'is_broadcast' : 1};
+      }
+      else
+      {
+        var reminder_customer_id = $(this).attr('id');
+        data = {'reminder_customer_id' : reminder_customer_id};
+      }
+     
       var warning = confirm('Are you sure to cancel this user?'+'\n'+'WARNING : This cannot be undone');
 
       if(warning == true)
@@ -333,8 +197,15 @@
 
         if(result.success == 1)
         {
-            table.destroy();
-            tableAjax();
+            if(result.broadcast == 1)
+            {
+              display_broadcast_data();
+            }
+            else
+            {
+              table.destroy();
+              tableAjax();
+            }
         }
         else
         {
