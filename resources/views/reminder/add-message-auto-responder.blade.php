@@ -119,6 +119,15 @@
         <button type="button" id="btn-clear" class="btn btn-custom">Clear</button>
       </div>
 
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Send 1 test Message</label>
+        <div class="col-sm-9 relativity">
+						<input type="text" id="phone" name="phone_number" class="form-control" />
+						<span class="error code_country"></span>
+						<span class="error phone_number"></span>
+						<button type="button" class="btn btn-test">Send Test</button>
+        </div>
+      </div>
   </form>
 </div>
 
@@ -230,6 +239,7 @@
     clickButtonEdit();
     clickButtonClear();
     $("#btn-clear").hide();
+    sendTestMessage();
   });
 
   function clickButtonEdit(){
@@ -324,5 +334,39 @@
     });
   }
   
+  function sendTestMessage(){
+    $("body").on("click",".btn-test",function(){
+				$.ajax({
+						headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+						type : 'POST',
+						url : '{{url("send-test-message")}}',
+						data : {
+							message : $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText(),
+							phone : $(".iti__selected-flag").attr('data-code')+$("#phone").val()
+						},
+						dataType : 'json',
+						beforeSend: function()
+						{
+							$('#loader').show();
+							$('.div-loading').addClass('background-load');
+						},
+						success : function(result){
+							$('#loader').hide();
+							$('.div-loading').removeClass('background-load');
+							alert("please check your phone");
+						},
+						error : function(xhr,attribute,throwable)
+						{
+							$('#loader').hide();
+							$('.div-loading').removeClass('background-load');
+							console.log(xhr.responseText);
+						}
+				});
+				//ajax
+			});
+
+  }
+
 </script>
+<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 @endsection

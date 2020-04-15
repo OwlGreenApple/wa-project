@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <script type="text/javascript">
@@ -9,7 +9,7 @@
       destroy: true,
       "order": [],
     });
-    $.fn.dataTable.moment( 'ddd, DD MMM YYYY' );
+    // $.fn.dataTable.moment( 'ddd, DD MMM YYYY' );
 
     refresh_page();
 

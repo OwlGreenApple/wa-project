@@ -75,7 +75,14 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
   Route::get('list-user/view-log','Admin\UserController@load_log');
   Route::post('/import-excel-user','Admin\UserController@import_excel_user');
   
-  //admin order
+	//List Coupon
+	Route::get('/list-coupon','CouponController@index');
+	Route::get('/list-coupon/load-coupon','CouponController@load_coupon');
+	Route::get('/list-coupon/add','CouponController@add_coupon');
+	Route::get('/list-coupon/edit','CouponController@edit_coupon');
+	Route::get('/list-coupon/delete','CouponController@delete_coupon');
+
+	//admin order
   Route::get('/list-order',function(){
     return view('admin.list-order.index');
   });
@@ -163,6 +170,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   /* CAMPAIGN */
   Route::get('campaign', 'CampaignController@index');
   Route::get('create-campaign', 'CampaignController@CreateCampaign');
+  Route::post('send-test-message', 'CampaignController@sendTestMessage');
   Route::post('save-campaign', 'CampaignController@SaveCampaign');
   Route::get('search-campaign', 'CampaignController@searchCampaign');
   Route::get('campaign-del','CampaignController@delCampaign'); 

@@ -22,6 +22,8 @@ use App\Rules\CheckExistIdOnDB;
 use App\Rules\EligibleTime;
 use DB;
 use Carbon\Carbon;
+use App\Helpers\ApiHelper;
+use App\PhoneNumber;
 
 class CampaignController extends Controller
 {
@@ -34,7 +36,33 @@ class CampaignController extends Controller
       return view('campaign.campaign',$data);
     }
 
-    public function CreateCampaign() 
+    public function sendTestMessage(Request $request) 
+    {
+			$rules = array(
+					'phone'=>['required','max:255'],
+					'message'=>['required','max:4095'],
+			);
+			$validator = Validator::make($request->all(),$rules);
+			$err = $validator->errors();
+
+			if($validator->fails()){
+					$error = array(
+						'phone'=>$err->first('phone'),
+						'msg'=>$err->first('message'),
+					);
+					return response()->json($error);
+			}
+			$userid = Auth::id();
+
+			$phoneNumber = PhoneNumber::where("user_id",$userid)->first();
+			$key = $phoneNumber->filename;
+			
+
+			ApiHelper::send_message($request->phone,$request->message,$key);
+			return "success";
+		}
+		
+		public function CreateCampaign() 
     {
       $userid = Auth::id();
       $lists = UserList::where('user_id',$userid)->get();

@@ -10,6 +10,12 @@ use Mail, DB;
 
 class Order extends Model
 {
+	/*
+	*
+	* 0 => created
+	* 1 => confirmed bukti transfer, waiting admin response
+	* 2 => paid
+	*/
   protected $table = 'orders';
   protected $connection = 'mysql2';
 
