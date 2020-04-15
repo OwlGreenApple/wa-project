@@ -256,49 +256,48 @@ class CampaignController extends Controller
                       $label = null;
                   }
 
-                  $broadcast_customer = BroadCastCustomers::where('broadcast_id','=',$broadcast->id)
+                  $total_message = $this->broadcastCampaign($row->id,'=',0)->count();
+                  $total_delivered = $this->broadcastCampaign($row->id,'>',0)->count();
+
+                /*  $broadcast_customer = BroadCastCustomers::where('broadcast_id','=',$broadcast->id)
                 ->select(DB::raw('COUNT("id") AS total_message'))->first();
 
                   $broadcast_customer_open = BroadCastCustomers::where([['broadcast_id','=',$broadcast->id],['status','>',0]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
-
+*/
                   $data[] = array(
                       'type'=>2,
                       'id'=>$broadcast->id,
                       'campaign_id'=>$row->id,
                       'campaign' => $row->name,
-                      'group_name' => $broadcast->group_name,
-                      'channel' => $broadcast->channel,
                       'date_send' => $broadcast->day_send,
                       'day_send' => Date('M d, Y',strtotime($broadcast->day_send)),
                       'sending' => Date('H:i',strtotime($broadcast->hour_time)),
                       'label' => $label,
                       'created_at' => Date('M d, Y',strtotime($row->created_at)),
-                      'total_message' => $broadcast_customer->total_message,
-                      'sent_message' => $broadcast_customer_open->total_sending_message,
+                      'total_message' => $total_message,
+                      'sent_message' => $total_delivered,
                       'messages' => $broadcast->message,
                   );
                 }
                 else //REMINDER
                 {
-                    $total_message = 0;
                     if($row->type == 0)
                     {
                         $reminder = Reminder::where([['campaign_id',$row->id],['is_event',1],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
+
+                        $total_message = $this->campaignsLogic($row->id,$userid,1,'=',0);
+                        $total_delivered = $this->campaignsLogic($row->id,$userid,1,'>',0);
                     }
                     else {
                         $reminder = Reminder::where([['campaign_id',$row->id],['is_event',0],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
+
+                        $total_message = $this->campaignsLogic($row->id,$userid,0,'=',0); 
+                        $total_delivered = $this->campaignsLogic($row->id,$userid,0,'>',0);
                     } 
 
                     if(!is_null($reminder))
                     {
                         $days = (int)$reminder->days;
-
-                        $reminder_customer = ReminderCustomers::where([['reminder_id','=',$reminder->id],['status',0]])->select(DB::raw('COUNT("id") AS total_message'))->first();
-
-                        $total_message += $reminder_customer->total_message;
-
-                        $reminder_customer_open = ReminderCustomers::where([['reminder_id','=',$reminder->id],['status','>',0]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
-
                         $total_template = Reminder::where('campaign_id',$row->id)->get()->count();
 
                         if($row->type == 0)
@@ -322,8 +321,8 @@ class CampaignController extends Controller
                             'label'=>$row->label,
                             'created_at'=>Date('M d, Y',strtotime($row->created_at)),
                             'total_template' => $total_template,
-                            'total_message' => $total_message,
-                            'sent_message' => $reminder_customer_open->total_sending_message
+                            'total_message' => $total_message->count(),
+                            'sent_message' => $total_delivered->count()
                           );
                         }
                         else
@@ -345,8 +344,8 @@ class CampaignController extends Controller
                             'label' => $row->label,
                             'created_at' => Date('M d, Y',strtotime($row->created_at)),
                             'total_template' => $total_template,
-                            'total_message' => $reminder_customer->total_message,
-                            'sent_message' => $reminder_customer_open->total_sending_message,
+                            'total_message' => $total_message->count(),
+                            'sent_message' => $total_delivered->count()
                           );
                         }
                     }
@@ -375,9 +374,51 @@ class CampaignController extends Controller
         return view('campaign.campaign-search',['data'=>$data]);
     }
 
+    private function campaignsLogic($campaign_id,$userid,$is_event,$cond,$status)
+    {
+        $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status',$cond,$status]])
+          ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
+          ->join('customers','customers.id','=','reminder_customers.customer_id')
+          ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
+          ->get();
+
+        return $campaigns;
+    }
+
+    public function listBroadcastCampaign(Request $request)
+    {
+        $userid = Auth::id();
+        $campaign_id = $request->campaign_id;
+        $active = $request->active;
+
+        if($active == 1)
+        {
+            $campaigns = $this->broadcastCampaign($campaign_id,'=',0);
+        }
+        else
+        {
+            $campaigns = $this->broadcastCampaign($campaign_id,'>',0);
+        }
+       
+        return view('campaign.list_broadcast_table',['active'=>$active,'campaigns'=>$campaigns]);
+    }
+
+    private function broadcastCampaign($campaign_id,$cond,$status)
+    {
+        $userid = Auth::id();
+        $campaigns = BroadCastCustomers::where([['broad_casts.campaign_id',$campaign_id],['broad_casts.user_id',$userid],['broad_cast_customers.status',$cond,$status]])
+                  ->join('broad_casts','broad_casts.id','=','broad_cast_customers.broadcast_id')
+                  ->join('customers','customers.id','=','broad_cast_customers.customer_id')
+                  ->select('customers.name','customers.telegram_number','broad_casts.day_send','broad_casts.hour_time','broad_cast_customers.id AS bcsid','broad_cast_customers.status')
+                  ->get();
+
+        return $campaigns;
+    }
+
     public function listCampaign($campaign_id,$is_event,$active)
     {
         /*
+          FOR ACTIVSCHEDULE & EVENT
           1 = Active
           0 = inactive
         */
@@ -413,22 +454,11 @@ class CampaignController extends Controller
         {
           if($active == 1)
           {
-            $active = true;
-            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
-            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
-            ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
-            // ->distinct()
-            ->get();
+            $campaigns = $this->campaignsLogic($campaign_id,$userid,$is_event,'=',0);
           }
           else
           {
-            $active = false;
-            $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','>',0]])
-            ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
-            ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
-            ->get();
+            $campaigns = $this->campaignsLogic($campaign_id,$userid,$is_event,'>',0);
           }
         }
 
@@ -732,14 +762,25 @@ class CampaignController extends Controller
     public function listDeleteCampaign(Request $request)
     {
         $userid = Auth::id();
-        $reminder_customer_id = $request->reminder_customer_id;
-        $reminder_customer = ReminderCustomers::find($reminder_customer_id);
+        $is_broadcast = $request->is_broadcast;
+
+        if($is_broadcast == 1)
+        {
+          $broadcast_customer_id = $request->broadcast_customer_id;
+          $customer = BroadCastCustomers::find($broadcast_customer_id);
+        }
+        else
+        {
+          $reminder_customer_id = $request->reminder_customer_id;
+          $customer = ReminderCustomers::find($reminder_customer_id);
+        }
 
         try
         {
-            $reminder_customer->status = 4;
-            $reminder_customer->save();
+            $customer->status = 4;
+            $customer->save();
             $data['success'] = 1;
+            $data['broadcast'] = $is_broadcast;
         }
         catch(Exception $e)
         {
