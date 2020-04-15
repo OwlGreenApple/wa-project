@@ -95,6 +95,9 @@
                               <a class="nav-link {{ (request()->is('list-order')) ? 'active' : '' }}" href="{{ url('list-order') }}">Order</a>
                             </li> 
                             <li class="nav-item">
+                              <a class="nav-link {{ (request()->is('list-coupon')) ? 'active' : '' }}" href="{{ url('list-coupon') }}">Coupon</a>
+                            </li> 
+                            <li class="nav-item">
                               <a class="nav-link {{ (request()->is('list-woowa')) ? 'active' : '' }}" href="{{ url('list-woowa') }}">WooWA</a>
                             </li> 
                             <li class="nav-item">
