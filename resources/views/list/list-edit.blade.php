@@ -243,6 +243,9 @@
       <!-- Modal content -->
       <div class="modal-content">
         <div class="modal-body">
+            <div class="text-center">
+              <span class="error_notif"></span>
+            </div>
             <div class="form-group">
                  <div class="mb-2">
                   <form id="importform">
@@ -821,15 +824,13 @@
                   (result.name !== undefined)?errors+=result.name+"\n":errname='';
                   (result.phone !== undefined)?errors+=result.phone+"\n":errphone='';
                   (result.email !== undefined)?errors+=result.email:erremail='';
-                  alert(errors);
+                  $(".error_notif").html('<div class="alert alert-danger">'+errors+'</div>');
 
                   if(result.message !== undefined)
                   {
                       $(".error_message").html("<div class='alert alert-danger'>"+result.message+"</div>");
                   }
               }
-
-              
             },
             error: function (xhr, ajaxOptions, thrownError) {
               $('#loader').hide();
@@ -839,7 +840,7 @@
               for ( var property in err.errors ) {
                 msg += err.errors[property][0]+"\n"; // get message by object name
               }*/
-              alert('Error, sorry unable to import, maybe your csv file is corrupt or data unavailable');
+              $(".error_notif").html('<div class="alert alert-danger">Error, sorry unable to import, maybe your csv file is corrupt or data unavailable</div>');
               $('input[name="csv_file"]').val('');
               displayCustomer();
             }

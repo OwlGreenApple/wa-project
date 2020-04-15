@@ -37,7 +37,11 @@ class CampaignController extends Controller
     public function CreateCampaign() 
     {
       $userid = Auth::id();
-      $lists = UserList::where('user_id',$userid)->get();
+      $lists = UserList::where([['lists.user_id',$userid],['customers.status','=',1]])
+          ->leftJoin('customers','customers.list_id','=','lists.id')
+          ->select(DB::raw('count(customers.id) as customer_count, lists.*'))
+          ->groupBy('lists.id')
+          ->get();
 
       $data = array(
           'lists'=>$lists,
@@ -259,11 +263,6 @@ class CampaignController extends Controller
                   $total_message = $this->broadcastCampaign($row->id,'=',0)->count();
                   $total_delivered = $this->broadcastCampaign($row->id,'>',0)->count();
 
-                /*  $broadcast_customer = BroadCastCustomers::where('broadcast_id','=',$broadcast->id)
-                ->select(DB::raw('COUNT("id") AS total_message'))->first();
-
-                  $broadcast_customer_open = BroadCastCustomers::where([['broadcast_id','=',$broadcast->id],['status','>',0]])->select(DB::raw('COUNT("id") AS total_sending_message'))->first();
-*/
                   $data[] = array(
                       'type'=>2,
                       'id'=>$broadcast->id,
