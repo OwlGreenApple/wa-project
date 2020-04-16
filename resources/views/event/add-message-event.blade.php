@@ -162,6 +162,7 @@
   $(function () {
       $('#datetimepicker').datetimepicker({
         format : 'YYYY-MM-DD HH:mm',
+        minDate : new Date()
       }); 
 
       $("#divInput-description-post").emojioneArea({

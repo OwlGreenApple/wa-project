@@ -60,20 +60,20 @@ class HomeController extends Controller
         }
 
         $lists = UserList::where('user_id',$id)->get()->count();
-        $campaign = Customer::where('user_id',$id)->get()->count();
+        $campaign = Campaign::where('user_id',$id)->get()->count();
         $contact = Customer::where('user_id',$id)->get()->count();
 
         $latest_list = DB::select('select * from lists where user_id ='.$id.' and DATE(created_at) > (NOW() - INTERVAL 7 DAY)');
         (count($latest_list) > 0)? $latest = '+'.count($latest_list) : $latest = count($latest_list);
 
-        $reminder = ReminderCustomers::where('user_id','=',$id)->get()->count();
+        $reminder = ReminderCustomers::where([['user_id','=',$id],['status','=',0]])->get()->count();
 
-        $reminder_sent = ReminderCustomers::where([['user_id','=',$id],['status',1]])->get()->count();
+        $reminder_sent = ReminderCustomers::where([['user_id','=',$id],['status','>',0]])->get()->count();
 
-        $broadcast = BroadCast::where('broad_casts.user_id','=',$id)
+        $broadcast = BroadCast::where([['broad_casts.user_id','=',$id],['broad_cast_customers.status','=',0]])
             ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')->get()->count();
 
-        $broadcast_sent = BroadCast::where([['broad_casts.user_id','=',$id],['broad_cast_customers.status',1]])
+        $broadcast_sent = BroadCast::where([['broad_casts.user_id','=',$id],['broad_cast_customers.status','>',0]])
             ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')->get()->count();
 
         $total_message = $reminder + $broadcast;

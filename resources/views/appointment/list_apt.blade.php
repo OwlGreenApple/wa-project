@@ -32,28 +32,8 @@
 
       </div>
 
-      <div class="mt-4">
-        <table id="list_appointment" class="display" style="width : 100%">
-          <thead class="bg-dashboard">
-            <tr>
-              <th class="text-center">No</th>
-              <th class="text-center">Date Appointment</th>
-              <th class="text-center">H-</th>
-              <th class="text-center">Name Contact</th>
-              <th class="text-center">WA Contact</th>
-              @if($active == true)
-                <th class="text-center">Edit</th>
-                <th class="text-center">Delete</th>
-              @else
-                <th class="text-center">Status</th>
-              @endif
-            </tr>
-          </thead>
-
-          <tbody>
-             @include('appointment.list_table_apt')
-          </tbody>
-        </table>
+      <div class="mt-4" id="display_data">
+       <!-- display table -->
       </div>
 
     </div>
@@ -116,33 +96,37 @@
   </div>
 </div>
 
+<!-- Modal Delete Confirmation -->
+<div class="modal fade" id="modal_notif" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-body">
+        <span class="modal_notif"></span>
+      </div>
+    </div>  
+    <!-- End Modal content-->
+  </div>
+</div>
+
 <script type="text/javascript">
   $(document).ready(function(){
     $('#datetimepicker').datetimepicker({
         format : 'YYYY-MM-DD HH:mm',
         minDate : new Date()
     }); 
-    // display_data();
-    searchData();
+    display_data();
     openEditForm();
     editContactAppointment();
     deleteAppointment();
-    tableData();
   });
 
-  function tableData()
-  {
-    $("#list_appointment").DataTable({
-      "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
-    });
-  }
-
-  function display_data(query)
+  function display_data()
   {
     $.ajax({
       type : 'GET',
-      url : 'test',
-      data : {campaign_id : {!! $campaign_id !!}, search : query },
+      url : '{{ url("list-table-apt") }}',
+      data : {campaign_id : {!! $campaign_id !!}, active : {!! $active !!} },
       dataType : 'html',
       beforeSend : function(){
         $('#loader').show();
@@ -172,14 +156,6 @@
         callback.apply(context, args);
       }, ms || 0);
     };
-  }
-
-  function searchData()
-  {
-     $(".search-box").keyup(delay(function(){
-        var query = $(this).val();
-        display_data(query);
-     },1000));
   }
 
   function openEditForm()
@@ -234,9 +210,10 @@
 
         if(result.success == 1)
         {
-            alert(result.message);
             $("#edit_appt").modal('hide');
             $(".error").hide();
+            $(".modal_notif").html(result.message);
+            $("#modal_notif").modal();
             display_data();
         }
         else
@@ -250,9 +227,13 @@
             $(".db_error").html(result.oldtime);
             if(result.message !== undefined)
             {
-                alert(result.message);
+                $(".modal_notif").html(result.message);
+                $("#modal_notif").modal();
             }
         }
+        setTimeout(function(){
+          $("#modal_notif").modal('hide');
+        },2000);
         
       },
       error : function(xhr)
@@ -271,8 +252,8 @@
       var customer_id = $(this).attr('data-ev'); 
       var oldtime = $(this).attr('data-tm'); 
       var data = {campaign_id : campaign_id, customer_id : customer_id, oldtime : oldtime};*/
-      var reminder_id = $(this).attr('id');
-      var data = {'reminder_id' : reminder_id}
+      var reminder_customer_id = $(this).attr('id');
+      var data = {'reminder_customer_id' : reminder_customer_id}
       var warning = confirm('Are you sure to delete this list appointment?'+'\n'+'WARNING : This cannot be undone');
 
       if(warning == true)
@@ -302,13 +283,20 @@
       {
         $('#loader').hide();
         $('.div-loading').removeClass('background-load');
-        alert(result.message);
-
         if(result.success == 1)
         {
+            $(".modal_notif").html(result.message);
+            $("#modal_notif").modal();
             display_data();
         }
-        
+        else
+        {
+            $(".modal_notif").html(result.message);
+            $("#modal_notif").modal();
+        }
+        setTimeout(function(){
+          $("#modal_notif").modal('hide');
+        },2000);
       },
       error : function(xhr)
       {

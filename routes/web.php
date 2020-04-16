@@ -211,7 +211,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('save-template-appoinments','AppointmentController@saveTemplateAppointment')->middleware('checkeditappt');
   Route::get('appointment','AppointmentController@index')->name('appointment');
   Route::get('list-apt/{id}/{active}','AppointmentController@listAppointment');
-  // Route::get('list-table-apt','AppointmentController@listTableAppointments');
+  Route::get('list-table-apt','AppointmentController@listTableAppointments');
   // Route::get('list-table-apt-inactiv','AppointmentController@listTableAppointmentInActive');
   Route::post('list-edit-apt','AppointmentController@listAppointmentEdit')->middleware('checkeditformappt');
   Route::get('list-delete-apt','AppointmentController@listAppointmentDelete');

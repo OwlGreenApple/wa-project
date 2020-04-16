@@ -27,13 +27,13 @@
               @if($row['label'] !== null)
                 <div class="col-lg-3 pad-fix cardnumber">
                   <div class="big-number">
-                    <a href="{{url('list-campaign').'/'.$row['campaign_id'].'/broadcast/0'}}">{{ $row['total_message'] }}</a>
+                    <a class="contacts" href="{{url('list-campaign').'/'.$row['campaign_id'].'/broadcast/0'}}">{{ $row['total_message'] }}</a>
                   </div>
                   <div class="contact">Queue</div>
                 </div>  
                 <div class="col-lg-3 pad-fix cardnumber">
                   <div class="big-number">
-                    <a href="{{url('list-campaign').'/'.$row['campaign_id'].'/broadcast/1'}}">{{ $row['sent_message'] }}</a>
+                    <a class="contacts" href="{{url('list-campaign').'/'.$row['campaign_id'].'/broadcast/1'}}">{{ $row['sent_message'] }}</a>
                   </div>
                   <div class="contact">Delivered</div>
                 </div> 
@@ -91,9 +91,9 @@
                 <div class="col-lg-4 pad-fix cardnumber">
                   <div class="big-number">
                      @if($row['type'] == 0)
-                      <a href="{{url('add-message-event').'/'.$row['id']}}">{{ $row['total_template'] }}</a>
+                      <a class="contacts" href="{{url('add-message-event').'/'.$row['id']}}">{{ $row['total_template'] }}</a>
                     @elseif($row['type'] == 1)
-                      <a href="{{url('add-message-auto-responder').'/'.$row['id']}}">{{ $row['total_template'] }}</a>
+                      <a class="contacts" href="{{url('add-message-auto-responder').'/'.$row['id']}}">{{ $row['total_template'] }}</a>
                     @endif
                   </div>
                   <div class="contact">Total Template</div>
@@ -102,9 +102,9 @@
                 <div class="col-lg-3 pad-fix cardnumber">
                   <div class="big-number">
                     @if($row['type'] == 0)
-                      <a href="{{url('list-campaign').'/'.$row['id'].'/1/1'}}">{{ $row['total_message'] }}</a>
+                      <a class="contacts" href="{{url('list-campaign').'/'.$row['id'].'/1/1'}}">{{ $row['total_message'] }}</a>
                     @elseif($row['type'] == 1)
-                      <a href="{{url('list-campaign').'/'.$row['id'].'/0/1'}}">{{ $row['total_message'] }}</a>
+                      <a class="contacts" href="{{url('list-campaign').'/'.$row['id'].'/0/1'}}">{{ $row['total_message'] }}</a>
                     @endif
                   </div>
                   <div class="contact">Queue</div>
@@ -112,9 +112,9 @@
                 <div class="col-lg-3 pad-fix cardnumber">
                   <div class="big-number">
                     @if($row['type'] == 0)
-                      <a href="{{url('list-campaign').'/'.$row['id'].'/1/0'}}">{{ $row['sent_message'] }}</a>
+                      <a class="contacts" href="{{url('list-campaign').'/'.$row['id'].'/1/0'}}">{{ $row['sent_message'] }}</a>
                     @elseif($row['type'] == 1)
-                      <a href="{{url('list-campaign').'/'.$row['id'].'/0/0'}}">{{ $row['sent_message'] }}</a>
+                      <a class="contacts" href="{{url('list-campaign').'/'.$row['id'].'/0/0'}}">{{ $row['sent_message'] }}</a>
                     @endif
                   </div>
                   <div class="contact">Delivered</div>

@@ -189,8 +189,8 @@
         }); 
 
         $('#datetimepicker-date').datetimepicker({
-          minDate: new Date(), 
           format : 'YYYY-MM-DD',
+          minDate: new Date()
         });
 
         $("#divInput-description-post").emojioneArea({
