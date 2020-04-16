@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\PhoneNumber;
+use App\User;
 
 class CheckCounter extends Command
 {
@@ -43,9 +44,18 @@ class CheckCounter extends Command
         if($phoneNumber->count() > 0){
             foreach($phoneNumber as $row){
                 $counter = $row->counter;
-                if($counter < env('MAXIMUM_COUNTER')){
-                    $update = PhoneNumber::where('user_id',$row->user_id)->update(['counter'=>env('MAXIMUM_COUNTER')]);
-                }
+                // if($counter < env('MAXIMUM_COUNTER')){
+                    // $update = PhoneNumber::where('user_id',$row->user_id)->update(['counter'=>env('MAXIMUM_COUNTER')]);
+                // }
+								$user = User::find($row->user_id);
+								if (!is_null($user)) {
+									if ($user->membership=="basic") {
+									}
+									$update = PhoneNumber::where('user_id',$user->id)->update([
+										'counter'=>env('MAXIMUM_COUNTER'),
+										'max_counter'=>env('MAXIMUM_COUNTER'),
+									]);
+								}
             }
         }
     }

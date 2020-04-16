@@ -23,117 +23,132 @@
               {{ csrf_field() }}
               <input type="hidden" id="price" name="price">
               <input type="hidden" id="namapaket" name="namapaket">
+              <input type="hidden" id="namapakettitle" name="namapakettitle">
               <h2 class="Daftar-Disini">Pilih Paket Anda</h2>
               <div class="form-group">
                 <div class="col-12 col-md-12">
                   <label class="text" for="formGroupExampleInput">Pilih Paket:</label>
                   <select class="form-control" name="idpaket" id="select-auto-manage">
-                        <option class="" data-price="195000" data-paket="basic1" value="1" <?php if ($id==1) echo "selected" ; ?>>
-                          Basic - 1.000 Kontak - IDR 195.000,-/30 hari
+                        <option class="" data-price="195000" data-paket="basic1" data-paket-title="Basic - 15.000 Messages" value="1" <?php if ($id==1) echo "selected" ; ?>>
+                          Basic - 15.000 Messages - IDR 195.000,-/30 hari
                         </option>
-                        <option class="" data-price="538200" data-paket="bestseller1" value="2" <?php if ($id==2) echo "selected" ; ?>>
-                          Best Seller - 1.000 Kontak - IDR 538.200,-/90 hari 
+                        <option class="" data-price="538200" data-paket="bestseller1" data-paket-title="Best Seller - 15.000 Messages" value="2" <?php if ($id==2) echo "selected" ; ?>>
+                          Best Seller - 15.000 Messages - IDR 538.200,-/90 hari 
                         </option>
-                        <option class="" data-price="1053000" data-paket="supervalue1" value="3" <?php if ($id==3) echo "selected" ; ?>>
-                          Super Value - 1.000 Kontak - IDR 1.053.000,-/180 hari 
+                        <option class="" data-price="1053000" data-paket="supervalue1" data-paket-title="Super Value - 15.000 Messages" value="3" <?php if ($id==3) echo "selected" ; ?>>
+                          Super Value - 15.000 Messages - IDR 1.053.000,-/180 hari 
                         </option>
 
                         <option class="">
                           -----------------------------------------------------------------------------------------------------------------
                         </option>
 												
-                        <option class="" data-price="275000" data-paket="basic2" value="4" <?php if ($id==4) echo "selected" ; ?>>
-                          Basic - 2.500 Kontak - IDR 275.000,-/30 hari
+                        <option class="" data-price="275000" data-paket="basic2" data-paket-title="Basic - 25.000 Messages" value="4" <?php if ($id==4) echo "selected" ; ?>>
+                          Basic - 25.000 Messages - IDR 275.000,-/30 hari
                         </option>
-                        <option class="" data-price="759000" data-paket="bestseller2" value="5" <?php if ($id==5) echo "selected" ; ?>>
-                          Best Seller - 2.500 Kontak - IDR 759.000,-/90 hari 
+                        <option class="" data-price="759000" data-paket="bestseller2" data-paket-title="Best Seller - 25.000 Messages" value="5" <?php if ($id==5) echo "selected" ; ?>>
+                          Best Seller - 25.000 Messages - IDR 759.000,-/90 hari 
                         </option>
-                        <option class="" data-price="1485000" data-paket="supervalue2" value="6" <?php if ($id==6) echo "selected" ; ?>>
-                          Super Value - 2.500 Kontak - IDR 1.485.000,-/180 hari 
-                        </option>
-												
-                        <option class="">
-                          -----------------------------------------------------------------------------------------------------------------
-                        </option>
-												
-                        <option class="" data-price="345000" data-paket="basic3" value="7" <?php if ($id==7) echo "selected" ; ?>>
-                          Basic - 5.000 Kontak - IDR 345.000,-/30 hari
-                        </option>
-                        <option class="" data-price="952200" data-paket="bestseller3" value="8" <?php if ($id==8) echo "selected" ; ?>>
-                          Best Seller - 5.000 Kontak - IDR 952.200,-/90 hari 
-                        </option>
-                        <option class="" data-price="1863000" data-paket="supervalue3" value="9" <?php if ($id==9) echo "selected" ; ?>>
-                          Super Value - 5.000 Kontak - IDR 1.863.000,-/180 hari 
+                        <option class="" data-price="1485000" data-paket="supervalue2" data-paket-title="Super Value - 25.000 Messages" value="6" <?php if ($id==6) echo "selected" ; ?>>
+                          Super Value - 25.000 Messages - IDR 1.485.000,-/180 hari 
                         </option>
 												
                         <option class="">
                           -----------------------------------------------------------------------------------------------------------------
                         </option>
 												
-                        <option class="" data-price="415000" data-paket="basic4" value="10" <?php if ($id==10) echo "selected" ; ?>>
-                          Basic - 7.500 Kontak - IDR 415.000,-/30 hari
+                        <option class="" data-price="345000" data-paket="basic3" data-paket-title="Basic - 40.000 Messages" value="7" <?php if ($id==7) echo "selected" ; ?>>
+                          Basic - 40.000 Messages - IDR 345.000,-/30 hari
                         </option>
-                        <option class="" data-price="1145400" data-paket="bestseller4" value="11" <?php if ($id==11) echo "selected" ; ?>>
-                          Best Seller - 7.500 Kontak - IDR 1.145.400,-/90 hari 
+                        <option class="" data-price="952200" data-paket="bestseller3" data-paket-title="Best Seller - 40.000 Messages" value="8" <?php if ($id==8) echo "selected" ; ?>>
+                          Best Seller - 40.000 Messages - IDR 952.200,-/90 hari 
                         </option>
-                        <option class="" data-price="2241000" data-paket="supervalue4" value="12" <?php if ($id==12) echo "selected" ; ?>>
-                          Super Value - 7.500 Kontak - IDR 2.241.000,-/180 hari 
-                        </option>
-												
-                        <option class="">
-                          -----------------------------------------------------------------------------------------------------------------
-                        </option>
-												
-                        <option class="" data-price="555000" data-paket="basic5" value="13" <?php if ($id==13) echo "selected" ; ?>>
-                          Basic - 10.000 Kontak - IDR 555.000,-/30 hari
-                        </option>
-                        <option class="" data-price="1531800" data-paket="bestseller5" value="14" <?php if ($id==14) echo "selected" ; ?>>
-                          Best Seller - 10.000 Kontak - IDR 1.531.800,-/90 hari 
-                        </option>
-                        <option class="" data-price="2997000" data-paket="supervalue5" value="15" <?php if ($id==15) echo "selected" ; ?>>
-                          Super Value - 10.000 Kontak - IDR 2.997.000,-/180 hari 
+                        <option class="" data-price="1863000" data-paket="supervalue3" data-paket-title="Super Value - 40.000 Messages" value="9" <?php if ($id==9) echo "selected" ; ?>>
+                          Super Value - 40.000 Messages - IDR 1.863.000,-/180 hari 
                         </option>
 												
                         <option class="">
                           -----------------------------------------------------------------------------------------------------------------
                         </option>
 												
-                        <option class="" data-price="695000" data-paket="basic6" value="16" <?php if ($id==16) echo "selected" ; ?>>
-                          Basic - 15.000 Kontak - IDR 695.000,-/30 hari
+                        <option class="" data-price="415000" data-paket="basic4" data-paket-title="Basic - 60.000 Messages" value="10" <?php if ($id==10) echo "selected" ; ?>>
+                          Basic - 60.000 Messages - IDR 415.000,-/30 hari
                         </option>
-                        <option class="" data-price="1918200" data-paket="bestseller6" value="17" <?php if ($id==17) echo "selected" ; ?>>
-                          Best Seller - 15.000 Kontak - IDR 1.918.200,-/90 hari 
+                        <option class="" data-price="1145400" data-paket="bestseller4" data-paket-title="Best Seller - 60.000 Messages" value="11" <?php if ($id==11) echo "selected" ; ?>>
+                          Best Seller - 60.000 Messages - IDR 1.145.400,-/90 hari 
                         </option>
-                        <option class="" data-price="3753000" data-paket="supervalue6" value="18" <?php if ($id==18) echo "selected" ; ?>>
-                          Super Value - 15.000 Kontak - IDR 3.753.000,-/180 hari 
-                        </option>
-												
-                        <option class="">
-                          -----------------------------------------------------------------------------------------------------------------
-                        </option>
-												
-                        <option class="" data-price="975000" data-paket="basic7" value="19" <?php if ($id==19) echo "selected" ; ?>>
-                          Basic - 20.000 Kontak - IDR 975.000,-/30 hari
-                        </option>
-                        <option class="" data-price="2691000" data-paket="bestseller7" value="20" <?php if ($id==20) echo "selected" ; ?>>
-                          Best Seller - 20.000 Kontak - IDR 2.691.200,-/90 hari 
-                        </option>
-                        <option class="" data-price="5265000" data-paket="supervalue7" value="21" <?php if ($id==21) echo "selected" ; ?>>
-                          Super Value - 20.000 Kontak - IDR 5.265.000,-/180 hari 
+                        <option class="" data-price="2241000" data-paket="supervalue4" data-paket-title="Super Value - 60.000 Messages" value="12" <?php if ($id==12) echo "selected" ; ?>>
+                          Super Value - 60.000 Messages - IDR 2.241.000,-/180 hari 
                         </option>
 												
                         <option class="">
                           -----------------------------------------------------------------------------------------------------------------
                         </option>
 												
-                        <option class="" data-price="1255000" data-paket="basic8" value="22" <?php if ($id==22) echo "selected" ; ?>>
-                          Basic - 25.000 Kontak - IDR 1.255.000,-/30 hari
+                        <option class="" data-price="555000" data-paket="basic5" data-paket-title="Basic - 90.000 Messages" value="13" <?php if ($id==13) echo "selected" ; ?>>
+                          Basic - 90.000 Messages - IDR 555.000,-/30 hari
                         </option>
-                        <option class="" data-price="3463800" data-paket="bestseller8" value="23" <?php if ($id==23) echo "selected" ; ?>>
-                          Best Seller - 25.000 Kontak - IDR 3.463.800,-/90 hari 
+                        <option class="" data-price="1531800" data-paket="bestseller5" data-paket-title="Best Seller - 90.000 Messages" value="14" <?php if ($id==14) echo "selected" ; ?>>
+                          Best Seller - 90.000 Messages - IDR 1.531.800,-/90 hari 
                         </option>
-                        <option class="" data-price="6777000" data-paket="supervalue8" value="24" <?php if ($id==24) echo "selected" ; ?>>
-                          Super Value - 25.000 Kontak - IDR 6.777.000,-/180 hari 
+                        <option class="" data-price="2997000" data-paket="supervalue5" data-paket-title="Super Value - 90.000 Messages" value="15" <?php if ($id==15) echo "selected" ; ?>>
+                          Super Value - 90.000 Messages - IDR 2.997.000,-/180 hari 
+                        </option>
+												
+                        <option class="">
+                          -----------------------------------------------------------------------------------------------------------------
+                        </option>
+												
+                        <option class="" data-price="695000" data-paket="basic6" data-paket-title="Basic - 130.000 Messages" value="16" <?php if ($id==16) echo "selected" ; ?>>
+                          Basic - 130.000 Messages - IDR 695.000,-/30 hari
+                        </option>
+                        <option class="" data-price="1918200" data-paket="bestseller6" data-paket-title="Best Seller - 130.000 Messages" value="17" <?php if ($id==17) echo "selected" ; ?>>
+                          Best Seller - 130.000 Messages - IDR 1.918.200,-/90 hari 
+                        </option>
+                        <option class="" data-price="3753000" data-paket="supervalue6" data-paket-title="Super Value - 130.000 Messages" value="18" <?php if ($id==18) echo "selected" ; ?>>
+                          Super Value - 130.000 Messages - IDR 3.753.000,-/180 hari 
+                        </option>
+												
+                        <option class="">
+                          -----------------------------------------------------------------------------------------------------------------
+                        </option>
+												
+                        <option class="" data-price="975000" data-paket="basic7" data-paket-title="Basic - 190.000 Messages" value="19" <?php if ($id==19) echo "selected" ; ?>>
+                          Basic - 190.000 Messages - IDR 975.000,-/30 hari
+                        </option>
+                        <option class="" data-price="2691000" data-paket="bestseller7" data-paket-title="Best Seller - 190.000 Messages" value="20" <?php if ($id==20) echo "selected" ; ?>>
+                          Best Seller - 190.000 Messages - IDR 2.691.200,-/90 hari 
+                        </option>
+                        <option class="" data-price="5265000" data-paket="supervalue7" data-paket-title="Super Value - 190.000 Messages" value="21" <?php if ($id==21) echo "selected" ; ?>>
+                          Super Value - 190.000 Messages - IDR 5.265.000,-/180 hari 
+                        </option>
+												
+                        <option class="">
+                          -----------------------------------------------------------------------------------------------------------------
+                        </option>
+												
+                        <option class="" data-price="1255000" data-paket="basic8" data-paket-title="Basic - 250.000 Messages" value="22" <?php if ($id==22) echo "selected" ; ?>>
+                          Basic - 250.000 Messages - IDR 1.255.000,-/30 hari
+                        </option>
+                        <option class="" data-price="3463800" data-paket="bestseller8" data-paket-title="Best Seller - 250.000 Messages" value="23" <?php if ($id==23) echo "selected" ; ?>>
+                          Best Seller - 250.000 Messages - IDR 3.463.800,-/90 hari 
+                        </option>
+                        <option class="" data-price="6777000" data-paket="supervalue8" data-paket-title="Super Value - 250.000 Messages" value="24" <?php if ($id==24) echo "selected" ; ?>>
+                          Super Value - 250.000 Messages - IDR 6.777.000,-/180 hari 
+                        </option>
+												
+                        <option class="">
+                          -----------------------------------------------------------------------------------------------------------------
+                        </option>
+												
+                        <option class="" data-price="1555000" data-paket="basic9" data-paket-title="Basic - 330.000 Messages" value="25" <?php if ($id==25) echo "selected" ; ?>>
+                          Basic - 330.000 Messages - IDR 1.555.000,-/30 hari
+                        </option>
+                        <option class="" data-price="4363800" data-paket="bestseller9" data-paket-title="Best Seller - 330.000 Messages" value="26" <?php if ($id==26) echo "selected" ; ?>>
+                          Best Seller - 330.000 Messages - IDR 4.363.800,-/90 hari 
+                        </option>
+                        <option class="" data-price="8577000" data-paket="supervalue9" data-paket-title="Super Value - 330.000 Messages" value="27" <?php if ($id==27) echo "selected" ; ?>>
+                          Super Value - 330.000 Messages - IDR 8.577.000,-/180 hari 
                         </option>
 												
                   </select>
@@ -263,9 +278,11 @@
 		$( "#select-auto-manage" ).change(function() {
 			var price = $(this).find("option:selected").attr("data-price");
 			var namapaket = $(this).find("option:selected").attr("data-paket");
+			var namapakettitle = $(this).find("option:selected").attr("data-paket-title");
 
 			$("#price").val(price);
 			$("#namapaket").val(namapaket);
+			$("#namapakettitle").val(namapakettitle);
 			// $('#kupon').val("");
 			// check_kupon();
 		});

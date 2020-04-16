@@ -11,8 +11,6 @@ use App\Coupon;
 use App\Order;
 use App\UserLog;
 use App\Notification;
-use App\Ads;
-use App\AdsHistory;
 
 use App\Helpers\Helper;
 use Carbon\Carbon;
@@ -62,6 +60,10 @@ class OrderController extends Controller
       'basic10' => 155000,
       'bestseller10' => 195000,
       'supervalue10' => 1020000,
+			
+      'basic11' => 1555000,
+      'bestseller11' => 4363800,
+      'supervalue11' => 8577000,
 			
     );
 
@@ -179,6 +181,7 @@ class OrderController extends Controller
     return view('auth.register')->with(array(
       "price"=>$request->price,
       "namapaket"=>$request->namapaket,
+      "namapakettitle"=>$request->namapakettitle,
       "coupon_code"=>$request->kupon,
       "idpaket" => $request->idpaket,
     ));
@@ -193,14 +196,6 @@ class OrderController extends Controller
     if($stat==false){
       // return redirect("checkout/1")->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
       return redirect($pathUrl)->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
-    }
-
-    if(substr($request->namapaket,0,6) === "Top Up"){
-      $ads = Ads::where('user_id',Auth::user()->id)->first();
-      if(is_null($ads)){
-        // return redirect("checkout/5")->with("error", "Buat Ads terlebih dahulu sebelum melakukan Top Up.");   
-        return redirect($pathUrl)->with("error", "Buat Ads terlebih dahulu sebelum melakukan Top Up.");   
-      } 
     }
 
     $diskon = 0;
@@ -228,6 +223,7 @@ class OrderController extends Controller
 			"kuponid"=> $kuponid,
 			"price"=> $request->price,
 			"diskon"=> $diskon,
+			"namapakettitle"=> $request->namapakettitle,
 		];
 		
 		$order = Order::create_order($data);

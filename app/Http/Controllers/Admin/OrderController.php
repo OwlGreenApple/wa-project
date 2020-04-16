@@ -9,6 +9,7 @@ use App\Group;
 use App\Save;
 use App\Coupon;
 use App\Order;
+use App\PhoneNumber;
 use App\Helpers\Helper;
 use Carbon, Crypt;
 use Auth,Mail,Validator,Storage,DateTime;
@@ -36,73 +37,71 @@ class OrderController extends Controller
     $order = Order::find($request->id);
     $order->status = 2;
     
-    $user = User::find($order->user_id);
-    $valid=null;
-    $type = "";
+		$phoneNumber = PhoneNumber::
+										where("user_id",$order->user_id)
+										->first();
+		$user = User::find($order->user_id);
+		$user->membership = $order->package;
     
-    /*
-      'Pro' => 195000, //30hari
-      'Popular' => 395000, //90hari
-      'Elite' => 695000, //180 hari
-      'Super' => 1095000, //360 hari
-    */
-    if(substr($order->package,0,5) === "Pro"){
-      if($order->package=='Pro Monthly'){
-        $valid = $this->add_time($user,"+1 months");
-      } 
-      else if($order->package=='Pro Yearly'){
-        $valid = $this->add_time($user,"+12 months");
-      }
-      else if($order->package=='Pro'){
-        $valid = $this->add_time($user,"+1 months");
-      }
-      $type = "pro";
-      $user->membership = 'pro';
-    } 
-    else if(substr($order->package,0,7) === "Popular"){
-      $valid = $this->add_time($user,"+3 months");
-      $type="popular";
-      $user->membership = 'popular';
-    }
-    else if(substr($order->package,0,5) === "Elite"){
-      if($order->package=='Elite Monthly'){
-        $valid = $this->add_time($user,"+1 months");
-      } else if($order->package=='Elite Yearly'){
-        $valid = $this->add_time($user,"+12 months");
-      }
-      else if($order->package=='Elite Special 2 Months'){
-        $valid = $this->add_time($user,"+2 months");
-      }
-      else if($order->package=='Elite Special 3 Months'){
-        $valid = $this->add_time($user,"+3 months");
-      }
-      else if($order->package=='Elite Special 5 Months'){
-        $valid = $this->add_time($user,"+5 months");
-      }
-      else if($order->package=='Elite Special 7 Months'){
-        $valid = $this->add_time($user,"+7 months");
-      }
-      else if($order->package=='Elite'){
-        $valid = $this->add_time($user,"+6 months");
-      }
-      $type = "elite";
-      $user->membership = 'elite';
-    }
-    else if(substr($order->package,0,5) === "Super"){
-      $valid = $this->add_time($user,"+12 months");
-      $type="super";
-      $user->membership = 'super';
-    }
-    
-    if($valid <> null){
-        $formattedDate = $valid->format('Y-m-d H:i:s');
-    }
+		$additional_day = 0;
 
+		$type_package =0;
 
-    $user->valid_until = $valid;
+		if(substr($order->package,0,5) === "basic"){
+			$additional_day += 30;
+			$type_package = explode("basic", $order->package)[0];
+    }
+		if(substr($order->package,0,10) === "bestseller"){
+			$additional_day += 90;
+			$type_package = explode("bestseller", $order->package)[0];
+    }
+		if(substr($order->package,0,10) === "supervalue"){
+			$additional_day += 180;
+			$type_package = explode("supervalue", $order->package)[0];
+    }
+		
+		if ($type_package=="1") {
+			$phoneNumber->max_counter_day=1000;
+			$phoneNumber->max_counter=15000;
+		}
+		if ($type_package=="2") {
+			$phoneNumber->max_counter_day=1500;
+			$phoneNumber->max_counter=25000;
+		}
+		if ($type_package=="3") {
+			$phoneNumber->max_counter_day=2000;
+			$phoneNumber->max_counter=40000;
+		}
+		if ($type_package=="4") {
+			$phoneNumber->max_counter_day=2500;
+			$phoneNumber->max_counter=60000;
+		}
+		if ($type_package=="5") {
+			$phoneNumber->max_counter_day=3000;
+			$phoneNumber->max_counter=90000;
+		}
+		if ($type_package=="6") {
+			$phoneNumber->max_counter_day=3500;
+			$phoneNumber->max_counter=130000;
+		}
+		if ($type_package=="7") {
+			$phoneNumber->max_counter_day=4000;
+			$phoneNumber->max_counter=190000;
+		}
+		if ($type_package=="8") {
+			$phoneNumber->max_counter_day=4500;
+			$phoneNumber->max_counter=250000;
+		}
+		if ($type_package=="9") {
+			$phoneNumber->max_counter_day=5000;
+			$phoneNumber->max_counter=330000;
+		}
+
+    $user->day_left += $additional_day;
     $user->is_member = 1;
     $user->save();
     $order->save();
+    $phoneNumber->save();
 
 
     $emaildata = [
@@ -118,7 +117,6 @@ class OrderController extends Controller
 
     $arr['status'] = 'success';
     $arr['message'] = 'Order berhasil dikonfirmasi';
-    $arr['response'] = $this->IsPay($user->email,17,1);
 
     return $arr;
   }

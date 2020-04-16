@@ -19,6 +19,7 @@ class CreateOrdersTableMysql2 extends Migration
             $table->bigInteger('user_id');    
             $table->integer('coupon_id')->nullable();
             $table->string('package')->nullable();
+            $table->string('package_title')->nullable();
             $table->double('total')->default(0);
             $table->double('discount')->nullable()->default(0);
             $table->double('grand_total')->default(0);

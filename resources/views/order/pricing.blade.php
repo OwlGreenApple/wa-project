@@ -33,24 +33,24 @@
       </div>
       <div class="col-6 row price-content">
         <h3>
-          How many contacts you have ? 
+          How many messages you need to send per month ? 
         </h3>
         <div class="col-12 div-range-slider">
           <input type="text" class="js-range-slider" name="my_range" value="" />
         </div>
-        <div class="col-4 ml-0 mr-0 box-pricing p-2 selected" data-attr="1">
+        <div class="col-4 ml-0 mr-0 box-pricing p-2 " data-attr="1">
           <div class="box-in">
             <div class="div-header w-100 p-1">
-              <h5>Super Value</h5>
+              <h5>Basic</h5>
             </div>
             <div class="div-content w-100 w-100 p-3">
-              <span>6 Months </span>
+              <span>1 Month </span>
               <span>&nbsp</span>
-              <span id="6months-price">IDR 1.053.000</span>
-              <span id="description-contact-3">25.000 Contacts</span>
+              <span id="monthly-price">IDR 195.000</span>
+              <span id="description-contact-3" class="description-contact">15.000 Messages</span>
             </div>
           </div>            
-        </div>            
+        </div>    
         <div class="col-4 ml-0 mr-0 box-pricing p-2 " data-attr="2">
           <div class="box-in">
             <div class="div-header w-100 p-1">
@@ -61,23 +61,23 @@
               <span>3 Months </span>
               <span>&nbsp</span>
               <span id="3months-price">IDR 538.200</span>
-              <span id="description-contact-3">25.000 Contacts</span>
+              <span id="description-contact-3" class="description-contact">15.000 Messages</span>
             </div>
           </div>            
         </div>    
-        <div class="col-4 ml-0 mr-0 box-pricing p-2 " data-attr="3">
+        <div class="col-4 ml-0 mr-0 box-pricing p-2 selected" data-attr="3">
           <div class="box-in">
             <div class="div-header w-100 p-1">
-              <h5>Basic</h5>
+              <h5>Super Value</h5>
             </div>
             <div class="div-content w-100 w-100 p-3">
-              <span>1 Month </span>
+              <span>6 Months </span>
               <span>&nbsp</span>
-              <span id="monthly-price">IDR 195.000</span>
-              <span id="description-contact-3">25.000 Contacts</span>
+              <span id="6months-price">IDR 1.053.000</span>
+              <span id="description-contact-3" class="description-contact">15.000 Messages</span>
             </div>
           </div>            
-        </div>    
+        </div>            
         
       </div>
       <div class="col-1 ">
@@ -90,7 +90,11 @@
         <ul>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
-            <span id="message-per-month">10.000 messages / a month </span>
+            <span>Unlimited Contacts</span>
+          </li>
+          <li>
+            <i class="fa fa-check" aria-hidden="true"></i> 
+            <span id="message-per-month">10.000 messages / month </span>
           </li>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
@@ -155,98 +159,133 @@
   });
 	function check_package(){
 		if (modePrice==1) {
-			if (numOfContact == 1000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/3'); ?>");
+			if (messagePer30day == 15000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/1'); ?>");
+				$("#description-contact-header").html("Basic 1 Month<br>15.000 Messages/month");
 			}
-			if (numOfContact == 2500) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/6'); ?>");
+			if (messagePer30day == 25000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/4'); ?>");
+				$("#description-contact-header").html("Basic 1 Month<br>25.000 Messages/month");
 			}
-			if (numOfContact == 5000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/9'); ?>");
+			if (messagePer30day == 40000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/7'); ?>");
+				$("#description-contact-header").html("Basic 1 Month<br>40.000 Messages/month");
 			}
-			if (numOfContact == 7500) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/12'); ?>");
+			if (messagePer30day == 60000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/10'); ?>");
+				$("#description-contact-header").html("Basic 1 Month<br>60.000 Messages/month");
 			}
-			if (numOfContact == 10000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/15'); ?>");
+			if (messagePer30day == 90000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/13'); ?>");
+				$("#description-contact-header").html("Basic 1 Month<br>90.000 Messages/month");
 			}
-			if (numOfContact == 15000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/18'); ?>");
+			if (messagePer30day == 130000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/16'); ?>");
+				$("#description-contact-header").html("Basic 1 Month<br>130.000 Messages/month");
 			}
-			if (numOfContact == 20000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/21'); ?>");
+			if (messagePer30day == 190000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/19'); ?>");
+				$("#description-contact-header").html("Basic 1 Month<br>190.000 Messages/month");
 			}
-			if (numOfContact == 25000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/24'); ?>");
+			if (messagePer30day == 250000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/22'); ?>");
+				$("#description-contact-header").html("Basic 1 Month<br>250.000 Messages/month");
 			}
-
+			if (messagePer30day == 330000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/25'); ?>");
+				$("#description-contact-header").html("Basic 1 Month<br>330.000 Messages/month");
+			}
 		}
 		if (modePrice==2) {
-			if (numOfContact == 1000) {
+			if (messagePer30day == 15000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/2'); ?>");
+				$("#description-contact-header").html("Best Seller 3 Months<br>15.000 Messages/month");
 			}
-			if (numOfContact == 2500) {
+			if (messagePer30day == 25000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/5'); ?>");
+				$("#description-contact-header").html("Best Seller 3 Months<br>25.000 Messages/month");
 			}
-			if (numOfContact == 5000) {
+			if (messagePer30day == 40000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/8'); ?>");
+				$("#description-contact-header").html("Best Seller 3 Months<br>40.000 Messages/month");
 			}
-			if (numOfContact == 7500) {
+			if (messagePer30day == 60000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/11'); ?>");
+				$("#description-contact-header").html("Best Seller 3 Months<br>60.000 Messages/month");
 			}
-			if (numOfContact == 10000) {
+			if (messagePer30day == 90000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/14'); ?>");
+				$("#description-contact-header").html("Best Seller 3 Months<br>90.000 Messages/month");
 			}
-			if (numOfContact == 15000) {
+			if (messagePer30day == 130000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/17'); ?>");
+				$("#description-contact-header").html("Best Seller 3 Months<br>130.000 Messages/month");
 			}
-			if (numOfContact == 20000) {
+			if (messagePer30day == 190000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/20'); ?>");
+				$("#description-contact-header").html("Best Seller 3 Months<br>190.000 Messages/month");
 			}
-			if (numOfContact == 25000) {
+			if (messagePer30day == 250000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/23'); ?>");
+				$("#description-contact-header").html("Best Seller 3 Months<br>250.000 Messages/month");
 			}
+			if (messagePer30day == 330000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/26'); ?>");
+				$("#description-contact-header").html("Best Seller 3 Months<br>330.000 Messages/month");
+			}		
 		}
 		if (modePrice==3) {
-			if (numOfContact == 1000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/1'); ?>");
+			if (messagePer30day == 15000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/3'); ?>");
+				$("#description-contact-header").html("Super Value 6 Months<br>15.000 Messages/month");
 			}
-			if (numOfContact == 2500) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/4'); ?>");
+			if (messagePer30day == 25000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/6'); ?>");
+				$("#description-contact-header").html("Super Value 6 Months<br>25.000 Messages/month");
 			}
-			if (numOfContact == 5000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/7'); ?>");
+			if (messagePer30day == 40000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/9'); ?>");
+				$("#description-contact-header").html("Super Value 6 Months<br>40.000 Messages/month");
 			}
-			if (numOfContact == 7500) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/10'); ?>");
+			if (messagePer30day == 60000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/12'); ?>");
+				$("#description-contact-header").html("Super Value 6 Months<br>60.000 Messages/month");
 			}
-			if (numOfContact == 10000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/13'); ?>");
+			if (messagePer30day == 90000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/15'); ?>");
+				$("#description-contact-header").html("Super Value 6 Months<br>90.000 Messages/month");
 			}
-			if (numOfContact == 15000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/16'); ?>");
+			if (messagePer30day == 130000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/18'); ?>");
+				$("#description-contact-header").html("Super Value 6 Months<br>130.000 Messages/month");
 			}
-			if (numOfContact == 20000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/19'); ?>");
+			if (messagePer30day == 190000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/21'); ?>");
+				$("#description-contact-header").html("Super Value 6 Months<br>190.000 Messages/month");
 			}
-			if (numOfContact == 25000) {
-				$("#link-checkout").attr("href","<?php echo url('checkout/22'); ?>");
+			if (messagePer30day == 250000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/24'); ?>");
+				$("#description-contact-header").html("Super Value 6 Months<br>250.000 Messages/month");
+			}
+			if (messagePer30day == 330000) {
+				$("#link-checkout").attr("href","<?php echo url('checkout/27'); ?>");
+				$("#description-contact-header").html("Super Value 6 Months<br>330.000 Messages/month");
 			}
 		}
 	}
   function set_price(){
       if (modePrice==1) {
-        $("#choose-price").html($("#6months-price").html());
+        $("#choose-price").html($("#monthly-price").html());
       }
       if (modePrice==2) {
         $("#choose-price").html($("#3months-price").html());
       }
       if (modePrice==3) {
-        $("#choose-price").html($("#monthly-price").html());
+        $("#choose-price").html($("#6months-price").html());
       }
       
-      numOfContact = $(".js-range-slider").val();
-      if (numOfContact == 1000) {
+      messagePer30day = $(".js-range-slider").val();
+      if (messagePer30day == 1000) {
         $(".not-1000").removeClass("fa-check");
         $(".not-1000").addClass("fa-times");
       }
@@ -258,7 +297,7 @@
   }
   
   function slider_init(){
-    var custom_values = [1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000];
+    var custom_values = [15000, 25000, 40000, 60000, 90000, 130000, 190000, 250000, 330000];
     $(".js-range-slider").ionRangeSlider({
         grid: true,
         step:100,
@@ -268,54 +307,69 @@
             // fired on every range slider update
             // console.log(data);
             // console.log($(".js-range-slider").val());
-          numOfContact = $(".js-range-slider").val();
-          if (numOfContact == 1000) {
-            $("#6months-price").html("IDR 1.053.000");
-            $("#3months-price").html("IDR 538.200");
+          messagePer30day = $(".js-range-slider").val();
+          if (messagePer30day == 15000) {
             $("#monthly-price").html("IDR 195.000");
-            $("#message-per-month").html("10.000 messages / a month ");
+            $("#3months-price").html("IDR 538.200");
+            $("#6months-price").html("IDR 1.053.000");
+            $("#message-per-month").html("1.000 Messages / day ");
+            $(".description-contact").html("15.000 Messages");
           }
-          if (numOfContact == 2500) {
-            $("#6months-price").html("IDR 1.485.000");
-            $("#3months-price").html("IDR 759.000");
+          if (messagePer30day == 25000) {
             $("#monthly-price").html("IDR 275.000");
-            $("#message-per-month").html("25.000 messages / a month ");
+            $("#3months-price").html("IDR 759.000");
+            $("#6months-price").html("IDR 1.485.000");
+            $("#message-per-month").html("1.500 Messages / day ");
+            $(".description-contact").html("25.000 Messages");
           }
-          if (numOfContact == 5000) {
-            $("#6months-price").html("IDR 1.863.000");
-            $("#3months-price").html("IDR 952.200");
+          if (messagePer30day == 40000) {
             $("#monthly-price").html("IDR 345.000");
-            $("#message-per-month").html("40.000 messages / a month ");
+            $("#3months-price").html("IDR 952.200");
+            $("#6months-price").html("IDR 1.863.000");
+            $("#message-per-month").html("2.000 Messages / day ");
+            $(".description-contact").html("40.000 Messages");
           }
-          if (numOfContact == 7500) {
-            $("#6months-price").html("IDR 2.241.000");
-            $("#3months-price").html("IDR 1.145.400");
+          if (messagePer30day == 60000) {
             $("#monthly-price").html("IDR 415.000");
-            $("#message-per-month").html("60.000 messages / a month ");
+            $("#3months-price").html("IDR 1.145.400");
+            $("#6months-price").html("IDR 2.241.000");
+            $("#message-per-month").html("2.500 Messages / day ");
+            $(".description-contact").html("60.000 Messages");
           }
-          if (numOfContact == 10000) {
-            $("#6months-price").html("IDR 2.997.000");
-            $("#3months-price").html("IDR 1.531.800");
+          if (messagePer30day == 90000) {
             $("#monthly-price").html("IDR 555.000");
-            $("#message-per-month").html("80.000 messages / a month ");
+            $("#3months-price").html("IDR 1.531.800");
+            $("#6months-price").html("IDR 2.997.000");
+            $("#message-per-month").html("3.000 Messages / day ");
+            $(".description-contact").html("90.000 Messages");
           }
-          if (numOfContact == 15000) {
-            $("#6months-price").html("IDR 3.753.000");
-            $("#3months-price").html("IDR 1.918.200");
+          if (messagePer30day == 130000) {
             $("#monthly-price").html("IDR 695.000");
-            $("#message-per-month").html("120.000 messages / a month ");
+            $("#3months-price").html("IDR 1.918.200");
+            $("#6months-price").html("IDR 3.753.000");
+            $("#message-per-month").html("3.500 Messages / day ");
+            $(".description-contact").html("130.000 Messages");
           }
-          if (numOfContact == 20000) {
-            $("#6months-price").html("IDR 5.265.000");
-            $("#3months-price").html("IDR 2.691.000");
+          if (messagePer30day == 190000) {
             $("#monthly-price").html("IDR 975.000");
-            $("#message-per-month").html("160.000 messages / a month ");
+            $("#3months-price").html("IDR 2.691.000");
+            $("#6months-price").html("IDR 5.265.000");
+            $("#message-per-month").html("4.000 Messages / day ");
+            $(".description-contact").html("190.000 Messages");
           }
-          if (numOfContact == 25000) {
-            $("#6months-price").html("IDR 6.777.000");
-            $("#3months-price").html("IDR 3.463.800");
+          if (messagePer30day == 250000) {
             $("#monthly-price").html("IDR 1.255.000");
-            $("#message-per-month").html("200.000 messages / a month ");
+            $("#3months-price").html("IDR 3.463.800");
+            $("#6months-price").html("IDR 6.777.000");
+            $("#message-per-month").html("4.500 Messages / day ");
+            $(".description-contact").html("250.000 Messages");
+          }
+          if (messagePer30day == 330000) {
+            $("#monthly-price").html("IDR 1.555.000");
+            $("#3months-price").html("IDR 4.363.800");
+            $("#6months-price").html("IDR 8.577.000");
+            $("#message-per-month").html("5.000 Messages / day ");
+            $(".description-contact").html("330.000 Messages");
           }
           set_price();
 					check_package();

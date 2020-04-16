@@ -31,6 +31,7 @@ class Order extends Model
     $order->no_order = $order_number;
     $order->user_id = $user->id;
     $order->package =$data['namapaket'];
+    $order->package_title =$data['namapakettitle'];
     $order->coupon_id = $data['kuponid'];
     $order->total = $data['price'] + $unique_code;
     $order->discount = $data['diskon'];
