@@ -34,8 +34,9 @@ class Order extends Model
     $order->package_title =$data['namapakettitle'];
     $order->coupon_id = $data['kuponid'];
     $order->total = $data['price'] + $unique_code;
+    $order->total_upgrade = $data['priceupgrade'];
     $order->discount = $data['diskon'];
-    $order->grand_total = $data['price'] - $data['diskon'] + $unique_code;
+    $order->grand_total = $data['price'] + $data['priceupgrade'] - $data['diskon'] + $unique_code;
     $order->status = 0;
     $order->buktibayar = "";
     $order->keterangan = "";

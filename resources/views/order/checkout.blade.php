@@ -24,10 +24,23 @@
               <input type="hidden" id="price" name="price">
               <input type="hidden" id="namapaket" name="namapaket">
               <input type="hidden" id="namapakettitle" name="namapakettitle">
+							<input type="hidden" id="priceupgrade" name="priceupgrade">
               <h2 class="Daftar-Disini">Pilih Paket Anda</h2>
+							<script>
+								dayleft = 0;priceupgrade=0;totalPriceUpgrade=0;
+							</script>
+							<?php if (Auth::check()) {?>
+								<div class="form-group">
+									<div class="col-md-12 col-12">
+										<label class="label-title-test" for="">
+											Remaining Time Upgrade:
+										</label>
+
+										<label id="label-priceupgrade"></label>
+									</div>
+								</div>
+							<?php }?>
               <div class="form-group">
-								<?php if (Auth::check()) {?>
-								<?php }?>
                 <div class="col-12 col-md-12">
                   <label class="text" for="formGroupExampleInput">Pilih Paket:</label>
                   <select class="form-control" name="idpaket" id="select-auto-manage">
@@ -234,12 +247,12 @@
         }
         
         if (data.status == 'success') {
-          $('.total').html('Rp. ' + data.total);
+          $('.total').html('Rp. ' + formatNumber(parseInt(data.total)+parseInt(totalPriceUpgrade)));
           $('#pesan').removeClass('alert-danger');
           $('#pesan').addClass('alert-success');
         } 
         else if (data.status == 'success-paket') {
-          $('.total').html('Rp. ' + data.total);
+          $('.total').html('Rp. ' + formatNumber(parseInt(data.total)+parseInt(totalPriceUpgrade)));
           $('#pesan').removeClass('alert-danger');
           $('#pesan').addClass('alert-success');
           
@@ -272,21 +285,41 @@
     });
   }
   
+	function formatNumber(num) {
+		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+	}
+
   $(document).ready(function() {
     $("body").on("click", ".btn-kupon", function() {
       check_kupon();
     });
 
+		<?php if (Auth::check()) {?>
+			dayleft = <?php echo $dayleft;?>;
+			priceupgrade = <?php echo $priceupgrade;?>;
+		<?php }?>
 		$( "#select-auto-manage" ).change(function() {
 			var price = $(this).find("option:selected").attr("data-price");
 			var namapaket = $(this).find("option:selected").attr("data-paket");
 			var namapakettitle = $(this).find("option:selected").attr("data-paket-title");
 
+			<?php if (Auth::check()) {?>
+				totalPriceUpgrade = dayleft * ((price-priceupgrade)/30);
+				if (parseInt(totalPriceUpgrade)< 0 ) {
+					$("#label-priceupgrade").html("Tidak dapat downgrade");
+					totalPriceUpgrade = 0;
+				}
+				else {
+					$("#label-priceupgrade").html("IDR "+formatNumber(totalPriceUpgrade));
+				}
+				$("#priceupgrade").val(totalPriceUpgrade);
+			<?php }?>
+			
 			$("#price").val(price);
 			$("#namapaket").val(namapaket);
 			$("#namapakettitle").val(namapakettitle);
 			// $('#kupon').val("");
-			// check_kupon();
+			check_kupon();
 		});
 		$( "#select-auto-manage" ).change();
 		$(".btn-kupon").trigger("click");

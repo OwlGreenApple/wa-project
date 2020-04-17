@@ -76,8 +76,23 @@ class OrderController extends Controller
 
   public function checkout($id){
     //halaman checkout
+		$priceupgrade = 0;
+		$dayleft = 0;
+		if (Auth::check()) {
+			$user = Auth::user();
+			$order = Order::where('user_id',$user->id)
+								->where("status",2)
+                ->orderBy('created_at','desc')
+								->first();
+			if (!is_null($order)) {
+				$priceupgrade = $order->total;
+			}
+			$dayleft = $user->day_left;
+		}
     return view('order.checkout')->with(array(
               'id'=>$id,
+              'priceupgrade'=>$priceupgrade,
+              'dayleft'=>$dayleft,
             ));
   }
 
@@ -86,7 +101,8 @@ class OrderController extends Controller
     //cek kodekupon
     $arr['status'] = 'success';
     $arr['message'] = '';
-    $arr['total'] = number_format($request->harga, 0, '', '.');
+    $arr['totaltitle'] = number_format($request->harga, 0, '', '.');
+    $arr['total'] = $request->harga;
     $arr['diskon'] = 0;
     $arr['coupon'] = null;
 
@@ -140,7 +156,8 @@ class OrderController extends Controller
 
             $arr['status'] = 'success';
             $arr['message'] = 'Kupon berhasil dipakai & berlaku sekarang';
-            $arr['total'] = number_format($total, 0, '', '.');
+            $arr['totaltitle'] = number_format($total, 0, '', '.');
+            $arr['total'] = $total;
             $arr['diskon'] = $diskon;
             $arr['coupon'] = $coupon;
             return $arr;
@@ -152,6 +169,32 @@ class OrderController extends Controller
     return $arr;
   }
 
+	public function check_upgrade(Request $request){
+		$arr['status'] = 'success';
+		$arr['message'] = 'Check upgrade success';
+
+		$priceupgrade = 0;
+		$dayleft = 0;
+		if (Auth::check()) {
+			$user = Auth::user();
+			$order = Order::where('user_id',$user->id)
+								->where("status",2)
+                ->orderBy('created_at','desc')
+								->first();
+			if (!is_null($order)) {
+				$priceupgrade = $order->total;
+			}
+			$dayleft = $user->day_left;
+		}
+		if ($request->price - $priceupgrade<0) {
+			$arr['status'] = 'error';
+			$arr['message'] = 'Cannot Downgrade';
+			return $arr;
+		}
+		
+		return $arr;
+	}
+	
 	//order dengan register
   public function submit_checkout_register(Request $request) {
 		// ditaruh ke session dulu
@@ -164,7 +207,6 @@ class OrderController extends Controller
     }
 
     $arr = $this->check_coupon($request);
-
     if($arr['status']=='error'){
       // return redirect("checkout/1")->with("error", $arr['message']);
       return redirect($pathUrl)->with("error", $arr['message']);
@@ -197,6 +239,12 @@ class OrderController extends Controller
       return redirect($pathUrl)->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
     }
 
+    $arr = $this->check_upgrade($request);
+    if($arr['status']=='error'){
+      // return redirect("checkout/1")->with("error", $arr['message']);
+      return redirect($pathUrl)->with("error", $arr['message']);
+    }
+
     $diskon = 0;
     // $total = $request->price;
     $kuponid = null;
@@ -221,6 +269,7 @@ class OrderController extends Controller
 			"namapaket"=> $request->namapaket,
 			"kuponid"=> $kuponid,
 			"price"=> $request->price,
+			"priceupgrade"=> $request->priceupgrade,
 			"diskon"=> $diskon,
 			"namapakettitle"=> $request->namapakettitle,
 		];

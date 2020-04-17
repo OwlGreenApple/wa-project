@@ -7,6 +7,9 @@ Info Order anda adalah sebagai berikut <br>
 Anda telah memesan Paket {{$nama_paket}} <br>
 <br>
 <strong>Rp. {{number_format($order->total)}} </strong><br>
+<?php if ($order->total_upgrade>0) { ?>
+	<strong>Upgrade Price :</strong>Rp. {{number_format($order->total_upgrade)}} </strong><br>
+<?php } ?>
 <strong>Diskon :</strong>Rp. {{number_format($order->discount)}} </strong><br>
 <strong>Total :</strong>Rp. {{number_format($order->grand_total)}} </strong><br>
 

@@ -152,6 +152,7 @@ class RegisterController extends Controller
             "namapaket"=> session('order')['namapaket'],
             "kuponid"=> $kuponid,
             "price"=> session('order')['price'],
+            "priceupgrade"=> 0,
             "diskon"=> $diskon,
             "namapakettitle"=> session('order')['namapakettitle'],
           ];
