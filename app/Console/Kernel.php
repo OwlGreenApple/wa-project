@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+         $schedule->command('check:membership')->dailyAt('07:00');
          $schedule->command('get:key')->everyMinute();
          $schedule->command('send:message')->everyMinute();
          $schedule->command('check:counter')->everyMinute();
