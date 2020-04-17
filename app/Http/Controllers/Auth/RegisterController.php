@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -14,6 +15,8 @@ use App\Rules\InternationalTel;
 use App\Rules\AvailablePhoneNumber;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RegisteredEmail;
+use App\Order;
+use Auth;
 
 class RegisterController extends Controller
 {
@@ -107,4 +110,63 @@ class RegisterController extends Controller
 
         return $user;
     }
+
+    public function register(Request $request)
+    {   
+        $signup = $this->create($request->all());
+        $order = null;
+
+        if(session('order') <> null)
+        {
+          $diskon = 0;
+          $kuponid = null;
+          $process_order = new OrderController;
+          $stat = $process_order->cekharga( session('order')['namapaket'],session('order')['price']);
+
+          $pathUrl = str_replace(url('/'), '', url()->previous());
+          if($stat==false)
+          {
+            return redirect($pathUrl)->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
+          }
+
+          if(session('order')['coupon_code'] <> null)
+          {
+              $arr = $process_order->check_coupon($request->session()->get('order'));
+
+              if($arr['status']=='error')
+              {
+                return redirect($pathUrl)->with("error", $arr['message']);
+              } 
+              else 
+              {
+                $diskon = $arr['diskon'];
+                
+                if($arr['coupon']!=null){
+                  $kuponid = $arr['coupon']->id;
+                }
+              }
+          }
+
+          $data = [
+            "user"=> $signup,
+            "namapaket"=> session('order')['namapaket'],
+            "kuponid"=> $kuponid,
+            "price"=> session('order')['price'],
+            "diskon"=> $diskon,
+            "namapakettitle"=> session('order')['namapakettitle'],
+          ];
+      
+          $order = Order::create_order($data);
+          Auth::loginUsingId($signup->id);
+          return redirect('thankyou');
+        }
+        else
+        {
+          Auth::loginUsingId($signup->id);
+          return redirect('home');
+        }
+
+    }
+
+/* END CONTROLLER */
 }

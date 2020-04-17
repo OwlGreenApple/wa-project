@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Order;
 
 use Carbon\Carbon;
-use Mail, DB;
+use Mail, DB, Session;
 
 class Order extends Model
 {
@@ -49,11 +49,17 @@ class Order extends Model
           'nama_paket' => $data['namapaket'],
           'no_order' => $order_number,
       ];
-      Mail::send('emails.order', $emaildata, function ($message) use ($user,$order_number) {
-        $message->from('no-reply@activrespon.com', 'Activrespon');
-        $message->to($user->email);
-        $message->subject('[Activrespon] Order Nomor '.$order_number);
-      });
+
+      if(env('APP_ENV') <> 'local')
+      {
+          Mail::send('emails.order', $emaildata, function ($message) use ($user,$order_number) {
+            $message->from('no-reply@activrespon.com', 'Activrespon');
+            $message->to($user->email);
+            $message->subject('[Activrespon] Order Nomor '.$order_number);
+          });
+      }
+      //delete session order
+      session::forget('order');
     } 
     else {
 			// for freemium case

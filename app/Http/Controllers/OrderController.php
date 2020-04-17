@@ -14,7 +14,7 @@ use App\Notification;
 
 use App\Helpers\Helper;
 use Carbon\Carbon;
-use Auth,Mail,Validator,Storage,DateTime,Crypt;
+use Auth,Mail,Validator,Storage,DateTime,Crypt,Session;
 
 class OrderController extends Controller
 {   
@@ -178,13 +178,20 @@ class OrderController extends Controller
       return redirect($pathUrl)->with("error", $arr['message']);
     }
 
-    return view('auth.register')->with(array(
+    $order = array(
       "price"=>$request->price,
       "namapaket"=>$request->namapaket,
       "namapakettitle"=>$request->namapakettitle,
       "coupon_code"=>$request->kupon,
-      "idpaket" => $request->idpaket,
-    ));
+      "idpaket" => $request->idpaket
+    );
+
+    if(session('order') == null)
+    {
+      session(['order'=>$order]);
+    }
+    
+    return redirect('register');
   }
 
   //checkout klo uda login
@@ -201,7 +208,7 @@ class OrderController extends Controller
     $diskon = 0;
     // $total = $request->price;
     $kuponid = null;
-    if($request->kupon!=''){
+    if($request->kupon!==''){
       $arr = $this->check_coupon($request);
 
       if($arr['status']=='error'){
@@ -227,7 +234,6 @@ class OrderController extends Controller
 		];
 		
 		$order = Order::create_order($data);
-
     return view('order.thankyou')->with(array(
               'order'=>$order,    
             ));
