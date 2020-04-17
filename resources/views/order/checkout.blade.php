@@ -24,10 +24,27 @@
               <input type="hidden" id="price" name="price">
               <input type="hidden" id="namapaket" name="namapaket">
               <input type="hidden" id="namapakettitle" name="namapakettitle">
+							<input type="hidden" id="priceupgrade" name="priceupgrade">
               <h2 class="Daftar-Disini">Pilih Paket Anda</h2>
+							<script>
+								var dayleft = 0,priceupgrade=0;
+							</script>
+							<?php if (Auth::check()) {?>
+								<script>
+									dayleft = <?php echo $dayleft;?>;
+									priceupgrade = <?php echo $priceupgrade;?>;
+								</script>
+								<div class="form-group">
+									<div class="col-md-12 col-12">
+										<label class="label-title-test" for="">
+											Remaining Time Upgrade:
+										</label>
+
+										<label id="label-priceupgrade"></label>
+									</div>
+								</div>
+							<?php }?>
               <div class="form-group">
-								<?php if (Auth::check()) {?>
-								<?php }?>
                 <div class="col-12 col-md-12">
                   <label class="text" for="formGroupExampleInput">Pilih Paket:</label>
                   <select class="form-control" name="idpaket" id="select-auto-manage">
@@ -272,6 +289,10 @@
     });
   }
   
+	function formatNumber(num) {
+		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+	}
+
   $(document).ready(function() {
     $("body").on("click", ".btn-kupon", function() {
       check_kupon();
@@ -285,6 +306,11 @@
 			$("#price").val(price);
 			$("#namapaket").val(namapaket);
 			$("#namapakettitle").val(namapakettitle);
+			<?php if (Auth::check()) {?>
+				dayleft = 0;priceupgrade=0;
+				totalPriceUpgrade = dayleft * ((priceupgrade-price)/30);
+				$("#label-priceupgrade").html("IDR "+formatNumber(totalPriceUpgrade));
+			<?php }?>
 			// $('#kupon').val("");
 			// check_kupon();
 		});

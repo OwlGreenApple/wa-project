@@ -76,8 +76,23 @@ class OrderController extends Controller
 
   public function checkout($id){
     //halaman checkout
+		$priceupgrade = 0;
+		$dayleft = 0;
+		if (Auth::check()) {
+			$user = Auth::user();
+			$order = Order::where('user_id',$user->id)
+								->where("status",2)
+                ->orderBy('created_at','desc')
+								->first();
+			if (!is_null($order)) {
+				$priceupgrade = $order->total;
+			}
+			$dayleft = $user->day_left;
+		}
     return view('order.checkout')->with(array(
               'id'=>$id,
+              'priceupgrade'=>$priceupgrade,
+              'dayleft'=>$dayleft,
             ));
   }
 
@@ -221,6 +236,7 @@ class OrderController extends Controller
 			"namapaket"=> $request->namapaket,
 			"kuponid"=> $kuponid,
 			"price"=> $request->price,
+			"priceupgrade"=> $request->priceupgrade,
 			"diskon"=> $diskon,
 			"namapakettitle"=> $request->namapakettitle,
 		];
