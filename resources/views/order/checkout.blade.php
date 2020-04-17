@@ -26,6 +26,8 @@
               <input type="hidden" id="namapakettitle" name="namapakettitle">
               <h2 class="Daftar-Disini">Pilih Paket Anda</h2>
               <div class="form-group">
+								<?php if (Auth::check()) {?>
+								<?php }?>
                 <div class="col-12 col-md-12">
                   <label class="text" for="formGroupExampleInput">Pilih Paket:</label>
                   <select class="form-control" name="idpaket" id="select-auto-manage">

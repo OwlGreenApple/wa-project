@@ -54,16 +54,8 @@ class OrderController extends Controller
       'supervalue8' => 6777000,
 			
       'basic9' => 155000,
-      'bestseller9' => 195000,
-      'supervalue9' => 1020000,
-			
-      'basic10' => 155000,
-      'bestseller10' => 195000,
-      'supervalue10' => 1020000,
-			
-      'basic11' => 1555000,
-      'bestseller11' => 4363800,
-      'supervalue11' => 8577000,
+      'bestseller9' => 4363000,
+      'supervalue9' => 8577000,
 			
     );
 
