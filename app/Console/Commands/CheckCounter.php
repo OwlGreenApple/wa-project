@@ -20,7 +20,7 @@ class CheckCounter extends Command
      *
      * @var string
      */
-    protected $description = 'To check counter on table user if sufficient or not to run WA,  maximum counter is depends on .env';
+    protected $description = 'To reset counter every minute';
 
     /**
      * Create a new command instance.
@@ -44,18 +44,9 @@ class CheckCounter extends Command
         if($phoneNumber->count() > 0){
             foreach($phoneNumber as $row){
                 $counter = $row->counter;
-                // if($counter < env('MAXIMUM_COUNTER')){
-                    // $update = PhoneNumber::where('user_id',$row->user_id)->update(['counter'=>env('MAXIMUM_COUNTER')]);
-                // }
-								$user = User::find($row->user_id);
-								if (!is_null($user)) {
-									if ($user->membership=="basic") {
-									}
-									$update = PhoneNumber::where('user_id',$user->id)->update([
-										'counter'=>env('MAXIMUM_COUNTER'),
-										'max_counter'=>env('MAXIMUM_COUNTER'),
-									]);
-								}
+                if($counter < env('MAXIMUM_COUNTER')){
+                    $update = PhoneNumber::where('user_id',$row->user_id)->update(['counter'=>env('MAXIMUM_COUNTER')]);
+                }
             }
         }
     }

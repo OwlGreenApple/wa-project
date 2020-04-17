@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\SendMessage::class,
         Commands\CheckCounter::class,
         Commands\GetKey::class,
+        Commands\ResetMessageCounter::class,
     ];
 
     /**
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+         $schedule->command('reset:m')->dailyAt('01:00');
          $schedule->command('get:key')->everyMinute();
          $schedule->command('send:message')->everyMinute();
          $schedule->command('check:counter')->everyMinute();
