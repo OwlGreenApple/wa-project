@@ -51,7 +51,7 @@
             </div>
           </div>            
         </div>    
-        <div class="col-4 ml-0 mr-0 box-pricing p-2 " data-attr="2">
+        <div class="col-4 ml-0 mr-0 box-pricing p-2 selected" data-attr="2">
           <div class="box-in">
             <div class="div-header w-100 p-1">
               <i class=""></i> 
@@ -65,7 +65,7 @@
             </div>
           </div>            
         </div>    
-        <div class="col-4 ml-0 mr-0 box-pricing p-2 selected" data-attr="3">
+        <div class="col-4 ml-0 mr-0 box-pricing p-2" data-attr="3">
           <div class="box-in">
             <div class="div-header w-100 p-1">
               <h5>Super Value</h5>
@@ -83,9 +83,7 @@
       <div class="col-1 ">
       </div>
       <div class="col-4 detail-description">
-        <h3 id="description-contact-header">
-          25.000 Contacts/6 Months
-        </h3>
+        <h3 id="description-contact-header">Best Seller 3 Months<br>15.000 Messages/month</h3>
         <button type="button" class="btn btn-lg btn-success col-12" id="choose-price">IDR 2.970.000</button>
         <ul>
           <li>
