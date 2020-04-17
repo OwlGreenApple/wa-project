@@ -162,6 +162,14 @@ class SettingController extends Controller
     public function connect_phone(Request $request)
     {
       $user = Auth::user();
+
+      if($this->checkIsPay() == 0)
+      {
+          $arr['status'] = 'error';
+          $arr['message'] = 'Please confirm or <a href="'.url('pricing').'">make your order</a>.';
+          return $arr;
+      }
+
       $resend = $request->resend;
       $phone_number = $request->code_country.$request->phone_number;
 
@@ -271,7 +279,7 @@ class SettingController extends Controller
           }
           return response()->json($data);
       //}
-      
+        
     }
 
     /*
@@ -280,6 +288,18 @@ class SettingController extends Controller
     public function check_connected_phone(Request $request)
     {
         $user = Auth::user();
+        $counter = $this->checkIsPay();
+        if($counter == 0)
+        {
+            $response['status'] = 'Please confirm or <a href="'.url('pricing').'">make your order</a>.';
+            return json_encode($response);
+        }
+        else
+        {
+            $day_counter = $counter['day'];
+            $month_counter = $counter['month'];
+        }
+
         if($request->phone_number <> null)
         {
             $no_wa = $request->phone_number;
@@ -298,19 +318,17 @@ class SettingController extends Controller
               'counter'=>6,
               'max_counter'=>5000
             );*/
-
+            $key = $this->get_key($no_wa);
             try{
               // new system PhoneNumber::where([['user_id',$user->id],['phone_number',$no_wa]])->update($data);
-
               $phoneNumber = new PhoneNumber();
               $phoneNumber->user_id = $user->id;
               $phoneNumber->phone_number = $no_wa;
-              $phoneNumber->counter = 0;
-              $phoneNumber->status = 0;
-              $phoneNumber->filename = "";
+              $phoneNumber->filename = $key;
+              $phoneNumber->counter = env('COUNTER');
+              $phoneNumber->max_counter_day = $day_counter;
+              $phoneNumber->max_counter = $month_counter;
               $phoneNumber->status = 2;
-              $phoneNumber->counter = 6;
-              $phoneNumber->max_counter = 5000;
               $phoneNumber->save();
 
               $response['status'] = 'Congratulations, your phone is connected';
@@ -321,8 +339,24 @@ class SettingController extends Controller
         else {
           $response['status'] = $status_connect;
         }
-        
+       
         return json_encode($response);
+    }
+
+    public function checkIsPay()
+    {
+      $userid = Auth::id();
+      $check_order = User::find($userid);
+      if($check_order->membership <> null && $check_order->day_left > 0)
+      {
+          $type_package = substr($check_order->membership,-1,1);
+          $counter = Alert::package($type_package);
+          return $counter;
+      }
+      else
+      {
+         return 0;
+      }
     }
 
     public function delete_phone(Request $request)
@@ -430,7 +464,11 @@ class SettingController extends Controller
     
     public function get_key($wa_number)
     {
-        return ApiHelper::get_key($wa_number);
+        $key = ApiHelper::get_key($wa_number);
+        $response = json_decode($key,true);
+        $response = explode(':',$response['message']);
+        $api_key = $response[1];
+        return $api_key;
     }
 
     public function send_message($wa_number,$message,$key)

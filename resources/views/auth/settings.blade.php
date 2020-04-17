@@ -124,9 +124,9 @@
             </form>
 
             <div class="col-lg-3 plan">
-              <div>Current plan : <b>pro</b></div>
-              <div>Valid Until 31 Dec 2020</div>
-              <div><i>Buy More</i></div>
+              <div>Current plan : <b>{{ $user->membership }}</b></div>
+              <div>Valid Until : ...</div>
+              <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
             </div>
         </div>
 
@@ -639,6 +639,7 @@
           $('.message').html(data.message);
           $("#button-connect").prop('disabled',false);
           $("#phone").val("");
+          loadPhoneNumber();
           // new system loadPhoneNumber();
         }
       });
