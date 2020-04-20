@@ -40,24 +40,32 @@ class CheckMembership extends Command
      */
     public function handle()
     {
-        $user = User::all();
+        $users = User::where('day_left','>',-2)->get();
 
-        if($user->count() > 0)
+        if($users->count() > 0)
         {
-            foreach($user as $row)
+            foreach($users as $row)
             {
-                if($row->day_left == 5)
-                {
-                   Mail::to($row->email)->send(new MemberShip($row->day_left));
-                }
-                elseif($row->day_left == 1)
-                {
-                   Mail::to($row->email)->send(new MemberShip($row->day_left));
-                }
-                elseif($row->day_left < 0)
-                {
-                  Mail::to($row->email)->send(new MemberShip($row->day_left));
-                }
+              $day_left = $row->day_left;
+              $client = User::find($row->id);
+              if($client->day_left > -2)
+              {
+                 $client->day_left--;
+                 $client->save();
+                 $day_left = $client->day_left;
+              }
+
+              if($day_left == 0)
+              {
+                 $client->membership = null;
+                 $client->status = 0;
+                 $client->save();
+              }
+
+              if($day_left == 5 || $day_left == 1 || $day_left == -1)
+              {
+                 Mail::to($row->email)->send(new MemberShip($day_left));
+              }
             }
         }
     }

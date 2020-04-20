@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
     {
 
          $schedule->command('check:membership')->dailyAt('07:00');
+         $schedule->command('notif:order')->dailyAt('08:00');
          $schedule->command('reset:m')->dailyAt('01:00');
          $schedule->command('get:key')->everyMinute();
          $schedule->command('send:message')->everyMinute();

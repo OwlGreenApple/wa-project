@@ -347,7 +347,7 @@ class SettingController extends Controller
     {
       $userid = Auth::id();
       $check_order = User::find($userid);
-      if($check_order->membership <> null && $check_order->day_left > 0)
+      if($check_order->membership <> null && $check_order->day_left > 0 && $check_order->status > 0)
       {
           $type_package = substr($check_order->membership,-1,1);
           $counter = Alert::package($type_package);
