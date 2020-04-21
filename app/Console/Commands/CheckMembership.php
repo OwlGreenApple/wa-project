@@ -64,7 +64,7 @@ class CheckMembership extends Command
 
               if($day_left == 5 || $day_left == 1 || $day_left == -1)
               {
-                 Mail::to($row->email)->send(new MemberShip($day_left));
+                 Mail::to($row->email)->send(new MemberShip($day_left,$row->phone_number));
               }
             }
         }

@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Helpers\ApiHelper;
 
 class NotifyOrder extends Mailable
 {
@@ -18,9 +19,11 @@ class NotifyOrder extends Mailable
      */
 
     public $day;
-    public function __construct($day)
+    public $phone;
+    public function __construct($day,$phone)
     {
         $this->day = $day;
+        $this->phone = $phone;
     }
 
     /**
@@ -33,6 +36,10 @@ class NotifyOrder extends Mailable
 
         if($this->day == 1)
         {
+            $phone = $this->phone;
+            $message = 'Test mesage _1 days_';
+            ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+
             return $this
               ->from('no-reply@activrespon.com', 'Activrespon')
               ->subject('Your order confirmation day 1')
@@ -42,6 +49,10 @@ class NotifyOrder extends Mailable
         }
         elseif($this->day == 5)
         {
+            $phone = $this->phone;
+            $message = 'Test mesage _5 days_';
+            ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+
             return $this
               ->from('no-reply@activrespon.com', 'Activrespon')
               ->subject('Your order confirmation day 5')

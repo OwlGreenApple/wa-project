@@ -369,6 +369,40 @@ class ApiHelper
     return $res;
   }
 
+  public static function send_message_android($cs_id,$message,$phone_number,$type)
+  {
+    $data = array(
+      'app_id' => '429d3472-da0f-4b2b-a63e-4644050caf8f', //app id don't change
+      'include_player_ids' => [$cs_id], //you can take Player id from Woowandroid App CS ID menu.
+      'data' => array(
+          "type"      => $type, //opsional Reminder/After Checkout/Pending Payment/dll editable
+          "message"   => $message,
+          "no_wa"     => $phone_number
+      ),
+      'contents'  => array(
+          "en"    => 'Woowa Title'
+      ),
+      "headings"  =>  array(
+          "en"    => 'Woowa Notice'
+      )
+    );
+    $data_json = json_encode($data);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://onesignal.com/api/v1/notifications');
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json; charset=utf-8',
+        'Authorization: Basic NjY0NzE3MTYtMzc3ZC00YmY5LWJhNzQtOGRiMWM1ZTNhNzBh')); //os_auth don't change
+    $response = curl_exec($ch);
+    curl_close($ch);
+    // echo $response;
+  }
+
   public static function send_image_url($phoneNumber,$url_image,$message,$key)
   {
     $url='http://116.203.92.59/api/send_image_url';
@@ -398,5 +432,6 @@ class ApiHelper
     
     return $res;
   }
+
 /* END CLASS */
 }
