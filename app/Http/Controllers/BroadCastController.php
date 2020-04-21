@@ -17,7 +17,7 @@ use App\Sender;
 use App\ReminderCustomers;
 use App\Campaign;
 use Session;
-use DB;
+use DB,Storage;
 use App\Http\Controllers\ListController;
 
 class BroadCastController extends Controller
@@ -25,13 +25,23 @@ class BroadCastController extends Controller
 
     /* Create broadcast list */
     public function saveBroadCast(Request $request){
-        $user_id = Auth::id();
+				$user = Auth::user();
         $message = $request->message;
         $time_sending = $request->hour;
         $campaign = $request->campaign_name;
         $broadcast_schedule = $request->broadcast_schedule;
         $date_send = $request->date_send;
 
+				$folder="";
+				$filename="";
+				if($request->hasFile('imageWA')) {
+					//save ke temp local dulu baru di kirim 
+					$dt = Carbon::now();
+					$folder = $user->id."/broadcast-image/";
+					$filename = $dt->format('ymdHi').'.jpg';
+					Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+				}
+				
         if($broadcast_schedule == 0)
         {
             $list_id = $request->list_id;
@@ -86,20 +96,21 @@ class BroadCastController extends Controller
         $campaign->name =  $request->campaign_name;
         $campaign->type =  $campaign_type;
         $campaign->list_id = $list_id;
-        $campaign->user_id = $user_id;
+        $campaign->user_id = $user->id;
         $campaign->save();
         $campaign_id = $campaign->id;
     
         if($campaign->save())
         {
           $broadcast = new BroadCast;
-          $broadcast->user_id = $user_id;
+          $broadcast->user_id = $user->id;
           $broadcast->list_id = $list_id;
           $broadcast->campaign_id = $campaign_id;
           $broadcast->group_name = $group_name;
           $broadcast->channel = $channel;
           $broadcast->day_send = $date_send;
           $broadcast->hour_time = $time_sending;
+          $broadcast->image = $folder.$filename;
           $broadcast->message = $message;
           $broadcast->save();
           $broadcast_id = $broadcast->id;
@@ -113,7 +124,7 @@ class BroadCastController extends Controller
         if($broadcast->save()){         
             // retrieve customer id 
             $customer = Customer::where([
-                ['user_id','=',$user_id],
+                ['user_id','=',$user->id],
                 ['list_id','=',$list_id],
                 ['status','=',1],
             ])->get();

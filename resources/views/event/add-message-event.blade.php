@@ -114,6 +114,18 @@
       </div>
 
       <div class="form-group row">
+				<label class="col-sm-3 col-form-label">Image :</label>
+				<div class="col-sm-9 relativity">
+					<div class="custom-file">
+						<input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
+
+						<label class="custom-file-label" for="inputGroupFile01">
+						</label>
+					</div>
+				</div>
+      </div>
+
+      <div class="form-group row">
         <label class="col-sm-3 col-form-label">Message :</label>
         <div class="col-sm-6">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
@@ -127,7 +139,13 @@
       </div>
 
 			<div class="form-group row">
-			<label class="col-sm-3 col-form-label">Send 1 test Message</label>
+			<label class="col-sm-3 col-form-label">Send 1 test Message
+					<span class="tooltipstered" title="<div class='panel-heading'>Send 1 test Message</div><div class='panel-content'>
+						Test Message will be send immediately
+						</div>">
+						<i class="fa fa-question-circle "></i>
+					</span>
+			</label>
 			<div class="col-sm-9 relativity">
 					<input type="text" id="phone" name="phone_number" class="form-control" />
 					<span class="error code_country"></span>
@@ -257,6 +275,7 @@
       clickButtonClear();
       $("#btn-clear").hide();
       sendTestMessage();
+      pictureClass();
   });
 
   function displayAddDaysBtn()
@@ -372,14 +391,17 @@
 	
   function sendTestMessage(){
     $("body").on("click",".btn-test",function(){
+				var form = $('#save_campaign')[0];
+				var formData = new FormData(form);
+				formData.append('phone', $(".iti__selected-flag").attr('data-code')+$("#phone").val()); // added
 				$.ajax({
 						headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 						type : 'POST',
 						url : '{{url("send-test-message")}}',
-						data : {
-							message : $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText(),
-							phone : $(".iti__selected-flag").attr('data-code')+$("#phone").val()
-						},
+						data : formData,
+						cache: false,
+						contentType: false,
+						processData: false,
 						dataType : 'json',
 						beforeSend: function()
 						{
@@ -389,7 +411,7 @@
 						success : function(result){
 							$('#loader').hide();
 							$('.div-loading').removeClass('background-load');
-							alert("please check your phone");
+							alert("Test Message Sent");
 						},
 						error : function(xhr,attribute,throwable)
 						{
@@ -403,6 +425,14 @@
 
   }
 
+	function pictureClass(){
+    // Add the following code if you want the name of the file appear on select
+    $(document).on("change", ".custom-file-input",function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+	}
+	
 </script>  
 <script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 @endsection

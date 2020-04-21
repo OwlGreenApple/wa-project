@@ -119,6 +119,7 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('get-all-cust', 'SettingController@get_all_cust');
   Route::get('get-key/{no}', 'SettingController@get_key');
   Route::get('send-message/{wa_number}/{message}/{key}', 'SettingController@send_message');
+  Route::get('send-image', 'SettingController@send_image_url');
   // Route::post('edit-phone', 'SettingController@editPhone');
 });
 

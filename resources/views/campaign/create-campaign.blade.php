@@ -144,6 +144,18 @@
       </div>
 
       <div class="form-group row">
+				<label class="col-sm-3 col-form-label">Image :</label>
+				<div class="col-sm-9 relativity">
+					<div class="custom-file">
+						<input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
+
+						<label class="custom-file-label" for="inputGroupFile01">
+						</label>
+					</div>
+				</div>
+      </div>
+
+      <div class="form-group row">
         <label class="col-sm-3 col-form-label">Message :
 					<span class="tooltipstered" title="<div class='panel-heading'>Message</div><div class='panel-content'>
 						You can use this as 'Personalization field' <br>
@@ -168,7 +180,13 @@
 			</div>
 			
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Send 1 test Message</label>
+        <label class="col-sm-3 col-form-label">Send 1 test Message
+					<span class="tooltipstered" title="<div class='panel-heading'>Send 1 test Message</div><div class='panel-content'>
+						Test Message will be send immediately
+						</div>">
+						<i class="fa fa-question-circle "></i>
+					</span>
+				</label>
         <div class="col-sm-9 relativity">
 						<input type="text" id="phone" name="phone_number" class="form-control" />
 						<span class="error code_country"></span>
@@ -181,8 +199,8 @@
 
 <script type="text/javascript">
 
-   /* Datetimepicker */
-   $(function () {
+		/* Datetimepicker */
+		$(function () {
         $('#datetimepicker').datetimepicker({
           format : 'YYYY-MM-DD HH:mm',
           minDate: new Date()
@@ -207,6 +225,7 @@
     neutralizeClock();
     saveCampaign();
     sendTestMessage();
+    pictureClass();
   });
 
   function saveCampaign()
@@ -227,8 +246,11 @@
             $('.div-loading').addClass('background-load');
           },
           success : function(result){
-
-            if(result.err == 'ev_err')
+						if(result.err == 'imgerr')
+            {  
+							alert("image width or image height more than 2000px");
+						}
+            else if(result.err == 'ev_err')
             {  
                 $('#loader').hide();
                 $('.div-loading').removeClass('background-load');
@@ -397,14 +419,17 @@
 	
   function sendTestMessage(){
     $("body").on("click",".btn-test",function(){
+				var form = $('#save_campaign')[0];
+				var formData = new FormData(form);
+				formData.append('phone', $(".iti__selected-flag").attr('data-code')+$("#phone").val()); // added
 				$.ajax({
 						headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 						type : 'POST',
 						url : '{{url("send-test-message")}}',
-						data : {
-							message : $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText(),
-							phone : $(".iti__selected-flag").attr('data-code')+$("#phone").val()
-						},
+						data : formData,
+						cache: false,
+						contentType: false,
+						processData: false,
 						dataType : 'json',
 						beforeSend: function()
 						{
@@ -414,7 +439,20 @@
 						success : function(result){
 							$('#loader').hide();
 							$('.div-loading').removeClass('background-load');
-							alert("please check your phone");
+							if (result.status=="success"){
+								alert("Test Message Sent");
+							}
+							if (result.status=="error"){
+								if (result.phone!=""){
+									alert("phone required");
+								}
+								if (result.msg!=""){
+									alert("message required");
+								}
+								if (result.image!=""){
+									alert("message required");
+								}
+							}
 						},
 						error : function(xhr,attribute,throwable)
 						{
@@ -428,6 +466,13 @@
 
   }
 
+	function pictureClass(){
+    // Add the following code if you want the name of the file appear on select
+    $(document).on("change", ".custom-file-input",function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+	}
   /*function broadcastSchedule()
   {
       $(".broadcast-type").hide();

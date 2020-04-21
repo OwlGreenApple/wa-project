@@ -118,7 +118,13 @@ class SendMessage extends Command
                         $status = 'Sent';
                         $number ++;
 
-                        $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+												if ($row->image==""){
+													$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+												}
+												else {
+													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+												}
+												
                         $this->generateLog($number,$campaign,$id_campaign,$status);
                         $status = $this->getStatus($send_message);
                         
@@ -211,7 +217,12 @@ class SendMessage extends Command
                 {        
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
 
-                    $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+										if ($row->image==""){
+											$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+										}
+										else {
+											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
+										}
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
                     $status = 'Sent';
@@ -307,7 +318,12 @@ class SendMessage extends Command
                   
                   $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
 
-                  $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+									if ($row->image==""){
+										$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+									}
+									else {
+										$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+									}
                   $this->generateLog($number,$campaign,$id_campaign,$status);
 
                   $status = $this->getStatus($send_message);
@@ -404,7 +420,12 @@ class SendMessage extends Command
                   $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt);
                   $id_reminder = $row->id_reminder;
      
-                  $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+									if ($row->image==""){
+										$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+									}
+									else {
+										$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+									}
                   $this->generateLog($number,$campaign,$id_campaign,$status);
 
                   $status = $this->getStatus($send_message);
