@@ -9,6 +9,7 @@ use App\User;
 use App\Order;
 use Carbon\Carbon;
 use Date;
+use App\Helpers\ApiHelper;
 
 class notifOrder extends Command
 {
@@ -43,7 +44,7 @@ class notifOrder extends Command
      */
     public function handle()
     {
-        $users = User::where('users.status',1)->rightJoin('activrespon2.orders AS orders2','orders2.user_id','=','users.id')->select('orders2.*','users.email','users.phone_number')->get();
+        $users = User::where([['users.status','>',0],['orders2.status','=',0]])->rightJoin('activrespon2.orders AS orders2','orders2.user_id','=','users.id')->select('orders2.*','users.email','users.phone_number')->get();
 
         if($users->count() > 0)
         {
@@ -56,8 +57,9 @@ class notifOrder extends Command
 
            if($diffDay == 1 || $diffDay == 5)
            {
-              Mail::to($row->email)->send(new NotifyOrder($diffDay));
+              Mail::to($row->email)->send(new NotifyOrder($diffDay,$row->phone_number));
            }
+           sleep(2);
          } // END FOREACH
         }// END IF
     }
