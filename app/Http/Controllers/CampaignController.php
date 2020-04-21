@@ -81,6 +81,11 @@ class CampaignController extends Controller
 				$url = asset("public/storage/".$folder."temp.jpg");
 				sleep(1);
 				ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
+				$arr = array(
+					'url'=>$url,
+					'status'=>"success",
+				);
+				return response()->json($arr);
 			}
 			else {
 				ApiHelper::send_message($request->phone,$request->message,$key);
