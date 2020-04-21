@@ -19,14 +19,24 @@ use Carbon\Carbon;
 use App\Sender;
 use App\Campaign;
 use App\Helpers\Alert;
-use DB;
+use DB,Storage;
 
 class EventController extends Controller
 {
 
     public function saveEvent(Request $request){
-        $user_id = Auth::id();
+        $user = Auth::user();
 
+				$folder="";
+				$filename="";
+				if($request->hasFile('imageWA')) {
+					//save ke temp local dulu baru di kirim 
+					$dt = Carbon::now();
+					$folder = $user->id."/broadcast-image/";
+					$filename = $dt->format('ymdHi').'.jpg';
+					Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+				}
+				
         if($request->schedule == 0){
             $request->day = 0;
         }
@@ -38,7 +48,7 @@ class EventController extends Controller
           $campaign->name =  $request->campaign_name;
           $campaign->type =  $campaign_type;
           $campaign->list_id = $request->list_id;
-          $campaign->user_id = $user_id;
+          $campaign->user_id = $user->id;
           $campaign->save();
           $campaign_id = $campaign->id;
         }
@@ -52,13 +62,14 @@ class EventController extends Controller
         else {
           $reminder = Reminder::find($request->reminder_id);
         }
-        $reminder->user_id = $user_id;
+        $reminder->user_id = $user->id;
         $reminder->list_id = $request->list_id;
         $reminder->campaign_id = $campaign_id;
         $reminder->is_event = 1;
         $reminder->days = $request->day;
         $reminder->hour_time = $request->hour;
         $reminder->event_time = $request->event_time;
+        $reminder->image = $folder.$filename;
         $reminder->message = $request->message;
         $reminder->save();
 
@@ -71,7 +82,7 @@ class EventController extends Controller
                     ['reminders.is_event','=',1],
                     ['customers.status','=',1],
                     ['customers.list_id','=',$request->list_id],
-                    ['customers.user_id','=',$user_id],
+                    ['customers.user_id','=',$user->id],
                     ])->join('customers','customers.list_id','=','reminders.list_id')->select('reminders.*','customers.id AS csid')->get();
         } else {
             return 'Error!! failed to set event';
@@ -85,7 +96,7 @@ class EventController extends Controller
         {
             foreach($event as $col){
               $remindercustomer = new ReminderCustomers;
-              $remindercustomer->user_id = $user_id;
+              $remindercustomer->user_id = $user->id;
               $remindercustomer->list_id = $col->list_id;
               $remindercustomer->reminder_id = $col->id;
               $remindercustomer->customer_id = $col->csid;

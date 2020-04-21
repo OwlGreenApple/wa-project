@@ -13,7 +13,7 @@ use App\Customer;
 use Carbon\Carbon;
 use App\Sender;
 use App\Campaign;
-use DB;
+use DB,Storage;
 
 class ReminderController extends Controller
 {
@@ -21,7 +21,7 @@ class ReminderController extends Controller
     public function saveAutoReponder(Request $request){
 
         $temprequest = $request->all();
-        $user_id = Auth::id();
+        $user = Auth::user();
         $list_id = $request->list_id;
         $message = $request->message;
         $days = $temprequest['day'];
@@ -31,12 +31,22 @@ class ReminderController extends Controller
         $campaign_type = 1;
 
 
+				$folder="";
+				$filename="";
+				if($request->hasFile('imageWA')) {
+					//save ke temp local dulu baru di kirim 
+					$dt = Carbon::now();
+					$folder = $user->id."/broadcast-image/";
+					$filename = $dt->format('ymdHi').'.jpg';
+					Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+				}
+				
         if ($request->campaign_id=="new") {
           $campaign = new Campaign;
           $campaign->name =  $request->campaign_name;
           $campaign->type =  $campaign_type;
           $campaign->list_id = $request->list_id;
-          $campaign->user_id = $user_id;
+          $campaign->user_id = $user->id;
           $campaign->save();
           $campaign_id = $campaign->id;
         }
@@ -51,11 +61,12 @@ class ReminderController extends Controller
           $reminder = Reminder::find($request->reminder_id);
         }
 
-        $reminder->user_id = $user_id;
+        $reminder->user_id = $user->id;
         $reminder->list_id = $list_id;
         $reminder->campaign_id = $campaign_id;
         $reminder->days = $days;
         $reminder->hour_time = $request->hour;
+        $reminder->image = $folder.$filename;
         $reminder->message = $message;
         $reminder->save();
         $created_date = $reminder->created_at;
@@ -63,7 +74,7 @@ class ReminderController extends Controller
         // If data successfully inserted into reminder
         if($reminder->save() == true){
             // retrieve customer id 
-            $customer = Customer::where([['user_id','=',$user_id],['list_id','=',$list_id],['status','=',1],])->get();
+            $customer = Customer::where([['user_id','=',$user->id],['list_id','=',$list_id],['status','=',1],])->get();
         } else {
             return 'Error!! failed to set reminder';
         }
@@ -95,7 +106,7 @@ class ReminderController extends Controller
 
                 $remindercustomer = new ReminderCustomers;
                 foreach($reminder_get_id as $id_reminder){
-                    $remindercustomer->user_id = $user_id;
+                    $remindercustomer->user_id = $user->id;
                     $remindercustomer->list_id = $col->list_id;
                     $remindercustomer->reminder_id = $id_reminder->id;
                     $remindercustomer->customer_id = $col->id;

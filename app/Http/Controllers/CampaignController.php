@@ -24,6 +24,7 @@ use DB;
 use Carbon\Carbon;
 use App\Helpers\ApiHelper;
 use App\PhoneNumber;
+use Storage;
 
 class CampaignController extends Controller
 {
@@ -47,19 +48,48 @@ class CampaignController extends Controller
 
 			if($validator->fails()){
 					$error = array(
+						'status'=>'error',
 						'phone'=>$err->first('phone'),
 						'msg'=>$err->first('message'),
 					);
 					return response()->json($error);
 			}
-			$userid = Auth::id();
+			if($request->hasFile('imageWA')) {
+				$image_size = getimagesize($request->file('imageWA'));
+				$imagewidth = $image_size[0];
+				$imageheight = $image_size[1];
+				if(($imagewidth > 2000) || ($imageheight > 2000) ){
+						$error = array(
+							'status'=>'error',
+							'phone'=>"",
+							'msg'=>"",
+							'image'=>"image width or image height more than 2000px",
+						);
+						return response()->json($error);
+				}
+			}
+			$user = Auth::user();
 
-			$phoneNumber = PhoneNumber::where("user_id",$userid)->first();
+			$phoneNumber = PhoneNumber::where("user_id",$user->id)->first();
 			$key = $phoneNumber->filename;
 			
 
-			ApiHelper::send_message($request->phone,$request->message,$key);
-			return "success";
+			if($request->hasFile('imageWA')) {
+				//save ke temp local dulu baru di kirim 
+				$folder = $user->id."/send-test-message/";
+				Storage::disk('public')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
+				$url = asset("public/storage/".$folder."temp.jpg");
+				sleep(1);
+				ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
+			}
+			else {
+				ApiHelper::send_message($request->phone,$request->message,$key);
+			}
+			// return "success";
+			$arr = array(
+				'status'=>"success",
+			);
+			return response()->json($arr);
 		}
 		
 		public function CreateCampaign() 
@@ -80,6 +110,18 @@ class CampaignController extends Controller
 
     public function SaveCampaign(Request $request)
     {
+			if($request->hasFile('imageWA')) {
+				$image_size = getimagesize($request->file('imageWA'));
+				$imagewidth = $image_size[0];
+				$imageheight = $image_size[1];
+				if(($imagewidth > 2000) || ($imageheight > 2000) ){
+            $error = array(
+              'err'=>'imgerr',
+            );
+            return response()->json($error);
+				}
+			}
+			
       $campaign = $request->campaign_type;
       if($request->schedule == 0)
       {
