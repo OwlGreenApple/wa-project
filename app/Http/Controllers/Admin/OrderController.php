@@ -100,8 +100,9 @@ class OrderController extends Controller
       $phoneNumber->save();
     }
 
-    $user->day_left += $additional_day;
+    $user->day_left = $additional_day;
     $user->membership = $order->package;
+    $user->status = 1;
     $user->save();
 
     $emaildata = [

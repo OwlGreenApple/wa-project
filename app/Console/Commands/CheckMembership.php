@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 use App\User;
+use App\Mail\MemberShip;
 
 class CheckMembership extends Command
 {
@@ -38,6 +40,33 @@ class CheckMembership extends Command
      */
     public function handle()
     {
-        //
+        $users = User::where('day_left','>',-2)->get();
+
+        if($users->count() > 0)
+        {
+            foreach($users as $row)
+            {
+              $day_left = $row->day_left;
+              $client = User::find($row->id);
+              if($client->day_left > -2)
+              {
+                 $client->day_left--;
+                 $client->save();
+                 $day_left = $client->day_left;
+              }
+
+              if($day_left == 0)
+              {
+                 $client->membership = null;
+                 $client->status = 0;
+                 $client->save();
+              }
+
+              if($day_left == 5 || $day_left == 1 || $day_left == -1)
+              {
+                 Mail::to($row->email)->send(new MemberShip($day_left));
+              }
+            }
+        }
     }
 }
