@@ -57,7 +57,14 @@ class notifOrder extends Command
 
            if($diffDay == 1 || $diffDay == 5)
            {
-              Mail::to($row->email)->send(new NotifyOrder($diffDay,$row->phone_number));
+              $orders = [
+                'no'=>$row->no_order,
+                'package'=>$row->package_title,
+                'pack'=>$row->package,
+                'discount'=>$row->discount,
+                'total'=>$row->grand_total,
+              ];
+              Mail::to($row->email)->send(new NotifyOrder($diffDay,$row->phone_number,$orders));
            }
            sleep(2);
          } // END FOREACH
