@@ -10,6 +10,8 @@ use App\Imports\UsersImport;
 use App\User;
 use App\AdminSetting;
 use App\Countries;
+use App\Helpers\ApiHelper;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -85,23 +87,65 @@ class AdminController extends Controller
         return response()->json($data);
     }
 
-    /*********** OLD CODES ***********/
-
-    public function index()
+    public function BroadcastAdmin()
     {
-      $user = User::where('is_admin',0)->get();
-      return view('admin.admin',['data'=>$user]);
+      return view('admin.broadcast');
     }
+
+    public function BroadcastUser(Request $request)
+    {
+        $rules = [
+          'receiver'=>['required'],
+          'message'=>['required','max:65000']
+        ];
+
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->fails())
+        {
+          $err = $validator->errors();
+          $errors = array(
+            'success'=>0,
+            'receiver'=>$err->first('receiver'),
+            'message'=>$err->first('message')
+          );
+
+          return response()->json($errors);
+        }
+
+        $receiver = $request->receiver;
+        $message = $request->message;
+
+        if($receiver == 'all')
+        {
+          $users = User::all();
+        }
+        elseif($receiver == 'active')
+        {
+          $users = User::where('status','>',0)->get();
+        }
+        else
+        {
+          $users = User::where('status','=',0)->get();
+        }
+
+        if($users->count() > 0)
+        {
+            foreach($users as $rows)
+            {
+                ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$rows->phone_number,'broadcast');
+                sleep(2);
+            }
+        }
+
+        return response()->json(['success'=>1,'message'=>'Broadcast has sent']);
+    }
+
+    /*********** OLD CODES ***********/
 
     public function LoginUser($id){
       Auth::loginUsingId($id, true);
       return redirect('home');
-    }
-
-
-    public function importCSVPage()
-    {
-        return view('admin.importcsv');
     }
 
     /* BE CAREFUL IF YOU PERFORM IMPORT USING THIS FUNCTION IT WOULD RETURN ALL DATA TO LIST_ID = 1 */

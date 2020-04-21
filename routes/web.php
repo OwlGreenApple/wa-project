@@ -62,6 +62,8 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 	Route::get('loginuser/{id_user}', 'AdminController@LoginUser');//home.blade
 	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');//home.blade
 	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');*/
+  Route::get('broadcast-admin','AdminController@BroadcastAdmin');
+  Route::post('broadcast-user','AdminController@BroadcastUser');
   Route::get('country-code','AdminController@InsertCountry');
   Route::get('country-show','AdminController@showCountry');
   Route::get('country-del','AdminController@delCountry');
