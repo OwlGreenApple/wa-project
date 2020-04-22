@@ -232,13 +232,15 @@
   {
     $("#save_campaign").submit(function(e){
       e.preventDefault();
-      var data = $(this).serialize();
-
+      // var data = $(this).serialize();
+				var form = $('#save_campaign')[0];
+				var formData = new FormData(form);
+				
       $.ajax({
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
           type : 'POST',
           url : '{{url("save-campaign")}}',
-          data : data,
+          data : formData,
 					cache: false,
 					contentType: false,
 					processData: false,
