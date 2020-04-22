@@ -22,6 +22,11 @@ class AdminController extends Controller
         return view('admin.admin',['data'=>$user]);
     }
 
+    public function LoginUser($id){
+      Auth::loginUsingId($id, true);
+      return redirect('home');
+    }
+
     public function InsertCountry()
     {
         return view('admin.insert_country');
@@ -149,10 +154,6 @@ class AdminController extends Controller
 
     /*********** OLD CODES ***********/
 
-    public function LoginUser($id){
-      Auth::loginUsingId($id, true);
-      return redirect('home');
-    }
 
     /* BE CAREFUL IF YOU PERFORM IMPORT USING THIS FUNCTION IT WOULD RETURN ALL DATA TO LIST_ID = 1 */
     public function importCustomerCSV(Request $request){
