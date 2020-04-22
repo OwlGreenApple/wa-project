@@ -369,6 +369,9 @@
         type: 'POST',
         url: "{{ url('broadcast-update') }}",
         data: data,
+				cache: false,
+				contentType: false,
+				processData: false,
         dataType: 'json',
         beforeSend: function()
         {

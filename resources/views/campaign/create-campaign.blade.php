@@ -239,6 +239,9 @@
           type : 'POST',
           url : '{{url("save-campaign")}}',
           data : data,
+					cache: false,
+					contentType: false,
+					processData: false,
           dataType : 'json',
           beforeSend: function()
           {
