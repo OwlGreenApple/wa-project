@@ -147,11 +147,3 @@
     @endif
   @endforeach
 @endif
-
-<script type="text/javascript">
-   $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip({
-        'placement':'top'
-      });   
-   });
-</script>
