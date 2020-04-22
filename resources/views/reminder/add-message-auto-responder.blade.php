@@ -172,8 +172,10 @@
   {
     $("#save_campaign").submit(function(e){
       e.preventDefault();
-      var data = $(this).serializeArray();
-        data.push({name:'list_id',value:'{!! $currentlistid !!}'},{ name:'campaign_name', value:'<?php echo $campaign_name;?>'});
+      // var data = $(this).serializeArray();
+			var form = $('#save_campaign')[0];
+			var formData = new FormData(form);
+        formData.push({name:'list_id',value:'{!! $currentlistid !!}'},{ name:'campaign_name', value:'<?php echo $campaign_name;?>'});
 
       $.ajax({
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -182,7 +184,7 @@
 					cache: false,
 					contentType: false,
 					processData: false,
-          data : data,
+          data : formData,
           dataType : 'json',
           beforeSend: function()
           {

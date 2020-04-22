@@ -361,14 +361,16 @@
       e.preventDefault();
      
       var broadcast_id = $("#broadcast_edit").attr('broadcast_id');
-      var data = $(this).serializeArray();
-      data.push({name : 'broadcast_id', value:broadcast_id},{name : 'is_update', value : 1});
+      // var data = $(this).serializeArray();
+			var form = $('#edit_broadcast')[0];
+			var formData = new FormData(form);
+      formData.push({name : 'broadcast_id', value:broadcast_id},{name : 'is_update', value : 1});
 
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         type: 'POST',
         url: "{{ url('broadcast-update') }}",
-        data: data,
+        data: formData,
 				cache: false,
 				contentType: false,
 				processData: false,
