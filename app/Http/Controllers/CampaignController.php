@@ -78,9 +78,10 @@ class CampaignController extends Controller
 				//save ke temp local dulu baru di kirim 
 				$folder = $user->id."/send-test-message/";
 				// Storage::disk('public')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
+				// $url = asset("public/storage/".$folder."temp.jpg");
 				Storage::disk('s3')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
-				$url = asset("public/storage/".$folder."temp.jpg");
 				sleep(1);
+				$url = Storage::disk('s3')->url($folder."temp.jpg");
 				ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
 				$arr = array(
 					'url'=>$url,
