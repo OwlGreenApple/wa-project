@@ -85,7 +85,7 @@ class MemberShip extends Mailable
            $message .= 'Tetap gunakan Activrespon dan urusan broadcast, reminder,'."\n";
            $message .= 'appointment menjadi lebih mudah.'."\n"."\n";
            $message .= 'Sebagai tanda apresiasi karena kamu adalah customer prioritas kami'."\n";
-           $message .= 'Ini adalah Kupon potongan harga spesial sebesar '.$percent.'percent '."\n";
+           $message .= 'Ini adalah Kupon potongan harga spesial sebesar '.$percent.'％'."\n";
            $message .= 'yang *BERLAKU HANYA* untuk '.$duration.' hari'."\n";
            $message .= '(terhitung sejak hari ini)'."\n"."\n";
            $message .= '_SEGERA manfaatkan Kupon ini SEKARANG DAN_'."\n";
