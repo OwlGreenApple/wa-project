@@ -195,7 +195,7 @@ class SettingController extends Controller
       }
 
       //new system, didelete dulu baru dieksekusi
-      // ApiHelper::unreg($phone_number);
+      ApiHelper::unreg($phone_number);
 
       //PHONE REGISTER TO API
       $registered_phone = ApiHelper::reg($phone_number,$user->name);
