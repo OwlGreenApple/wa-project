@@ -105,6 +105,49 @@ class Alert
       return $counter;
     }
 
+    public static function pricing($package)
+    {
+        $paket = array(
+          'basic1' => 195000,
+          'bestseller1' => 538200,
+          'supervalue1' => 1053000,
+          
+          'basic2' => 275000,
+          'bestseller2' => 759000,
+          'supervalue2' => 1485000,
+          
+          'basic3' => 345000,
+          'bestseller3' => 952000,
+          'supervalue3' => 1863000,
+          
+          'basic4' => 415000,
+          'bestseller4' => 1145400,
+          'supervalue4' => 2241000,
+          
+          'basic5' => 555000,
+          'bestseller5' => 1531800,
+          'supervalue5' => 2997000,
+          
+          'basic6' => 695000,
+          'bestseller6' => 1918200,
+          'supervalue6' => 3753000,
+          
+          'basic7' => 975000,
+          'bestseller7' => 2691000,
+          'supervalue7' => 5265000,
+          
+          'basic8' => 1255000,
+          'bestseller8' => 3463800,
+          'supervalue8' => 6777000,
+          
+          'basic9' => 155000,
+          'bestseller9' => 4363000,
+          'supervalue9' => 8577000,  
+        );
+
+        return $paket[$package];
+    }
+
 /* End class */
 }
 
