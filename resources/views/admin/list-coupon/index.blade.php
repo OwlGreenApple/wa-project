@@ -12,10 +12,6 @@
     // $.fn.dataTable.moment( 'ddd, DD MMM YYYY' );
 
     refresh_page();
-
-    $('.formatted-date').datepicker({
-      dateFormat: 'yy/mm/dd',
-    });
   });
 
   function refresh_page(){
@@ -359,6 +355,13 @@
 </section>
 
 <script type="text/javascript">
+  $(function(){
+    $('.formatted-date').datetimepicker({
+      format : 'YYYY/MM/DD',
+      minDate: new Date()
+    }); 
+  });
+
   $( "body" ).on( "click", ".btn-edit", function() {
     $('#title-coupon').html('Edit Kupon');
     $('#kodekupon').val($(this).attr('data-kodekupon'));

@@ -16,6 +16,12 @@ use Illuminate\Support\Facades\Validator;
 class AdminController extends Controller
 {
 
+    public function index()
+    {
+        $user = User::all();
+        return view('admin.admin',['data'=>$user]);
+    }
+
     public function InsertCountry()
     {
         return view('admin.insert_country');

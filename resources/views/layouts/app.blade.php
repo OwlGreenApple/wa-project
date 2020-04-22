@@ -27,7 +27,6 @@
     <link href="{{ asset('/assets/css/app.css') }}" rel="stylesheet">
 
     <!--<link href="{{ asset('/assets/css/waku.css') }}" rel="stylesheet"> -->
-    <link href="{{ asset('/assets/datetimepicker/jquery.datetimepicker.css') }}" rel="stylesheet">
 
     <!-- Font Awesome 4.7 -->
     <link href="{{ asset('/assets/Font-Awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet">
@@ -56,6 +55,7 @@
     <script type="text/javascript" src="{{ asset('/assets/ckfinder/ckfinder.js') }}"></script>
 
     <!-- Datetimepicker -->
+    <link href="{{ asset('/assets/datetimepicker/jquery.datetimepicker.css') }}" rel="stylesheet">
     <link href="{{ asset('/assets/datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
     <script type="text/javascript" src="{{ asset('/assets/datetimepicker/js/moment.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/assets/datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script> 

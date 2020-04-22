@@ -41,26 +41,24 @@ class NotifyOrder extends Mailable
         {
             $phone = $this->phone;
             $orders = $this->orders;
-            $message = '
-              Hai,
-              Kami mau mengingatkan, kamu belum melakukan transfer atas pembelian *Activrespon* dengan rincian: 
+            $message = null;
+            $message .= 'Hai,'."\n";
+            $message .= 'Kami mau mengingatkan, kamu belum melakukan transfer atas pembelian *Activrespon* dengan rincian: '."\n"."\n";
+            $message .= 'No Order      : '.$orders["no"].''."\n";
+            $message .= 'Package       : '.$orders["package"].''."\n";
+            $message .= 'Harga         : '.number_format(Alert::pricing($orders["pack"])).''."\n";
+            $message .= 'Discount      : '.$orders["discount"].''."\n";
+            $message .= 'Total Tagihan : '.number_format($orders["total"]).''."\n"."\n";
+            $message .= 'Silakan transfer sekarang ke'."\n";
+            $message .= '*BCA :  8290-812-845 (Sugiarto Lasjim)*'."\n";
+            $message .= 'Setelah transfer, jangan lupa konfirmasi ke link di bawah ini ya.'."\n";
+            $message .= 'Klik ► '.url("order").''."\n"."\n";
+            $message .= 'Salam sukses selalu,'."\n";
+            $message .= '*Team Activrespon*'."\n";
+            $message .= ' ------------------------------------------';
 
-              No Order        : '.$orders["no"].'
-              Package         : '.$orders["package"].'
-              Harga           : '.Alert::pricing($orders["pack"]).'
-              Discount        : '.$orders["discount"].'
-              Total Tagihan   : '.$orders["total"].'
-
-              Silakan transfer sekarang ke
-              *BCA :  8290-812-845 (Sugiarto Lasjim)*
-
-              Setelah transfer, jangan lupa konfirmasi ke link di bawah ini ya. 
-              Klik ►
-
-              Salam sukses selalu,
-              *Team Activrespon*
-              ------------------------------------------
-              ';
+            //dd($message);
+             
             ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
             $data_email = [
               'no'=>$orders["no"],
@@ -80,14 +78,40 @@ class NotifyOrder extends Mailable
         elseif($this->day == 5)
         {
             $phone = $this->phone;
-            $message = 'Test mesage _5 days_';
+            $orders = $this->orders;
+            $message = null;
+            $message .= 'Halo,'."\n";
+            $message .= 'Hari ini kamu akan kehilangan harga promo lhoo'."\n".'Yakin bisa rela?'."\n"."\n";
+            $message .= 'Kamu akan kehilangan harga spesial yang sudah kamu'."\n".'dapatkan 5 hari yang lalu ketika order *Activrespon*.'."\n"."\n";
+            $message .= 'Ini detail pembelianmu:'."\n";
+            $message .= 'No Order      : '.$orders["no"].''."\n";
+            $message .= 'Package       : '.$orders["package"].''."\n";
+            $message .= 'Harga         : '.number_format(Alert::pricing($orders["pack"])).''."\n";
+            $message .= 'Discount      : '.$orders["discount"].''."\n";
+            $message .= 'Total Tagihan : '.number_format($orders["total"]).''."\n"."\n";
+            $message .= 'Silakan transfer sekarang ke'."\n";
+            $message .= '_BCA :  8290-812-845 (Sugiarto Lasjim)_'."\n"."\n";
+            $message .= 'Mohon segera transfer dan konfirmasi sekarang karena hari ini'."\n".'karena pembelianmu akan dihapus oleh sistem.'."\n"."\n";
+            $message .= 'Setelah transfer, jangan lupa konfirmasi pada link di bawah ini'."\n";
+            $message .= 'Klik ► '.url('order').''."\n"."\n";
+            $message .= 'Salam sukses selalu,'."\n";
+            $message .= '*Team Activrespon*'."\n";
+            $message .= ' ------------------------------------------';
+
             ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+            $data_email = [
+              'no'=>$orders["no"],
+              'package'=>$orders["package"],
+              'price'=>Alert::pricing($orders["pack"]),
+              'disc'=>$orders["discount"],
+              'total'=>$orders["total"],
+            ];
 
             return $this
               ->from('no-reply@activrespon.com', 'Activrespon')
               ->subject('Your order confirmation day 5')
               ->view('emails.notify.notif-order-2')
-              ->with($this->day);
+              ->with('data',$data_email);
              ;
         }
         

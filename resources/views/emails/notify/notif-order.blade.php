@@ -12,10 +12,10 @@ Silakan transfer sekarang ke<br/>
 <b>BCA :  8290-812-845 (Sugiarto Lasjim)</b>
 
 <div>
-Setelah transfer, jangan lupa konfirmasi ke link di bawah ini ya. 
-Klik ► 
+Setelah transfer, jangan lupa konfirmasi ke link di bawah ini ya. <br/>
+Klik ► <a href="{{ url('order') }}" target="_blank">Konfirmasi Pembayaran</a>
 </div><br/>
 
 Salam sukses selalu,<br/>
-<b>Team Activrespon</b>
+<b>Team Activrespon</b><br/>
 ------------------------------------------
