@@ -304,7 +304,7 @@ class CampaignController extends Controller
         if($search == null && $type == null)
         {
           $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
-                      ->leftJoin('lists','lists.id','=','campaigns.list_id')
+                      ->join('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
                       ->get();
@@ -312,7 +312,7 @@ class CampaignController extends Controller
         elseif($type <> null)
         { 
           $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',$type]])
-                      ->leftJoin('lists','lists.id','=','campaigns.list_id')
+                      ->join('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
                       ->get();
@@ -320,7 +320,7 @@ class CampaignController extends Controller
         else
         {
           $campaign = Campaign::where([['name','like','%'.$search.'%'],['userid',$userid],['campaigns.type','<',3]]) 
-                      ->leftJoin('lists','lists.id','=','campaigns.list_id')
+                      ->join('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
                       ->get();

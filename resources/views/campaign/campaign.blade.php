@@ -313,6 +313,10 @@
           pickerPosition: "right",
           mainPathFolder : "{{url('')}}",
       });
+
+      $('body > [data-toggle="tooltip"]').tooltip({
+        'placement':'top'
+      });   
   });
 
   $(document).ready(function(){
