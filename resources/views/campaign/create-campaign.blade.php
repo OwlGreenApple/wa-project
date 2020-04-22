@@ -152,6 +152,7 @@
 						<label class="custom-file-label" for="inputGroupFile01">
 						</label>
 					</div>
+					<span class="error image"></span>
 				</div>
       </div>
 
@@ -266,6 +267,7 @@
                 $(".day").html(result.day);
                 $(".hour").html(result.hour);
                 $(".msg").html(result.msg);
+                $(".image").html(result.image);
             }
             else if(result.err == 'responder_err')
             {
@@ -277,6 +279,7 @@
                 $(".day").html(result.day);
                 $(".hour").html(result.hour);
                 $(".msg").html(result.msg);
+								$(".image").html(result.image);
             }
             else if(result.err == 'broadcast_err')
             {
@@ -290,6 +293,7 @@
                 $(".date_send").html(result.date_send);
                 $(".hour").html(result.hour);
                 $(".msg").html(result.msg);
+								$(".image").html(result.image);
             }
             else
             {
