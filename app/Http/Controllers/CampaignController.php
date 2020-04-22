@@ -42,6 +42,7 @@ class CampaignController extends Controller
 			$rules = array(
 					'phone'=>['required','max:255'],
 					'message'=>['required','max:4095'],
+					'imageWA'=>['max:1024'],
 			);
 			$validator = Validator::make($request->all(),$rules);
 			$err = $validator->errors();
@@ -51,6 +52,7 @@ class CampaignController extends Controller
 						'status'=>'error',
 						'phone'=>$err->first('phone'),
 						'msg'=>$err->first('message'),
+						'image'=>"image maximum size 1MB",
 					);
 					return response()->json($error);
 			}
@@ -142,7 +144,8 @@ class CampaignController extends Controller
             'list_id'=>['required',new CheckValidListID],
             'event_time'=>['required',new CheckDateEvent,new CheckEventEligibleDate($request->day)],
             'hour'=>['required','date_format:H:i',new EligibleTime($request->event_time)],
-            'message'=>['required','max:4095']
+            'message'=>['required','max:4095'],
+						'imageWA'=>['max:1024'],
         );
 
         if($request->schedule > 0){
@@ -161,6 +164,7 @@ class CampaignController extends Controller
               'day'=>$err->first('day'),
               'hour'=>$err->first('hour'),
               'msg'=>$err->first('message'),
+							'image'=>"image maximum size 1MB",
             );
             return response()->json($error);
         }
@@ -184,7 +188,8 @@ class CampaignController extends Controller
             'list_id'=>['required',new CheckValidListID],
             'day'=>['required','numeric','min:1','max:100'],
             'hour'=>['required','date_format:H:i'],
-            'message'=>['required','max:4095']
+            'message'=>['required','max:4095'],
+						'imageWA'=>['max:1024'],
         );
 
         $validator = Validator::make($request->all(),$rules);
@@ -198,6 +203,7 @@ class CampaignController extends Controller
               'day'=>$err->first('day'),
               'hour'=>$err->first('hour'),
               'msg'=>$err->first('message'),
+							'image'=>"image maximum size 1MB",
             );
             return response()->json($error);
         }
@@ -221,6 +227,7 @@ class CampaignController extends Controller
           'date_send'=>['required',new CheckBroadcastDate],
           'hour'=>['required','date_format:H:i',new EligibleTime($request->date_send)],
           'message'=>['required','max:4095'],
+          'imageWA'=>['max:1024'],
         );
 
         $validator = Validator::make($request->all(),$rules);
@@ -236,6 +243,7 @@ class CampaignController extends Controller
               'date_send'=>$error->first('date_send'),
               'hour'=>$error->first('hour'),
               'msg'=>$error->first('message'),
+							'image'=>"image maximum size 1MB",
             ];
 
             return response()->json($data_error);

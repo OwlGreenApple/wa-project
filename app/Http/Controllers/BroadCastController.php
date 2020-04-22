@@ -219,9 +219,20 @@ class BroadCastController extends Controller
         $time_sending = $request->hour;
         $message = $request->edit_message;
 
+				$folder="";
+				$filename="";
+				if($request->hasFile('imageWA')) {
+					//save ke temp local dulu baru di kirim 
+					$dt = Carbon::now();
+					$folder = $user->id."/broadcast-image/";
+					$filename = $dt->format('ymdHi').'.jpg';
+					Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+				}
+				
         $broadcast = BroadCast::find($broadcast_id);
         $broadcast->day_send = $date_send;
         $broadcast->hour_time = $time_sending;
+				$broadcast->image = $folder.$filename;
         $broadcast->message = $message;
         $campaign_id = $broadcast->campaign_id;
 
