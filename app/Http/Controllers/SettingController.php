@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
+use App\Order;
 use App\PhoneNumber;
 use App\Rules\TelNumber;
 use App\Rules\AvailablePhoneNumber;
 use App\Helpers\ApiHelper;
 use App\Helpers\Alert;
 use DB;
+use Carbon\Carbon;
 
 class SettingController extends Controller
 {
@@ -32,6 +34,10 @@ class SettingController extends Controller
     public function index()
     {
       $user = Auth::user();
+    /*  $order = Order::where([['user_id',$user->id],['status',2]])->first();
+      $day_left = User::find($user->id)->day_left;
+      $date_order = Carbon::parse($order->created_at)->subDays($day_left);*/
+
       $is_registered = 0;
       $phoneNumber = PhoneNumber::
                       where("user_id",$user->id)
@@ -166,7 +172,7 @@ class SettingController extends Controller
       if($this->checkIsPay() == 0)
       {
           $arr['status'] = 'error';
-          $arr['message'] = 'Please confirm or <a href="'.url('pricing').'">make your order</a>.';
+          $arr['message'] = 'Currently you don\'t have any package left, Please Order new package now.';
           return $arr;
       }
 
@@ -291,7 +297,7 @@ class SettingController extends Controller
         $counter = $this->checkIsPay();
         if($counter == 0)
         {
-            $response['status'] = 'Please confirm or <a href="'.url('pricing').'">make your order</a>.';
+            $response['status'] = 'Currently you don\'t have any package left, Please Order new package now.';
             return json_encode($response);
         }
         else

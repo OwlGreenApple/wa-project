@@ -163,6 +163,7 @@
 						[NAME] <br>
 						[PHONE] <br>
 						[WA] <br>
+            Do NOT use : % or & character on your message<br>
 						</div>">
 						<i class="fa fa-question-circle "></i>
 					</span>

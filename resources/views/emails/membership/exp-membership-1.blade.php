@@ -13,8 +13,8 @@
 <br/>
 
 <div>Sebagai tanda apresiasi karena kamu adalah customer prioritas kami</div>
-<div>Ini adalah Kupon potongan harga spesial sebesar XXX %</div>
-<div>yang <b>BERLAKU HANYA</b> untuk X hari</div>
+<div>Ini adalah Kupon potongan harga spesial sebesar {{ $data['percent'] }} %</div>
+<div>yang <b>BERLAKU HANYA</b> untuk {{ $data['duration'] }} hari</div>
 <div>(terhitung sejak hari ini)</div>
 <br/>
 
@@ -23,7 +23,7 @@
 
 <div>Ingat yah, hari ini terakhir,</div>
 <div>*PS : Kupon special hanya untukmu, silakan login terlebih dahulu</div>
-<div>*PSS : ini kuponnya kalau lupa ► --- nanti diketik saat check out</div>
+<div>*PSS : ini kuponnya kalau lupa ► <b>{{ $data['coupon'] }}</b> nanti diketik saat check out</div>
 <br/>
 
 Salam sukses selalu,<br/>

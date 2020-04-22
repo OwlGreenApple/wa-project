@@ -7,6 +7,8 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Helpers\ApiHelper;
+use App\Coupon;
+use DateTime;
 
 class MemberShip extends Mailable
 {
@@ -20,11 +22,13 @@ class MemberShip extends Mailable
 
     public $day;
     public $phone;
+    public $userid;
 
-    public function __construct($day,$phone)
+    public function __construct($day,$phone,$userid)
     {
         $this->day = $day;
         $this->phone = $phone;
+        $this->userid = $userid;
     }
 
     /**
@@ -65,6 +69,11 @@ class MemberShip extends Mailable
         elseif($this->day == 1)
         {
            $phone = $this->phone;
+           $percent = 10;
+           $duration = 3;
+           $code_coupon = $this->generateCharacter();
+           $coupon = $this->generate_coupon($percent,$duration,$this->userid,$code_coupon);
+
            $message = null;
            $message .= 'Halo,'."\n";
            $message .= 'Hari ini masa berlaku *Activrespon* akan berakhir, kecuali...'."\n";
@@ -76,24 +85,30 @@ class MemberShip extends Mailable
            $message .= 'Tetap gunakan Activrespon dan urusan broadcast, reminder,'."\n";
            $message .= 'appointment menjadi lebih mudah.'."\n"."\n";
            $message .= 'Sebagai tanda apresiasi karena kamu adalah customer prioritas kami'."\n";
-           $message .= 'Ini adalah Kupon potongan harga spesial sebesar XXX persen'."\n";
-           $message .= 'yang *BERLAKU HANYA* untuk X hari'."\n";
+           $message .= 'Ini adalah Kupon potongan harga spesial sebesar '.$percent.'percent '."\n";
+           $message .= 'yang *BERLAKU HANYA* untuk '.$duration.' hari'."\n";
            $message .= '(terhitung sejak hari ini)'."\n"."\n";
            $message .= '_SEGERA manfaatkan Kupon ini SEKARANG DAN_'."\n";
            $message .= '_Perpanjang waktu berlangganan anda HARI INI juga._'."\n"."\n";
            $message .= 'Ingat yah, hari ini terakhir,'."\n";
            $message .= '*PS : Kupon special hanya untukmu, silakan login terlebih dahulu'."\n";
-           $message .= '*PSS : ini kuponnya kalau lupa ► --- nanti diketik saat check out'."\n"."\n";
+           $message .= '*PSS : ini kuponnya kalau lupa ► _'.$code_coupon.'_ nanti diketik saat check out'."\n"."\n";
            $message .= 'Salam sukses selalu,'."\n"."\n";
            $message .= '*Activrespon*';
 
            ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
 
+           $data_email = array(
+              'percent'=>$percent,
+              'duration'=>$duration,
+              'coupon'=>$code_coupon,
+           );
+
            return $this
             ->from('no-reply@activrespon.com', 'Activrespon')
             ->subject('Expired membership day -1')
             ->view('emails.membership.exp-membership-1')
-            ->with($this->day);
+            ->with('data',$data_email);
            ;
         } 
         elseif($this->day == -1)
@@ -124,5 +139,40 @@ class MemberShip extends Mailable
             //->with($this->day);
            ;
         }
-    }
+  }
+
+  public function generate_coupon($percent,$valid,$userid,$code_coupon)
+  {
+    $coupon = new Coupon;
+    $coupon->package_id = 0;
+    $coupon->user_id = $userid;
+    $coupon->kodekupon = $code_coupon;
+    $coupon->diskon_value = 0;
+    $coupon->diskon_percent = $percent;
+    $coupon->valid_until = new DateTime('+'.$valid.' days');
+    $coupon->valid_to = '';
+    $coupon->keterangan = "Kupon AutoGenerate Expired User H-1";
+    $coupon->save();
+  }
+
+  public function generateCharacter()
+  {
+     $generate = $this->characterRandom();
+     $coupon = Coupon::where("kodekupon","=",$generate)->first();
+
+     if(is_null($coupon)){
+          return $generate;
+     } else {
+          return $this->generateCharacter();
+     }
+  }
+
+  public function characterRandom()
+  {
+    $karakter= 'abcdefghjklmnpqrstuvwxyz123456789';
+    $string = 'special-'.substr(str_shuffle($karakter), 0, 8);
+    return $string;
+  }
+
+/* END CLASS */
 }
