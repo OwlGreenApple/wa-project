@@ -96,6 +96,7 @@ class SendMessage extends Command
                     $chat_id = $row->chat_id;  
                     $counter = $phoneNumber->counter;
                     $max_counter = $phoneNumber->max_counter;
+                    $max_counter_day = $phoneNumber->max_counter_day;
                     $key = $phoneNumber->filename;
 
                     $time_sending = $date->toDateString().' '.$hour;
@@ -107,7 +108,7 @@ class SendMessage extends Command
                       continue;
                     }
 
-                    if($counter <= 0) {
+                    if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
                         continue;
                     }
 
@@ -133,6 +134,10 @@ class SendMessage extends Command
                         if($max_counter > 0)
                         {
                           $phoneNumber->max_counter --;
+                        }
+                        if($max_counter_day > 0)
+                        {
+                          $phoneNumber->max_counter_day --;
                         }
                         $phoneNumber->save();
                         
@@ -175,7 +180,7 @@ class SendMessage extends Command
             ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid')
             ->get();
 
-        $number = $count = $max_counter = 0;
+        $number = $counter = $max_counter = 0;
 
         if($reminder->count() > 0)
         {
@@ -184,8 +189,9 @@ class SendMessage extends Command
                 $phoneNumber = PhoneNumber::where('user_id','=',$col->userid)->select('counter','id','filename','max_counter')->first();
             
                 if(!is_null($phoneNumber)){
-                  $count = $phoneNumber->counter;
+                  $counter = $phoneNumber->counter;
                   $max_counter = $phoneNumber->max_counter;
+                  $max_counter_day = $phoneNumber->max_counter_day;
                 }
                 else
                 {
@@ -209,11 +215,11 @@ class SendMessage extends Command
                 $adding = Carbon::parse($adding_with_hour);         
                 $number++;
 
-                if($count <= 0 ){
+                if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
                   continue;
                 }
 
-                if($adding->lte(Carbon::now()) && $count > 0)
+                if($adding->lte(Carbon::now()) && $counter > 0)
                 {        
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
 
@@ -238,6 +244,10 @@ class SendMessage extends Command
                     if($max_counter > 0)
                     {
                         $phoneNumber->max_counter--;
+                    }
+                    if($max_counter_day > 0)
+                    {
+                        $phoneNumber->max_counter_day--;
                     }
 
                     $phoneNumber->save();
@@ -276,7 +286,7 @@ class SendMessage extends Command
 
           if($reminder->count() > 0)
           {
-              $number = $count = 0;
+              $number = $counter = 0;
               foreach($reminder as $row)
               {
                 $id_reminder = $row->id;
@@ -289,14 +299,18 @@ class SendMessage extends Command
                 $key = $phoneNumber->filename;
 
                 if(!is_null($phoneNumber)){
-                  $count = $phoneNumber->counter;
+                  $counter = $phoneNumber->counter;
                   $max_counter = $phoneNumber->max_counter;
+                  $max_counter_day = $phoneNumber->max_counter_day;
                 }
                 else
                 {
                   continue;
                 }
 
+								if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
+									continue;
+								}
                 // if the day before / substract 
                 if($days < 0){
                   $days = abs($days);
@@ -309,7 +323,7 @@ class SendMessage extends Command
                 $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
 
                 // get id reminder for reminder customer
-                if($deliver_time >= 0 && $count > 0){
+                if($deliver_time >= 0 && $counter > 0){
                   $number++;
                   $campaign = 'Event';
                   $id_campaign = $row->rcs_id;
@@ -336,6 +350,10 @@ class SendMessage extends Command
                   if($max_counter > 0)
                   {
                       $phoneNumber->max_counter--;
+                  }
+                  if($max_counter_day > 0)
+                  {
+                      $phoneNumber->max_counter_day--;
                   }
                   $phoneNumber->save();
                 }
@@ -375,7 +393,7 @@ class SendMessage extends Command
 
           if($reminder->count() > 0)
           {
-              $number = $count = 0;
+              $number = $counter = 0;
               foreach($reminder as $row)
               {
                 $id_reminder = $row->id;
@@ -392,13 +410,19 @@ class SendMessage extends Command
                 $time_appt = $event_date->toTimeString();
 
                 if(!is_null($phoneNumber)){
-                  $count = $phoneNumber->counter;
+                  $counter = $phoneNumber->counter;
+                  $max_counter = $phoneNumber->max_counter;
+                  $max_counter_day = $phoneNumber->max_counter_day;
                 }
                 else
                 {
                   continue;
                 }
 
+								if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
+									continue;
+								}
+								
                 // if the day before / substract 
                 if($days < 0){
                   $days = abs($days);
@@ -411,7 +435,7 @@ class SendMessage extends Command
                 $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
 
                 // get id reminder for reminder customer
-                if($deliver_time >= 0 && $count > 0){
+                if($deliver_time >= 0 && $counter > 0){
                   $number++;
                   $campaign = 'Event';
                   $id_campaign = $row->rcs_id;
@@ -434,9 +458,9 @@ class SendMessage extends Command
                   $remindercustomer_update->save();
 
                   $phoneNumber->counter--;
+                  $phoneNumber->max_counter--;
+                  $phoneNumber->max_counter_day--;
                   $phoneNumber->save();
-                 /* $count--;
-                  PhoneNumber::where([['id',$phoneNumber->id]])->update(['counter'=>$count,'max_counter'=>$count]);*/
                 }
                 else
                 {
