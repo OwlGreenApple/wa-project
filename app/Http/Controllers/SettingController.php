@@ -480,7 +480,7 @@ class SettingController extends Controller
     {
 			//6285967284773
         // return ApiHelper::send_image_url($wa_number,$url,$message,$key);
-        return ApiHelper::send_image_url("628123238793","https://omnilinkz.s3.us-west-2.amazonaws.com/banner/Rizky-6/2004181003-967.jpg","test message","67fb470ceb5c439b9241d1a65167bd7c6946a47a98cacf15");
+        return ApiHelper::send_image_url("628123238793","https://activrespon.com/dashboard/assets/img/pricing-bg-1.jpg","test message","67fb470ceb5c439b9241d1a65167bd7c6946a47a98cacf15");
         // return ApiHelper::send_image_url("628123238793","https://www.emmasdiary.co.uk/images/default-source/default-album/9-months.jpg?sfvrsn=9dde63ad_0","test message","3a0b718387f65aa92d93df352e30c8d227f018456385a33c");
     }
 }

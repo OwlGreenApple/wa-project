@@ -77,7 +77,8 @@ class CampaignController extends Controller
 			if($request->hasFile('imageWA')) {
 				//save ke temp local dulu baru di kirim 
 				$folder = $user->id."/send-test-message/";
-				Storage::disk('public')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
+				// Storage::disk('public')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
+				Storage::disk('s3')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
 				$url = asset("public/storage/".$folder."temp.jpg");
 				sleep(1);
 				ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
