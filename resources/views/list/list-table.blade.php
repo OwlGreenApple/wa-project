@@ -1,8 +1,3 @@
-<?php
-  use App\Http\Controllers\ListController;
-  $listcontroller = new ListController; 
-?>
-
 <!-- tab -->
 @if($lists->count() > 0)
   @foreach($lists as $rows)
@@ -22,17 +17,15 @@
 
         <div class="col-lg-3 pad-fix cardnumber">
           <div class="big-number">
-            +<?php 
-              echo $listcontroller->newContact($rows->id);
-            ?>
+            @if($listcontroller->newContact($rows->id) !== 0)+@endif {!! $listcontroller->newContact($rows->id) !!}
           </div>
           <div class="contact">New Contacts</div>
         </div> 
 
         <div class="col-lg-3 pad-fix cardnumber">
-          <div class="big-number"><?php 
-              echo $listcontroller->contactList($rows->id);
-            ?></div>
+          <div class="big-number">
+              {!! $listcontroller->contactList($rows->id) !!}
+          </div>
           <div class="contact">Contacts</div>
         </div>
 

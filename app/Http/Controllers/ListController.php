@@ -46,10 +46,10 @@ class ListController extends Controller
       $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->orderBy('id','desc')->paginate(5);
 
       if ($request->ajax()) {
-          return view('list.list-table',['lists'=>$lists,'paginate'=>$lists]);
+          return view('list.list-table',['lists'=>$lists,'paginate'=>$lists,'listcontroller'=> new ListController]);
       }
 
-      return view('list.list-data',['lists'=>$lists,'paginate'=>$lists]);
+      return view('list.list-data',['lists'=>$lists,'paginate'=>$lists,'listcontroller'=> new ListController]);
     }
 
     public function ListContacts($list_id)
@@ -67,9 +67,8 @@ class ListController extends Controller
 
     public function dataList(Request $request){
        $userid = Auth::id();
-      
-       $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->orderBy('id','desc')->get();
-       return view('list.list-table',['lists'=>$lists]);
+       $lists = UserList::where([['status','=',1],['user_id','=',$userid]])->orderBy('id','desc')->get();
+       return view('list.list-table',['lists'=>$lists,'listcontroller'=> new ListController]);
     }
 
     public function newContact($listid){
