@@ -828,7 +828,7 @@
 
                   if(result.message !== undefined)
                   {
-                      $(".error_message").html("<div class='alert alert-danger'>"+result.message+"</div>");
+                      $(".error_notif").html("<div class='alert alert-danger'>"+result.message+"</div>");
                   }
               }
             },

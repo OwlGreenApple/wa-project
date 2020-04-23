@@ -73,11 +73,8 @@ class ListController extends Controller
 
     public function newContact($listid){
       $userid = Auth::id();
-      /*$newcontact = Customer::where('status','>',0)->whereRaw('DATE(created_at) = DATE(CURDATE()) AND list_id = "'.$listid.'" AND user_id = '.$userid.'')->select(DB::raw('COUNT(id) AS newcontact'))->get();*/
-      dd($listid);
-      $newcontact = Customer::where([['list_id','=',$listid],['user_id',$userid]])->get();
+      $newcontact = Customer::where('status','>',0)->whereRaw('DATE(created_at) = DATE(CURDATE()) AND list_id = "'.$listid.'" AND user_id = '.$userid.'')->get();
 
-      dd($newcontact->count());
       return $newcontact->count();
     }
 
@@ -85,7 +82,6 @@ class ListController extends Controller
       $userid = Auth::id();
       $contacts = Customer::where([['status','>',0],['list_id','=',$listid],['user_id','=',$userid]])->get();
        
-       dd($contacts->count());
       return $contacts->count();
     }
 
@@ -985,6 +981,12 @@ class ListController extends Controller
            return response()->json(['message'=>'Error! Please set your phone number first']);
         }
 
+        $extension = $request->file('csv_file')->getClientOriginalExtension();
+        if($extension <> "xlsx")
+        {
+          return response()->json(['message'=>'Please use .xlsx file extension only!']);
+        }
+
         $file = $request->file('csv_file')->getRealPath();
         $binder = new ExcelValueBinder;
         $data = Excel::setValueBinder($binder)->load($file)->get();
@@ -1032,6 +1034,7 @@ class ListController extends Controller
                 $customer->name = $name;
                 $customer->telegram_number = $phone;
                 $customer->email = $email;
+                $customer->status = 1;
                 
                 try
                 {     
