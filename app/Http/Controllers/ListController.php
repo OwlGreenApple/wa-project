@@ -981,11 +981,72 @@ class ListController extends Controller
            return response()->json(['message'=>'Error! Please set your phone number first']);
         }
 
-        $extension = $request->file('csv_file')->getClientOriginalExtension();
+       /* $extension = $request->file('csv_file')->getClientOriginalExtension();
         if($extension <> "xlsx")
         {
           return response()->json(['message'=>'Please use .xlsx file extension only!']);
+        }*/
+
+        $file = $request->file('csv_file')->getRealPath();
+        $binder = new ExcelValueBinder;
+        $data = Excel::setValueBinder($binder)->load($file)->get();
+        $count = 0;
+
+        if($data->count() > 0)
+        {
+           foreach ($data as $key => $value) 
+           {
+              $phone = strval($value->phone);
+              if(substr($phone,0,1) <> '+')
+              {
+                  $phone = '+'.$phone;
+              }
+              $check_phone = $this->checkAvailablePhone($id_list,$phone);
+
+              if($check_phone == true)
+              {
+                  $count++;
+              }
+           }
+
+           if($count > 0)
+           {
+              $msg['duplicate'] = 1;
+           }
+           else
+           {
+              $msg['duplicate'] = 0;
+           }
         }
+        else
+        {
+            $msg['success'] = 1;    
+            $msg['message'] = 'Your file is empty, nothing to import';
+        }
+
+        return response()->json($msg);
+    }
+
+    public function checkAvailablePhone($list_id,$number)
+    {
+        $userid = Auth::id();
+        $customer = Customer::where([['user_id',$userid],['list_id',$list_id],['telegram_number','=',$number]])->first();
+       
+        if(!is_null($customer))
+        {
+           return true;
+        }
+        else
+        {
+           return false;
+        }
+    }
+
+    public function importExcelListSubscribersAct(Request $request)
+    {
+        $userid = Auth::id();
+        $id_list = $request->list_id_import;
+        $overwrite = $request->overwrite;
 
         $file = $request->file('csv_file')->getRealPath();
         $binder = new ExcelValueBinder;
@@ -1017,17 +1078,16 @@ class ListController extends Controller
               }
               
               //FILTER 2
-              $checkuniquephone = $this->checkUniquePhone($phone,$id_list);
+              if(substr($phone,0,1) <> '+')
+              {
+                  $phone = '+'.$phone;
+              }
+
+              $checkuniquephone = $this->checkUniquePhone($phone,$id_list);           
               // $checkuniqueemail = $this->checkUniqueEmail($email,$id_list);
 
               if($checkuniquephone == true)
               {
-
-                if(substr($phone,0,1) <> '+')
-                {
-                    $phone = '+'.$phone;
-                }
-
                 $customer = new Customer;
                 $customer->user_id = $userid;
                 $customer->list_id = $id_list;
@@ -1047,6 +1107,17 @@ class ListController extends Controller
                   $msg['message'] = 'Failed to import,sorry there is something wrong on our server';
                   return response()->json($msg);
                 }
+              }
+
+              if($overwrite == 1)
+              {
+                 $customer_rewrite = Customer::where([['telegram_number',$phone],['list_id',$id_list]])->first();
+                 $customer_id = $customer_rewrite->id;
+                 $data_customer = Customer::find($customer_id);
+                 $data_customer->name = $name;
+                 $data_customer->email = $email;
+                 $data_customer->status = 1;
+                 $data_customer->save();
               }
             } // ENDFOREACH
 

@@ -155,6 +155,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');
   Route::post('list-duplicate','ListController@duplicateList')->name('duplicatelist');
   Route::post('import_excel_list_subscriber','ListController@importExcelListSubscribers')->middleware('checkimportcsv');
+  Route::post('import_excel_list_subscriber_act','ListController@importExcelListSubscribersAct');
   Route::post('changelistname','ListController@changeListName');
   Route::get('export_excel_list_subscriber/{id_list}/{import}','ListController@exportListExcelSubscriber');
   Route::post('save-auto-reply','ListController@save_auto_reply');

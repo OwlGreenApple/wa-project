@@ -417,6 +417,28 @@
   </div>
 </div>
 
+<!-- Modal Import phone available -->
+<div class="modal fade" id="duplicate_phone" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          There is available phone on your xlsx file,<br/>
+          Do you want to overwrite?
+        </h5>
+      </div>
+      <div class="modal-body">
+         <form id="data_serialize"></form>
+         <button class="btn btn-primary overwrite" data-overwrite="1">Overwrite</button>
+         <button class="btn btn-primary overwrite" data-overwrite="0">Skip</button>
+      </div>
+    </div>
+      
+  </div>
+</div>
+
 <!-- Modal Edit List Name -->
 <div class="modal fade" id="display_edit_list_name" role="dialog">
   <div class="modal-dialog">
@@ -461,13 +483,17 @@
       config.removePlugins = 'image';
   };
 
+  var fd = new FormData();
+
   $(document).ready(function() {    
     tabs();
     display_edit_list_name();
     open_ck_editor();
     //Choose();
     openImport();
-    excelImport();
+    excelImportCheck();
+    cloneFile();
+    overWriteFile();
     addContact();
     //column -- edit
     displayCustomer(); 
@@ -784,7 +810,26 @@
     });
   }
 
-  function excelImport()
+  function cloneFile()
+  {
+    var clone;
+    $("input[name='csv_file']").change(function(){
+      // prevent double action
+      fd.delete('csv_file');
+      fd.delete('list_id_import');
+      fd.delete('overwrite'); 
+  
+      var value = this.files;
+      if(value.length > 0)
+      {
+        // clone = value[0].slice(0, value[0].size, value[0].type);
+        fd.append("csv_file", value[0]);
+        fd.append("list_id_import", '{{ $id }}');
+      }
+    });
+  }
+
+  function excelImportCheck()
   {
     $("body").on('submit','#importform',function(e){
         e.preventDefault();
@@ -813,23 +858,23 @@
               if(result.success == 1)
               {
                   $("#btn_close_import").trigger("click");
-                  displayCustomer();
                   $(".main").html("<div class='alert alert-success'>"+result.message+"</div>");
                   $("body .alert-success").delay(5000).fadeOut(2000);
               }
-              else
-              {   
-                  var errors = '';
-                  var errname, errphone, erremail;
-                  (result.name !== undefined)?errors+=result.name+"\n":errname='';
-                  (result.phone !== undefined)?errors+=result.phone+"\n":errphone='';
-                  (result.email !== undefined)?errors+=result.email:erremail='';
-                  $(".error_notif").html('<div class="alert alert-danger">'+errors+'</div>');
 
-                  if(result.message !== undefined)
-                  {
-                      $(".error_notif").html("<div class='alert alert-danger'>"+result.message+"</div>");
-                  }
+              if(result.duplicate == 1)
+              {   
+                  $("#btn_close_import").trigger("click");
+                  $("#duplicate_phone").modal({
+                      backdrop: 'static', 
+                      keyboard: false
+                  });
+                  // console.log(data);
+              }
+              else
+              {
+                  // alert('aaaa');
+                  excelImport(data);
               }
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -846,6 +891,76 @@
             }
         });/* end ajax */
     });
+  }
+
+  function overWriteFile()
+  {
+    $("body").on('click','.overwrite',function(){
+      var overwrite = $(this).attr('data-overwrite');
+      $("#duplicate_phone").modal('hide');
+      fd.append('overwrite',overwrite);
+      excelImport(fd);
+    });
+  }
+
+  function excelImport(data)
+  {
+      $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+      });
+      $.ajax({
+          type : 'POST',
+          url : "{{ url('import_excel_list_subscriber_act') }}",
+          data : data,
+          contentType: false,
+          processData: false,
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').show().addClass('background-load');
+          },
+          success : function(result){
+            $('.div-loading').hide().removeClass('background-load');
+            $('#loader').hide();
+            $('input[name="csv_file"]').val('');
+  
+            if(result.success == 1)
+            {
+                $("#btn_close_import").trigger("click");
+                displayCustomer();
+                $(".main").html("<div class='alert alert-success'>"+result.message+"</div>");
+                $("body .alert-success").delay(5000).fadeOut(2000);
+            }
+            else
+            {   
+                var errors = '';
+                var errname, errphone, erremail;
+                (result.name !== undefined)?errors+=result.name+"\n":errname='';
+                (result.phone !== undefined)?errors+=result.phone+"\n":errphone='';
+                (result.email !== undefined)?errors+=result.email:erremail='';
+                $(".error_notif").html('<div class="alert alert-danger">'+errors+'</div>');
+
+                if(result.message !== undefined)
+                {
+                    $(".error_notif").html("<div class='alert alert-danger'>"+result.message+"</div>");
+                }
+            }
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+           /* var err = eval("(" + xhr.responseText + ")");
+            var msg = '';
+            for ( var property in err.errors ) {
+              msg += err.errors[property][0]+"\n"; // get message by object name
+            }*/
+            $(".error_notif").html('<div class="alert alert-danger">Error, sorry unable to import, maybe your csv file is corrupt or data unavailable</div>');
+            $('input[name="csv_file"]').val('');
+            displayCustomer();
+          }
+      });/* end ajax */
   }
 
   function addContact(){
