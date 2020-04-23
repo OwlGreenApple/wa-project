@@ -75,6 +75,7 @@ class ListController extends Controller
       $userid = Auth::id();
       $newcontact = Customer::whereRaw('DATE(created_at) = DATE(CURDATE()) AND list_id = "'.$listid.'" AND user_id = '.$userid.' AND status = 1')->get();
 
+      dd($newcontact->count());
       return $newcontact->count();
     }
 
@@ -82,6 +83,7 @@ class ListController extends Controller
       $userid = Auth::id();
       $contacts = Customer::where([['status','=',1],['list_id','=',$listid],['user_id','=',$userid]])->get();
        
+       dd($contacts->count());
       return $contacts->count();
     }
 
@@ -1134,41 +1136,6 @@ class ListController extends Controller
 
         return $err;
     }
-
-   /* //IMPORT SUBSCRIBER / CUSTOMER INTO CSV
-    function importCSVListSubscribers(Request $request)
-    {
-        $id_list = $request->list_id_import;
-        $userid = Auth::id();
-
-        $check = UserList::where([['id',$id_list],['user_id',$userid]])->first();
-        if(is_null($check))
-        {
-            $msg['message'] = 'Invalid List!';
-            return response()->json($msg);
-        }
-
-        $phone = PhoneNumber::where('user_id',$userid)->first();
-        if (is_null($phone)) {
-           return response()->json(['message'=>'Error! Please set your phone number first']);
-        }
-
-        $file = $request->file('csv_file');
-        $import = new ListSubscribersImport($id_list);
-        Excel::import($import, $file);
-
-        if($import->getRowCount() > 0)
-        {
-            $msg['success'] = 1;
-            $msg['message'] = 'Import Successful';
-        }
-        else
-        {
-            $msg['success'] = 0;
-            $msg['message'] = 'Failed to import, maybe your data had available';
-        }
-        return response()->json($msg);
-    }*/
 
      /* check random list name */
     public function createRandomListName(){

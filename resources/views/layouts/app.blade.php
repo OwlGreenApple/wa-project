@@ -165,10 +165,11 @@
                            <a id="cogDropdown" class="icon-cog" data-toggle="dropdown"></a>
                            <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="cogDropdown">
                                     <a href="{{url('settings')}}" class="nav-link {{ (request()->is('settings')) ? 'active' : '' }}">Settings</a>
+
                                     <a href="{{url('pricing')}}" class="nav-link {{ (request()->is('pricing')) ? 'active' : '' }}">Buy More</a>
-                                    <!--
-                                    <a href="{{url('history-order')}}" class="nav-link {{ (request()->is('history-order')) ? 'active' : '' }}">History Order</a> 
-                                    -->
+                                    
+                                    <a href="{{url('pricing')}}" class="nav-link {{ (request()->is('pricing')) ? 'active' : '' }}">Upgrade</a> 
+                                    
 																		<a href="{{url('order')}}" class="nav-link {{ (request()->is('order')) ? 'active' : '' }}">Order</a>
                                     <a class="nav-link" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
