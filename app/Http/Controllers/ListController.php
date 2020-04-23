@@ -73,7 +73,7 @@ class ListController extends Controller
 
     public function newContact($listid){
       $userid = Auth::id();
-      $newcontact = Customer::whereRaw('DATE(created_at) = DATE(CURDATE()) AND list_id = "'.$listid.'" AND user_id = '.$userid.' AND status = 1')->get();
+      $newcontact = Customer::whereRaw('DATE(created_at) = DATE(CURDATE()) AND list_id = "'.$listid.'" AND user_id = '.$userid.'')->get();
 
       dd($newcontact->count());
       return $newcontact->count();
