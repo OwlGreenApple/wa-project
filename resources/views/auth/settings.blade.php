@@ -184,7 +184,6 @@
                   <input name="user_name" type="text" class="form-control" value="{{$user->name}}" />
                   <span class="error user_name"></span>
                 </div>
-                
               </div> 
 
               <div class="form-group row col-fix">
@@ -193,6 +192,19 @@
                 <div class="col-sm-7 text-left row">
                   <input name="user_phone" type="text" class="form-control" value="{{$user->phone_number}}" />
                   <span class="error user_phone"></span>
+                </div>
+              </div>
+
+              <div class="form-group row col-fix">
+                <label class="col-sm-4 col-form-label">TimeZone</label>
+                <label class="col-sm-1 col-form-label">:</label>
+                <div class="col-sm-7 text-left row">
+                   <select class="js-example-basic-single form-control" id="timezone"  name="timezone" required>
+                      @foreach($timezone as $time)
+                        <option value="{{$time['zone']}}"> ({{$time['GMT_difference']. ' ) '.$time['zone']}}</option>
+                      @endforeach
+                   </select>
+                   <span class="error timezone"></span>
                 </div>
               </div>
         </div>
@@ -325,6 +337,7 @@
     editPhoneNumber();
     openEditModal();
     settingUser();
+    selJs();
     //codeCountry();
     //putCallCode();
 
@@ -392,6 +405,17 @@
     $('#button-connect').click(function(){
       $("#modal-start-connect").modal();
     });
+
+   /* var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    $("select[name='timezone'] > option[value='"+timezone+"']").prop("selected", true);*/
+
+    function selJs()
+    {
+      $('.js-example-basic-single').select2({
+          width: '100%',
+          theme: 'bootstrap4'
+      });
+    }
 
    // Display Country
 
@@ -726,6 +750,7 @@
               $(".oldpass").html(result.oldpass);
               $(".confpass").html(result.confpass);
               $(".newpass").html(result.newpass);
+              $(".timezone").html(result.timezone);
             }
             else {
               $('.message-settings').show();

@@ -29,6 +29,7 @@ class CheckSettings
             'oldpass' => ['required','string', new OldPassword],
             'confpass' => ['required','string', 'min:8', 'max:32'],
             'newpass' => [ 'required','string', 'min:8', 'max:32', 'same:confpass'],
+            'timezone' => ['required', 'timezone', 'max:60']
           ];
         }
 
@@ -44,6 +45,7 @@ class CheckSettings
               'oldpass'=>$err->first('oldpass'),
               'confpass'=>$err->first('confpass'),
               'newpass'=>$err->first('newpass'),
+              'timezone'=>$err->first('timezone'),
             );
 
             return response()->json($error);

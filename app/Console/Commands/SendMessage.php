@@ -62,7 +62,7 @@ class SendMessage extends Command
     /* BROADCAST */
     public function campaignBroadcast()
     {
-        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","customers.*")
+        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","customers.*","users.timezone")
           ->join('users','broad_casts.user_id','=','users.id')
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
@@ -98,9 +98,11 @@ class SendMessage extends Command
                     $max_counter = $phoneNumber->max_counter;
                     $max_counter_day = $phoneNumber->max_counter_day;
                     $key = $phoneNumber->filename;
+                    $now = Carbon::parse(Carbon::now())->timezone($row->timezone);
 
                     $time_sending = $date->toDateString().' '.$hour;
-                    $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
+                    $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
+                    // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
 
                     
                     if($deliver_time < 0){
@@ -177,7 +179,7 @@ class SendMessage extends Command
             ->join('users','reminders.user_id','=','users.id')
             ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid')
+            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone')
             ->get();
 
         $number = $counter = $max_counter = 0;
@@ -211,6 +213,7 @@ class SendMessage extends Command
 
                 $reminder_customer_status = $col->rc_st;
                 $reminder_customers_id = $col->rcs_id;
+                $now = Carbon::parse(Carbon::now())->timezone($row->timezone);
 
                 $adding = Carbon::parse($adding_with_hour);         
                 $number++;
@@ -219,7 +222,8 @@ class SendMessage extends Command
                   continue;
                 }
 
-                if($adding->lte(Carbon::now()) && $counter > 0)
+                // if($adding->lte(Carbon::now()) && $counter > 0)
+                if($adding->lte($now) && $counter > 0)
                 {        
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
 
@@ -281,7 +285,7 @@ class SendMessage extends Command
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone')
           ->get();
 
           if($reminder->count() > 0)
@@ -320,7 +324,9 @@ class SendMessage extends Command
                 }
 
                 $time_sending = $date->toDateString().' '.$hour;
-                $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
+                $now = Carbon::parse(Carbon::now())->timezone($row->timezone);
+                $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
+                // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
 
                 // get id reminder for reminder customer
                 if($deliver_time >= 0 && $counter > 0){
@@ -388,7 +394,7 @@ class SendMessage extends Command
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone')
           ->get();
 
           if($reminder->count() > 0)
@@ -432,7 +438,9 @@ class SendMessage extends Command
                 }
 
                 $time_sending = $date->toDateString().' '.$hour;
-                $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
+                $now = Carbon::parse(Carbon::now())->timezone($row->timezone);
+                $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
+                // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
 
                 // get id reminder for reminder customer
                 if($deliver_time >= 0 && $counter > 0){

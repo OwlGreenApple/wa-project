@@ -18,6 +18,7 @@ use App\Helpers\ApiHelper;
 use App\Helpers\Alert;
 use DB;
 use Carbon\Carbon;
+use DateTimeZone;
 
 class SettingController extends Controller
 {
@@ -45,10 +46,26 @@ class SettingController extends Controller
       if (!is_null($phoneNumber)) {
         $is_registered = 1;
       }
+
       return view('auth.settings',[
         'user'=>$user,
         'is_registered'=>$is_registered,
+        'timezone'=>$this->showTimeZone()
       ]);
+    }
+
+    public function showTimeZone(){
+      $timezone = array();
+      $timestamp = time();
+      
+      foreach(timezone_identifiers_list(DateTimeZone::ALL) as $key => $t) {
+          date_default_timezone_set($t);
+          $timezone[$key]['zone'] = $t;
+          $timezone[$key]['GMT_difference'] =  date('P', $timestamp);
+      }
+      $timezone = collect($timezone)->sortBy('GMT_difference');
+
+      return $timezone;
     }
 
     public function settingsUser(Request $request)
@@ -57,6 +74,7 @@ class SettingController extends Controller
         $data = array(
             'name'=> $request->user_name,
             'phone_number'=>$request->user_phone,
+            'timezone'=>$request->timezone,
         );
 
         if(!empty($request->oldpass) && !empty($request->confpass) && !empty($request->newpass))
