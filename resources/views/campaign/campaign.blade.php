@@ -368,7 +368,8 @@
       // var data = $(this).serializeArray();
 			var form = $('#edit_broadcast')[0];
 			var formData = new FormData(form);
-      formData.push({name : 'broadcast_id', value:broadcast_id},{name : 'is_update', value : 1});
+      formData.append('broadcast_id',broadcast_id);
+      formData.append('is_update',1);
 
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },

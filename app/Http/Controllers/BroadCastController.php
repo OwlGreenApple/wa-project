@@ -224,7 +224,7 @@ class BroadCastController extends Controller
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
 					$dt = Carbon::now();
-					$folder = $user->id."/broadcast-image/";
+					$folder = $user_id."/broadcast-image/";
 					$filename = $dt->format('ymdHi').'.jpg';
 					Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
 				}
