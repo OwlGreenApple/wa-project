@@ -122,7 +122,7 @@ class SendMessage extends Command
                         $number ++;
 
 												if ($row->email=="activomnicom@gmail.com") {
-													$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,"reminder");
+													$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 												}
 												else {
 													if ($row->image==""){
@@ -233,7 +233,7 @@ class SendMessage extends Command
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
 
 										if ($row->useremail=="activomnicom@gmail.com") {
-											$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,"reminder");
+											$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										}
 										else {
 											if ($row->image==""){
@@ -349,7 +349,7 @@ class SendMessage extends Command
                   $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
 
 									if ($row->useremail=="activomnicom@gmail.com") {
-										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,"reminder");
+										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 									}
 									else {
 										if ($row->image==""){
@@ -468,7 +468,7 @@ class SendMessage extends Command
                   $id_reminder = $row->id_reminder;
      
 									if ($row->useremail=="activomnicom@gmail.com") {
-										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,"reminder");
+										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 									}
 									else {
 										if ($row->image==""){

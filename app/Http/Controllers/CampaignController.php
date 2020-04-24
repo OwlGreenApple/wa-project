@@ -77,7 +77,7 @@ class CampaignController extends Controller
 			
 
 			if ($user->email=="activomnicom@gmail.com") {
-				ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$request->message,"reminder");
+				ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$request->message,$request->phone,"reminder");
 			}
 			else {
 				if($request->hasFile('imageWA')) {
