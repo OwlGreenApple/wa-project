@@ -62,7 +62,7 @@ class SendMessage extends Command
     /* BROADCAST */
     public function campaignBroadcast()
     {
-        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","customers.*","users.timezone")
+        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","customers.*","users.timezone","users.email")
           ->join('users','broad_casts.user_id','=','users.id')
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
@@ -121,11 +121,16 @@ class SendMessage extends Command
                         $status = 'Sent';
                         $number ++;
 
-												if ($row->image==""){
-													$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+												if ($row->email=="activomnicom@gmail.com") {
+													$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 												}
 												else {
-													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+													if ($row->image==""){
+														$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+													}
+													else {
+														$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+													}
 												}
 												
                         $this->generateLog($number,$campaign,$id_campaign,$status);
@@ -179,7 +184,7 @@ class SendMessage extends Command
             ->join('users','reminders.user_id','=','users.id')
             ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone')
+            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone','users.email as useremail')
             ->get();
 
         $number = $counter = $max_counter = 0;
@@ -227,11 +232,16 @@ class SendMessage extends Command
                 {        
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
 
-										if ($row->image==""){
-											$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+										if ($row->useremail=="activomnicom@gmail.com") {
+											$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										}
 										else {
-											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
+											if ($row->image==""){
+												$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+											}
+											else {
+												$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
+											}
 										}
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
@@ -285,7 +295,7 @@ class SendMessage extends Command
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail')
           ->get();
 
           if($reminder->count() > 0)
@@ -338,11 +348,16 @@ class SendMessage extends Command
                   
                   $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
 
-									if ($row->image==""){
-										$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+									if ($row->useremail=="activomnicom@gmail.com") {
+										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 									}
 									else {
-										$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+										if ($row->image==""){
+											$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+										}
+										else {
+											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+										}
 									}
                   $this->generateLog($number,$campaign,$id_campaign,$status);
 
@@ -394,7 +409,7 @@ class SendMessage extends Command
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail')
           ->get();
 
           if($reminder->count() > 0)
@@ -452,13 +467,18 @@ class SendMessage extends Command
                   $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt);
                   $id_reminder = $row->id_reminder;
      
-									if ($row->image==""){
-										$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+									if ($row->useremail=="activomnicom@gmail.com") {
+										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 									}
 									else {
-										$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-									}
+										if ($row->image==""){
+											$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+										}
+										else {
+											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+										}
                   $this->generateLog($number,$campaign,$id_campaign,$status);
+									}
 
                   $status = $this->getStatus($send_message);
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
