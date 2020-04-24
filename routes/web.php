@@ -106,7 +106,7 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 
 /* SETTING */
 Route::group(['middleware'=>['auth','web']],function(){
-  Route::get('settings', 'SettingController@index');
+  Route::get('settings/{mod?}', 'SettingController@index');
   Route::post('save-settings', 'SettingController@settingsUser')->middleware('usersettings');
   Route::get('load-phone-number', 'SettingController@load_phone_number');
   Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkcall');

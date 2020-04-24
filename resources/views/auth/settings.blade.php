@@ -299,6 +299,7 @@
           
       $('#tabs li a').click(function(){
         var t = $(this).attr('id');
+
         if($(this).hasClass('inactive')){ //this is the start of our condition 
           $('#tabs li a').addClass('inactive');           
           $(this).removeClass('inactive');
@@ -335,12 +336,25 @@
     });
   }
 
+  function triggerButtonMod()
+  {
+      var mod = "{{ $mod }}";
+      if(mod == 1)
+      {
+          $('#tab1').addClass('inactive');
+          $('.tabs-container').hide();
+          $('#tab2').removeClass('inactive');
+          $('#tab2C').fadeIn('slow');
+      }
+  }
+
   $(document).ready(function() {   
     tabs();
     loadPhoneNumber();
     editPhoneNumber();
     openEditModal();
     settingUser();
+    triggerButtonMod();
     // selJs();
     //codeCountry();
     //putCallCode();

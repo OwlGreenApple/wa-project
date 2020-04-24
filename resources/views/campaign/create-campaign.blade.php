@@ -140,6 +140,7 @@
           </span> -->
           <span class="error day"></span><br/>
           <span class="error hour"></span>
+          <small>Please set your timezone on : <a target="_blank" href="{{ url('settings/?mod=1') }}">Settings</a></small>
         </div>
       </div>
 

@@ -37,6 +37,7 @@ class SettingController extends Controller
       $user = Auth::user();
       $day_left = User::find($user->id)->day_left;
       $expired = Carbon::now()->addDays($day_left)->toDateString();
+      $mod = request()->get('mod');
 
       $is_registered = 0;
       $phoneNumber = PhoneNumber::
@@ -47,13 +48,14 @@ class SettingController extends Controller
       }
 
       ($user->timezone == null)?$user_timezone = 'Asia/Jakarta':$user_timezone = $user->timezone;
-      
+
       return view('auth.settings',[
         'user'=>$user,
         'is_registered'=>$is_registered,
         'timezone'=>$this->showTimeZone(),
         'expired'=>Date('d M Y',strtotime($expired)),
-        'user_timezone'=>$user_timezone
+        'user_timezone'=>$user_timezone,
+        'mod'=>$mod
       ]);
     }
 
