@@ -287,6 +287,29 @@
   </div>
   <!-- End Modal -->
 
+  <!-- Modal Import Contact -->
+  <div class="modal fade child-modal" id="leadsettings" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+
+        <div class="modal-header text-center">
+          <div class="modal-title">
+            <span id="auth_message"></span>
+          </div>
+        </div>
+
+        <div class="modal-body text-center">
+            <a href="{{url('pricing')}}" class="btn btn-primary btn-lg">Buy Now</a>
+        </div>
+
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
 <script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
 
@@ -347,7 +370,35 @@
       }
   }
 
-  $(document).ready(function() {   
+  function checkPhone() {
+      $.ajax({
+        type : 'GET',
+        url : '{{url("checkphone")}}',
+        success : function(result){
+
+          if(result.status == 'buy'){
+            $("#leadsettings").modal({
+              show: true,
+              keyboard: false,
+              backdrop: 'static'
+            });
+            $("#auth_message").html('Please make order here :');
+          }
+          else if(result.status == 'exp')
+          {
+            $("#leadsettings").modal({
+              show: true,
+              keyboard: false,
+              backdrop: 'static'
+            }); 
+            $("#auth_message").html('Your membership has expired please buy more to continue');
+          }
+        }
+      });
+  }
+
+  $(document).ready(function() {  
+    checkPhone(); 
     tabs();
     loadPhoneNumber();
     editPhoneNumber();
@@ -425,13 +476,13 @@
 
     $("select[name='timezone'] > option[value='{{ $user_timezone }}']").prop("selected", true);
 
-    function selJs()
+   /* function selJs()
     {
       $('.js-example-basic-single').select2({
           width: '100%',
           theme: 'bootstrap4'
       });
-    }
+    }*/
 
    // Display Country
 

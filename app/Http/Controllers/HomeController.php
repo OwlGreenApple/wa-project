@@ -84,6 +84,15 @@ class HomeController extends Controller
         $expired = Carbon::now()->addDays($users->day_left)->toDateString();
         $phone = PhoneNumber::where('user_id',$id)->first();
 
+        if(is_null($phone))
+        {
+            $max_counter = 0;
+        }
+        else
+        {
+            $max_counter = number_format($phone->max_counter);
+        }
+
         $data = array(
           'lists'=>$lists,
           'latest_lists'=>$latest,
@@ -94,7 +103,7 @@ class HomeController extends Controller
           'membership'=>$users->membership,
           'expired'=>Date("d M Y",strtotime($expired)),
           'status'=>$users->status,
-          'quota'=>number_format($phone->max_counter),
+          'quota'=>$max_counter,
         );
 
         return view('home',$data);
@@ -136,15 +145,26 @@ class HomeController extends Controller
     public function checkPhone(){
       $userid = Auth::id();
       $phone = PhoneNumber::where('user_id',$userid)->get();
-
-      if($phone->count() < 1)
+      $lists = UserList::where('user_id',$userid)->get();
+      $user = User::find($userid);
+      $user_status = $user->status;
+      
+      if($user_status < 1 && $lists->count() < 1)
       {
-        $data['status'] = 1;
+        $data['status'] = 'buy';
+      }
+      elseif($user_status < 1 && $lists->count() > 0) 
+      {
+        $data['status'] = 'exp';
+      } 
+      elseif($phone->count() < 1) 
+      {
+        $data['status'] = 'phone';
       }
       else {
         $data['status'] = 0;
       }
-
+      
       return response()->json($data);
     }
 

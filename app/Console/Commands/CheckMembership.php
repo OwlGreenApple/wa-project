@@ -5,7 +5,9 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 use App\User;
+use App\PhoneNumber;
 use App\Mail\MemberShip;
+use App\Helpers\ApiHelper;
 
 class CheckMembership extends Command
 {
@@ -60,6 +62,10 @@ class CheckMembership extends Command
                  $client->membership = null;
                  $client->status = 0;
                  $client->save();
+
+                 $phone = PhoneNumber::where('user_id',$row->id);
+                 $delete_api = ApiHelper::unreg($phone->first()->phone_number);
+                 $phone->delete();
               }
 
               if($day_left == 5 || $day_left == 1 || $day_left == -1)

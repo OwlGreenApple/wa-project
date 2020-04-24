@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\PhoneNumber;
+use App\User;
 use Illuminate\Support\Facades\Auth;
 use Closure;
 
@@ -23,6 +24,7 @@ class AuthSettings
       if($phone->count() < 1){
         return redirect('settings');
       }
+
       return $next($request);
     }
 }

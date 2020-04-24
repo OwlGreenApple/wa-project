@@ -49,6 +49,15 @@ class SettingController extends Controller
 
       ($user->timezone == null)?$user_timezone = 'Asia/Jakarta':$user_timezone = $user->timezone;
 
+      if(is_null($phoneNumber))
+      {
+          $max_counter = 0;
+      }
+      else
+      {
+          $max_counter = number_format($phoneNumber->max_counter);
+      }
+
       return view('auth.settings',[
         'user'=>$user,
         'is_registered'=>$is_registered,
@@ -56,7 +65,7 @@ class SettingController extends Controller
         'expired'=>Date('d M Y',strtotime($expired)),
         'user_timezone'=>$user_timezone,
         'mod'=>$mod,
-        'quota'=>number_format($phoneNumber->max_counter)
+        'quota'=>$max_counter
       ]);
     }
 

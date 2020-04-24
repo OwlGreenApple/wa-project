@@ -101,12 +101,12 @@
 
         <div class="modal-header">
           <h5 class="modal-title text-center">
-            Please connect your phone at here :
+            <span id="auth_message"></span>
           </h5>
         </div>
 
         <div class="modal-body text-center">
-            <a href="{{url('settings')}}" class="btn btn-primary btn-lg">Settings</a>
+            <a href="{{url('pricing')}}" class="btn btn-primary btn-lg">Buy Now</a>
         </div>
 
       </div>
@@ -126,12 +126,33 @@
         url : '{{url("checkphone")}}',
         success : function(result){
 
-          if(result.status == 1){
+          if(result.status == 'phone'){
             $("#leadsettings").modal({
               show: true,
               keyboard: false,
               backdrop: 'static'
             });
+            $("#auth_message").html('Please connect your phone :');
+            $(".btn-primary").html('Settings')
+            $(".btn-primary").attr('href','{{ url("settings") }}')
+          }
+          else if(result.status == 'buy')
+          {
+            $("#leadsettings").modal({
+              show: true,
+              keyboard: false,
+              backdrop: 'static'
+            }); 
+            $("#auth_message").html('Please make order here :');
+          }
+          else if(result.status == 'exp')
+          {
+            $("#leadsettings").modal({
+              show: true,
+              keyboard: false,
+              backdrop: 'static'
+            }); 
+            $("#auth_message").html('Your membership has expired please buy more to continue');
           }
         }
       });
