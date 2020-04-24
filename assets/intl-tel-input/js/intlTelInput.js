@@ -375,7 +375,7 @@
                         //custom
                         this.customDialCode = this._createEl("div", {
                             "id": "iti_custom"
-                        }, this.selectedFlag);
+                        }, this.selectedFlag); 
 
                         // country dropdown: preferred countries, then divider, then all countries
                         this.countryList = this._createEl("ul", {
@@ -932,7 +932,7 @@
                     var data_code = "+".concat(this.selectedCountryData.dialCode);
                     this.selectedFlag.setAttribute("data-code", data_code);
                     document.getElementById('iti_custom').innerHTML=data_code;
-
+                   
                      // for hidden input
                     if(this.options.pageHiddenInput == 'register')
                     {

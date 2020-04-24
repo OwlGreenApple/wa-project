@@ -82,6 +82,7 @@ class HomeController extends Controller
 
         $users = User::find($id);
         $expired = Carbon::now()->addDays($users->day_left)->toDateString();
+        $phone = PhoneNumber::where('user_id',$id)->first();
 
         $data = array(
           'lists'=>$lists,
@@ -92,7 +93,8 @@ class HomeController extends Controller
           'total_sending_message'=>$total_sending_message,
           'membership'=>$users->membership,
           'expired'=>Date("d M Y",strtotime($expired)),
-          'status'=>$users->status
+          'status'=>$users->status,
+          'quota'=>number_format($phone->max_counter),
         );
 
         return view('home',$data);

@@ -126,7 +126,8 @@
             <div class="col-lg-3 plan">
               @if($user->status > 0)
                 <div>Current plan : <b>{{ $user->membership }}</b></div>
-                <div>Valid Until : {{ $expired }}</div>
+                <div>Valid Until {{ $expired }}</div>
+                <div>MESSAGES Quota {{ $quota }}</div>
                 <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
               @endif
             </div>
@@ -192,7 +193,7 @@
                 <label class="col-sm-4 col-form-label">Phone Number</label>
                 <label class="col-sm-1 col-form-label">:</label>
                 <div class="col-sm-7 text-left row">
-                  <input name="user_phone" type="text" class="form-control" value="{{$user->phone_number}}" />
+                  <input name="user_phone" type="text" class="form-control settings_phone" value="{{$user->phone_number}}" />
                   <span class="error user_phone"></span>
                 </div>
               </div>
@@ -202,10 +203,8 @@
                 <label class="col-sm-1 col-form-label">:</label>
                 <div class="col-sm-7 text-left row">
                    <select class="js-example-basic-single form-control" id="timezone"  name="timezone" required>
-                      @foreach($timezone as $time)
-                      
+                      @foreach($timezone as $time)    
                           <option value="{{$time['zone']}}"> ({{$time['GMT_difference']. ' ) '.$time['zone']}}</option>
-                       
                       @endforeach
                    </select>
                    <span class="error timezone"></span>

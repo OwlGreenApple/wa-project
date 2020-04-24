@@ -94,13 +94,15 @@ class RegisterController extends Controller
     {
         $generated_password = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'),0,10);
         $name = $data['username'];
+        $timezone = 'Asia/Jakarta';
 
         $user = User::create([
           'name' => $data['username'],
           'email' => $data['email'],
           'phone_number'=>$data['code_country'].$data['phone'],
           'password' => Hash::make($generated_password),
-          'gender'=>$data['gender']
+          'gender'=>$data['gender'],
+          'timezone'=>$timezone,
         ]);
            
         if(env('APP_ENV') <> 'local')

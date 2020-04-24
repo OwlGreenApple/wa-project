@@ -1129,7 +1129,7 @@ class ListController extends Controller
             else
             {
                 $msg['success'] = 1;
-                $msg['message'] = 'Nothing to import, your data on csv had available in our database';
+                $msg['message'] = 'Nothing to import, your data on import file had available in our database';
             }
             return response()->json($msg);
         }

@@ -12,6 +12,7 @@
     @if($status > 0)
       <div>Current plan : <b>{{ $membership }}</b></div>
       <div>Valid Until {{ $expired }}</div>
+      <div>MESSAGES Quota {{ $quota }}</div>
       <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
     @endif
   </div>

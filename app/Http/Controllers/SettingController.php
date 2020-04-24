@@ -55,7 +55,8 @@ class SettingController extends Controller
         'timezone'=>$this->showTimeZone(),
         'expired'=>Date('d M Y',strtotime($expired)),
         'user_timezone'=>$user_timezone,
-        'mod'=>$mod
+        'mod'=>$mod,
+        'quota'=>number_format($phoneNumber->max_counter)
       ]);
     }
 
