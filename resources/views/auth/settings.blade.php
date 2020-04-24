@@ -124,9 +124,11 @@
             </form>
 
             <div class="col-lg-3 plan">
-              <div>Current plan : <b>{{ $user->membership }}</b></div>
-              <div>Valid Until : ...</div>
-              <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
+              @if($user->status > 0)
+                <div>Current plan : <b>{{ $user->membership }}</b></div>
+                <div>Valid Until : {{ $expired }}</div>
+                <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
+              @endif
             </div>
         </div>
 
@@ -201,7 +203,9 @@
                 <div class="col-sm-7 text-left row">
                    <select class="js-example-basic-single form-control" id="timezone"  name="timezone" required>
                       @foreach($timezone as $time)
-                        <option value="{{$time['zone']}}"> ({{$time['GMT_difference']. ' ) '.$time['zone']}}</option>
+                      
+                          <option value="{{$time['zone']}}"> ({{$time['GMT_difference']. ' ) '.$time['zone']}}</option>
+                       
                       @endforeach
                    </select>
                    <span class="error timezone"></span>
@@ -337,7 +341,7 @@
     editPhoneNumber();
     openEditModal();
     settingUser();
-    selJs();
+    // selJs();
     //codeCountry();
     //putCallCode();
 
@@ -406,8 +410,7 @@
       $("#modal-start-connect").modal();
     });
 
-   /* var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    $("select[name='timezone'] > option[value='"+timezone+"']").prop("selected", true);*/
+    $("select[name='timezone'] > option[value='{{ $user_timezone }}']").prop("selected", true);
 
     function selJs()
     {

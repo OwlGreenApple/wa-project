@@ -92,7 +92,8 @@ class MemberShip extends Mailable
            $message .= '_Perpanjang waktu berlangganan anda HARI INI juga._'."\n"."\n";
            $message .= 'Ingat yah, hari ini terakhir,'."\n";
            $message .= '*PS : Kupon special hanya untukmu, silakan login terlebih dahulu'."\n";
-           $message .= '*PSS : ini kuponnya kalau lupa'."\n".' ► _'.$code_coupon.'_ nanti diketik saat check out'."\n"."\n";
+           $message .= '*PSS : ini kuponnya kalau lupa'."\n";
+           $message .= ' ► *'.$code_coupon.'* nanti diketik saat check out'."\n"."\n";;
            $message .= 'Salam sukses selalu,'."\n"."\n";
            $message .= '*Activrespon*';
 

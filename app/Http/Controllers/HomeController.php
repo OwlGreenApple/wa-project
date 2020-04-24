@@ -18,6 +18,7 @@ use App\ReminderCustomers;
 use App\BroadCast;
 use App\BroadCastCustomers;
 use DB;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -79,13 +80,19 @@ class HomeController extends Controller
         $total_message = $reminder + $broadcast;
         $total_sending_message = $reminder_sent + $broadcast_sent;
 
+        $users = User::find($id);
+        $expired = Carbon::now()->addDays($users->day_left)->toDateString();
+
         $data = array(
           'lists'=>$lists,
           'latest_lists'=>$latest,
           'campaign'=>$campaign,
           'contact'=>$contact,
           'total_message'=>$total_message,
-          'total_sending_message'=>$total_sending_message
+          'total_sending_message'=>$total_sending_message,
+          'membership'=>$users->membership,
+          'expired'=>Date("d M Y",strtotime($expired)),
+          'status'=>$users->status
         );
 
         return view('home',$data);

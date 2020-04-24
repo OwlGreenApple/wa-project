@@ -9,9 +9,11 @@
   </div>
 
   <div class="act-tel-dashboard-right">
-      <div>Current plan : <b>pro</b></div>
-      <div>Valid Until 31 Dec 2020</div>
-      <div><i>Buy More</i></div>
+    @if($status > 0)
+      <div>Current plan : <b>{{ $membership }}</b></div>
+      <div>Valid Until {{ $expired }}</div>
+      <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
+    @endif
   </div>
   <div class="clearfix"></div>
 </div>
