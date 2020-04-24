@@ -76,23 +76,28 @@ class CampaignController extends Controller
 			$key = $phoneNumber->filename;
 			
 
-			if($request->hasFile('imageWA')) {
-				//save ke temp local dulu baru di kirim 
-				$folder = $user->id."/send-test-message/";
-				// Storage::disk('public')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
-				// $url = asset("public/storage/".$folder."temp.jpg");
-				Storage::disk('s3')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
-				sleep(1);
-				$url = Storage::disk('s3')->url($folder."temp.jpg");
-				ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
-				$arr = array(
-					'url'=>$url,
-					'status'=>"success",
-				);
-				return response()->json($arr);
+			if ($user->email=="activomnicom@gmail.com") {
+				ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$request->message,"reminder");
 			}
 			else {
-				ApiHelper::send_message($request->phone,$request->message,$key);
+				if($request->hasFile('imageWA')) {
+					//save ke temp local dulu baru di kirim 
+					$folder = $user->id."/send-test-message/";
+					// Storage::disk('public')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
+					// $url = asset("public/storage/".$folder."temp.jpg");
+					Storage::disk('s3')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
+					sleep(1);
+					$url = Storage::disk('s3')->url($folder."temp.jpg");
+					ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
+					$arr = array(
+						'url'=>$url,
+						'status'=>"success",
+					);
+					return response()->json($arr);
+				}
+				else {
+					ApiHelper::send_message($request->phone,$request->message,$key);
+				}
 			}
 			// return "success";
 			$arr = array(
