@@ -212,6 +212,7 @@ class BroadCastController extends Controller
 
     public function updateBroadcast(Request $request)
     {
+        // dd($request->all());
         $user_id = Auth::id();
         $broadcast_id = $request->broadcast_id;
         $campaign_name = $request->campaign_name;
@@ -234,11 +235,11 @@ class BroadCastController extends Controller
         $broadcast->hour_time = $time_sending;
 				$broadcast->image = $folder.$filename;
         $broadcast->message = $message;
-        $campaign_id = $broadcast->campaign_id;
 
         try
         {
             $broadcast->save();
+            $campaign_id = $broadcast->campaign_id;
         }
         catch(Exception $e)
         {
