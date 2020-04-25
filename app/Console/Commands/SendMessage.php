@@ -218,7 +218,7 @@ class SendMessage extends Command
 
                 $reminder_customer_status = $col->rc_st;
                 $reminder_customers_id = $col->rcs_id;
-                $now = Carbon::parse(Carbon::now())->timezone($row->timezone);
+                $now = Carbon::parse(Carbon::now())->timezone($col->timezone);
 
                 $adding = Carbon::parse($adding_with_hour);         
                 $number++;
@@ -232,11 +232,11 @@ class SendMessage extends Command
                 {        
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
 
-										if ($row->useremail=="activomnicom@gmail.com") {
+										if ($col->useremail=="activomnicom@gmail.com") {
 											$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										}
 										else {
-											if ($row->image==""){
+											if ($col->image==""){
 												$send_message = ApiHelper::send_message($customer_phone,$message,$key);
 											}
 											else {

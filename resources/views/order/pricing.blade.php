@@ -25,17 +25,19 @@
   <div class="row h-100">
       <!--
       <div class="card card-block w-25 mx-auto">I am Groot.</div>
+			<i class="fa fa-check"></i>
       -->
       <h1 class="col-12">
         Choose Your Package
       </h1>
       <div class="col-1 ">
       </div>
-      <div class="col-6 row price-content">
-        <h3>
+      <div class="col-md-7 col-lg-7 col-sm-12 col-xs-12 price-content">
+				<div class="row">
+        <h3><br><br>
           How many messages you need to send per month ? 
         </h3>
-        <div class="col-12 div-range-slider">
+        <div class="col-10 div-range-slider">
           <input type="text" class="js-range-slider" name="my_range" value="" />
         </div>
         <div class="col-4 ml-0 mr-0 box-pricing p-2 " data-attr="1">
@@ -78,11 +80,13 @@
             </div>
           </div>            
         </div>            
-        
+        </div>
       </div>
+			<!--
       <div class="col-1 ">
       </div>
-      <div class="col-4 detail-description">
+			-->
+      <div class="col-md-4 col-lg-4 col-xs-12 col-sm-12 detail-description">
         <h3 id="description-contact-header">Best Seller 3 Months<br>15.000 Messages/month</h3>
         <button type="button" class="btn btn-lg btn-success col-12" id="choose-price">IDR 2.970.000</button>
         <ul>
@@ -131,11 +135,11 @@
             <span>Google form integration</span>
           </li>
           <li>
-            <i class="not-1000 fa fa-check" aria-hidden="true"></i> 
+            <i class="not-15000 fa fa-check" aria-hidden="true"></i> 
             <span>Event Reminder</span>
           </li>
           <li>
-            <i class="not-1000 fa fa-check" aria-hidden="true"></i> 
+            <i class="not-15000 fa fa-check" aria-hidden="true"></i> 
             <span>Appointment Reminder</span>
           </li>
         </ul>
@@ -281,17 +285,17 @@
       if (modePrice==3) {
         $("#choose-price").html($("#6months-price").html());
       }
-      
+
       messagePer30day = $(".js-range-slider").val();
-      if (messagePer30day == 1000) {
-        $(".not-1000").removeClass("fa-check");
-        $(".not-1000").addClass("fa-times");
+      if (messagePer30day == 15000) {
+        $(".not-15000").removeClass("fa-check");
+        $(".not-15000").addClass("fa-times");
       }
       else {
-        $(".not-1000").addClass("fa-check");
-        $(".not-1000").removeClass("fa-times");
+        $(".not-15000").addClass("fa-check");
+        $(".not-15000").removeClass("fa-times");
       }
-			
+
   }
   
   function slider_init(){
