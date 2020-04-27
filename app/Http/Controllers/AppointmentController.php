@@ -528,7 +528,13 @@ class AppointmentController extends Controller
         $userid = Auth::id();
 
         $list = UserList::find($list_id);
-        $customer = Customer::where([['user_id',$userid],['list_id','=',$list_id],['name','LIKE','%'.$src.'%']])->orWhere('telegram_number','LIKE','%'.$src.'%')->get();
+        // $customer = Customer::where([['user_id',$userid],['list_id','=',$list_id],['name','LIKE','%'.$src.'%']])->orWhere('telegram_number','LIKE','%'.$src.'%')->get();
+
+        $customer = Customer::where([['user_id',$userid],['list_id','=',$list_id]])->where(function($query) use($src){
+                $query->where('name','LIKE','%'.$src.'%')
+                ->orWhere('telegram_number','LIKE','%'.$src.'%')
+                ;
+              }) ->get();
 
         return view('appointment.customer_apt',['customer'=>$customer,'url'=>$list->name]);
     }
