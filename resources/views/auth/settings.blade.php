@@ -108,7 +108,7 @@
                       <span class="error code_country"></span>
                     </div>
                     -->
-                    <div class="col-sm-12">
+                    <div id="move_tab1" class="col-sm-12">
                       <input type="text" id="phone" name="phone_number" class="form-control" />
                       <span class="error code_country"></span>
                       <span class="error phone_number"></span>
@@ -192,7 +192,7 @@
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Phone Number</label>
                 <label class="col-sm-1 col-form-label">:</label>
-                <div class="col-sm-7 text-left row">
+                <div id="move_tab2" class="col-sm-7 text-left row">
                   <input name="user_phone" type="text" class="form-control settings_phone" value="{{$user->phone_number}}" />
                   <span class="error user_phone"></span>
                 </div>
@@ -327,9 +327,22 @@
           $(this).removeClass('inactive');
           
           $('.tabs-container').hide();
+          // moveInputPhone(t);
           $('#'+ t + 'C').fadeIn('slow');
         }
       });
+  }
+
+  function moveInputPhone(tab)
+  {
+      var phone_number = '{{$user->phone_number}}';
+      var move = $("#move_"+tab);
+      $(".iti").appendTo(move);
+      $("#phone").on('paste',function(){
+        
+      });
+     /* $(".iti__selected-flag").attr('title','Malaysia: +60');
+      $(".iti__selected-flag").attr('data-code','+60');*/
   }
   
   function loadPhoneNumber(){

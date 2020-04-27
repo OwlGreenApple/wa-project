@@ -5,6 +5,7 @@
  * Released under the MIT license
  * Date: 2017-09-06T17:05Z
  */
+
 window = ( typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {} );
 document = window.document || {};
 
@@ -125,6 +126,22 @@ document = window.document || {};
             document.selection.createRange().pasteHTML(html);
         }
     }
+
+    var filename = window.location.href;
+    var url = filename.split('/');
+    var path;
+
+    if(url[2] == 'localhost')
+    {
+        path = 'https://localhost/'+url[3]+'/assets';
+    }
+    else
+    {
+        path = 'https://'+url[2]+'/'+url[3]+'/assets';
+    }
+
+    // console.log(path);
+
     var getDefaultOptions = function () {
         return $.fn.emojioneArea && $.fn.emojioneArea.defaults ? $.fn.emojioneArea.defaults : {
             attributes: {
@@ -134,7 +151,7 @@ document = window.document || {};
                 autocorrect       : "off",
                 autocapitalize    : "off",
             },
-            mainPathFolder    : 'assets',
+            mainPathFolder    : path,
             placeholder       : null,
             emojiPlaceholder  : ":smiley:",
             container         : null,

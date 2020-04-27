@@ -126,7 +126,19 @@ document = window.document || {};
         }
     }
 
-    var url = window.location.hostname;
+    var filename = window.location.href;
+    var url = filename.split('/');
+    var path;
+
+    if(url[2] == 'localhost')
+    {
+        path = 'https://localhost/'+url[3]+'/assets';
+    }
+    else
+    {
+        path = 'https://'+url[2]+'/'+url[3]+'/assets';
+    }
+
     var getDefaultOptions = function () {
         return $.fn.emojioneArea && $.fn.emojioneArea.defaults ? $.fn.emojioneArea.defaults : {
             attributes: {
