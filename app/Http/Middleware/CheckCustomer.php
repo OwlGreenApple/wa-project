@@ -73,8 +73,20 @@ class CheckCustomer
             'name'=> ['required','min:4','max:190'],
             'email'=> ['required','email','max:190',new SubscriberEmail($id_list)],
             'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
-            'phone_number'=> ['required','min:6','max:18',new InternationalTel, new SubscriberPhone($id_list), new CheckWANumbers($req['code_country'],$id_list)],
          ];
+
+         if(isset($req['listedit']))
+         {
+            $rules = [
+              'phone_number'=> ['required','min:6','max:18',new InternationalTel],
+            ];
+         }
+         else
+         {
+            $rules = [
+              'phone_number'=> ['required','min:6','max:18',new InternationalTel, new CheckWANumbers($req['code_country'],$id_list)],
+            ];
+         }
 
         $validator = Validator::make($data,$rules);
 
@@ -86,7 +98,6 @@ class CheckCustomer
                 'phone'=>$error->first('phone_number'),
                 'code_country'=>$error->first('code_country'),
             );
-            
             return response()->json($data);
         }
 

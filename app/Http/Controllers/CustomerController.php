@@ -17,6 +17,7 @@ use App\PhoneNumber;
 use App\Countries;
 use App\Console\Commands\SendWA as SendMessage;
 use App\Helpers\ApiHelper;
+use App\Rules\SubscriberPhone;
 
 class CustomerController extends Controller
 {
@@ -122,20 +123,57 @@ class CustomerController extends Controller
               // $customer->status = 0;
             // }
             // $customer->save();
+
+            if($request->overwrite == null && $request->listedit == 1)
+            {
+                $check_phone = new SubscriberPhone($list->id);
+                if($check_phone == true)
+                {
+                  return response()->json(['duplicate'=>1]);
+                }
+            }
+
 						$status = 1;
             if ($list->is_secure) {
               $status = 0;
             }
-            $customer = Customer::create([
-                     'user_id'  => $list->user_id,
-                     'list_id'  => $list->id,
-                     'name'     => $request->subscribername,
-                     'telegram_number'=>$phone_number,
-                     'email'=> $request->email,
-                     'status'=> $status,
-            ]);
-            $customer_id = $customer->id;
-            $customer_join = $customer->created_at;
+
+            if($request->overwrite == 1)
+            {
+              $customer_phone = Customer::where([['list_id',$list->id],['telegram_number',$phone_number]]);
+
+              $update = array(
+                'name' => $request->subscribername,
+                'email'=> $request->email,
+                'status'=> 1
+              );
+
+              try
+              {
+                $customer_phone->update($update);
+                $data['success'] = true;
+                $data['message'] = 'Success, your contact has been overwritten';
+              }
+              catch(Exception $e)
+              {
+                $data['success'] = false;
+                $data['message'] = 'Sorry, our system is too busy';
+              } 
+              return response()->json($data);
+            }
+            else
+            {
+              $customer = Customer::create([
+                 'user_id'  => $list->user_id,
+                 'list_id'  => $list->id,
+                 'name'     => $request->subscribername,
+                 'telegram_number'=>$phone_number,
+                 'email'=> $request->email,
+                 'status'=> $status,
+              ]);
+              $customer_id = $customer->id;
+              $customer_join = $customer->created_at;
+            }
 
             /*
             Kalo is_secure maka akan dikirim langsung message wa nya 
@@ -176,7 +214,7 @@ class CustomerController extends Controller
             } 
             else {
               $data['success'] = false;
-              $data['message'] = 'Sorry, our system is busy';
+              $data['message'] = 'Sorry, our system is too busy';
             }
             return response()->json($data);
         }

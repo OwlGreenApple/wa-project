@@ -425,14 +425,33 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
-          There is available phone on your xlsx file,<br/>
-          Do you want to overwrite?
+            <span class="duplicated"></span>
         </h5>
       </div>
       <div class="modal-body">
          <form id="data_serialize"></form>
          <button class="btn btn-primary overwrite" data-overwrite="1">Overwrite</button>
          <button class="btn btn-primary overwrite" data-overwrite="0">Skip</button>
+      </div>
+    </div>
+      
+  </div>
+</div>
+
+<!-- Modal Import phone available -->
+<div class="modal fade" id="duplicate_phone_contact" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+            <span class="duplicated"></span>
+        </h5>
+      </div>
+      <div class="modal-body">
+         <button class="btn btn-primary overwrite_contact" data-overwrite="1">Overwrite</button>
+         <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
       </div>
     </div>
       
@@ -494,6 +513,7 @@
     excelImportCheck();
     cloneFile();
     overWriteFile();
+    checkContact();
     addContact();
     //column -- edit
     displayCustomer(); 
@@ -865,6 +885,8 @@
               if(result.duplicate == 1)
               {   
                   $("#btn_close_import").trigger("click");
+                  $(".duplicated").html("There is available phone on your xlsx file,<br/>Do you want to overwrite?");
+        
                   $("#duplicate_phone").modal({
                       backdrop: 'static', 
                       keyboard: false
@@ -873,7 +895,6 @@
               }
               else
               {
-                  // alert('aaaa');
                   excelImport(data);
               }
             },
@@ -963,14 +984,37 @@
       });/* end ajax */
   }
 
-  function addContact(){
+  function checkContact(){
     $(".add-contact").submit(function(e){
         e.preventDefault();
         var code_country = $(".iti__selected-flag").attr('data-code');
         var data = $(this).serializeArray();
-        data.push({name:'code_country', value:code_country});
+        data.push(
+          {name:'code_country', value:code_country},
+          {name:'listedit',value:1}
+        );
+        customerAdding(data);
+      });
+  }
 
-        $.ajaxSetup({
+  function addContact()
+  {
+    $(".overwrite_contact").click(function(){
+      var data_overwrite = $(this).attr('data-overwrite');
+      var code_country = $(".iti__selected-flag").attr('data-code');
+        var data = $('.add-contact').serializeArray();
+        data.push(
+          {name:'code_country', value:code_country},
+          {name:'listedit',value:1},
+          {name:'overwrite',value:1},
+        );
+        customerAdding(data);
+    });
+  }
+
+  function customerAdding(data)
+  {
+      $.ajaxSetup({
           headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           }
@@ -988,8 +1032,21 @@
               $('#loader').hide();
               $('.div-loading').removeClass('background-load');
 
+              if(result.duplicate == 1)
+              {   
+                  $("#btn_close_import").trigger("click");
+                  $(".duplicated").html("This phone is available,<br/>Do you want to overwrite?");
+        
+                  $("#duplicate_phone_contact").modal({
+                      backdrop: 'static', 
+                      keyboard: false
+                  });
+                  // console.log(data);
+              }
+
               if(result.success == true){
-                $(".main").html('<div class="alert alert-success text-center">'+result.message+'</div>')
+                  $("#duplicate_phone_contact").modal('hide');
+                  $(".main").html('<div class="alert alert-success text-center">'+result.message+'</div>')
                   clearField();
                   $(".error").hide();
                   displayCustomer();
@@ -1017,7 +1074,6 @@
             }
         });
         /*end ajax*/
-      });
   }
 
   function clearField()

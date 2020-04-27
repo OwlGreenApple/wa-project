@@ -60,6 +60,6 @@ class CheckWANumbers implements Rule
      */
     public function message()
     {
-        return 'Sorry, this number has registered already.';
+        return 'Sorry, this number had registered already.';
     }
 }
