@@ -1794,7 +1794,7 @@
           $.ajax({
             type : 'GET',
             url : '{{ url("list-delete-customer") }}',
-            data : {id_customer : id},
+            data : {id_customer : id, list_id : {!! $data['listid'] !!}},
             dataType : 'json',
             beforeSend: function()
             {

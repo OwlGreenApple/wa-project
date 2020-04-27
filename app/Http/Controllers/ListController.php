@@ -20,6 +20,7 @@ use App\Customer;
 use App\Sender;
 use App\Additional;
 use App\Reminder;
+use App\ReminderCustomers;
 use App\PhoneNumber;
 use Carbon\Carbon;
 use DB;
@@ -474,7 +475,7 @@ class ListController extends Controller
 
         $lists = Userlist::where('label','like','%'.$listname.'%')->get();
 
-        return view('list.list-table',['lists'=>$lists,'paginate'=>null]);
+        return view('list.list-table',['lists'=>$lists,'paginate'=>null,'listcontroller'=> new ListController]);
     }
 
 
@@ -943,6 +944,7 @@ class ListController extends Controller
     {
         $userid = Auth::id();
         $id_customer = $request->id_customer;
+        $list_id = $request->list_id;
 
         if($id_customer == null)
         {
@@ -952,6 +954,17 @@ class ListController extends Controller
         try
         {
           Customer::where([['id',$id_customer],['user_id',$userid]])->delete();
+        }
+        catch(Exception $e)
+        {
+          $data['success'] = 0;
+          $data['message'] = 'Failed to delete your customer, please try again later';
+          return response()->json($data);
+        }
+
+        try
+        {
+          ReminderCustomers::where([['list_id',$list_id],['customer_id',$id_customer]])->delete();
           $data['success'] = 1;
           $data['message'] = 'Your customer deleted successfully';
         }
@@ -960,6 +973,7 @@ class ListController extends Controller
           $data['success'] = 0;
           $data['message'] = 'Failed to delete your customer, please try again later';
         }
+
         return response()->json($data);
     }
 

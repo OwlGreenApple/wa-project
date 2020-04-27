@@ -172,17 +172,17 @@ class SendMessage extends Command
     public function campaignAutoResponder()
     {
         // Reminder 
-        $current_time = Carbon::now();
+        // $current_time = Carbon::now();
         $reminder = Reminder::where([
             ['reminder_customers.status','=',0],
             ['reminders.is_event','=',0],
             ['reminders.status','=',1],
             ['customers.status','=',1],
-            ['customers.created_at','<=',$current_time->toDateTimeString()],
+            // ['customers.created_at','<=',$current_time->toDateTimeString()],
             ])
-            ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
+            // ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
             ->join('users','reminders.user_id','=','users.id')
-            ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
+            ->rightJoin('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
             ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone','users.email as useremail')
             ->get();
@@ -193,7 +193,7 @@ class SendMessage extends Command
         {
             foreach($reminder as $col) 
             {
-                $phoneNumber = PhoneNumber::where('user_id','=',$col->userid)->select('counter','id','filename','max_counter')->first();
+                $phoneNumber = PhoneNumber::where('user_id','=',$col->userid)->first();
             
                 if(!is_null($phoneNumber)){
                   $counter = $phoneNumber->counter;
@@ -218,8 +218,7 @@ class SendMessage extends Command
 
                 $reminder_customer_status = $col->rc_st;
                 $reminder_customers_id = $col->rcs_id;
-                $now = Carbon::parse(Carbon::now())->timezone($col->timezone);
-
+                $now = Carbon::now()->timezone($col->timezone);
                 $adding = Carbon::parse($adding_with_hour);         
                 $number++;
 
@@ -243,6 +242,7 @@ class SendMessage extends Command
 												$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
 											}
 										}
+
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
                     $status = 'Sent';
@@ -308,7 +308,7 @@ class SendMessage extends Command
                 $days = (int)$row->days;
                 $hour = $row->hour_time; //hour according user set it to sending
 
-                $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->select('counter','id','filename')->first();
+                $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->first();
                 $customer_phone = $row->telegram_number;
                 $key = $phoneNumber->filename;
 
@@ -334,7 +334,7 @@ class SendMessage extends Command
                 }
 
                 $time_sending = $date->toDateString().' '.$hour;
-                $now = Carbon::parse(Carbon::now())->timezone($row->timezone);
+                $now = Carbon::now()->timezone($row->timezone);
                 $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
                 // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
 
@@ -422,7 +422,7 @@ class SendMessage extends Command
                 $days = (int)$row->days;
                 $hour = $row->hour_time; //hour according user set it to sending
 
-                $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->select('counter','id','filename')->first();
+                $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->first();
                 $customer_phone = $row->telegram_number;
                 $customer_message = $row->message;
                 $key = $phoneNumber->filename;
@@ -453,7 +453,7 @@ class SendMessage extends Command
                 }
 
                 $time_sending = $date->toDateString().' '.$hour;
-                $now = Carbon::parse(Carbon::now())->timezone($row->timezone);
+                $now = Carbon::now()->timezone($row->timezone);
                 $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
                 // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
 

@@ -17,7 +17,7 @@ use App\PhoneNumber;
 use App\Countries;
 use App\Console\Commands\SendWA as SendMessage;
 use App\Helpers\ApiHelper;
-use App\Rules\SubscriberPhone;
+use App\Rules\CheckWANumbers;
 
 class CustomerController extends Controller
 {
@@ -126,7 +126,7 @@ class CustomerController extends Controller
 
             if($request->overwrite == null && $request->listedit == 1)
             {
-                $check_phone = new SubscriberPhone($list->id);
+                $check_phone = $this->checkDuplicateSubscriberPhone($phone_number,$list->id);
                 if($check_phone == true)
                 {
                   return response()->json(['duplicate'=>1]);
@@ -217,6 +217,23 @@ class CustomerController extends Controller
               $data['message'] = 'Sorry, our system is too busy';
             }
             return response()->json($data);
+        }
+    }
+
+    private function checkDuplicateSubscriberPhone($wa_number,$list_id)
+    {
+        $customer = Customer::where([
+          ['telegram_number','=',$wa_number],
+          ['list_id','=',$list_id]
+        ])->first();
+
+        if(is_null($customer))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 
