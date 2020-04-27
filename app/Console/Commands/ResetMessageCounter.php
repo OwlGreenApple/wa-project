@@ -51,15 +51,15 @@ class ResetMessageCounter extends Command
 								$type_package =0;
 
 								if(substr($user->membership,0,5) === "basic"){
-									$additional_day += 30;
+									// $additional_day = 30;
 									$type_package = explode("basic", $user->membership)[0];
 								}
 								if(substr($user->membership,0,10) === "bestseller"){
-									$additional_day += 90;
+									// $additional_day = 90;
 									$type_package = explode("bestseller", $user->membership)[0];
 								}
 								if(substr($user->membership,0,10) === "supervalue"){
-									$additional_day += 180;
+									// $additional_day = 180;
 									$type_package = explode("supervalue", $user->membership)[0];
 								}
 
