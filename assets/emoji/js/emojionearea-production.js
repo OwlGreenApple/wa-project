@@ -140,7 +140,7 @@ document = window.document || {};
         path = 'https://'+url[2]+'/'+url[3]+'/assets';
     }
 
-    // console.log(path);
+    console.log(path);
 
     var getDefaultOptions = function () {
         return $.fn.emojioneArea && $.fn.emojioneArea.defaults ? $.fn.emojioneArea.defaults : {
