@@ -86,9 +86,11 @@ class SettingController extends Controller
     public function settingsUser(Request $request)
     {
         $id = Auth::id();
+        $phone_number = $request->code_country.$request->phone_number;
         $data = array(
             'name'=> $request->user_name,
-            'phone_number'=>$request->user_phone,
+            'phone_number'=>$phone_number,
+            'code_country'=>$request->data_country,
             'timezone'=>$request->timezone,
         );
 

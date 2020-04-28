@@ -69,6 +69,7 @@
                               <strong>{{ $message }}</strong>
                           </span>
                       @enderror
+                     <input name="data_country" type="hidden" /> 
                     </div>
 
                     <div class="form-group">
@@ -118,13 +119,28 @@
     </div>
 </div>
 
-<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 <script>
   $(document).ready(function(){
       agreement();
       checkCheckBox();
       fixLayoutInputPhoneCountry();
+      getDataFromCountry();
+      countryChange();
   });
+
+  function getDataFromCountry()
+  {
+     var data_country = $(".iti__selected-flag").attr('data-country');
+     $("input[name='data_country']").val(data_country);
+  }
+
+  function countryChange()
+  {
+     jQuery("#phone").on('countrychange', function(e, countryData){
+        var data_country = $(".iti__selected-flag").attr('data-country');
+        $("input[name='data_country']").val(data_country);
+    })
+  } 
 
   function fixLayoutInputPhoneCountry()
   {
@@ -156,4 +172,5 @@
     });
   }
 </script>
+<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 @endsection

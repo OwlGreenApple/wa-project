@@ -13,5 +13,6 @@ class Customer extends Model
 		status : 
 		0 = inactive / banned
 		1 = active
+    telegram_number = unique
     */
 }
