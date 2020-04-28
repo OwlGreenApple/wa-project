@@ -219,7 +219,7 @@
           </div>
 
           <div class="form-group mt-3">
-            <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text">@if(session('autoreply')){{ session('autoreply') }}@endif</textarea>
+            <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text"><?php echo $data['auto_reply_message'];?></textarea>
           </div>
           <div class="text-right">
             <button class="btn btn-custom" id="btn-save-autoreply">Save</button>
@@ -1836,8 +1836,8 @@
 		<?php if ($data['is_secure']) { ?> 
 			$("#secureRadio").trigger("click");
 		<?php } ?> 
-		tempMessage = "<?php echo $data['auto_reply_message'];?>";
-		$("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempMessage);
+		// tempMessage = "";
+		// $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempMessage);
 	}
   /*
   function radioCheck(){
