@@ -157,6 +157,11 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('google-form')) ? 'active' : '' }}" href="{{ url('google-form') }}">Google Form</a>
                             </li>
+														@if(Auth()->user()->is_admin)
+															<li class="nav-item">
+                                <a class="nav-link {{ (request()->is('list-user')) ? 'active' : '' }}" href="{{ url('list-user') }}">Admin Page</a>
+															</li>
+														@endif
                         @endif 
                     </ul>
                     <ul class="navbar-nav mr-auto"><!-- separator --></ul>
@@ -176,6 +181,7 @@
                                     <a href="{{url('pricing')}}" class="nav-link {{ (request()->is('pricing')) ? 'active' : '' }}">Upgrade</a> 
                                     
 																		<a href="{{url('order')}}" class="nav-link {{ (request()->is('order')) ? 'active' : '' }}">Order</a>
+																		
                                     <a class="nav-link" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
