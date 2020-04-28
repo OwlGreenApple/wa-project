@@ -1836,7 +1836,8 @@
 		<?php if ($data['is_secure']) { ?> 
 			$("#secureRadio").trigger("click");
 		<?php } ?> 
-		$("#divInput-description-post").emojioneArea()[0].emojioneArea.setText("<?php echo $data['auto_reply_message'];?>");
+		tempMessage = "<?php echo $data['auto_reply_message'];?>";
+		$("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempMessage);
 	}
   /*
   function radioCheck(){
