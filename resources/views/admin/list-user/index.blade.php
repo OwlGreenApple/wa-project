@@ -181,7 +181,7 @@
               Membership
             </th>
             <th>
-              Valid Until
+              Day left
             </th>
             <th>
               Created
@@ -300,16 +300,6 @@
                 <option value="elite">Elite</option>
                 <option value="super">Super</option>
               </select>
-            </div>
-          </div>
-
-          <div class="form-group row">
-            <label class="col-md-3 col-12">
-              <b>Valid Until</b> 
-            </label>
-            <div class="col-md-9 col-12">
-              <input type="text" class="form-control formatted-date" name="valid_until" id="valid_until">
-              <input type="checkbox" name="unlimited" id="unlimited"> Unlimited
             </div>
           </div>
 
@@ -463,15 +453,6 @@
     $('#is_admin').val($(this).attr('data-is_admin'));
     $('#membership').val($(this).attr('data-membership'));
 
-    if($(this).attr('data-valid_until')==null || $(this).attr('data-valid_until')==''){
-      $('#valid_until').prop('disabled', true);
-      $('#valid_until').val('');
-      $('#unlimited').prop('checked', true);
-    } else {
-      $('#valid_until').prop('disabled', false);
-      $('#valid_until').val($(this).attr('data-valid_until'));
-      $('#unlimited').prop('checked', false);
-    }
     
     $('.password-field').hide();
     
@@ -489,8 +470,6 @@
     $('#username').val('');
     $('#is_admin').val('Admin');
     $('#membership').val('Free');
-    $('#valid_until').val('');
-    $('#valid_until').prop('disabled', false);
     $('.password-field').show();
     $('#password').val('');
     $('#password-confirm').val('');
@@ -508,14 +487,6 @@
     }
   });
 
-  $( "body" ).on( "change", "#unlimited", function() {
-    if(this.checked) {
-      $('#valid_until').val('');
-      $('#valid_until').prop('disabled', true);
-    } else {
-      $('#valid_until').prop('disabled', false);
-    }
-  });
 
   $( "body" ).on( "click", ".btn-log", function() {
     $('#idlog').val($(this).attr('data-id'));

@@ -11,5 +11,6 @@ class BroadCastCustomers extends Model
 		0 = pending
 		1 = Sent
 		2 = Read 
+		5 = queued -> supaya ga dieksekusi dobel2
     */
 }

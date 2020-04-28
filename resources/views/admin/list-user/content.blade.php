@@ -20,11 +20,7 @@
       {{$user->membership}}
     </td>
     <td data-label="Valid_until">
-      @if($user->valid_until==null)
-        Unlimited
-      @else 
-        {{$user->valid_until}}
-      @endif
+      {{$user->day_left}}
     </td>
     <td data-label="Created">
       {{$user->created_at}}
