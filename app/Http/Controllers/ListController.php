@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-//require $_SERVER['DOCUMENT_ROOT'].'/waku/assets/ckfinder/core/connector/php/vendor/autoload.php';
-//require $_SERVER['DOCUMENT_ROOT'].'/waku/app/ckfinder/core/connector/php/vendor/CKSource/CKFinder/CKFinder.php';
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -740,11 +737,23 @@ class ListController extends Controller
         } 
 
         $userid = Auth::id();
-        $list = UserList::where('id',$listid)->first();
-
+        $list = UserList::
+								where('id',$listid)
+								->where('user_id',$userid)
+								->first();
         if(is_null($list)){
             return redirect('lists');
         } 
+				
+				$auto_reply_message = "";
+				$reminder = Reminder::where("list_id",$listid)
+										->where("campaign_id",0)
+										->where("days",0)
+										->where("user_id",$userid)
+										->first();
+				if (!is_null($reminder)) {
+					$auto_reply_message = $reminder->message;
+				}
 
         $data = array(
             'list_label'=>$list->label,
@@ -754,7 +763,9 @@ class ListController extends Controller
             'label_email'=>$list->label_email,
             'content'=> $list->content,
             'pixel'=>$list->pixel_text,
-            'listid'=>$listid
+            'listid'=>$listid,
+            'is_secure'=>$list->is_secure,
+            'auto_reply_message'=>$auto_reply_message,
         );
 
         $url = env('APP_URL').$list->name; 

@@ -118,6 +118,15 @@ class SendMessage extends Command
                     {
                         $campaign = 'broadcast';
                         $id_campaign = $row->bccsid;
+
+                        //status
+												$broadcastCustomer = BroadCastCustomers::find($row->bccsid);
+												if ($broadcastCustomer->status==5) {
+													continue;
+												}
+												$broadcastCustomer->status = 5;
+												$broadcastCustomer->save();
+
                         $status = 'Sent';
                         $number ++;
 
@@ -149,10 +158,8 @@ class SendMessage extends Command
                         $phoneNumber->save();
                         
                         $broadcastCustomer = BroadCastCustomers::find($row->bccsid);
-                        if (!is_null($broadcastCustomer)){
-                          $broadcastCustomer->status = $status;
-                          $broadcastCustomer->save();
-                        }
+												$broadcastCustomer->status = $status;
+												$broadcastCustomer->save();
                     }
                     else {
                         $campaign = 'broadcast';
@@ -218,6 +225,15 @@ class SendMessage extends Command
 
                 $reminder_customer_status = $col->rc_st;
                 $reminder_customers_id = $col->rcs_id;
+								
+								//status queued 
+								$remindercustomer_update = ReminderCustomers::find($reminder_customers_id);
+								if ($remindercustomer_update->status==5) {
+									continue;
+								}
+								$remindercustomer_update->status = 5;
+								$remindercustomer_update->save();
+								
                 $now = Carbon::now()->timezone($col->timezone);
                 $adding = Carbon::parse($adding_with_hour);         
                 $number++;
@@ -343,6 +359,15 @@ class SendMessage extends Command
                   $number++;
                   $campaign = 'Event';
                   $id_campaign = $row->rcs_id;
+
+                  //status queued
+									$remindercustomer_update = ReminderCustomers::find($id_campaign);
+									if ($remindercustomer_update->status==5) {
+										continue;
+									}
+                  $remindercustomer_update->status = 5;
+                  $remindercustomer_update->save();
+
                   $status = 'Sent';
                   $id_reminder = $row->id_reminder;
                   
@@ -350,6 +375,9 @@ class SendMessage extends Command
 
 									if ($row->useremail=="activomnicom@gmail.com") {
 										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
+										if ($send_message) {
+											$send_message="success";
+										}
 									}
 									else {
 										if ($row->image==""){
@@ -462,6 +490,15 @@ class SendMessage extends Command
                   $number++;
                   $campaign = 'Event';
                   $id_campaign = $row->rcs_id;
+
+                  //queued status
+									$remindercustomer_update = ReminderCustomers::find($id_campaign);
+									if ($remindercustomer_update->status==5) {
+										continue;
+									}
+                  $remindercustomer_update->status = 5;
+                  $remindercustomer_update->save();
+
                   $status = 'Sent';
 
                   $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt);
@@ -469,6 +506,9 @@ class SendMessage extends Command
      
 									if ($row->useremail=="activomnicom@gmail.com") {
 										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
+										if ($send_message) {
+											$send_message="success";
+										}
 									}
 									else {
 										if ($row->image==""){
@@ -554,7 +594,7 @@ class SendMessage extends Command
 
     public function getStatus($send_message)
     {
-      if($send_message == 'Success')
+      if(strtolower($send_message) == 'Success')
       {
           $status = 1;
       }

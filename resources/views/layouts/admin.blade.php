@@ -96,6 +96,9 @@
                             @endif
                         @else
                             <li class="nav-item">
+                              <a class="nav-link {{ (request()->is('home')) ? 'active' : '' }}" href="{{ url('home') }}">User Page</a>
+                            </li> 
+                            <li class="nav-item">
                               <a class="nav-link {{ (request()->is('list-user')) ? 'active' : '' }}" href="{{ url('list-user') }}">User</a>
                             </li> 
                             <li class="nav-item">
