@@ -737,10 +737,7 @@ class ListController extends Controller
         } 
 
         $userid = Auth::id();
-        $list = UserList::
-								where('id',$listid)
-								->where('user_id',$userid)
-								->first();
+        $list = UserList::where([['id',$listid],['user_id',$userid]])->first();
         if(is_null($list)){
             return redirect('lists');
         } 
