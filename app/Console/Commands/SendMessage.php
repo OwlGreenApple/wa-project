@@ -121,6 +121,9 @@ class SendMessage extends Command
 
                         //status
 												$broadcastCustomer = BroadCastCustomers::find($row->bccsid);
+												if ($broadcastCustomer->status==5) {
+													continue;
+												}
 												$broadcastCustomer->status = 5;
 												$broadcastCustomer->save();
 
@@ -225,6 +228,9 @@ class SendMessage extends Command
 								
 								//status queued 
 								$remindercustomer_update = ReminderCustomers::find($reminder_customers_id);
+								if ($remindercustomer_update->status==5) {
+									continue;
+								}
 								$remindercustomer_update->status = 5;
 								$remindercustomer_update->save();
 								
@@ -356,6 +362,9 @@ class SendMessage extends Command
 
                   //status queued
 									$remindercustomer_update = ReminderCustomers::find($id_campaign);
+									if ($remindercustomer_update->status==5) {
+										continue;
+									}
                   $remindercustomer_update->status = 5;
                   $remindercustomer_update->save();
 
@@ -366,6 +375,9 @@ class SendMessage extends Command
 
 									if ($row->useremail=="activomnicom@gmail.com") {
 										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
+										if ($send_message) {
+											$send_message="success";
+										}
 									}
 									else {
 										if ($row->image==""){
@@ -481,6 +493,9 @@ class SendMessage extends Command
 
                   //queued status
 									$remindercustomer_update = ReminderCustomers::find($id_campaign);
+									if ($remindercustomer_update->status==5) {
+										continue;
+									}
                   $remindercustomer_update->status = 5;
                   $remindercustomer_update->save();
 
@@ -491,6 +506,9 @@ class SendMessage extends Command
      
 									if ($row->useremail=="activomnicom@gmail.com") {
 										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
+										if ($send_message) {
+											$send_message="success";
+										}
 									}
 									else {
 										if ($row->image==""){
@@ -576,7 +594,7 @@ class SendMessage extends Command
 
     public function getStatus($send_message)
     {
-      if($send_message == 'Success')
+      if(strtolower($send_message) == 'Success')
       {
           $status = 1;
       }

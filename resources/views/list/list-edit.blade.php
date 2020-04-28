@@ -541,6 +541,7 @@
 		autoReplyButton();
 		saveAutoReply();
     fixWidthPhoneInput();
+		initAutoReply();
   });
 
   function fixWidthPhoneInput()
@@ -1830,6 +1831,13 @@
       });
   }
 
+  function initAutoReply()
+  {
+		<?php if ($data['is_secure']) { ?> 
+			$("#secureRadio").trigger("click");
+		<?php } ?> 
+		$("#divInput-description-post").emojioneArea()[0].emojioneArea.setText("<?php echo $data['auto_reply_message'];?>");
+	}
   /*
   function radioCheck(){
       $("#tab2, #tab-contact").click(function(){
