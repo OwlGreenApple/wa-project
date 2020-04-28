@@ -4,8 +4,10 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use App\Rules\OldPassword;
-use App\Rules\TelegramNumber;
+use App\Rules\InternationalTel;
+use App\Rules\CheckUserPhone;
 
 class CheckSettings
 {
@@ -18,9 +20,10 @@ class CheckSettings
      */
     public function handle($request, Closure $next)
     {
+        $userid = Auth::id();
         $rules = [
             'user_name' => ['required','string','max:255'],
-            'user_phone' => ['required','max:18',new TelegramNumber],
+            'phone_number' => ['required','max:18','min:6','max:18',new InternationalTel,new CheckUserPhone($request->code_country,$userid)],
         ];
 
         if(!empty($request->oldpass) && !empty($request->confpass) || !empty($request->newpass))
@@ -41,7 +44,7 @@ class CheckSettings
             $error = array(
               'status'=>'error',
               'user_name'=>$err->first('user_name'),
-              'user_phone'=>$err->first('user_phone'),
+              'user_phone'=>$err->first('phone_number'),
               'oldpass'=>$err->first('oldpass'),
               'confpass'=>$err->first('confpass'),
               'newpass'=>$err->first('newpass'),

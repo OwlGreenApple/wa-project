@@ -193,7 +193,7 @@
                 <label class="col-sm-4 col-form-label">Phone Number</label>
                 <label class="col-sm-1 col-form-label">:</label>
                 <div id="move_tab2" class="col-sm-7 text-left row">
-                  <input name="user_phone" type="text" class="form-control settings_phone" value="{{$user->phone_number}}" />
+                <!--   <input name="user_phone" type="text" class="form-control settings_phone" value="{{$user->phone_number}}" /> -->
                   <span class="error user_phone"></span>
                 </div>
               </div>
@@ -310,8 +310,52 @@
   </div>
   <!-- End Modal -->
 
-<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
+<!-- <script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script> -->
 <script type="text/javascript">
+
+  var code_country = '{{ $user->code_country }}';
+
+  if(code_country == null)
+  {
+      code_country = 'us';
+  }
+
+  function intialCountry()
+  {
+      var filename = window.location.href;
+      var url = filename.split('/');
+      var path;
+
+      if(url[2] == 'localhost')
+      {
+          path = 'https://localhost/'+url[3]+'/assets';
+      }
+      else
+      {
+          path = 'https://'+url[2]+'/'+url[3]+'/assets';
+      }
+
+      var input = document.querySelector("#phone");
+      window.intlTelInput(input, {
+        customPlaceholder : function(selectedCountryPlaceholder, selectedCountryData){
+           if(selectedCountryPlaceholder.substring(0,1) == '(')
+           {
+              return selectedCountryPlaceholder.replace(/\-+/g,'');
+           }
+           else
+           {
+              var placeholder = selectedCountryPlaceholder.replace(/^0| +|\-+/g,'');
+              return placeholder;
+           }
+        },
+        dropdownContainer: document.body,
+        pageHiddenInput : url[4],
+        initialCountry: code_country,  
+        onlyCountries: ['us', 'gb', 'sg', 'au', 'id','my'],
+        placeholderNumberType: "MOBILE",
+        utilsScript: path+"/intl-tel-input/js/utils.js",
+        });
+  }
 
   // Jquery Tabs
   function tabs() {    
@@ -327,7 +371,7 @@
           $(this).removeClass('inactive');
           
           $('.tabs-container').hide();
-          // moveInputPhone(t);
+          moveInputPhone(t);
           $('#'+ t + 'C').fadeIn('slow');
         }
       });
@@ -335,14 +379,21 @@
 
   function moveInputPhone(tab)
   {
+      var data_code = $(".iti__selected-flag").attr('data-code');
       var phone_number = '{{$user->phone_number}}';
       var move = $("#move_"+tab);
       $(".iti").appendTo(move);
-      $("#phone").on('paste',function(){
-        
-      });
-     /* $(".iti__selected-flag").attr('title','Malaysia: +60');
-      $(".iti__selected-flag").attr('data-code','+60');*/
+
+      if(tab == 'tab1')
+      {
+        $("#phone").val('');
+      }
+      else
+      {
+        var regx = new RegExp("^\\"+data_code,"g");
+        phone_number = phone_number.replace(regx,'');
+        $("#phone").val(phone_number);
+      }
   }
   
   function loadPhoneNumber(){
@@ -376,10 +427,9 @@
       var mod = "{{ $mod }}";
       if(mod == 1)
       {
-          $('#tab1').addClass('inactive');
-          $('.tabs-container').hide();
-          $('#tab2').removeClass('inactive');
-          $('#tab2C').fadeIn('slow');
+        setTimeout(function(){
+          $("#tab2").trigger('click');
+        },100);
       }
   }
 
@@ -418,6 +468,7 @@
     openEditModal();
     settingUser();
     triggerButtonMod();
+    intialCountry();
     // selJs();
     //codeCountry();
     //putCallCode();
@@ -800,7 +851,10 @@
     $(".message-settings").hide();
     $("#user_contact").submit(function(e){
       e.preventDefault();
-      var data = $(this).serialize();
+      var initial_country = $(".iti__selected-flag").attr('data-country');
+      var code_country = $(".iti__selected-flag").attr('data-code');
+      var data = $(this).serializeArray();
+      data.push({name : 'data_country', value : initial_country},{name : 'code_country', value : code_country})
 
       $.ajax({
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },

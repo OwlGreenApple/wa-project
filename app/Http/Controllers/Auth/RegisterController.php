@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use App\Rules\CheckPlusCode;
 use App\Rules\CheckCallCode;
 use App\Rules\InternationalTel;
-use App\Rules\AvailablePhoneNumber;
+use App\Rules\CheckUserPhone;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RegisteredEmail;
 use App\Order;
@@ -79,7 +79,7 @@ class RegisterController extends Controller
             'username' => ['required','string','max:255'],
             'email' => ['required','string', 'email', 'max:255', 'unique:users'],
             'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
-            'phone' => ['required','max:18','min:6','max:18',new InternationalTel,new AvailablePhoneNumber($data['code_country'])]
+            'phone' => ['required','max:18','min:6','max:18',new InternationalTel,new CheckUserPhone($data['code_country'],null)]
             //'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -100,6 +100,7 @@ class RegisterController extends Controller
           'name' => $data['username'],
           'email' => $data['email'],
           'phone_number'=>$data['code_country'].$data['phone'],
+          'code_country'=>$data['data_country'],
           'password' => Hash::make($generated_password),
           'gender'=>$data['gender'],
           'timezone'=>$timezone,

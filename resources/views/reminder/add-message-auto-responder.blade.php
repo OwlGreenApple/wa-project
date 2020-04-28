@@ -175,7 +175,9 @@
       // var data = $(this).serializeArray();
 			var form = $('#save_campaign')[0];
 			var formData = new FormData(form);
-        formData.push({name:'list_id',value:'{!! $currentlistid !!}'},{ name:'campaign_name', value:'<?php echo $campaign_name;?>'});
+        // formData.push({name:'list_id',value:'{!! $currentlistid !!}'},{ name:'campaign_name', value:'<php echo $campaign_name;?>'});
+        formData.append('list_id','{!! $currentlistid !!}');
+        formData.append('campaign_name',  '{!! $campaign_name !!}');
 
       $.ajax({
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },

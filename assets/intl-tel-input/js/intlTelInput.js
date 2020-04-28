@@ -930,7 +930,9 @@
 
                     // modified code
                     var data_code = "+".concat(this.selectedCountryData.dialCode);
+                    var data_country = this.selectedCountryData.iso2;
                     this.selectedFlag.setAttribute("data-code", data_code);
+                    this.selectedFlag.setAttribute("data-country", data_country);
                     document.getElementById('iti_custom').innerHTML=data_code;
                    
                      // for hidden input

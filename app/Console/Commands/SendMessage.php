@@ -325,10 +325,10 @@ class SendMessage extends Command
                 $hour = $row->hour_time; //hour according user set it to sending
 
                 $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->first();
-                $customer_phone = $row->telegram_number;
-                $key = $phoneNumber->filename;
 
                 if(!is_null($phoneNumber)){
+                  $customer_phone = $row->telegram_number;
+                  $key = $phoneNumber->filename;
                   $counter = $phoneNumber->counter;
                   $max_counter = $phoneNumber->max_counter;
                   $max_counter_day = $phoneNumber->max_counter_day;
