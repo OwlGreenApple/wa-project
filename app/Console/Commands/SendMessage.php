@@ -141,7 +141,7 @@ class SendMessage extends Command
 														$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
 													}
 												}
-												
+												sleep(3);
                         $this->generateLog($number,$campaign,$id_campaign,$status);
                         $status = $this->getStatus($send_message);
                         
@@ -169,7 +169,7 @@ class SendMessage extends Command
                         $this->generateLog($number,$campaign,$id_campaign,$status);
                     }
                 // }
-                sleep(10);
+                sleep(7);
             }//END LOOPING
 
         } // END BROADCAST 
@@ -259,6 +259,7 @@ class SendMessage extends Command
 											}
 										}
 
+										sleep(3);
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
                     $status = 'Sent';
@@ -290,7 +291,7 @@ class SendMessage extends Command
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(10);
+                sleep(7);
             }//END LOOPING
         }
     }
@@ -387,9 +388,9 @@ class SendMessage extends Command
 											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
 										}
 									}
-                  $this->generateLog($number,$campaign,$id_campaign,$status);
-
+									sleep(3);
                   $status = $this->getStatus($send_message);
+                  $this->generateLog($number,$campaign,$id_campaign,$status);
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
                   $remindercustomer_update->status = $status;
                   $remindercustomer_update->save();
@@ -414,7 +415,7 @@ class SendMessage extends Command
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(10);
+                sleep(7);
               }//END FOR LOOP EVENT
           }
     }
@@ -517,10 +518,11 @@ class SendMessage extends Command
 										else {
 											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
 										}
-                  $this->generateLog($number,$campaign,$id_campaign,$status);
 									}
 
+									sleep(3);
                   $status = $this->getStatus($send_message);
+                  $this->generateLog($number,$campaign,$id_campaign,$status);
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
                   $remindercustomer_update->status = $status;
                   $remindercustomer_update->save();
@@ -538,7 +540,7 @@ class SendMessage extends Command
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(10);
+                sleep(7);
               }//END FOR LOOP EVENT
           }
     }
