@@ -21,7 +21,6 @@ class ReminderController extends Controller
     public function saveAutoReponder(Request $request){
 
         $temprequest = $request->all();
-        dd($temprequest);
         $user = Auth::user();
         $list_id = $request->list_id;
         $message = $request->message;
