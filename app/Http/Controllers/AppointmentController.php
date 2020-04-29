@@ -85,7 +85,7 @@ class AppointmentController extends Controller
        $appointments = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',2],['reminders.user_id',$userid],['reminder_customers.status',$cond,$status]])
           ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rid')
+          ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rid','reminder_customers.status')
           // ->distinct()
           ->get();
 
