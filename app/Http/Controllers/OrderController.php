@@ -22,40 +22,40 @@ class OrderController extends Controller
     //cek paket dengan harga
     $paket = array(
       'basic1' => 195000,
-      'bestseller1' => 538200,
-      'supervalue1' => 1053000,
+      'bestseller1' => 370500,
+      'supervalue1' => 526500,
 			
       'basic2' => 275000,
-      'bestseller2' => 759000,
-      'supervalue2' => 1485000,
+      'bestseller2' => 522500,
+      'supervalue2' => 742500,
 			
       'basic3' => 345000,
-      'bestseller3' => 952000,
-      'supervalue3' => 1863000,
+      'bestseller3' => 655500,
+      'supervalue3' => 931500,
 			
       'basic4' => 415000,
-      'bestseller4' => 1145400,
-      'supervalue4' => 2241000,
+      'bestseller4' => 788500,
+      'supervalue4' => 1120500,
 			
       'basic5' => 555000,
-      'bestseller5' => 1531800,
-      'supervalue5' => 2997000,
+      'bestseller5' => 1054500,
+      'supervalue5' => 1498500,
 			
       'basic6' => 695000,
-      'bestseller6' => 1918200,
-      'supervalue6' => 3753000,
+      'bestseller6' => 1320500,
+      'supervalue6' => 1876500,
 			
       'basic7' => 975000,
-      'bestseller7' => 2691000,
-      'supervalue7' => 5265000,
+      'bestseller7' => 1852500,
+      'supervalue7' => 2632500,
 			
       'basic8' => 1255000,
-      'bestseller8' => 3463800,
-      'supervalue8' => 6777000,
+      'bestseller8' => 2384500,
+      'supervalue8' => 3388500,
 			
       'basic9' => 155000,
-      'bestseller9' => 4363000,
-      'supervalue9' => 8577000,
+      'bestseller9' => 2954500,
+      'supervalue9' => 4288500,
 			
     );
 
