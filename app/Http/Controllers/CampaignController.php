@@ -468,7 +468,7 @@ class CampaignController extends Controller
         $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status',$cond,$status]])
           ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
+          ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid','reminder_customers.status')
           ->get();
 
         return $campaigns;
@@ -582,7 +582,7 @@ class CampaignController extends Controller
              $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status','=',0]])
               ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
               ->join('customers','customers.id','=','reminder_customers.customer_id')
-              ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
+              ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid','reminder_customers.status')
               ->take($length)
               ->skip($start)
               ->orderBy('reminder_customers.id',$dir)
@@ -601,7 +601,7 @@ class CampaignController extends Controller
               }) 
               ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
               ->join('customers','customers.id','=','reminder_customers.customer_id')
-              ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid')
+              ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.id AS rcid','reminder_customers.status')
               ->take($length)
               ->skip($start)
               ->orderBy('reminder_customers.id',$dir)

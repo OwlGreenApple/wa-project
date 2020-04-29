@@ -538,15 +538,25 @@
     pagination();
    /* codeCountry();
     putCallCode();*/
+    initAutoReply();
 		autoReplyButton();
 		saveAutoReply();
     fixWidthPhoneInput();
-		initAutoReply();
   });
 
   function fixWidthPhoneInput()
   {
     $(".iti").addClass('w-100');
+  }
+
+   function initAutoReply()
+  {
+    <?php if ($data['is_secure'] > 0) { ?> 
+      $("#secureRadio").trigger("click");
+    <?php } ?> 
+
+    var tempMessage = "{!! $data['auto_reply_message'] !!}";
+    $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempMessage);
   }
 
   function saveAutoReply()
@@ -596,12 +606,13 @@
   function autoReplyButton()
   {
     $("body").on("click","#secureRadio",function(){
-      tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
-      
-      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [NAME], \n Terima Kasih sudah mendaftar \n Langkah selanjutnya adalah : \n - Reply Chat ini klik [REPLY_CHAT] \n - Untuk menerima pesan klik > [START] \n - Untuk Unsubs klik > [UNSUBS]');
+      var tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [NAME],'+"\n"+' Terima Kasih sudah mendaftar'+"\n"+'Langkah selanjutnya adalah :'+"\n"+'- Reply Chat ini klik [REPLY_CHAT]'+"\n"+'- Untuk menerima pesan klik > [START]'+"\n"+'- Untuk Unsubs klik > [UNSUBS]');
     });
+
     $("body").on("click","#standardRadio",function(){
-      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempText);
+      var standardText = "{!! $data['auto_reply_message'] !!}";
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(standardText);
     });
 	}
 	
@@ -1831,14 +1842,6 @@
       });
   }
 
-  function initAutoReply()
-  {
-		<?php if ($data['is_secure']) { ?> 
-			$("#secureRadio").trigger("click");
-		<?php } ?> 
-		// tempMessage = "";
-		// $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempMessage);
-	}
   /*
   function radioCheck(){
       $("#tab2, #tab-contact").click(function(){

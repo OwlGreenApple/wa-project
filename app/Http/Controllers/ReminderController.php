@@ -21,6 +21,7 @@ class ReminderController extends Controller
     public function saveAutoReponder(Request $request){
 
         $temprequest = $request->all();
+        dd($temprequest);
         $user = Auth::user();
         $list_id = $request->list_id;
         $message = $request->message;
@@ -29,7 +30,6 @@ class ReminderController extends Controller
         //$mailsubject = $request->mailsubject;
         //$mailmessage = $request->mailmessage;
         $campaign_type = 1;
-
 
 				$folder="";
 				$filename="";
@@ -75,6 +75,7 @@ class ReminderController extends Controller
         if($reminder->save() == true){
             // retrieve customer id 
             $customer = Customer::where([['user_id','=',$user->id],['list_id','=',$list_id],['status','=',1],])->get();
+            $update = true;
         } else {
             return 'Error!! failed to set reminder';
         }
@@ -84,7 +85,7 @@ class ReminderController extends Controller
             foreach($customer as $rows){
                 $customer_signup = Carbon::parse($rows->created_at);
                 $adding_day = $customer_signup->addDays($days);
-                if($adding_day >= $created_date){
+                if($adding_day->gte($created_date)){
                     $datacustomer[] = $rows;
                 } 
             }
@@ -92,7 +93,7 @@ class ReminderController extends Controller
             return 'Your Auto schedule has been set!';
         }
 
-        if(count($datacustomer) > 0)
+        if(count($datacustomer) > 0 && $request->reminder_id=="new")
         {
             // display data customer 
             foreach($datacustomer as $col){

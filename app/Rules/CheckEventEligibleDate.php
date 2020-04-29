@@ -39,7 +39,7 @@ class CheckEventEligibleDate implements Rule
         $day = (int)$day;
         $date = Carbon::parse($date)->addDays($day);
 
-        if($date >= $today)
+        if($date->gte($today))
         {
             return true;
         }
