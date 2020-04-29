@@ -52,6 +52,7 @@
             <label class="form-check-label" for="inlineRadio2">Auto Responder</label>
           </div>
 
+          @if(getMembership(Auth()->user()->membership) > 1) 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
               <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio1" value="event" />
@@ -59,6 +60,7 @@
             </label>
             <label class="form-check-label" for="inlineRadio1">Event</label>
           </div>
+          @endif
           
           <!-- -->
         </div>

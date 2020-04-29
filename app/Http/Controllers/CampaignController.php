@@ -308,15 +308,36 @@ class CampaignController extends Controller
 
         if($search == null && $type == null)
         {
-          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
+          if(getMembership(Auth()->user()->membership) > 1)
+          {
+            $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
                       ->join('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
                       ->get();
+          }
+          else
+          {
+            $campaign = Campaign::where('campaigns.user_id',$userid)
+                      ->whereIn('campaigns.type',[1,2])
+                      ->join('lists','lists.id','=','campaigns.list_id')
+                      ->orderBy('campaigns.id','desc')
+                      ->select('campaigns.*','lists.label')
+                      ->get();
+          }
         }
         elseif($type <> null)
         { 
-          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',$type]])
+          if(getMembership(Auth()->user()->membership) > 1)
+          {
+            $real_type = $type;
+          }
+          else
+          {
+            $real_type = null;
+          }
+
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',$real_type]])
                       ->join('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
@@ -324,11 +345,19 @@ class CampaignController extends Controller
         }
         else
         {
-          $campaign = Campaign::where([['name','like','%'.$search.'%'],['userid',$userid],['campaigns.type','<',3]]) 
-                      ->join('lists','lists.id','=','campaigns.list_id')
-                      ->orderBy('campaigns.id','desc')
-                      ->select('campaigns.*','lists.label')
-                      ->get();
+          if(getMembership(Auth()->user()->membership) > 1)
+          {
+            $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['campaigns.type','<',3]]);
+          }
+          else
+          {
+            $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',[1,2]); 
+          }
+
+          $campaign->join('lists','lists.id','=','campaigns.list_id')
+          ->orderBy('campaigns.id','desc')
+          ->select('campaigns.*','lists.label')
+          ->get();
         }
 
         if($campaign->count() > 0)
@@ -377,7 +406,8 @@ class CampaignController extends Controller
                         $total_message = $this->campaignsLogic($row->id,$userid,1,'=',0);
                         $total_delivered = $this->campaignsLogic($row->id,$userid,1,'>',0);
                     }
-                    else {
+                    else
+                    {           
                         $reminder = Reminder::where([['campaign_id',$row->id],['is_event',0],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
 
                         $total_message = $this->campaignsLogic($row->id,$userid,0,'=',0); 
@@ -448,10 +478,12 @@ class CampaignController extends Controller
                         'id'=>$row->id,
                         'campaign_name' => $row->name,
                         'sending' => '-',
+                        'sending_time' => '-',
                         'label' => $row->label,
                         'created_at' => Date('M d, Y',strtotime($row->created_at)),
                         'total_message' => 0,
                         'sent_message' => 0,
+                        'total_template' => 0
                       );
                     }
 
