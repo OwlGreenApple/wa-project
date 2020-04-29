@@ -24,9 +24,9 @@ use DB,Storage;
 class EventController extends Controller
 {
 
-    public function saveEvent(Request $request){
+    public function saveEvent(Request $request)
+    {
         $user = Auth::user();
-
 				$folder="";
 				$filename="";
 				if($request->hasFile('imageWA')) {
@@ -92,7 +92,8 @@ class EventController extends Controller
         if($event->count() == 0){
             return 'Your event has been set!!';
         } 
-        else
+        
+        if($request->reminder_id=="new")
         {
             foreach($event as $col){
               $remindercustomer = new ReminderCustomers;
@@ -102,6 +103,11 @@ class EventController extends Controller
               $remindercustomer->customer_id = $col->csid;
               $remindercustomer->save();
             }  
+        }
+        else
+        {
+            $data = 'Your event has been updated.';
+            return $data;
         }
 
         // If successful insert data into event customer
