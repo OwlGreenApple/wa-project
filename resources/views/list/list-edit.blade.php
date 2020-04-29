@@ -555,8 +555,6 @@
       $("#secureRadio").trigger("click");
     <?php } ?> 
 
-    var tempMessage = "{!! $data['auto_reply_message'] !!}";
-    $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempMessage);
   }
 
   function saveAutoReply()
@@ -603,16 +601,16 @@
 		});
 	}
 	
+	var tempText="";
   function autoReplyButton()
   {
     $("body").on("click","#secureRadio",function(){
-      var tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
+      tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
       $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [NAME],'+"\n"+' Terima Kasih sudah mendaftar'+"\n"+'Langkah selanjutnya adalah :'+"\n"+'- Reply Chat ini klik [REPLY_CHAT]'+"\n"+'- Untuk menerima pesan klik > [START]'+"\n"+'- Untuk Unsubs klik > [UNSUBS]');
     });
 
     $("body").on("click","#standardRadio",function(){
-      var standardText = "{!! $data['auto_reply_message'] !!}";
-      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(standardText);
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempText);
     });
 	}
 	

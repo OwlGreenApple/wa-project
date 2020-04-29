@@ -171,10 +171,12 @@
                     @if(!request()->is('pricing'))
                      <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item mr-3">
-                           Hi, {{Auth()->user()->name}}
-                        </li>
-                         <li class="nav-item cog-pos dropdown">
+												@if(!Auth()->user()->is_admin)
+													<li class="nav-item mr-3">
+														 Hi, {{Auth()->user()->name}}
+													</li>
+												@endif 
+                        <li class="nav-item cog-pos dropdown">
                            <a id="cogDropdown" class="icon-cog" data-toggle="dropdown"></a>
                            <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="cogDropdown">
                                     <a href="{{url('settings')}}" class="nav-link {{ (request()->is('settings')) ? 'active' : '' }}">Settings</a>
