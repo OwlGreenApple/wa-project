@@ -15,6 +15,7 @@ use App\Sender;
 use App\Additional;
 use App\PhoneNumber;
 use App\Countries;
+use App\Message;
 use App\Console\Commands\SendWA as SendMessage;
 use App\Helpers\ApiHelper;
 use App\Rules\CheckWANumbers;
@@ -196,7 +197,13 @@ class CustomerController extends Controller
                 $message = str_replace( "[START]" , env("APP_URL")."link/activate/".$list->name."/".$customer_id, $message);
                 $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$customer_id, $message);
               }
-              ApiHelper::send_message($phone_number,$message,$key);
+              // ApiHelper::send_message($phone_number,$message,$key);
+							$message_send = new Message;
+							$message_send->phone_number=$phone_number;
+							$message_send->message=$message;
+							$message_send->key=$key;
+							$message_send->status=0;
+							$message_send->save();
             }
       
             // if customer successful sign up 

@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         Commands\CheckCounter::class,
         Commands\GetKey::class,
         Commands\ResetMessageCounter::class,
+        Commands\QueueMessage::class,
     ];
 
     /**
@@ -31,6 +32,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('notif:order')->dailyAt('08:00');
         $schedule->command('reset:m')->dailyAt('01:00');
         $schedule->command('get:key')->everyMinute();
+        $schedule->command('queue:message')->everyMinute();
         $schedule->command('send:message')->everyMinute();
         $schedule->command('check:counter')->everyMinute();
         // $schedule->command('check:wa')->hourly();
