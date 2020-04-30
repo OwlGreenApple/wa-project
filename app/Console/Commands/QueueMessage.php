@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Customer;
 use App\Message;
 use App\Helpers\Spintax;
 use Carbon\Carbon;
@@ -47,6 +48,11 @@ class QueueMessage extends Command
 				
 				$message->status = $status;
 				$message->save();
+
+				$newcustomer = Customer::find($message->customer_id);
+				$newcustomer->status = 0;
+				$newcustomer->save();
+
 				sleep(10);
 			}
 		}

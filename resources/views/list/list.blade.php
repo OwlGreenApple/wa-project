@@ -67,7 +67,7 @@
     $("body").on("click","#secureRadio",function(){
       tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
       
-      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [NAME], \n Terima Kasih sudah mendaftar \n Langkah selanjutnya adalah : \n - Reply Chat ini klik [REPLY_CHAT] \n - Untuk menerima pesan klik > [START] \n - Untuk Unsubs klik > [UNSUBS]');
+      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [NAME], \n Terima Kasih sudah mendaftar \n Langkah selanjutnya adalah : \n - Untuk menerima pesan klik > [START] \n - Untuk Unsubs klik > [UNSUBS]');
     });
     $("body").on("click","#standardRadio",function(){
       $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempText);
