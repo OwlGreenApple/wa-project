@@ -312,7 +312,7 @@ class SendMessage extends Command
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
           ->get();
 
           if($reminder->count() > 0)
@@ -324,6 +324,7 @@ class SendMessage extends Command
                 $event_date = Carbon::parse($row->event_time);
                 $days = (int)$row->days;
                 $hour = $row->hour_time; //hour according user set it to sending
+                $membership = $row->membership;
 
                 $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->first();
 
@@ -337,6 +338,12 @@ class SendMessage extends Command
                 else
                 {
                   continue;
+                }
+
+                // PREVENT RUN IF MEMBERSHIP LESS THAN 2
+                if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)))
+                {
+                    continue;
                 }
 
 								if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
@@ -438,7 +445,7 @@ class SendMessage extends Command
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
           ->get();
 
           if($reminder->count() > 0)
@@ -455,6 +462,7 @@ class SendMessage extends Command
                 $customer_phone = $row->telegram_number;
                 $customer_message = $row->message;
                 $key = $phoneNumber->filename;
+                $membership = $row->membership;
 
                 $date_appt = $event_date->toFormattedDateString();
                 $time_appt = $event_date->toTimeString();
@@ -463,10 +471,16 @@ class SendMessage extends Command
                   $counter = $phoneNumber->counter;
                   $max_counter = $phoneNumber->max_counter;
                   $max_counter_day = $phoneNumber->max_counter_day;
+
                 }
                 else
                 {
                   continue;
+                }
+
+                if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)))
+                {
+                    continue;
                 }
 
 								if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
