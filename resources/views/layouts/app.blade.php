@@ -138,8 +138,9 @@
                                     <a href="{{url('list-form')}}" class="nav-link {{ (request()->is('list-form') || request()->is('create-campaign')|| request()->is('create-apt')) ? 'active' : '' }}">Lists</a>
                                     
                                     <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">Campaigns</a> 
-
-                                    <a href="{{url('create-apt')}}" class="nav-link {{ (request()->is('create-apt')) ? 'active' : '' }}">Appointment</a> 
+                                    @if(getMembership(Auth()->user()->membership) > 1) 
+                                      <a href="{{url('create-apt')}}" class="nav-link {{ (request()->is('create-apt')) ? 'active' : '' }}">Appointment</a>
+                                    @endif
                                 </div>
                             </li> 
 
@@ -151,9 +152,11 @@
                                 <a class="nav-link {{ (request()->is('campaign') || request()->is('add-reminder')) ? 'active' : '' }}" href="{{url('campaign')}}">Campaigns</a>
                             </li> 
                             
+                            @if(getMembership(Auth()->user()->membership) > 1) 
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('appointment')) ? 'active' : '' }}" href="{{ route('appointment') }}">Appointment</a>
                             </li>
+                            @endif
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('google-form')) ? 'active' : '' }}" href="{{ url('google-form') }}">Google Form</a>
                             </li>
