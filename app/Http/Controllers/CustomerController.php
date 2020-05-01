@@ -325,7 +325,14 @@ class CustomerController extends Controller
           $customer->save();
         }
       }
-      return redirect($list->name);
+			$message = "";
+			if (!is_null($list)){
+				$message = $list->start_custom_message;
+				$message = str_replace("[LIST_NAME]",$list->label,$message);
+			}
+      return redirect($list->name)
+							->with('message',$message)
+			;
     }
 
     public function link_unsubscribe($list_name,$customer_id)
@@ -338,7 +345,14 @@ class CustomerController extends Controller
           $customer->save();
         }
       }
-      return redirect($list->name);
+			$message = "";
+			if (!is_null($list)){
+				$message = $list->unsubs_custom_message;
+				$message = str_replace("[LIST_NAME]",$list->label,$message);
+			}
+      return redirect($list->name)
+							->with('message',$message)
+			;
     }
 
     public function Country(Request $request)
