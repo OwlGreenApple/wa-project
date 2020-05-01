@@ -139,6 +139,39 @@ class CustomerController extends Controller
               $status = 0;
             }
 
+            if($request->data_update <> null)
+            {
+              $customer = Customer::find($request->data_update);
+              if($request->phone_number == null)
+              {
+                $customer->name = $request->subscribername;
+                $customer->email = $request->email;
+                $customer->code_country = $request->data_country;
+                $customer->status = 1;
+              }
+              else
+              {
+                $customer->name = $request->subscribername;
+                $customer->email = $request->email;
+                $customer->telegram_number = $phone_number;
+                $customer->code_country = $request->data_country;
+                $customer->status = 1;
+              }
+
+              try
+              {
+                  $customer->save();
+                  $data['update'] = true;
+                  $data['message'] = 'Success, your contact has updated';
+              }
+              catch(Exception $e)
+              {
+                  $data['update'] = false;
+                  $data['message'] = 'Sorry, our system is too busy';
+              }
+              return response()->json($data);
+            }
+
             if($request->overwrite == 1)
             {
               $customer_phone = Customer::where([['list_id',$list->id],['telegram_number',$phone_number]]);
@@ -146,6 +179,7 @@ class CustomerController extends Controller
               $update = array(
                 'name' => $request->subscribername,
                 'email'=> $request->email,
+                'code_country'=>$request->data_country,
                 'status'=> 1
               );
 
@@ -169,6 +203,7 @@ class CustomerController extends Controller
                  'list_id'  => $list->id,
                  'name'     => $request->subscribername,
                  'telegram_number'=>$phone_number,
+                 'code_country'=>$request->data_country,
                  'email'=> $request->email,
                  'status'=> $status,
               ]);

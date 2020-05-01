@@ -75,6 +75,10 @@
     <link href="{{ asset('/assets/intl-tel-input/css/intlTelInput.min.css') }}" rel="stylesheet" />
     <script type="text/javascript" src="{{ asset('/assets/intl-tel-input/js/intlTelInput.js') }}"></script> 
 
+    <!-- Jquery Exists Element
+    <script type="text/javascript" src="{{ asset('/assets/exists/exists.js') }}"></script>
+     -->
+
     <!-- Main Styles -->
     <link href="{{ asset('/assets/css/main.css') }}" rel="stylesheet" />
     <link href="{{ asset('/assets/css/dashboard.css') }}" rel="stylesheet" />
