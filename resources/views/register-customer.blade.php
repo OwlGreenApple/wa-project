@@ -8,7 +8,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title></title>
-
+		<!-- Icon -->
+		<link rel='shortcut icon' type='image/png' href="{{ asset('assets/img/favicon.png') }}">
     <!-- Scripts -->
     <script src="{{ asset('/assets/js/jquery-3.2.1.min.js') }}"></script>
     <script src="{{ asset('/assets/js/app.js') }}"></script>
@@ -189,6 +190,9 @@
       /*//codeCountry()
       putCallCode();*/
       fixWidthPhoneInput();
+			<?php if(session('message')) { ?>
+			alert("<?php echo session('message'); ?>");
+			<?php }?>
   });
 
   function fixWidthPhoneInput()

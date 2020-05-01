@@ -52,7 +52,7 @@ class CheckCustomer
     
         /* Get all data from request and then fetch it in array */
         $req = $request->all();
-        dd($req);
+        // dd($req);
         $id_list = $request->listid;
 
         try{
