@@ -306,9 +306,11 @@
         minDate : new Date()
       });
 
+      var date = new Date();
+      date.setHours(0,0,0,0);
       $('#datetimepicker-date, #date_send').datetimepicker({
         format : 'YYYY-MM-DD',
-        minDate : new Date()
+        minDate : date
       }); 
 
       $("#divInput-description-post, #edit_message").emojioneArea({

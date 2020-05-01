@@ -934,6 +934,7 @@
                     this.selectedFlag.setAttribute("data-code", data_code);
                     this.selectedFlag.setAttribute("data-country", data_country);
                     document.getElementById('iti_custom').innerHTML=data_code;
+                    this.telInput.setAttribute("data-country", data_country);
                    
                      // for hidden input
                     if(this.options.pageHiddenInput == 'register')

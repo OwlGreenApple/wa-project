@@ -140,6 +140,7 @@
           <div class="main"><!-- message --></div>
         </div>
 
+        <div id="move_contact">
         <form class="wrapper add-contact">
             <div class="form-group">
               <label>Name:</label>
@@ -177,9 +178,11 @@
             <input type="hidden" name="listid" value="{{ $listid }}">
 
             <div class="text-right">
-              <button type="submit" class="btn btn-custom">Add Contact</button>
+              <button id="change_btn" type="submit" class="btn btn-custom">Add Contact</button>
             </div>
         </form>
+        </div>
+
       </div>
     <!-- end tabs -->  
     </div>
@@ -484,7 +487,32 @@
   </div>
 </div>
 
-<script src="{{ url('assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
+<!-- Modal Edit Contact -->
+  <div class="modal fade child-modal" id="edit_customer" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            Edit Customer Data
+          </h5>
+          <a class="btn btn-danger btn-sm text-white" data-dismiss="modal">Close</a>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+              <span class="error_notif"></span>
+            </div>
+            <div id="move_form"></div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
+<script src="{{ url('assets/intl-tel-input/callbackplugin.js') }}" type="text/javascript"></script>
+<!-- <script src="{{ url('assets/intl-tel-input/callback.js') }}" type="text/javascript"></script> -->
 <script type="text/javascript">
   /* CKEditor */
   CKEDITOR.replace( 'editor1',{
@@ -504,10 +532,10 @@
 
   var fd = new FormData();
 
-  $(document).ready(function() {    
+  $(document).ready(function() {  
     tabs();
     display_edit_list_name();
-    open_ck_editor();
+    open_ck_editor();    
     //Choose();
     openImport();
     excelImportCheck();
@@ -542,6 +570,7 @@
 		autoReplyButton();
 		saveAutoReply();
     fixWidthPhoneInput();
+    display_edit_customer_form();
   });
 
   function fixWidthPhoneInput()
@@ -549,12 +578,25 @@
     $(".iti").addClass('w-100');
   }
 
+  function customizeIntlInput(code)
+  {
+    if(code == undefined)
+    {
+      $("body").intlInput();
+    }
+    else
+    {
+      $("body").intlInput({
+        code_country : code
+      });
+    } 
+  }
+
    function initAutoReply()
   {
     <?php if ($data['is_secure'] > 0) { ?> 
       $("#secureRadio").trigger("click");
     <?php } ?> 
-
   }
 
   function saveAutoReply()
@@ -642,6 +684,18 @@
           $(this).removeClass('inactive');
 
           $('.tabs-container').hide();
+
+          if(t == 'tab2')
+          {
+            $(".add-contact").appendTo('#move_contact');
+            // customizeIntlInput();
+            $("input[name='phone_number']").val('');
+          } 
+
+          if(t == 'tab3')
+          {
+            $(".add-contact").appendTo('#move_form');
+          }
           $('#'+ t + 'C').fadeIn('slow');
         }
       });
@@ -804,6 +858,28 @@
           $(".ctel").show();
           $("#selectType").val("tl");
         }
+    });
+  }
+
+  function display_edit_customer_form()
+  {
+    $("body").on("click",".edit_customer",function(){
+      var name = $(this).attr('data-name');
+      var email = $(this).attr('data-email');
+      var phone = $(this).attr('data-phone');
+      var code = $(this).attr('data-code');
+
+      customizeIntlInput(code);
+      $("#change_btn").html('Update Contact').attr('data_update',1);
+
+      var code_number = $("#iti_custom").text();
+      var regx = new RegExp("^\\"+code_number,"g");
+      var phone_number = phone.replace(regx,'');
+
+      $("input[name='subscribername']").val(name);
+      $("input[name='phone_number']").val(phone_number);
+      $("input[name='email']").val(email);
+      $("#edit_customer").modal();
     });
   }
 
@@ -997,12 +1073,28 @@
   function checkContact(){
     $(".add-contact").submit(function(e){
         e.preventDefault();
-        var code_country = $(".iti__selected-flag").attr('data-code');
+        var data_update = $("#change_btn").attr('data_update');
+        var code_country;
         var data = $(this).serializeArray();
-        data.push(
-          {name:'code_country', value:code_country},
-          {name:'listedit',value:1}
-        );
+
+        if(data_update == 1)
+        {
+           var data_country = $("#phone").attr('data-country');
+           code_country = $("#iti_custom").text();
+           data.push(
+              {name:'code_country', value:code_country},
+              {name:'data_country', value:data_country},
+              {name:'data_update',value:1}
+           );
+        }
+        else
+        {
+          code_country = $(".iti__selected-flag").attr('data-code');
+          data.push(
+            {name:'code_country', value:code_country},
+            {name:'listedit',value:1}
+          );
+        }
         customerAdding(data);
       });
   }

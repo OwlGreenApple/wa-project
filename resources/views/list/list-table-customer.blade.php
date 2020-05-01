@@ -1,11 +1,12 @@
 @if($customer->count() > 0)
-  <table class="table" id="data-customer">
+  <table class="table" id="data_customer">
     <thead>
       <tr>
         <th>Name</th>
         <th>Email</th>
         <th>Phone Number</th>
         <th>Additional</th>
+        <th>Edit</th>
         <th>Delete</th>
       </tr>
     </thead>
@@ -16,12 +17,13 @@
           <td>{{ $col->email }}</td>
           <td>{{ $col->telegram_number }}</td>
           <td>
-            @if( $col->additional <> null)
+            @if($col->additional <> null)
               <a additional="{{ $col->additional }}" class="btn btn-info btn-sm text-white view">View Addtional</a>
             @else
               -
             @endif
           </td>
+          <td><a id="{{ $col->id }}" data-name="{{ $col->name }}" data-email="{{ $col->email }}" data-phone="{{ $col->telegram_number }}" data-code="{{ $col->code_country }}" class="btn btn-info btn-sm text-white edit_customer">Edit</a></td>
           <td><a id="{{ $col->id }}" class="btn btn-danger btn-sm text-white del-customer">Delete</a></td>
         </tr>
       @endforeach
@@ -32,3 +34,11 @@
   <h2>Add Your Contact</h2>
   <h6 class="mt-3">From <a id="tab-contact">Add Contact</a> or <a id="tab-form">Form</a></h6>
 @endif
+
+<script type="text/javascript">
+  $(document).ready(function(){
+      $("#data_customer").DataTable({
+        "lengthMenu": [ 5, 25, 50, 75, 100, 250, 500 ],
+      });
+  });
+</script>

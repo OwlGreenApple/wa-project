@@ -52,6 +52,7 @@ class CheckCustomer
     
         /* Get all data from request and then fetch it in array */
         $req = $request->all();
+        dd($req);
         $id_list = $request->listid;
 
         try{
@@ -71,9 +72,21 @@ class CheckCustomer
 
          $rules = [
             'name'=> ['required','min:4','max:190'],
-            'email'=> ['required','email','max:190',new SubscriberEmail($id_list)],
             'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
          ];
+
+         if(isset($req['data_update']))
+         {
+            $rules = [
+              'email'=> ['email','max:190',new SubscriberEmail($id_list)]
+            ];
+         }
+         else
+         {
+            $rules = [
+              'email'=> ['required','email','max:190',new SubscriberEmail($id_list)]
+            ];
+         }
 
          if(isset($req['listedit']))
          {

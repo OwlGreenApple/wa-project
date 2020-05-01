@@ -203,6 +203,8 @@
 </div>
 
 <script type="text/javascript">
+    var date = new Date();
+    date.setHours(0,0,0,0);
 
 		/* Datetimepicker */
 		$(function () {
@@ -213,7 +215,7 @@
 
         $('#datetimepicker-date').datetimepicker({
           format : 'YYYY-MM-DD',
-          minDate: new Date()
+          minDate: date
         });
 
         $("#divInput-description-post").emojioneArea({
