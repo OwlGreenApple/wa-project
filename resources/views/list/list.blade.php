@@ -46,6 +46,16 @@
             <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text">@if(session('autoreply')){{ session('autoreply') }}@endif</textarea>
           </div>
 
+          <div class="form-group mt-3 secure-group" style="display:none;">
+						<label class="text-left" style="display:block;">START Custom Message</label>
+            <input type="text" name="start_custom_message" id="start_custom_message" class="form-control custom-form text-left" value="<?php if(session('start_custom_message')) {echo session('start_custom_message');  } else { echo 'Thank you, You have been Subscribed to [LIST_NAME]'; } ?>">
+          </div>
+
+          <div class="form-group mt-3 secure-group" style="display:none;">
+						<label class="text-left" style="display:block;">UNSUBS Custom Message</label>
+            <input type="text" name="unsubs_custom_message" id="unsubs_custom_message" class="form-control custom-form text-left" value="<?php if(session('unsubs_custom_message')) {echo session('unsubs_custom_message');  } else { echo 'Sorry to see you go, You have been Unsubscribed to [LIST_NAME] '; } ?>">
+          </div>
+
           <div class="text-right">
             <button class="btn btn-custom">Create List</button>
           </div>
@@ -65,11 +75,13 @@
   var tempText;
   $(document).ready(function(){
     $("body").on("click","#secureRadio",function(){
+			$(".secure-group").show();
       tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
       
       $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [NAME], \n Terima Kasih sudah mendaftar \n Langkah selanjutnya adalah : \n - Untuk menerima pesan klik > [START] \n - Untuk Unsubs klik > [UNSUBS]');
     });
     $("body").on("click","#standardRadio",function(){
+			$(".secure-group").hide();
       $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempText);
     });
   });

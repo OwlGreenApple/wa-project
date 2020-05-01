@@ -206,7 +206,7 @@
           </div>
         </div>
 
-				<form>
+				<form id="form-auto-reply">
 					<input type="hidden" name="idlist">
           <div class="form-check mt-2">
             <input class="form-check-input" type="radio" name="is_secure" id="standardRadio" value="0" checked>
@@ -224,6 +224,16 @@
           <div class="form-group mt-3">
             <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text"><?php echo $data['auto_reply_message'];?></textarea>
           </div>
+          <div class="form-group mt-3 secure-group" style="display:none;">
+						<label class="text-left" style="display:block;">START Custom Message</label>
+            <input type="text" name="start_custom_message" id="start_custom_message" class="form-control custom-form text-left" value="<?php echo $data['start_custom_message'];?>">
+          </div>
+
+          <div class="form-group mt-3 secure-group" style="display:none;">
+						<label class="text-left" style="display:block;">UNSUBS Custom Message</label>
+            <input type="text" name="unsubs_custom_message" id="unsubs_custom_message" class="form-control custom-form text-left" value="<?php echo $data['unsubs_custom_message'];?>">
+          </div>
+
           <div class="text-right">
             <button class="btn btn-custom" id="btn-save-autoreply">Save</button>
           </div>
@@ -640,13 +650,18 @@
   {
     <?php if ($data['is_secure'] > 0) { ?> 
       $("#secureRadio").trigger("click");
+			$(".secure-group").show();
     <?php } ?> 
   }
 
   function saveAutoReply()
   {
-		$("body").on("click","#btn-save-autoreply",function(){
-
+		$("body").on("click","#btn-save-autoreply",function(e){
+			var data = $('#form-auto-reply').serializeArray();
+			data.push(
+				{name:'idlist', value:{!! $data['listid'] !!}},
+			);
+			e.preventDefault();
        $.ajax({
 					headers: {
 							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -691,11 +706,13 @@
   function autoReplyButton()
   {
     $("body").on("click","#secureRadio",function(){
+			$(".secure-group").show();
       tempText = $("#divInput-description-post").emojioneArea()[0].emojioneArea.getText();
       $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('Hi [NAME],'+"\n"+' Terima Kasih sudah mendaftar'+"\n"+'Langkah selanjutnya adalah :'+"\n"+'- Reply Chat ini klik [REPLY_CHAT]'+"\n"+'- Untuk menerima pesan klik > [START]'+"\n"+'- Untuk Unsubs klik > [UNSUBS]');
     });
 
     $("body").on("click","#standardRadio",function(){
+			$(".secure-group").hide();
       $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(tempText);
     });
 	}

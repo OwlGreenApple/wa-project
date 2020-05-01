@@ -14,8 +14,8 @@ class AddColCustomMessageOnLists extends Migration
     public function up()
     {
       Schema::table('lists', function (Blueprint $table) {
-          $table->string('start_custom_message');
-          $table->string('unsubs_custom_message');
+          $table->string('start_custom_message')->nullable();
+          $table->string('unsubs_custom_message')->nullable();
       });
     }
 
