@@ -15,6 +15,7 @@ use App\Sender;
 use App\Additional;
 use App\PhoneNumber;
 use App\Countries;
+use App\Message;
 use App\Console\Commands\SendWA as SendMessage;
 use App\Helpers\ApiHelper;
 use App\Rules\CheckWANumbers;
@@ -191,24 +192,25 @@ class CustomerController extends Controller
               if (!is_null($reminder)){
                 $message = $reminder->message;
                 $message = str_replace( "[NAME]" , $request->subscribername, $message);
-                $message = str_replace( "[REPLY_CHAT]" , "whatsapp://send/?phone=".$phoneNumber->phone_number."&text=" . "Hi Nama saya ".$request->subscribername.", saya bergabung digroup ini", $message);
+                // $message = str_replace( "[REPLY_CHAT]" , "whatsapp://send/?phone=".$phoneNumber->phone_number."&text=" . "Hi Nama saya ".$request->subscribername.", saya bergabung digroup ini", $message);
 
                 $message = str_replace( "[START]" , env("APP_URL")."link/activate/".$list->name."/".$customer_id, $message);
                 $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$customer_id, $message);
               }
-              ApiHelper::send_message($phone_number,$message,$key);
+              // ApiHelper::send_message($phone_number,$message,$key);
+							$message_send = new Message;
+							$message_send->phone_number=$phone_number;
+							$message_send->message=$message;
+							$message_send->key=$key;
+							$message_send->status=0;
+							$message_send->customer_id=$customer_id;
+							$message_send->save();
             }
       
             // if customer successful sign up 
             if($customer->save()){
                $user_id = $list->user_id;
                $list_id = $list->id;
-
-              if($list->is_secure) {
-                $newcustomer = Customer::find($customer->id);
-                $newcustomer->status = 0;
-                $newcustomer->save();
-              }
               
               return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
             } 

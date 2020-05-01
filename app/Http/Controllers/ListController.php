@@ -108,12 +108,12 @@ class ListController extends Controller
 			
       // pengecekan error nya klo ga ada [START] [UNSUBS] [REPLY_CHAT]
       if ($request->is_secure) {
-        if (strpos($request->autoreply, '[REPLY_CHAT]') == false) {
-					return response()->json([
-						"status"=>"error",
-						"message"=>"Error! String must be contain [REPLY_CHAT] ",
-					]);
-				}
+        // if (strpos($request->autoreply, '[REPLY_CHAT]') == false) {
+					// return response()->json([
+						// "status"=>"error",
+						// "message"=>"Error! String must be contain [REPLY_CHAT] ",
+					// ]);
+				// }
         if (strpos($request->autoreply, '[START]') == false) {
 					return response()->json([
 						"status"=>"error",
