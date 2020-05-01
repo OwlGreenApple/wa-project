@@ -76,10 +76,10 @@ class CampaignController extends Controller
 			$key = $phoneNumber->filename;
 			
 
-			if ($user->email=="activomnicom@gmail.com") {
+			/*if ($user->email=="activomnicom@gmail.com") {
 				ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$request->message,$request->phone,"reminder");
 			}
-			else {
+			else {*/
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
 					$folder = $user->id."/send-test-message/";
@@ -98,7 +98,7 @@ class CampaignController extends Controller
 				else {
 					ApiHelper::send_message($request->phone,$request->message,$key);
 				}
-			}
+			// }
 			// return "success";
 			$arr = array(
 				'status'=>"success",

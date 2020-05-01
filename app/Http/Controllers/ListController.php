@@ -141,6 +141,14 @@ class ListController extends Controller
         }
         $reminder->save();
       }
+			
+			if (!is_null($list)) {
+				$list->is_secure = $request->is_secure;
+				$list->start_custom_message = $request->start_custom_message;
+				$list->unsubs_custom_message = $request->unsubs_custom_message;
+				$list->save();
+			}
+			
 			return response()->json([
 				"status"=>"success",
 				"message"=>"data save",
@@ -166,6 +174,8 @@ class ListController extends Controller
           return redirect('list-form')->withErrors($validator)->with('listname',$request->listname)
           ->with('listname',$request->listname)
           ->with('autoreply',$request->autoreply)
+					->with('start_custom_message',$request->start_custom_message)
+					->with('unsubs_custom_message',$request->unsubs_custom_message)
           ;               
       }
 
@@ -175,27 +185,33 @@ class ListController extends Controller
         return redirect('list-form')->with('error_number','Error! Please set your phone number first ')
           ->with('listname',$request->listname)
           ->with('autoreply',$request->autoreply)
+					->with('start_custom_message',$request->start_custom_message)
+					->with('unsubs_custom_message',$request->unsubs_custom_message)
           ;
       }
       
       // pengecekan error nya klo ga ada [START] [UNSUBS] [REPLY_CHAT]
       if ($request->is_secure) {
-        if (strpos($request->autoreply, '[REPLY_CHAT]') == false) {
-          return redirect('list-form')->with('error_number','Error! String must be contain [REPLY_CHAT] ')
-            ->with('listname',$request->listname)
-            ->with('autoreply',$request->autoreply)
-            ;
-        }
+        // if (strpos($request->autoreply, '[REPLY_CHAT]') == false) {
+          // return redirect('list-form')->with('error_number','Error! String must be contain [REPLY_CHAT] ')
+            // ->with('listname',$request->listname)
+            // ->with('autoreply',$request->autoreply)
+            // ;
+        // }
         if (strpos($request->autoreply, '[START]') == false) {
           return redirect('list-form')->with('error_number','Error! String must be contain [START] ')
             ->with('listname',$request->listname)
             ->with('autoreply',$request->autoreply)
+            ->with('start_custom_message',$request->start_custom_message)
+            ->with('unsubs_custom_message',$request->unsubs_custom_message)
             ;
         }
         if (strpos($request->autoreply, '[UNSUBS]') == false) {
           return redirect('list-form')->with('error_number','Error! String must be contain [UNSUBS] ')
             ->with('listname',$request->listname)
             ->with('autoreply',$request->autoreply)
+            ->with('start_custom_message',$request->start_custom_message)
+            ->with('unsubs_custom_message',$request->unsubs_custom_message)
             ;
         }
       }
@@ -206,6 +222,8 @@ class ListController extends Controller
       $list->label = $label;
       $list->phone_number_id = $phone->id;
       $list->is_secure = $request->is_secure;
+      $list->start_custom_message = $request->start_custom_message;
+      $list->unsubs_custom_message = $request->unsubs_custom_message;
       $list->save();
       $listid = $list->id;
       $listname = $list->name;
@@ -741,7 +759,7 @@ class ListController extends Controller
         if(is_null($list)){
             return redirect('lists');
         } 
-				
+
 				$auto_reply_message = "";
 				$reminder = Reminder::where("list_id",$listid)
 										->where("campaign_id",0)
@@ -763,12 +781,14 @@ class ListController extends Controller
             'listid'=>$listid,
             'is_secure'=>$list->is_secure,
             'auto_reply_message'=>$auto_reply_message,
+            'start_custom_message'=>$list->start_custom_message,
+            'unsubs_custom_message'=>$list->unsubs_custom_message,
         );
 
         $url = env('APP_URL').$list->name; 
         $id = $listid;
         $list_id = encrypt($id);
-      
+
        return view('list.list-edit',['data'=>$data,'label'=>$list->label,'listid'=>$list_id,'url'=>$url,'listname'=>$list->name,'id'=>$id]);
     }
 

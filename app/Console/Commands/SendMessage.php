@@ -130,17 +130,17 @@ class SendMessage extends Command
                         $status = 'Sent';
                         $number ++;
 
-												if ($row->email=="activomnicom@gmail.com") {
+												/*if ($row->email=="activomnicom@gmail.com") {
 													$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 												}
-												else {
+												else {*/
 													if ($row->image==""){
 														$send_message = ApiHelper::send_message($customer_phone,$message,$key);
 													}
 													else {
 														$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
 													}
-												}
+												//}
 												sleep(3);
                         $this->generateLog($number,$campaign,$id_campaign,$status);
                         $status = $this->getStatus($send_message);
@@ -247,17 +247,17 @@ class SendMessage extends Command
                 {        
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
 
-										if ($col->useremail=="activomnicom@gmail.com") {
+										/*if ($col->useremail=="activomnicom@gmail.com") {
 											$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										}
-										else {
+										else {*/
 											if ($col->image==""){
 												$send_message = ApiHelper::send_message($customer_phone,$message,$key);
 											}
 											else {
 												$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
 											}
-										}
+										//}
 
 										sleep(3);
                     $campaign = 'Auto Responder';
@@ -381,20 +381,20 @@ class SendMessage extends Command
                   
                   $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
 
-									if ($row->useremail=="activomnicom@gmail.com") {
+									/*if ($row->useremail=="activomnicom@gmail.com") {
 										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										if ($send_message) {
 											$send_message="success";
 										}
 									}
-									else {
+									else {*/
 										if ($row->image==""){
 											$send_message = ApiHelper::send_message($customer_phone,$message,$key);
 										}
 										else {
 											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
 										}
-									}
+									// }
 									sleep(3);
                   $status = $this->getStatus($send_message);
                   $this->generateLog($number,$campaign,$id_campaign,$status);
@@ -519,20 +519,20 @@ class SendMessage extends Command
                   $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt);
                   $id_reminder = $row->id_reminder;
      
-									if ($row->useremail=="activomnicom@gmail.com") {
+									/*if ($row->useremail=="activomnicom@gmail.com") {
 										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										if ($send_message) {
 											$send_message="success";
 										}
 									}
-									else {
+									else {*/
 										if ($row->image==""){
 											$send_message = ApiHelper::send_message($customer_phone,$message,$key);
 										}
 										else {
 											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
 										}
-									}
+									// }
 
 									sleep(3);
                   $status = $this->getStatus($send_message);
