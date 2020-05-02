@@ -44,7 +44,7 @@ class notifOrder extends Command
      */
     public function handle()
     {
-        $users = User::where([['users.status','>',0],['orders2.status','=',0]])->rightJoin(env('DB_DATABASE2').'.orders AS orders2','orders2.user_id','=','users.id')->select('orders2.*','users.email','users.phone_number')->get();
+        $users = User::where([['users.status','>',0],['orders.status','=',0]])->rightJoin(env('DB_DATABASE2').'.orders','orders.user_id','=','users.id')->select('orders.*','users.email','users.phone_number')->get();
 
         if($users->count() > 0)
         {

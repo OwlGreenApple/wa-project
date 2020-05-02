@@ -202,16 +202,16 @@ class CustomerController extends Controller
 							$message_send->phone_number=$phone_number;
 							$message_send->message=$message;
 							$message_send->key=$key;
-							$message_send->status=0;
+							$message_send->status=9;
 							$message_send->customer_id=$customer_id;
 							$message_send->save();
             }
-      
+
             // if customer successful sign up 
             if($customer->save()){
                $user_id = $list->user_id;
                $list_id = $list->id;
-              
+
               return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
             } 
             else {

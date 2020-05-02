@@ -121,6 +121,9 @@ class SendMessage extends Command
 
                         //status
 												$broadcastCustomer = BroadCastCustomers::find($row->bccsid);
+												if (isnull($broadcastCustomer)) {
+													continue;
+												}
 												if ($broadcastCustomer->status==5) {
 													continue;
 												}
@@ -157,7 +160,6 @@ class SendMessage extends Command
                         }
                         $phoneNumber->save();
                         
-                        $broadcastCustomer = BroadCastCustomers::find($row->bccsid);
 												$broadcastCustomer->status = $status;
 												$broadcastCustomer->save();
                     }

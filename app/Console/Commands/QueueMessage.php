@@ -41,7 +41,8 @@ class QueueMessage extends Command
 
     public function handle()
     {
-			$messages = Message::where("status",0)->get();
+			//status 9 dari customer controller, perlu untuk mengubah status customer
+			$messages = Message::where("status",9)->get();
 			foreach($messages as $message) {
 				$send_message = ApiHelper::send_message($message->phone_number,$message->message,$message->key);
 				$status = $this->getStatus($send_message);
@@ -52,6 +53,18 @@ class QueueMessage extends Command
 				$newcustomer = Customer::find($message->customer_id);
 				$newcustomer->status = 0;
 				$newcustomer->save();
+
+				sleep(10);
+			}
+			
+			//status 0 dari campaign controller
+			$messages = Message::where("status",0)->get();
+			foreach($messages as $message) {
+				$send_message = ApiHelper::send_message($message->phone_number,$message->message,$message->key);
+				$status = $this->getStatus($send_message);
+				
+				$message->status = $status;
+				$message->save();
 
 				sleep(10);
 			}

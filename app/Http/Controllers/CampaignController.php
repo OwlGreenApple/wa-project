@@ -14,6 +14,7 @@ use App\BroadCast;
 use App\BroadCastCustomers;
 use App\Reminder;
 use App\ReminderCustomers;
+use App\Message;
 use App\Rules\CheckDateEvent;
 use App\Rules\CheckValidListID;
 use App\Rules\CheckEventEligibleDate;
@@ -82,13 +83,20 @@ class CampaignController extends Controller
 			else {*/
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
-					$folder = $user->id."/send-test-message/";
-					// Storage::disk('public')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
-					// $url = asset("public/storage/".$folder."temp.jpg");
+					/*$folder = $user->id."/send-test-message/";
 					Storage::disk('s3')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
 					sleep(1);
 					$url = Storage::disk('s3')->url($folder."temp.jpg");
-					ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
+					ApiHelper::send_image_url($request->phone,$url,$request->message,$key);*/
+					
+					$message_send = new Message;
+					$message_send->phone_number=$request->phone;
+					$message_send->message=$request->message;
+					$message_send->key=$key;
+					$message_send->status=0;
+					$message_send->customer_id=0;
+					$message_send->save();
+
 					$arr = array(
 						'url'=>$url,
 						'status'=>"success",

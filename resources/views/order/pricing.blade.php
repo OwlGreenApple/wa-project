@@ -48,7 +48,7 @@
             <div class="div-content w-100 w-100 p-3">
               <span>Monthly </span>
               <span>&nbsp</span>
-              <span id="monthly-price">IDR 195.000</span>
+              <span id="monthly-price" class="content-price">IDR 195.000</span>
               <span id="description-contact-3" class="description-contact">15.000 Messages</span>
             </div>
           </div>            
@@ -62,7 +62,7 @@
             <div class="div-content w-100 w-100 p-3">
               <span>2 Months </span>
               <span>&nbsp</span>
-              <span id="2months-price">IDR 370.500</span>
+              <span id="2months-price" class="content-price">IDR 370.500</span>
               <span id="description-contact-3" class="description-contact">15.000 Messages</span>
             </div>
           </div>            
@@ -75,7 +75,7 @@
             <div class="div-content w-100 w-100 p-3">
               <span>3 Months </span>
               <span>&nbsp</span>
-              <span id="3months-price">IDR 526.500</span>
+              <span id="3months-price" class="content-price">IDR 526.500</span>
               <span id="description-contact-3" class="description-contact">15.000 Messages</span>
             </div>
           </div>            
@@ -92,7 +92,7 @@
         <ul>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
-            <span>Unlimited Contacts</span>
+            <span><strong>Unlimited Contacts</strong></span>
           </li>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
