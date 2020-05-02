@@ -1,9 +1,29 @@
+# Protect .env
+<Files .env>
+Order Allow,Deny
+Deny from all
+</Files>
+
+# Protect .env.example
+<Files .env.example>
+Order Allow,Deny
+Deny from all
+</Files>
+
+# Protect composer.json
+<Files composer.json>
+Order Allow,Deny
+Deny from all
+</Files>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
+    #order deny,allow
+    #deny from all
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -13,6 +33,9 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
+
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
