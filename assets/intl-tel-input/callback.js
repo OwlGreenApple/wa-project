@@ -32,8 +32,8 @@ window.intlTelInput(input, {
   pageHiddenInput : url[4],
   // excludeCountries: ["us"],
   // formatOnDisplay: false,
- /* initialCountry: "auto",
-  geoIpLookup: function(callback) {
+  initialCountry: "us",
+  /* geoIpLookup: function(callback) {
     $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
       var countryCode = (resp && resp.country) ? resp.country : "";
       callback(countryCode);

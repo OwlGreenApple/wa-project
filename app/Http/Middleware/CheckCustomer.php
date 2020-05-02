@@ -15,6 +15,7 @@ use App\Rules\SubscriberPhone;
 use App\Rules\CheckCallCode;
 use App\Rules\CheckPlusCode;
 use App\Rules\CheckWANumbers;
+use App\Rules\CheckExistIdOnDB;
 use Session;
 
 class CheckCustomer
@@ -52,7 +53,6 @@ class CheckCustomer
     
         /* Get all data from request and then fetch it in array */
         $req = $request->all();
-        // dd($req);
         $id_list = $request->listid;
 
         try{
@@ -77,8 +77,13 @@ class CheckCustomer
 
          if(isset($req['data_update']))
          {
+            $cond = [
+              ['id','=',$req['data_update']]
+            ];
+
             $rules = [
-              'email'=> ['email','max:190',new SubscriberEmail($id_list)]
+              'email'=> ['email','max:190',new SubscriberEmail($id_list)],
+              'data_update'=> ['required',new CheckExistIdOnDB('customers',$cond)],
             ];
          }
          else
@@ -92,6 +97,12 @@ class CheckCustomer
          {
             $rules = [
               'phone_number'=> ['required','min:6','max:18',new InternationalTel],
+            ];
+         }
+         elseif(isset($req['data_update']) && $req['phone_number'] == null)
+         {
+            $rules = [
+              'phone_number'=> [],
             ];
          }
          else

@@ -263,8 +263,9 @@
       $("#addcustomer").submit(function(e){
           e.preventDefault();
           var code_country = $(".iti__selected-flag").attr('data-code');
+          var data_country = $(".iti__selected-flag").attr('data-country');
           var data = $(this).serializeArray();
-          data.push({name:'code_country', value:code_country});
+          data.push({name:'code_country', value:code_country},{name:'data_country',value:data_country});
 
           $.ajaxSetup({
             headers: {

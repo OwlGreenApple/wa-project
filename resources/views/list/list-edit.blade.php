@@ -178,7 +178,7 @@
             <input type="hidden" name="listid" value="{{ $listid }}">
 
             <div class="text-right">
-              <button id="change_btn" type="submit" class="btn btn-custom">Add Contact</button>
+              <button type="submit" class="btn btn-custom">Add Contact</button>
             </div>
         </form>
         </div>
@@ -511,9 +511,50 @@
         </div>
         <div class="modal-body">
             <div class="text-center">
-              <span class="error_notif"></span>
+              <span class="update_notif"></span>
             </div>
-            <div id="move_form"></div>
+
+            <form class="update-contact">
+              <div class="form-group">
+                <label>Name:</label>
+                <input type="text" name="subscribername" class="form-control" placeholder="Input Your Name" >
+                <span class="error name"></span>
+              </div>
+
+              <div class="form-group">
+                 <label>Your Phone Number</label>
+                 <div class="col-sm-12 row">
+                    <div class="col-sm-12 row">
+                      <div class="form-control current_phone_number"></div>
+                    </div>
+                  </div>
+              </div> 
+
+              <div class="form-group">
+                 <label>Edit Phone Number</label>
+                 <div class="col-sm-12 row">
+                    <div class="col-sm-12 row">
+                      <input id="phone_number" name="phone_number" class="form-control" />
+                      <span class="error code_country"></span>
+                      <span class="error phone_number"></span>
+                    </div>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" class="form-control" placeholder="Input Your Email" />
+                <span class="error email"></span>
+              </div>
+
+              <input type="hidden" name="listname" value="{{$listname}}">
+              <input type="hidden" name="listid" value="{{ $listid }}">
+
+              <div class="text-right">
+                <button id="change_btn" type="submit" class="btn btn-success">Update Contact</button>
+              </div>
+          </form>
+            
         </div>
       </div>
       
@@ -522,7 +563,8 @@
   <!-- End Modal -->
 
 <script src="{{ url('assets/intl-tel-input/callbackplugin.js') }}" type="text/javascript"></script>
-<!-- <script src="{{ url('assets/intl-tel-input/callback.js') }}" type="text/javascript"></script> -->
+<script src="{{ url('assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
+
 <script type="text/javascript">
   /* CKEditor */
   CKEDITOR.replace( 'editor1',{
@@ -553,8 +595,9 @@
     overWriteFile();
     checkContact();
     addContact();
+    updateContact();
+    displayCustomer();
     //column -- edit
-    displayCustomer(); 
     displayAdditional();
     updateList();
     delCols();
@@ -580,26 +623,27 @@
 		autoReplyButton();
 		saveAutoReply();
     fixWidthPhoneInput();
+    pastePhoneNumber();
     display_edit_customer_form();
   });
+
+  function pastePhoneNumber()
+  {
+    $("#phone_number").on('paste',function(e){
+      var pastedData = e.originalEvent.clipboardData.getData('text');
+      
+      setTimeout(function(){
+        var data_code = $(".iti__selected-flag").eq(1).attr('data-code');
+        var regx = new RegExp("^\\"+data_code,"g");
+        var phone_number = pastedData.replace(regx,'');
+        $("#phone_number").val(phone_number);
+      },250);
+    });
+  }
 
   function fixWidthPhoneInput()
   {
     $(".iti").addClass('w-100');
-  }
-
-  function customizeIntlInput(code)
-  {
-    if(code == undefined)
-    {
-      $("body").intlInput();
-    }
-    else
-    {
-      $("body").intlInput({
-        code_country : code
-      });
-    } 
   }
 
    function initAutoReply()
@@ -701,17 +745,21 @@
           $(this).removeClass('inactive');
 
           $('.tabs-container').hide();
+          var check = (".add-contact").length;
+          clearField();
 
           if(t == 'tab2')
           {
-            $(".add-contact").appendTo('#move_contact');
-            // customizeIntlInput();
-            $("input[name='phone_number']").val('');
+
+            // $("#phone").val('');
           } 
 
           if(t == 'tab3')
           {
-            $(".add-contact").appendTo('#move_form');
+            /*if($("#move_form > .add-contact").exist() == false)
+            {
+              $(".add-contact").appendTo('#move_form');
+            }           */ 
           }
           $('#'+ t + 'C').fadeIn('slow');
         }
@@ -878,25 +926,21 @@
     });
   }
 
+
   function display_edit_customer_form()
   {
     $("body").on("click",".edit_customer",function(){
+      var customer_id = $(this).attr('id');
       var name = $(this).attr('data-name');
       var email = $(this).attr('data-email');
       var phone = $(this).attr('data-phone');
       var code = $(this).attr('data-code');
 
-      customizeIntlInput(code);
-      $("#change_btn").html('Update Contact').attr('data_update',1);
-
-      var code_number = $("#iti_custom").text();
-      var regx = new RegExp("^\\"+code_number,"g");
-      var phone_number = phone.replace(regx,'');
-
+      $("#change_btn").attr('data_update',customer_id);
       $("input[name='subscribername']").val(name);
-      $("input[name='phone_number']").val(phone_number);
       $("input[name='email']").val(email);
       $("#edit_customer").modal();
+      $(".current_phone_number").html(phone);
     });
   }
 
@@ -1087,31 +1131,36 @@
       });/* end ajax */
   }
 
-  function checkContact(){
+  function checkContact()
+  {
     $(".add-contact").submit(function(e){
         e.preventDefault();
-        var data_update = $("#change_btn").attr('data_update');
-        var code_country;
+        var code_country = $(".iti__selected-flag").attr('data-code');
+        var data_country = $(".iti__selected-flag").attr('data-country');
         var data = $(this).serializeArray();
 
-        if(data_update == 1)
-        {
-           var data_country = $("#phone").attr('data-country');
-           code_country = $("#iti_custom").text();
-           data.push(
-              {name:'code_country', value:code_country},
-              {name:'data_country', value:data_country},
-              {name:'data_update',value:1}
-           );
-        }
-        else
-        {
-          code_country = $(".iti__selected-flag").attr('data-code');
-          data.push(
+        data.push(
+          {name:'code_country', value:code_country},
+          {name:'data_country', value:data_country},
+          {name:'listedit',value:1}
+        );
+        customerAdding(data);
+      });
+  }
+
+  function updateContact(){
+    $(".update-contact").submit(function(e){
+        e.preventDefault();
+        var data_update = $("#change_btn").attr('data_update');
+        var data_country = $(".iti__selected-flag").eq(1).attr('data-country');
+        var code_country = $(".iti__selected-flag").eq(1).attr('data-code');
+        var data = $(this).serializeArray();
+
+         data.push(
             {name:'code_country', value:code_country},
-            {name:'listedit',value:1}
-          );
-        }
+            {name:'data_country', value:data_country},
+            {name:'data_update',value:data_update}
+         );
         customerAdding(data);
       });
   }
@@ -1121,9 +1170,12 @@
     $(".overwrite_contact").click(function(){
       var data_overwrite = $(this).attr('data-overwrite');
       var code_country = $(".iti__selected-flag").attr('data-code');
+      var data_country = $(".iti__selected-flag").attr('data-country');
+
         var data = $('.add-contact').serializeArray();
         data.push(
           {name:'code_country', value:code_country},
+          {name:'data_country', value:data_country},
           {name:'listedit',value:1},
           {name:'overwrite',value:1},
         );
@@ -1169,7 +1221,15 @@
                   clearField();
                   $(".error").hide();
                   displayCustomer();
-              } else {
+              } 
+              if(result.update == true)
+              {
+                 $(".update_notif").html('<div class="alert alert-success text-center">'+result.message+'</div>')
+                 $(".error").hide();
+                 $(".alert-success").delay(3000).fadeOut(3000);
+                 displayCustomer();
+              }
+              else if(result.success == false || result.update == false) {
                   $(".error").fadeIn('fast');
                   $(".name").text(result.name);
                   $(".error_message").text(result.main);
