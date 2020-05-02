@@ -514,7 +514,7 @@ class SettingController extends Controller
 
     public function send_message($wa_number,$message,$key)
     {
-        return ApiHelper::send_message($wa_number,$message,$key);
+        // return ApiHelper::send_message($wa_number,$message,$key);
     }
 		
     public function send_image_url()
@@ -524,4 +524,39 @@ class SettingController extends Controller
         return ApiHelper::send_image_url("628123238793","https://activrespon.com/dashboard/assets/img/pricing-bg-1.jpg","test message","67fb470ceb5c439b9241d1a65167bd7c6946a47a98cacf15");
         // return ApiHelper::send_image_url("628123238793","https://www.emmasdiary.co.uk/images/default-source/default-album/9-months.jpg?sfvrsn=9dde63ad_0","test message","3a0b718387f65aa92d93df352e30c8d227f018456385a33c");
     }
+
+    public function test_send_message()
+    {
+			// A sample PHP Script to POST data using cURL
+				// Data in JSON format
+				 
+				$data = array(
+						'to' => "+628123238793@c.us",
+						'body' => "test 112233 aaa"
+				);
+				 
+				$payload = json_encode($data);
+				 
+				// Prepare new cURL resource
+				$ch = curl_init('http://forhuman.live:5050/api/whatsapp/chats/sendMessage');
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+				// Set HTTP Header for POST request 
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+						'Content-Type: application/json',
+						'apikey:d802233599d94441b11d47d70531ab57',
+						'Content-Length: ' . strlen($payload))
+				);
+
+				// Submit the POST request
+				$result = curl_exec($ch);
+				 
+				// Close cURL session handle
+				curl_close($ch);
+
+				return "success";				
+		}		
 }
