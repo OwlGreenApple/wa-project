@@ -83,11 +83,19 @@ class CampaignController extends Controller
 			else {*/
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
-					/*$folder = $user->id."/send-test-message/";
+					$folder = $user->id."/send-test-message/";
 					Storage::disk('s3')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
 					sleep(1);
 					$url = Storage::disk('s3')->url($folder."temp.jpg");
-					ApiHelper::send_image_url($request->phone,$url,$request->message,$key);*/
+					ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
+					$arr = array(
+						'url'=>$url,
+						'status'=>"success",
+					);
+					return response()->json($arr);
+				}
+				else {
+					// ApiHelper::send_message($request->phone,$request->message,$key);
 					
 					$message_send = new Message;
 					$message_send->phone_number=$request->phone;
@@ -97,14 +105,6 @@ class CampaignController extends Controller
 					$message_send->customer_id=0;
 					$message_send->save();
 
-					$arr = array(
-						'url'=>$url,
-						'status'=>"success",
-					);
-					return response()->json($arr);
-				}
-				else {
-					ApiHelper::send_message($request->phone,$request->message,$key);
 				}
 			// }
 			// return "success";
