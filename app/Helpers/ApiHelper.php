@@ -433,7 +433,6 @@ class ApiHelper
     return $res;
   }
 
-	// NIw0JNu0EsRBZ4eV9XrRdoUdOv5lkGRU
 	public static function send_wanotif($phoneNumber,$message,$key)
   {
 		// METHOD POST
@@ -456,6 +455,41 @@ class ApiHelper
 		));
 		$response = curl_exec($curl);
 		curl_close($curl);
+		return "success";
+	}
+	
+	public static function send_simi($phoneNumber,$message,$key)
+  {
+		// A sample PHP Script to POST data using cURL
+		// Data in JSON format
+		 
+		$data = array(
+				'to' => $phoneNumber."@c.us",
+				'body' => $message
+		);
+		 
+		$payload = json_encode($data);
+		 
+		// Prepare new cURL resource
+		$ch = curl_init('http://forhuman.live:5050/api/whatsapp/chats/sendMessage');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+		// Set HTTP Header for POST request 
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Content-Type: application/json',
+				'apikey:d802233599d94441b11d47d70531ab57',
+				'Content-Length: ' . strlen($payload))
+		);
+
+		// Submit the POST request
+		$result = curl_exec($ch);
+		 
+		// Close cURL session handle
+		curl_close($ch);
+
 		return "success";
 	}
 /* END CLASS */
