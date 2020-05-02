@@ -138,7 +138,8 @@ class SendMessage extends Command
 												}
 												else {*/
 													if ($row->image==""){
-														$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+														// $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+														$send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 													}
 													else {
 														$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
@@ -254,7 +255,8 @@ class SendMessage extends Command
 										}
 										else {*/
 											if ($col->image==""){
-												$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+												// $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+												$send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 											}
 											else {
 												$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
@@ -391,7 +393,8 @@ class SendMessage extends Command
 									}
 									else {*/
 										if ($row->image==""){
-											$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+											// $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+											$send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 										}
 										else {
 											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
@@ -529,7 +532,8 @@ class SendMessage extends Command
 									}
 									else {*/
 										if ($row->image==""){
-											$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+											// $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+											$send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 										}
 										else {
 											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);

@@ -433,5 +433,30 @@ class ApiHelper
     return $res;
   }
 
+	// NIw0JNu0EsRBZ4eV9XrRdoUdOv5lkGRU
+	public static function send_wanotif($phoneNumber,$message,$key)
+  {
+		// METHOD POST
+		// Pastikan phone menggunakan kode negara 62 di depannya
+		$apikey = 'NIw0JNu0EsRBZ4eV9XrRdoUdOv5lkGRU';
+		$url = 'https://api.wanotif.id/v1/send';
+
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_HEADER, 0);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($curl, CURLOPT_TIMEOUT,30);
+		curl_setopt($curl, CURLOPT_POST, 1);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, array(
+				'Apikey'    => $apikey,
+				'Phone'     => $phoneNumber,
+				'Message'   => $message,
+		));
+		$response = curl_exec($curl);
+		curl_close($curl);
+		return "success";
+	}
 /* END CLASS */
 }
