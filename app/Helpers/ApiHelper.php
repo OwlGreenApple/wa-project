@@ -490,7 +490,8 @@ class ApiHelper
 		// Close cURL session handle
 		curl_close($ch);
 
-		return "success";
+		// return "success";
+		return $result;
 	}
 /* END CLASS */
 }
