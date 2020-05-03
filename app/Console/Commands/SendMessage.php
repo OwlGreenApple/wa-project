@@ -147,7 +147,8 @@ class SendMessage extends Command
 													}
 												//}
 												sleep(3);
-                        $this->generateLog($number,$campaign,$id_campaign,$status);
+                        // $this->generateLog($number,$campaign,$id_campaign,$status);
+                        $this->generateLog($number,$campaign,$id_campaign,$send_message);
                         $status = $this->getStatus($send_message);
                         
                         $phoneNumber->counter --;
