@@ -615,13 +615,9 @@ class ListController extends Controller
 
     /* Update List content */
     public function updateListContent(Request $request){
-        if(Session::get('data') <> null)
-        {
-            Session::reflash();
-        }
-       
         $userid = Auth::id();
         $id = $request->id;
+
         //$list_label = $request->list_label;
         $label_name = $request->label_name;
         $label_phone = $request->label_phone;
@@ -635,13 +631,22 @@ class ListController extends Controller
         $data['additionalerror'] = false;
 
         // $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
-        $lists = UserList::find($id)->update([
-            'label_name'=>$label_name,
-            'label_phone'=>$label_phone,
-            'label_email'=>$label_email,
-            'content'=> $editor,
-            'pixel_text'=> $pixel,
-        ]);
+        $lists = UserList::find($id);
+        $lists->label_name = $label_name;
+        $lists->label_phone = $label_phone;
+        $lists->label_email = $label_email;
+        $lists->content = $editor;
+        $lists->pixel_text = $pixel;
+
+        try
+        {
+          $lists->save();
+        }
+        catch(Exception $e)
+        {
+           $data['message'] = 'Sorry, unable to update your list, our system is busy';
+           return response()->json($data);
+        }
 
         if($fields !== null)
         {

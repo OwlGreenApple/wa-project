@@ -569,7 +569,6 @@
   /* CKEditor */
   CKEDITOR.replace( 'editor1',{
       allowedContent: true,
-      allowedContent: true,
       filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
       filebrowserUploadUrl: "{{ route('ckupload') }}",
       extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
@@ -1393,7 +1392,6 @@
                    $('#loader').hide();
                    $('.div-loading').removeClass('background-load');
 
-
                    if(result.error == undefined)
                    {
                       $(".list_label").html('');
@@ -1410,6 +1408,12 @@
                       $(".label_phone").html(result.label_phone);
                       $(".label_email").html(result.label_email);
                    }
+                },
+                error: function(xhr,attr,throwable)
+                {
+                   $('#loader').hide();
+                   $('.div-loading').removeClass('background-load');
+                   console.log(xhr.responseText);
                 }
             });
 

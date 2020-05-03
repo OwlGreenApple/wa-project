@@ -55,29 +55,34 @@ class CKController extends Controller
 	 /* Upload image from list */
     public function ck_upload_image(Request $request){
     	$username = Auth::user()->name;
-		$id = Auth::id();
-		$folder = $username.'-'.$id;
-        $file = $request->file('upload');
-       	
-        $rules = [
-            'upload' => 'required|image|mimes:jpeg,png,jpg,gif|max:1024',
-        ];
+		  $id = Auth::id();
+		  $folder = $username.'-'.$id;
 
-        $validator = Validator::make($request->all(),$rules);
+      $file = $request->file('upload');
+     	
+      $message = [
+        'dimensions'=>'Maximum image dimension width : 1165px and height : 295px'
+      ];
 
-        if($validator->fails()){
-        	$error =  $validator->errors();
-        	return response()->json(['uploaded' => $error->first('upload')]);
-        }
+      $rules = [
+          'upload' => 'required|image|mimes:jpeg,png,jpg,gif|max:200|dimensions:max_width=1165,max_height=295',
+      ];
 
-        if($request->hasfile('upload'))
-         {
-            $file = $request->file('upload');
-            $name=time().$file->getClientOriginalName();
-            $file->move(public_path().'/ckeditor/'.$folder.'/', $name);
-            $url = url('public/ckeditor/'.$folder.'/'.$name.'');
-         }
-         return response()->json([ 'fileName' => $name, 'uploaded' => true, 'url'=> $url]);
+      $validator = Validator::make($request->all(),$rules,$message);
+
+      if($validator->fails()){
+      	$error =  $validator->errors();
+      	return response()->json(['message'=>$error->first('upload'),'uploaded' =>true ]);
+      }
+
+      if($request->hasfile('upload'))
+       {
+          $file = $request->file('upload');
+          $name=time().$file->getClientOriginalName();
+          $file->move(public_path().'/ckeditor/'.$folder.'/', $name);
+          $url = url('public/ckeditor/'.$folder.'/'.$name.'');
+       }
+       return response()->json(['fileName' => $name, 'uploaded' => true, 'url'=> $url]);
     }
 	
 }
