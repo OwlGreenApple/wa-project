@@ -460,6 +460,7 @@ class ApiHelper
 	
 	public static function send_simi($phoneNumber,$message,$key)
   {
+		$phoneNumber = str_replace("+","",$phoneNumber);
 		// A sample PHP Script to POST data using cURL
 		// Data in JSON format
 		 
