@@ -31,6 +31,9 @@
     <!-- Font Awesome 4.7 -->
     <link href="{{ asset('/assets/Font-Awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet">
 
+    <!-- Font Awesome 5 -->
+    <link href="{{ asset('/assets/font-awesome-5/all.css') }}" rel="stylesheet">
+
     <!-- Icomoon -->
     <link href="{{ asset('/assets/icomoon/icomoon.css') }}" rel="stylesheet" />
 

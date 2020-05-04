@@ -260,7 +260,10 @@
           success : function(result){
 						if(result.err == 'imgerr')
             {  
-							alert("image width or image height more than 2000px");
+							  $('#loader').hide();
+                $('.div-loading').removeClass('background-load');
+                $(".error").show();
+                $(".image").html('Image width or image height cannot more than 2000px');
 						}
             else if(result.err == 'ev_err')
             {  

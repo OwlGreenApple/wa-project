@@ -22,12 +22,13 @@ use App\PhoneNumber;
 use Carbon\Carbon;
 use DB;
 use Session;
+use stdClass;
 
 class ListController extends Controller
 {
 
     public function test(){
-        return $this->generateRandomListName();
+        // return $this->generateRandomListName();
         //session_start();
         //$id = Auth::id();
           //  $user_name = Auth::user()->name;
@@ -35,6 +36,9 @@ class ListController extends Controller
         //echo $_SESSION['editor_path'];
         //unset($_SESSION['editor_path']);
         //mkdir($_SERVER['DOCUMENT_ROOT'].'/ckfinder/mdir', 0741);
+         $order = new stdClass();
+        $order->no_order = 'Test'; 
+        return view('order.thankyou',['order'=>$order]);
     }   
 
     public function index(Request $request)

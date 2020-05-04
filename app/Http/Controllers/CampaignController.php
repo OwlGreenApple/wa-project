@@ -130,20 +130,33 @@ class CampaignController extends Controller
       return view('campaign.create-campaign',$data);
     }
 
+    private function checkImageSize(Request $request)
+    {
+        $image = $request->file('imageWA');
+        $image_file_size = (int)number_format($request->file('imageWA')->getSize() / 1024, 2);
+        if($image_file_size > 1000)
+        {
+           return response()->json($error);
+        }
+    }
+
     public function SaveCampaign(Request $request)
     {
 			if($request->hasFile('imageWA')) {
 				$image_size = getimagesize($request->file('imageWA'));
+        $image_file_size = (int)number_format($request->file('imageWA')->getSize() / 1024, 2);
 				$imagewidth = $image_size[0];
 				$imageheight = $image_size[1];
-				if(($imagewidth > 2000) || ($imageheight > 2000) ){
+				if(($imagewidth > 2000) || ($imageheight > 2000) )
+        {
             $error = array(
               'err'=>'imgerr',
             );
             return response()->json($error);
 				}
+        // $this->checkImageSize($request);
 			}
-			
+    
       $campaign = $request->campaign_type;
       if($request->schedule == 0)
       {

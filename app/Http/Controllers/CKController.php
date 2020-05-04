@@ -65,7 +65,7 @@ class CKController extends Controller
       ];
 
       $rules = [
-          'upload' => 'required|image|mimes:jpeg,png,jpg,gif|max:200|dimensions:max_width=1165,max_height=295',
+          'upload' => 'required|image|mimes:jpeg,png,jpg,gif|max:1024|dimensions:max_width=1165,max_height=295',
       ];
 
       $validator = Validator::make($request->all(),$rules,$message);

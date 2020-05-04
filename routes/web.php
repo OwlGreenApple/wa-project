@@ -19,7 +19,6 @@ Route::get('/', function () {
 
 //Route::get('ck','ListController@generateRandomListName');
 Route::get('send','SenderController@getDeviceId');
-
 Route::get('justcarbon','EventController@JUSTCARBON');
 
 /* API */
