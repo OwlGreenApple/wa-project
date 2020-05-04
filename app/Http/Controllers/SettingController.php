@@ -532,14 +532,14 @@ class SettingController extends Controller
 				 
 				$data = array(
 						// 'to' => "+628123238793@c.us",
-						'to' => "+6287781122123@c.us",
+						'to' => "6287723238793@c.us",
 						'body' => "test 112233 aaa"
 				);
 				 
 				$payload = json_encode($data);
 				 
 				// Prepare new cURL resource
-				$ch = curl_init('http://forhuman.live:5050/api/whatsapp/chats/sendMessage');
+				$ch = curl_init('http://103.65.237.93:3000/api/whatsapp/chats/sendMessage');
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 				curl_setopt($ch, CURLOPT_POST, true);
@@ -548,7 +548,7 @@ class SettingController extends Controller
 				// Set HTTP Header for POST request 
 				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 						'Content-Type: application/json',
-						'apikey:d802233599d94441b11d47d70531ab57',
+						'apikey:d802233599d9riz1b11dk7d70531ab57',
 						'Content-Length: ' . strlen($payload))
 				);
 
@@ -558,6 +558,6 @@ class SettingController extends Controller
 				// Close cURL session handle
 				curl_close($ch);
 
-				return "success";				
+				return $result;				
 		}		
 }
