@@ -558,6 +558,6 @@ class SettingController extends Controller
 				// Close cURL session handle
 				curl_close($ch);
 
-				return "success";				
+				return $result;				
 		}		
 }
