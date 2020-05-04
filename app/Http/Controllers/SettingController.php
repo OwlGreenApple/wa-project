@@ -532,7 +532,7 @@ class SettingController extends Controller
 				 
 				$data = array(
 						// 'to' => "+628123238793@c.us",
-						'to' => "+6287781122123@c.us",
+						'to' => "6287723238793@c.us",
 						'body' => "test 112233 aaa"
 				);
 				 
