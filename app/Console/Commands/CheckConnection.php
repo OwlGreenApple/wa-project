@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\HelpersApiHelper;
 use App\PhoneNumber;
+use App\Helpers\ApiHelper;
 
 class CheckConnection extends Command
 {
