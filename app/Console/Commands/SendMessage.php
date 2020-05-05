@@ -138,9 +138,13 @@ class SendMessage extends Command
 												}
 												else {*/
 													if ($row->image==""){
-														// $send_message = ApiHelper::send_message($customer_phone,$message,$key);
 														// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
-														$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+														if ($phoneNumber->mode == 0) {
+															$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+														}
+														if ($phoneNumber->mode == 1) {
+															$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+														}
 													}
 													else {
 														$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
@@ -149,7 +153,7 @@ class SendMessage extends Command
 												sleep(3);
                         // $this->generateLog($number,$campaign,$id_campaign,$status);
                         $this->generateLog($number,$campaign,$id_campaign,$send_message);
-                        $status = $this->getStatus($send_message);
+                        $status = $this->getStatus($send_message,$phoneNumber->mode);
                         
                         $phoneNumber->counter --;
 
@@ -257,9 +261,13 @@ class SendMessage extends Command
 										}
 										else {*/
 											if ($col->image==""){
-												// $send_message = ApiHelper::send_message($customer_phone,$message,$key);
 												// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
-												$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+												if ($phoneNumber->mode == 0) {
+													$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+												}
+												if ($phoneNumber->mode == 1) {
+													$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+												}
 											}
 											else {
 												$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
@@ -272,7 +280,7 @@ class SendMessage extends Command
                     $status = 'Sent';
                     $this->generateLog($number,$campaign,$id_campaign,$status);
 
-                    $status = $this->getStatus($send_message);
+                    $status =  $this->getStatus($send_message,$phoneNumber->mode);
                     $remindercustomer_update = ReminderCustomers::find($reminder_customers_id);
                     $remindercustomer_update->status = $status;
                     $remindercustomer_update->save();
@@ -396,16 +404,20 @@ class SendMessage extends Command
 									}
 									else {*/
 										if ($row->image==""){
-											// $send_message = ApiHelper::send_message($customer_phone,$message,$key);
 											// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
-											$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+											if ($phoneNumber->mode == 0) {
+												$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+											}
+											if ($phoneNumber->mode == 1) {
+												$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+											}
 										}
 										else {
 											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
 										}
 									// }
 									sleep(3);
-                  $status = $this->getStatus($send_message);
+                  $status =  $this->getStatus($send_message,$phoneNumber->mode);
                   $this->generateLog($number,$campaign,$id_campaign,$status);
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
                   $remindercustomer_update->status = $status;
@@ -536,9 +548,13 @@ class SendMessage extends Command
 									}
 									else {*/
 										if ($row->image==""){
-											// $send_message = ApiHelper::send_message($customer_phone,$message,$key);
 											// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
-											$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+											if ($phoneNumber->mode == 0) {
+												$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+											}
+											if ($phoneNumber->mode == 1) {
+												$send_message = ApiHelper::send_message($customer_phone,$message,$key);
+											}
 										}
 										else {
 											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
@@ -546,7 +562,7 @@ class SendMessage extends Command
 									// }
 
 									sleep(3);
-                  $status = $this->getStatus($send_message);
+                  $status =  $this->getStatus($send_message,$phoneNumber->mode);
                   $this->generateLog($number,$campaign,$id_campaign,$status);
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
                   $remindercustomer_update->status = $status;
@@ -619,20 +635,38 @@ class SendMessage extends Command
         return $message;
     }
 
-    public function getStatus($send_message)
+    public function getStatus($send_message,$mode)
     {
-      if(strtolower($send_message) == 'Success')
-      {
-          $status = 1;
-      }
-      elseif($send_message == 'phone_offline')
-      {
-          $status = 2;
-      } 
-      else
-      {
-          $status = 3;
-      }
+			//default status 
+			$status = 1;
+			
+			if ($mode == 0) {
+				//status simi
+				$obj = json_decode($send_message);
+				if ($obj->sent) {
+					$status = 1;
+				}
+				else {
+					//number not registered
+					$status = 3;
+				}
+			}
+			
+			if ($mode == 1) {
+				//status woowa
+				if(strtolower($send_message) == 'Success')
+				{
+						$status = 1;
+				}
+				elseif($send_message == 'phone_offline')
+				{
+						$status = 2;
+				} 
+				else
+				{
+						$status = 3;
+				}
+			}
 
       return $status;
     }

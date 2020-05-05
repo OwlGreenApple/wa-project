@@ -460,85 +460,6 @@
       });
   }
 
-  $(document).ready(function() {  
-    checkPhone(); 
-    tabs();
-    loadPhoneNumber();
-    editPhoneNumber();
-    openEditModal();
-    settingUser();
-    triggerButtonMod();
-    intialCountry();
-    // selJs();
-    //codeCountry();
-    //putCallCode();
-
-    $(".iti").addClass('w-100');
-    $('#div-verify').hide();
-    $('.message').hide();
-    $('#phone-table').hide();
-    <?php if ($is_registered) { ?>
-      $('#phone-table').show();
-    <?php } ?>
-    $('#button-start-connect').click(function(){
-      var phone_number = $("#phone").val();
-      var code_country = $(".iti__selected-flag").attr('data-code');
-      var dataphone = $("#form-connect").serializeArray();
-      dataphone.push({name:'code_country', value:code_country});
-
-      $.ajax({
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        type: 'GET',
-        url: "{{ url('connect-phone') }}",
-        data: dataphone,
-        dataType: 'text',
-        beforeSend: function()
-        {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
-        },
-        success: function(result) {
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-
-          var data = jQuery.parseJSON(result);
-
-          if(data.status == "success") {
-            $('.message').show();
-            $('.message').html(data.message);
-            $("#button-connect").prop('disabled',true);
-            $("#phone").prop('disabled',true);
-            $("#code_country").prop('disabled',true);
-            // new system loadPhoneNumber();
-            waitingTime();
-            $(".error").hide();
-          }
-
-          if(data.status == "error") {
-              $(".error").show();
-              $(".phone_number").html(data.phone_number);
-              $('.code_country').html(data.code_country);
-          }
-
-          if(data.message !== undefined){
-              $('.message').show();
-              $('.message').html(data.message);
-          }
-
-        },
-        error: function(xhr,attr,throwable)
-        {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            alert(xhr.responseText);
-        }
-      });
-    });
-    $('#button-connect').click(function(){
-      $("#modal-start-connect").modal();
-    });
-
-    $("select[name='timezone'] > option[value='{{ $user_timezone }}']").prop("selected", true);
 
    /* function selJs()
     {
@@ -547,9 +468,6 @@
           theme: 'bootstrap4'
       });
     }*/
-
-   // Display Country
-
     function delay(callback, ms) {
       var timer = 0;
       return function() {
@@ -604,247 +522,39 @@
         $("#display_countries").hide();
       });
     }
-  // End Display Country
-  var tm,flagtm;
-  function waitingTime()
-  {
-      var scd = 0;
-      var sc = 0;
-      var min = 0;
-      flagtm = false;
-      tm = setInterval(function(){
-          $("#secs").html(sc);
-          $("#min").html('0'+min);
+		
+	$(document).ready(function() {  
+    checkPhone(); 
+    tabs();
+    loadPhoneNumber();
+    editPhoneNumber();
+    openEditModal();
+    settingUser();
+    triggerButtonMod();
+    intialCountry();
+    // selJs();
 
-          if(sc < 10)
-          {
-            $("#secs").html('0'+sc);
-          }
+    $(".iti").addClass('w-100');
+    $('#div-verify').hide();
+    $('.message').hide();
+    $('#phone-table').hide();
+    <?php if ($is_registered) { ?>
+      $('#phone-table').show();
+    <?php } ?>
+    buttonStartConnect();
+		buttonConnect();
 
-          if(sc == 60){
-            min = min + 1;
-            $("#min").html('0'+min);
-            sc = 0;
-            $("#secs").html('0'+sc);
-          }
-
-          if( (scd == 180) || (scd == 233) || (scd == 287) || (scd == 329) || (scd == 359) )
-          {
-            // console.log("new system");
-            if (flagtm == false ) {
-              flagtm = true;
-              getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
-            }
-          }
-
-          if(min == 6)
-          {
-              $("#secs").html('0'+0);
-              clearInterval(tm);
-          }
-
-          sc++;
-          scd++;
-      },1000);
-  };
-
-    function getQRCode(phone_number)
-    {
-      $.ajax({
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-          type: 'GET',
-          url: "{{ url('verify-phone') }}",
-          data: {
-            phone_number : phone_number,
-          },
-          dataType: 'json',
-          beforeSend: function()
-          {
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success: function(result) {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-
-            if(result.status == 'error'){
-              /* new system $('.message').show();
-              $('.message').append(result.phone_number);*/
-              // getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
-              console.log(result);
-            }
-            else
-            {
-              $('#div-verify').show();
-              $("#qr-code").html(result.data);
-							$(window).scrollTop(700);
-              clearInterval(tm);
-              countDownTimer(phone_number);
-            }
-            flagtm = false;
-            // new system loadPhoneNumber();
-          },
-          error : function(xhr,attr,throwable){
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            console.log(xhr.responseText);
-            alert('Sorry, unable to display QR-CODE, there is something wrong with our server, please try again later')
-          }
-        });
-
-    }
-
-    var timerCheckQrCode,flagTimerCheckQrCode;
-    function countDownTimer(phone_number)
-    {
-      var sec = 25; //countdown timer
-      var word = '<h3>Please scan qr-code before time\'s up :</h3>';
-      flagTimerCheckQrCode=false;
-      timerCheckQrCode = setInterval( function(){
-
-          if( (sec == 20) || (sec == 15) || (sec == 10) || (sec == 1) ) {
-            if (flagTimerCheckQrCode == false ) {
-              flagTimerCheckQrCode = true;
-              checkQRcode(phone_number);
-            }
-          }
-          
-          if(sec < 1){
-            clearInterval(timerCheckQrCode);
-          }
-
-          if(sec < 10){
-            $("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
-          }
-          else
-          {
-            $("#timer").html(word+'<h4><b>'+sec+'</b></h4>');
-          }
-          sec--;
-      },1000);
-    }
-
-    function checkQRcode(phone_number)
-    {
-      $.ajax({
-        type: 'GET',
-        url: "{{ url('check-qr') }}",
-        data: {
-          no_wa : phone_number,
-        },
-        dataType: 'json',
-        beforeSend: function()
-        {
-          /* new system $('#loader').show();
-          $('.div-loading').addClass('background-load');*/
-        },
-        success: function(result) {
-          /* new system $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-
-          $('#div-verify').hide();
-          $("#timer, #qr-code").html('');*/
-
-          if (result.status!="none"){
-            $('.message').show();
-            $('.message').html(result.status);
-          }  
-          if (result.status=="Congratulations, your phone is connected"){
-            $('#div-verify').hide();
-            $("#timer, #qr-code").html('');
-            $('#phone-table').show();
-            loadPhoneNumber();
-            clearInterval(timerCheckQrCode);
-          }
-          flagTimerCheckQrCode=false;
-          /* new system loadPhoneNumber();*/
-        },
-        error : function(xhr){
-          /* new system $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-          $('#div-verify').hide();
-          $("#timer, #qr-code").html('');*/
-
-          // alert('Sorry, unable to check if your phone verified, please try again later');
-          console.log(xhr.responseText);
-        }
-      });
-    }
-    
-    $('#button-delete-phone').click(function(){
-      $.ajax({
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        type: 'GET',
-        url: "<?php echo url('/delete-phone');?>",
-        data: {
-          id : $("#id_phone_number").val(),
-        },
-        dataType: 'text',
-        beforeSend: function()
-        {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
-        },
-        success: function(result) {
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-
-          var data = jQuery.parseJSON(result);
-          $('.message').show();
-          $('.message').html(data.message);
-          $("#button-connect").prop('disabled',false);
-          $("#phone").val("");
-          loadPhoneNumber();
-          // new system loadPhoneNumber();
-        }
-      });
-    });
+    $("select[name='timezone'] > option[value='{{ $user_timezone }}']").prop("selected", true);
 
 
-    /*$('body').on("click","#link-resend",function(){
-      var data_tel = $(this).attr('data-phone');
-      var data = {'resend':1,'phone_number':data_tel};
 
-      $.ajax({
-        type: 'GET',
-        url: "{{ url('connect-phone') }}",
-        data: data,
-        dataType: 'json',
-        beforeSend: function()
-        {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
-        },
-        success: function(result) {
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-        
-          if(result.status == "success") {
-            $('.message').show();
-            $('.message').html(result.message);
-            $('#div-verify').show();
-            loadPhoneNumber();
-          }
+		// Display Country
+    codeCountry();
+    putCallCode();
 
-          if(result.status == "error") {
-              $(".phone_number").html(data.phone_number);
-          }
-
-        }
-      });
-      
-    });*/
-
-    $("body").on("click", ".icon-delete", function() {
-      $('#id_phone_number').val($(this).attr('data-id'));
-      $('#confirm-delete').modal('show');
-    });
-
-    $("body").on("click", ".link-verify", function() {
-      var phone_number = $(this).attr('data-phone');
-      $("#phone").val(phone_number);
-      getQRCode(phone_number);
-    });
+		// End Display Country
+		
+		initButton();
   });
 
   function settingUser(){
@@ -951,7 +661,288 @@
         });
      });
   }
+	function buttonConnect(){
+		<?php if (session('mode')==0) { ?>
+			console.log("a");
+			$('#button-connect').click(function(){
+				$("#modal-start-connect").modal();
+			});
+		<?php } ?>
+		<?php if (session('mode')==1) { ?>
+			console.log("b");
+			$('#button-connect').click(function(){
+				$("#modal-start-connect").modal();
+			});
+		<?php } ?>
+	}
+	function buttonStartConnect(){
+    $('#button-start-connect').click(function(){
+      var phone_number = $("#phone").val();
+      var code_country = $(".iti__selected-flag").attr('data-code');
+      var dataphone = $("#form-connect").serializeArray();
+      dataphone.push({name:'code_country', value:code_country});
 
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        url: "{{ url('connect-phone') }}",
+        data: dataphone,
+        dataType: 'text',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          var data = jQuery.parseJSON(result);
+
+          if(data.status == "success") {
+            $('.message').show();
+            $('.message').html(data.message);
+            $("#button-connect").prop('disabled',true);
+            $("#phone").prop('disabled',true);
+            $("#code_country").prop('disabled',true);
+            // new system loadPhoneNumber();
+            waitingTime();
+            $(".error").hide();
+          }
+
+          if(data.status == "error") {
+              $(".error").show();
+              $(".phone_number").html(data.phone_number);
+              $('.code_country').html(data.code_country);
+          }
+
+          if(data.message !== undefined){
+              $('.message').show();
+              $('.message').html(data.message);
+          }
+
+        },
+        error: function(xhr,attr,throwable)
+        {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            alert(xhr.responseText);
+        }
+      });
+    });
+	}
+
+	
+  var tm,flagtm;
+  function waitingTime()
+  {
+      var scd = 0;
+      var sc = 0;
+      var min = 0;
+      flagtm = false;
+      tm = setInterval(function(){
+          $("#secs").html(sc);
+          $("#min").html('0'+min);
+
+          if(sc < 10)
+          {
+            $("#secs").html('0'+sc);
+          }
+
+          if(sc == 60){
+            min = min + 1;
+            $("#min").html('0'+min);
+            sc = 0;
+            $("#secs").html('0'+sc);
+          }
+
+          if( (scd == 180) || (scd == 233) || (scd == 287) || (scd == 329) || (scd == 359) )
+          {
+            // console.log("new system");
+            if (flagtm == false ) {
+              flagtm = true;
+              getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
+            }
+          }
+
+          if(min == 6)
+          {
+              $("#secs").html('0'+0);
+              clearInterval(tm);
+          }
+
+          sc++;
+          scd++;
+      },1000);
+  };
+
+	function getQRCode(phone_number)
+	{
+		$.ajax({
+				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+				type: 'GET',
+				url: "{{ url('verify-phone') }}",
+				data: {
+					phone_number : phone_number,
+				},
+				dataType: 'json',
+				beforeSend: function()
+				{
+					$('#loader').show();
+					$('.div-loading').addClass('background-load');
+				},
+				success: function(result) {
+					$('#loader').hide();
+					$('.div-loading').removeClass('background-load');
+
+					if(result.status == 'error'){
+						/* new system $('.message').show();
+						$('.message').append(result.phone_number);*/
+						// getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
+						console.log(result);
+					}
+					else
+					{
+						$('#div-verify').show();
+						$("#qr-code").html(result.data);
+						$(window).scrollTop(700);
+						clearInterval(tm);
+						countDownTimer(phone_number);
+					}
+					flagtm = false;
+					// new system loadPhoneNumber();
+				},
+				error : function(xhr,attr,throwable){
+					$('#loader').hide();
+					$('.div-loading').removeClass('background-load');
+					console.log(xhr.responseText);
+					alert('Sorry, unable to display QR-CODE, there is something wrong with our server, please try again later')
+				}
+			});
+
+	}
+
+	var timerCheckQrCode,flagTimerCheckQrCode;
+	function countDownTimer(phone_number)
+	{
+		var sec = 25; //countdown timer
+		var word = '<h3>Please scan qr-code before time\'s up :</h3>';
+		flagTimerCheckQrCode=false;
+		timerCheckQrCode = setInterval( function(){
+
+				if( (sec == 20) || (sec == 15) || (sec == 10) || (sec == 1) ) {
+					if (flagTimerCheckQrCode == false ) {
+						flagTimerCheckQrCode = true;
+						checkQRcode(phone_number);
+					}
+				}
+				
+				if(sec < 1){
+					clearInterval(timerCheckQrCode);
+				}
+
+				if(sec < 10){
+					$("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
+				}
+				else
+				{
+					$("#timer").html(word+'<h4><b>'+sec+'</b></h4>');
+				}
+				sec--;
+		},1000);
+	}
+
+	function checkQRcode(phone_number)
+	{
+		$.ajax({
+			type: 'GET',
+			url: "{{ url('check-qr') }}",
+			data: {
+				no_wa : phone_number,
+			},
+			dataType: 'json',
+			beforeSend: function()
+			{
+				/* new system $('#loader').show();
+				$('.div-loading').addClass('background-load');*/
+			},
+			success: function(result) {
+				/* new system $('#loader').hide();
+				$('.div-loading').removeClass('background-load');
+
+				$('#div-verify').hide();
+				$("#timer, #qr-code").html('');*/
+
+				if (result.status!="none"){
+					$('.message').show();
+					$('.message').html(result.status);
+				}  
+				if (result.status=="Congratulations, your phone is connected"){
+					$('#div-verify').hide();
+					$("#timer, #qr-code").html('');
+					$('#phone-table').show();
+					loadPhoneNumber();
+					clearInterval(timerCheckQrCode);
+				}
+				flagTimerCheckQrCode=false;
+				/* new system loadPhoneNumber();*/
+			},
+			error : function(xhr){
+				/* new system $('#loader').hide();
+				$('.div-loading').removeClass('background-load');
+				$('#div-verify').hide();
+				$("#timer, #qr-code").html('');*/
+
+				// alert('Sorry, unable to check if your phone verified, please try again later');
+				console.log(xhr.responseText);
+			}
+		});
+	}	
+	
+	function initButton(){
+		    
+    $('#button-delete-phone').click(function(){
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        url: "<?php echo url('/delete-phone');?>",
+        data: {
+          id : $("#id_phone_number").val(),
+        },
+        dataType: 'text',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          var data = jQuery.parseJSON(result);
+          $('.message').show();
+          $('.message').html(data.message);
+          $("#button-connect").prop('disabled',false);
+          $("#phone").val("");
+          loadPhoneNumber();
+          // new system loadPhoneNumber();
+        }
+      });
+    });
+
+
+    $("body").on("click", ".icon-delete", function() {
+      $('#id_phone_number').val($(this).attr('data-id'));
+      $('#confirm-delete').modal('show');
+    });
+
+    $("body").on("click", ".link-verify", function() {
+      var phone_number = $(this).attr('data-phone');
+      $("#phone").val(phone_number);
+      getQRCode(phone_number);
+    });
+	}
+	
 </script>
 
 @endsection

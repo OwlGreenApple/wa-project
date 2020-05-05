@@ -6,16 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class PhoneNumber extends Model
 {
-  /* OLD
+  /* 
   * Status 
-  * 0 -> Not Verified (Not Ready to scan code, mesti tunggu 3-5menit)
-  * 1 -> Ready To Scan Code (Belum scan code)
-  * 2 -> Verified
+  * 1 -> Disconnected
+	* 2 -> Connected
+	
+	mode 
+	0 -> Simi
+	1 -> Woowa
+	
+	if mode == 0 -> filename -> port
+	if mode == 1 -> filename -> key
   */
-  /* NEW
-  * Status 
-  * 0 -> Disconnected
-  * 1 -> Connected
-  */
+	
   protected $table = 'phone_numbers';
 }

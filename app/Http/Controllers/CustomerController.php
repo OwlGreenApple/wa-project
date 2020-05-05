@@ -236,8 +236,14 @@ class CustomerController extends Controller
 							$message_send = new Message;
 							$message_send->phone_number=$phone_number;
 							$message_send->message=$message;
-							$message_send->key=$key;
-							$message_send->status=9;
+							if ($phoneNumber->mode == 0) {
+								$message_send->key="belum jadi";
+								$message_send->status=8;
+							}
+							if ($phoneNumber->mode == 1) {
+								$message_send->key=$key;
+								$message_send->status=9;
+							}
 							$message_send->customer_id=$customer_id;
 							$message_send->save();
             }

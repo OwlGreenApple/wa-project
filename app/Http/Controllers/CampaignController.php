@@ -81,6 +81,7 @@ class CampaignController extends Controller
 				ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$request->message,$request->phone,"reminder");
 			}
 			else {*/
+			
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
 					$folder = $user->id."/send-test-message/";
@@ -100,8 +101,14 @@ class CampaignController extends Controller
 					$message_send = new Message;
 					$message_send->phone_number=$request->phone;
 					$message_send->message=$request->message;
-					$message_send->key=$key;
-					$message_send->status=0;
+					if ($phoneNumber->mode == 0) {
+						$message_send->key="belum jadi";
+						$message_send->status=6;
+					}
+					if ($phoneNumber->mode == 1) {
+						$message_send->key=$key;
+						$message_send->status=7;
+					}
 					$message_send->customer_id=0;
 					$message_send->save();
 
