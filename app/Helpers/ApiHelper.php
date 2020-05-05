@@ -458,11 +458,11 @@ class ApiHelper
 		return "success";
 	}
 	
-	public static function send_simi($phoneNumber,$message,$key)
+	
+	
+	public static function send_simi($phoneNumber,$message,$url)
   {
 		$phoneNumber = str_replace("+","",$phoneNumber);
-		// A sample PHP Script to POST data using cURL
-		// Data in JSON format
 		 
 		$data = array(
 				'to' => $phoneNumber."@c.us",
@@ -472,7 +472,8 @@ class ApiHelper
 		$payload = json_encode($data);
 		 
 		// Prepare new cURL resource
-		$ch = curl_init('http://103.65.237.93:3000/api/whatsapp/chats/sendMessage');
+		// $ch = curl_init('http://103.65.237.93:3000/api/whatsapp/chats/sendMessage');
+		$ch = curl_init($url.'/api/whatsapp/chats/sendMessage');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 		curl_setopt($ch, CURLOPT_POST, true);
@@ -493,6 +494,69 @@ class ApiHelper
 
 		// return "success";
 		return $result;
+	}
+	
+	public static function send_image_url_simi($phoneNumber,$url_image,$message,$url)
+  {
+		$phoneNumber = str_replace("+","",$phoneNumber);
+		 
+		$data = array(
+				'to' => $phoneNumber."@c.us",
+				'body' => $message,
+				'image' => $message
+		);
+		 
+		$payload = json_encode($data);
+		 
+		// Prepare new cURL resource
+		$ch = curl_init($url.'/api/whatsapp/chats/sendImage');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+		// Set HTTP Header for POST request 
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Content-Type: application/json',
+				'apikey:d802233599d9riz1b11dk7d70531ab57',
+				'Content-Length: ' . strlen($payload))
+		);
+
+		// Submit the POST request
+		$result = curl_exec($ch);
+		 
+		// Close cURL session handle
+		curl_close($ch);
+
+		// return "success";
+		return $result;
+	}
+
+ 	public static function get_qr_code_simi($url)
+  {
+		$phoneNumber = str_replace("+","",$phoneNumber);
+
+		// Prepare new cURL resource
+		$ch = curl_init($url.'/api/whatsapp/instance/scan');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+
+		// Set HTTP Header for POST request 
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Content-Type: application/json',
+				'apikey:d802233599d9riz1b11dk7d70531ab57'
+		));
+
+		// Submit the POST request
+		$result = curl_exec($ch);
+
+		// Close cURL session handle
+		curl_close($ch);
+
+		$qrcode='<img src="data:image/jpeg;base64,'.base64_encode($result).'"/>';
+		return $qrcode;
+
 	}
 /* END CLASS */
 }

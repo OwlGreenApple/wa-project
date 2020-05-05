@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
 use App\Order;
+use App\Server;
 use App\PhoneNumber;
 use App\Rules\TelNumber;
 use App\Rules\AvailablePhoneNumber;
@@ -58,6 +59,27 @@ class SettingController extends Controller
           $max_counter = number_format($phoneNumber->max_counter);
       }
 
+      $countModeSimi = PhoneNumber::
+                      where("mode",0)
+											->count();
+      $countModeWoowa = PhoneNumber::
+                      where("mode",1)
+											->count();
+
+			if (floor($countModeSimi / 3) <= $countModeWoowa) {
+				$server = Server::where("status",0)->first();
+				if (is_null($server)){
+					return "contact administrator";
+				}
+				session([
+					'mode'=>0,
+					'server_id'=>$server->id,
+				]);
+			}
+			else {
+				session(['mode'=>1]);
+			}
+		
       return view('auth.settings',[
         'user'=>$user,
         'is_registered'=>$is_registered,
@@ -200,6 +222,93 @@ class SettingController extends Controller
       return response()->json($data);
     }
 
+		//simi
+    public function req_qrcode_simi(Request $request)
+    {
+			$server = Server::find(session("server_id"));
+			if (is_null($server)){
+				$data = array(
+					'status'=>'error',
+					'message'=>"contact administrator",
+				);
+				return response()->json($data);
+			}
+			
+			$qr_code = ApiHelper::get_qr_code_simi($server->url);
+
+			if($qr_code == false)
+			{
+				$data = array(
+					'status'=>'error',
+					'phone_number'=>Alert::qrcode(),
+				);
+			}
+			else
+			{
+				$data = array(
+					'status'=>'success',
+					'data'=>$qr_code,
+				);
+			}
+			return response()->json($data);
+		}
+
+		//simi
+    public function check_qrcode_simi(Request $request)
+    {
+        $user = Auth::user();
+        $counter = $this->checkIsPay();
+        if($counter == 0)
+        {
+            $response['status'] = 'Currently you don\'t have any package left, Please Order new package now.';
+            return json_encode($response);
+        }
+        else
+        {
+            $day_counter = $counter['day'];
+            $month_counter = $counter['month'];
+        }
+
+        if($request->phone_number <> null)
+        {
+            $no_wa = $request->phone_number;
+        }
+        else 
+        {
+            $no_wa = $request->no_wa;
+        }
+
+        $wa_number = substr($no_wa, 1);
+        $status_connect = ApiHelper::qr_status($no_wa);
+        //if status_connect == none which mean phone still not connect
+				if ( ($status_connect == $wa_number) || ($status_connect == "phone_offline")){
+            $key = $this->get_key($no_wa);
+            try{
+              // new system PhoneNumber::where([['user_id',$user->id],['phone_number',$no_wa]])->update($data);
+              $phoneNumber = new PhoneNumber();
+              $phoneNumber->user_id = $user->id;
+              $phoneNumber->phone_number = $no_wa;
+              $phoneNumber->filename = $key;
+              $phoneNumber->counter = env('COUNTER');
+              $phoneNumber->max_counter_day = $day_counter;
+              $phoneNumber->max_counter = $month_counter;
+              $phoneNumber->status = 2;
+              $phoneNumber->mode = 0;
+              $phoneNumber->save();
+
+              $response['status'] = 'Congratulations, your phone is connected';
+            }catch(Exception $e){
+              $response['status'] = 'Sorry, there is some error, please retry to verify your phone';
+            }
+        }
+        else {
+          $response['status'] = $status_connect;
+        }
+       
+        return json_encode($response);
+		}
+
+		//woowa
     public function connect_phone(Request $request)
     {
       $user = Auth::user();
@@ -270,7 +379,7 @@ class SettingController extends Controller
     }
 
     /*
-    * GET QR CODE
+    * GET QR CODE woowa
     */
     public function verify_phone(Request $request)
     {
@@ -324,7 +433,7 @@ class SettingController extends Controller
     }
 
     /*
-    * Confirm QR CODE
+    * Confirm QR CODE woowa
     */
     public function check_connected_phone(Request $request)
     {
@@ -370,6 +479,7 @@ class SettingController extends Controller
               $phoneNumber->max_counter_day = $day_counter;
               $phoneNumber->max_counter = $month_counter;
               $phoneNumber->status = 2;
+              $phoneNumber->mode = session('mode');
               $phoneNumber->save();
 
               $response['status'] = 'Congratulations, your phone is connected';
