@@ -36,12 +36,29 @@ class BroadCastController extends Controller
 				$filename="";
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
+          $image_size = getimagesize($request->file('imageWA'));
+          $imagewidth = $image_size[0];
+          $imageheight = $image_size[1];
+          $imgtrue = imagecreatetruecolor($imagewidth,$imageheight);
+
 					$dt = Carbon::now();
+          $ext = $request->file('imageWA')->getClientOriginalExtension();
 					$folder = $user->id."/broadcast-image/";
-					$filename = $dt->format('ymdHi').'.jpg';
-					Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+					$filename = $dt->format('ymdHi').'.'.$ext;
+          
+          if(checkImageSize($request->file('imageWA')) == true || $imagewidth > 1280 || $imageheight > 1280)
+          {
+              $scale = scaleImageRatio($imagewidth,$imageheight);
+              $imagewidth = $scale['width'];
+              $imageheight = $scale['height'];
+              resize_image($request->file('imageWA'),$imagewidth,$imageheight,false,$folder,$filename);
+          }
+          else
+          {
+              Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+          }
 				}
-				
+
         if($broadcast_schedule == 0)
         {
             $list_id = $request->list_id;

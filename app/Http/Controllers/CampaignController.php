@@ -130,21 +130,11 @@ class CampaignController extends Controller
       return view('campaign.create-campaign',$data);
     }
 
-    private function checkImageSize(Request $request)
-    {
-        $image = $request->file('imageWA');
-        $image_file_size = (int)number_format($request->file('imageWA')->getSize() / 1024, 2);
-        if($image_file_size > 1000)
-        {
-           return response()->json($error);
-        }
-    }
-
     public function SaveCampaign(Request $request)
     {
 			if($request->hasFile('imageWA')) {
 				$image_size = getimagesize($request->file('imageWA'));
-        $image_file_size = (int)number_format($request->file('imageWA')->getSize() / 1024, 2);
+        // $image_file_size = (int)number_format($request->file('imageWA')->getSize() / 1024, 2);
 				$imagewidth = $image_size[0];
 				$imageheight = $image_size[1];
 				if(($imagewidth > 2000) || ($imageheight > 2000) )
@@ -154,7 +144,6 @@ class CampaignController extends Controller
             );
             return response()->json($error);
 				}
-        // $this->checkImageSize($request);
 			}
     
       $campaign = $request->campaign_type;
@@ -170,8 +159,8 @@ class CampaignController extends Controller
             'list_id'=>['required',new CheckValidListID],
             'event_time'=>['required',new CheckDateEvent,new CheckEventEligibleDate($request->day)],
             'hour'=>['required','date_format:H:i',new EligibleTime($request->event_time)],
-            'message'=>['required','max:4095'],
-						'imageWA'=>['max:1024'],
+            'message'=>['required','max:65000'],
+						'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],
         );
 
         if($request->schedule > 0){
@@ -190,7 +179,7 @@ class CampaignController extends Controller
               'day'=>$err->first('day'),
               'hour'=>$err->first('hour'),
               'msg'=>$err->first('message'),
-							'image'=>"image maximum size 1MB",
+							'image'=>$err->first('imageWA'),
             );
             return response()->json($error);
         }
@@ -214,8 +203,8 @@ class CampaignController extends Controller
             'list_id'=>['required',new CheckValidListID],
             'day'=>['required','numeric','min:1','max:100'],
             'hour'=>['required','date_format:H:i'],
-            'message'=>['required','max:4095'],
-						'imageWA'=>['max:1024'],
+            'message'=>['required','max:65000'],
+						'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],
         );
 
         $validator = Validator::make($request->all(),$rules);
@@ -229,7 +218,7 @@ class CampaignController extends Controller
               'day'=>$err->first('day'),
               'hour'=>$err->first('hour'),
               'msg'=>$err->first('message'),
-							'image'=>"image maximum size 1MB",
+							'image'=>$err->first('imageWA'),
             );
             return response()->json($error);
         }
@@ -252,8 +241,8 @@ class CampaignController extends Controller
           'list_id'=>['required', new CheckValidListID],
           'date_send'=>['required',new CheckBroadcastDate],
           'hour'=>['required','date_format:H:i',new EligibleTime($request->date_send)],
-          'message'=>['required','max:4095'],
-          'imageWA'=>['max:1024'],
+          'message'=>['required','max:65000'],
+          'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],
         );
 
         $validator = Validator::make($request->all(),$rules);
@@ -269,7 +258,7 @@ class CampaignController extends Controller
               'date_send'=>$error->first('date_send'),
               'hour'=>$error->first('hour'),
               'msg'=>$error->first('message'),
-							'image'=>"image maximum size 1MB",
+							'image'=>$error->first('imageWA'),
             ];
 
             return response()->json($data_error);

@@ -34,7 +34,18 @@ class EventController extends Controller
 					$dt = Carbon::now();
 					$folder = $user->id."/broadcast-image/";
 					$filename = $dt->format('ymdHi').'.jpg';
-					Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+
+          if(checkImageSize($request->file('imageWA')) == true || $imagewidth > 1280 || $imageheight > 1280)
+          {
+              $scale = scaleImageRatio($imagewidth,$imageheight);
+              $imagewidth = $scale['width'];
+              $imageheight = $scale['height'];
+              resize_image($request->file('imageWA'),$imagewidth,$imageheight,false,$folder,$filename);
+          }
+          else
+          {
+              Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+          }
 				}
 				
         if($request->schedule == 0){
