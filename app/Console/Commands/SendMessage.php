@@ -15,6 +15,7 @@ use App\Helpers\Spintax;
 use Carbon\Carbon;
 use App\User;
 use App\PhoneNumber;
+use App\Server;
 use DB;
 use App\Helpers\ApiHelper;
 
@@ -81,10 +82,12 @@ class SendMessage extends Command
                 $customer_message = $row->message;
                 $customer_phone = $row->telegram_number;
                 $phoneNumber = PhoneNumber::find($row->phoneid);
-
-                if(is_null($phoneNumber))
-                {
-                   continue;
+                if(is_null($phoneNumber)){
+                  continue;
+                }
+								$server = Server::where('phone_id',$phoneNumber->id)->first();
+                if(is_null($server)){
+                  continue;
                 }
 
                 $hour = $row->hour_time; //hour according user set it to sending
@@ -140,7 +143,7 @@ class SendMessage extends Command
 													if ($row->image==""){
 														// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 														if ($phoneNumber->mode == 0) {
-															$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+															$send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
 														}
 														if ($phoneNumber->mode == 1) {
 															$send_message = ApiHelper::send_message($customer_phone,$message,$key);
@@ -210,7 +213,6 @@ class SendMessage extends Command
             foreach($reminder as $col) 
             {
                 $phoneNumber = PhoneNumber::where('user_id','=',$col->userid)->first();
-            
                 if(!is_null($phoneNumber)){
                   $counter = $phoneNumber->counter;
                   $max_counter = $phoneNumber->max_counter;
@@ -218,6 +220,10 @@ class SendMessage extends Command
                 }
                 else
                 {
+                  continue;
+                }
+								$server = Server::where('phone_id',$phoneNumber->id)->first();
+                if(is_null($server)){
                   continue;
                 }
 
@@ -263,7 +269,7 @@ class SendMessage extends Command
 											if ($col->image==""){
 												// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 												if ($phoneNumber->mode == 0) {
-													$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+													$send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
 												}
 												if ($phoneNumber->mode == 1) {
 													$send_message = ApiHelper::send_message($customer_phone,$message,$key);
@@ -342,7 +348,6 @@ class SendMessage extends Command
                 $membership = $row->membership;
 
                 $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->first();
-
                 if(!is_null($phoneNumber)){
                   $customer_phone = $row->telegram_number;
                   $key = $phoneNumber->filename;
@@ -352,6 +357,10 @@ class SendMessage extends Command
                 }
                 else
                 {
+                  continue;
+                }
+								$server = Server::where('phone_id',$phoneNumber->id)->first();
+                if(is_null($server)){
                   continue;
                 }
 
@@ -406,7 +415,7 @@ class SendMessage extends Command
 										if ($row->image==""){
 											// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 											if ($phoneNumber->mode == 0) {
-												$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+												$send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
 											}
 											if ($phoneNumber->mode == 1) {
 												$send_message = ApiHelper::send_message($customer_phone,$message,$key);
@@ -492,10 +501,12 @@ class SendMessage extends Command
                   $counter = $phoneNumber->counter;
                   $max_counter = $phoneNumber->max_counter;
                   $max_counter_day = $phoneNumber->max_counter_day;
-
                 }
-                else
-                {
+                else{
+                  continue;
+                }
+								$server = Server::where('phone_id',$phoneNumber->id)->first();
+                if(is_null($server)){
                   continue;
                 }
 
@@ -550,7 +561,7 @@ class SendMessage extends Command
 										if ($row->image==""){
 											// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 											if ($phoneNumber->mode == 0) {
-												$send_message = ApiHelper::send_simi($customer_phone,$message,$key);
+												$send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
 											}
 											if ($phoneNumber->mode == 1) {
 												$send_message = ApiHelper::send_message($customer_phone,$message,$key);
