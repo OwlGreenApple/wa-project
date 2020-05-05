@@ -35,6 +35,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('queue:message')->everyMinute();
         $schedule->command('send:message')->everyMinute();
         $schedule->command('check:counter')->everyMinute();
+        $schedule->command('check:connection')->hourly();
         // $schedule->command('check:wa')->hourly();
     }
 
