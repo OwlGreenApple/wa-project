@@ -546,7 +546,7 @@ class ApiHelper
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Content-Type: application/json',
 				'apikey:d802233599d9riz1b11dk7d70531ab57'
-		);
+		));
 
 		// Submit the POST request
 		$result = curl_exec($ch);
