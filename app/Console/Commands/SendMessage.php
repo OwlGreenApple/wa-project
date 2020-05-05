@@ -106,9 +106,9 @@ class SendMessage extends Command
                     $time_sending = $date->toDateString().' '.$hour;
                     $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
                     // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
-
+                    $midnightTime = $this->avoidMidnightTime($row->timezone);
                     
-                    if($deliver_time < 0){
+                    if($deliver_time < 0 || $midnightTime == false){
                       //klo blm hour_time di skip dulu
                       continue;
                     }
@@ -252,8 +252,9 @@ class SendMessage extends Command
                 $now = Carbon::now()->timezone($col->timezone);
                 $adding = Carbon::parse($adding_with_hour);         
                 $number++;
+                $midnightTime = $this->avoidMidnightTime($row->timezone);
 
-                if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
+                if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) || $midnightTime == false) {
                   continue;
                 }
 
@@ -346,6 +347,7 @@ class SendMessage extends Command
                 $days = (int)$row->days;
                 $hour = $row->hour_time; //hour according user set it to sending
                 $membership = $row->membership;
+                $midnightTime = $this->avoidMidnightTime($row->timezone);
 
                 $phoneNumber = PhoneNumber::where('user_id','=',$row->user_id)->first();
                 if(!is_null($phoneNumber)){
@@ -365,7 +367,7 @@ class SendMessage extends Command
                 }
 
                 // PREVENT RUN IF MEMBERSHIP LESS THAN 2
-                if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)))
+                if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)) || $midnightTime == false )
                 {
                     continue;
                 }
@@ -496,6 +498,7 @@ class SendMessage extends Command
 
                 $date_appt = $event_date->toFormattedDateString();
                 $time_appt = $event_date->toTimeString();
+                $midnightTime = $this->avoidMidnightTime($row->timezone);
 
                 if(!is_null($phoneNumber)){
                   $counter = $phoneNumber->counter;
@@ -510,7 +513,7 @@ class SendMessage extends Command
                   continue;
                 }
 
-                if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)))
+                if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)) ||$midnightTime == false)
                 {
                     continue;
                 }
@@ -535,7 +538,7 @@ class SendMessage extends Command
                 // get id reminder for reminder customer
                 if($deliver_time >= 0 && $counter > 0){
                   $number++;
-                  $campaign = 'Event';
+                  $campaign = 'Appointment';
                   $id_campaign = $row->rcs_id;
 
                   //queued status
@@ -680,6 +683,22 @@ class SendMessage extends Command
 			}
 
       return $status;
+    }
+
+    public function avoidMidnightTime($timezone)
+    {
+        $time = Carbon::now()->timezone($timezone);
+        $start = Carbon::createFromTime(23,0,0,$timezone);
+        $end = Carbon::createFromTime(5,0,0,$timezone)->addDays(1);
+
+        if($time->gte($start) && $time->lte($end))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
 /* End command class */    

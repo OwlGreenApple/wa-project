@@ -49,7 +49,7 @@ class CheckConnection extends Command
             if($check_connected <> 'success')
             {
               $phone = PhoneNumber::find($idphone_number);
-              $phone->status = 0;
+              $phone->status = 1;
               $phone->save();
             }
           } // END FOREACH
