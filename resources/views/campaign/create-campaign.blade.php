@@ -84,9 +84,9 @@
         <label class="col-sm-3 col-form-label">Select List :</label>
         <div class="col-sm-9 relativity">
            <select name="list_id" class="custom-select-campaign form-control">
-              @if($lists->count() > 0)
+              @if(count($lists) > 0)
                 @foreach($lists as $row)
-                  <option value="{{$row->id}}">{{$row->customer_count}} {{$row->label}}</option>
+                  <option value="{{ $row['id'] }}">{{ $row['customer_count'] }} {{ $row['label'] }}</option>
                 @endforeach
               @endif
            </select>

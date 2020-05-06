@@ -85,6 +85,7 @@ class CustomerController extends Controller
           'listname'=>$link_list,
           'pixel'=>$list->pixel_text,
           'additional'=>$arr,
+          'btn_message'=>$list->button_subscriber
         ];
 
         return view('register-customer',$data);
@@ -294,6 +295,7 @@ class CustomerController extends Controller
     function addSubscriber($list_id,$customer_id,$customer_join,$user_id)
     {
         $reminder = Reminder::where([['list_id','=',$list_id],['user_id','=',$user_id],['status','=',1],])->get();
+        $confirmation = UserList::find($list_id);
 
         if($reminder->count() > 0)
         {
@@ -362,7 +364,7 @@ class CustomerController extends Controller
         }
         
         $data['success'] = true;
-        $data['message'] = 'Success, your new contact has been added';
+        $data['message'] = $confirmation->message_conf;
         return response()->json($data);
     }
 

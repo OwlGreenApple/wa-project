@@ -639,6 +639,8 @@ class ListController extends Controller
         $lists->label_name = $label_name;
         $lists->label_phone = $label_phone;
         $lists->label_email = $label_email;
+        $lists->button_subscriber = $request->button_rename;
+        $lists->message_conf = $request->conf_message;
         $lists->content = $editor;
         $lists->pixel_text = $pixel;
 
@@ -786,7 +788,9 @@ class ListController extends Controller
             'label_phone'=>$list->label_phone,
             'label_email'=>$list->label_email,
             'content'=> $list->content,
+            'message_conf'=> $list->message_conf,
             'pixel'=>$list->pixel_text,
+            'button_subscriber'=> $list->button_subscriber,
             'listid'=>$listid,
             'is_secure'=>$list->is_secure,
             'auto_reply_message'=>$auto_reply_message,

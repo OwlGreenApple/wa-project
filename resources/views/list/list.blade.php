@@ -42,6 +42,18 @@
             </label>
           </div>
 
+          <div class="form-group text-left mt-2">
+            <span class="tooltipstered" title="<div class='panel-heading'>Information :</div><div class='panel-content'>
+              - [NAME] for name <br/>
+              - [PHONE] for phone <br/>
+              Whatsapp : <br/>
+              - Bold : *<i>Your Text</i>*<br/>
+              - Italics : _<i>Your Text</i>_<br/>
+              - Strikethrough : ~<i>Your Text</i>~
+            </div>">
+              <b>See how to fill</b>
+          </div>
+
           <div class="form-group mt-3">
             <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text">@if(session('autoreply')){{ session('autoreply') }}@endif</textarea>
           </div>

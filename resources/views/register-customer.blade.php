@@ -63,6 +63,7 @@
               </div>
 
               <div class="wrapper">
+                <div id="message_id" class="text-center">
                 <span class="error main"></span>
 
                 <form class="add-contact" id="addcustomer">
@@ -135,15 +136,15 @@
                     @endif
 
                     <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
-                    <input type="hidden" name="listname" value="{{$listname}}">
-                    <input type="hidden" name="listid" value="{{$id}}">
-
+                
                     <div class="text-left">
-                      <button type="submit" class="btn btn-custom btn-lg">Submit</button>
+                      <button type="submit" class="btn btn-custom btn-lg">{{ $btn_message }}</button>
                     </div>
 
                     <span class="error captcha"></span>
                 </form>
+              <!-- END MESSAGE_ID -->
+              </div>
 
               <div class="text-left marketing">
                   <div>Marketing by</div>
@@ -265,7 +266,13 @@
           var code_country = $(".iti__selected-flag").attr('data-code');
           var data_country = $(".iti__selected-flag").attr('data-country');
           var data = $(this).serializeArray();
-          data.push({name:'code_country', value:code_country},{name:'data_country',value:data_country});
+      
+          data.push(
+            {name:'code_country', value:code_country},
+            {name:'data_country',value:data_country},
+            {name:'listname',value:'{{ $listname }}'},
+            {name:'listid',value:'{{ $id }}'},
+          );
 
           $.ajaxSetup({
             headers: {
@@ -286,9 +293,10 @@
                 $('.div-loading').removeClass('background-load');
 
                 if(result.success == true){
-                    $(".modal-body > p").text(result.message);
-                    $("#myModal").modal();
-                    setTimeout(function(){$("#myModal").modal('hide')} , 1500);   
+                  $("#message_id").html(result.message);
+                  /*  $(".modal-body > p").text(result.message);
+                    $("#myModal").modal();*/
+                    // setTimeout(function(){$("#myModal").modal('hide')} , 1500);   
                     // clearField();
                 } else {
                     $(".error").html('');
