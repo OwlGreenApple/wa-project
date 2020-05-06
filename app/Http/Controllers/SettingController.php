@@ -622,9 +622,9 @@ class SettingController extends Controller
         return $api_key;
     }
 
-    public function send_message($wa_number,$message,$key)
+    public function send_message()
     {
-        // return ApiHelper::send_message($wa_number,$message,$key);
+        return ApiHelper::send_message("+628123238793","test rizky","eb6c9068bfbbe6156ebdffa5f7238b9fe28f3432692771e1");
     }
 		
     public function send_image_url()

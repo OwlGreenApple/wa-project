@@ -85,10 +85,12 @@ class SendMessage extends Command
                 if(is_null($phoneNumber)){
                   continue;
                 }
-								$server = Server::where('phone_id',$phoneNumber->id)->first();
-                if(is_null($server)){
-                  continue;
-                }
+								if ($phoneNumber->mode == 0) {
+									$server = Server::where('phone_id',$phoneNumber->id)->first();
+									if(is_null($server)){
+										continue;
+									}
+								}
 
                 $hour = $row->hour_time; //hour according user set it to sending
                 $date = Carbon::parse($row->day_send);
@@ -222,10 +224,12 @@ class SendMessage extends Command
                 {
                   continue;
                 }
-								$server = Server::where('phone_id',$phoneNumber->id)->first();
-                if(is_null($server)){
-                  continue;
-                }
+								if ($phoneNumber->mode == 0) {
+									$server = Server::where('phone_id',$phoneNumber->id)->first();
+									if(is_null($server)){
+										continue;
+									}
+								}
 
                 $key = $phoneNumber->filename;
                 $customer_phone = $col->telegram_number;
@@ -361,10 +365,12 @@ class SendMessage extends Command
                 {
                   continue;
                 }
-								$server = Server::where('phone_id',$phoneNumber->id)->first();
-                if(is_null($server)){
-                  continue;
-                }
+								if ($phoneNumber->mode == 0) {
+									$server = Server::where('phone_id',$phoneNumber->id)->first();
+									if(is_null($server)){
+										continue;
+									}
+								}
 
                 // PREVENT RUN IF MEMBERSHIP LESS THAN 2
                 if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)) || $midnightTime == false )
@@ -508,10 +514,12 @@ class SendMessage extends Command
                 else{
                   continue;
                 }
-								$server = Server::where('phone_id',$phoneNumber->id)->first();
-                if(is_null($server)){
-                  continue;
-                }
+								if ($phoneNumber->mode == 0) {
+									$server = Server::where('phone_id',$phoneNumber->id)->first();
+									if(is_null($server)){
+										continue;
+									}
+								}
 
                 if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)) ||$midnightTime == false)
                 {
