@@ -45,7 +45,7 @@ class QueueMessage extends Command
 			//Simi
 			$messages = Message::where("status",6)->get();
 			foreach($messages as $message) {
-				$send_message = ApiHelper::send_message($message->phone_number,$message->message,$message->key);
+				$send_message = ApiHelper::send_simi($message->phone_number,$message->message,$message->key);
 				$status = $this->getStatus($send_message,0);
 				
 				$message->status = $status;
@@ -71,7 +71,7 @@ class QueueMessage extends Command
 			//simi
 			$messages = Message::where("status",8)->get();
 			foreach($messages as $message) {
-				$send_message = ApiHelper::send_message($message->phone_number,$message->message,$message->key);
+				$send_message = ApiHelper::send_simi($message->phone_number,$message->message,$message->key);
 				$status = $this->getStatus($send_message,0);
 				
 				$message->status = $status;
