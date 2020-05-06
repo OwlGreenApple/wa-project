@@ -503,11 +503,7 @@ class ApiHelper
 		$data = array(
 				'to' => $phoneNumber."@c.us",
 				'caption' => $message,
-				'image' => curl_file_create(
-					$image["imageWA"]["tmp_name"],
-					$image["imageWA"]["type"],
-					$image["imageWA"]["name"]
-				)
+				'image' => $image
 		);
 		 
 		$payload = json_encode($data);

@@ -95,11 +95,15 @@ class CampaignController extends Controller
 				ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$request->message,$request->phone,"reminder");
 			}
 			else {*/
-			
+			// dd($_FILES["imageWA"]);
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
 					if ($phoneNumber->mode == 0) {
-						ApiHelper::send_image_url_simi($request->phone,$request->file('imageWA'),$request->message,$server->url);
+						ApiHelper::send_image_url_simi($request->phone,curl_file_create(
+							$_FILES["imageWA"]["tmp_name"],
+							$_FILES["imageWA"]["type"],
+							$_FILES["imageWA"]["name"]
+						),$request->message,$server->url);
 					}
 					else {
 						$folder = $user->id."/send-test-message/";
