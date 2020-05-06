@@ -498,6 +498,7 @@ class ApiHelper
 	
 	public static function send_image_url_simi($phoneNumber,$image,$message,$url)
   {
+		dd($image);
 		$phoneNumber = str_replace("+","",$phoneNumber);
 		 
 		$data = array(

@@ -41,7 +41,7 @@ class CampaignController extends Controller
 
     public function sendTestMessage(Request $request) 
     {
-			dd($_FILES["imageWA"]);
+			// dd($_FILES["imageWA"]);
 			
 			$rules = array(
 					'phone'=>['required','max:255'],
