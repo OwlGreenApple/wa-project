@@ -498,7 +498,7 @@ class ApiHelper
 	
 	public static function send_image_url_simi($phoneNumber,$image,$message,$url)
   {
-		dd($image);
+		// dd($image);
 		$phoneNumber = str_replace("+","",$phoneNumber);
 		 
 		$data = array(
@@ -518,7 +518,7 @@ class ApiHelper
 
 		// Set HTTP Header for POST request 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-				'Content-Type: application/json',
+				'Content-Type: multipart/form-data',
 				'apikey:d802233599d9riz1b11dk7d70531ab57'
 				// ,'Content-Length: ' . strlen($payload)
 		));
