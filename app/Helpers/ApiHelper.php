@@ -496,31 +496,29 @@ class ApiHelper
 		return $result;
 	}
 	
-	public static function send_image_url_simi($phoneNumber,$url_image,$message,$url)
+	public static function send_image_url_simi($phoneNumber,$image,$message,$url)
   {
+		// dd($image);
 		$phoneNumber = str_replace("+","",$phoneNumber);
 		 
-		$data = array(
+		$postfields = array(
 				'to' => $phoneNumber."@c.us",
-				'body' => $message,
-				'image' => $message
+				'caption' => $message,
+				'image' => $image
 		);
-		 
-		$payload = json_encode($data);
-		 
+
 		// Prepare new cURL resource
 		$ch = curl_init($url.'/api/whatsapp/chats/sendImage');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
 
 		// Set HTTP Header for POST request 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-				'Content-Type: application/json',
-				'apikey:d802233599d9riz1b11dk7d70531ab57',
-				'Content-Length: ' . strlen($payload))
-		);
+				"Content-Type:multipart/form-data",
+				'apikey:d802233599d9riz1b11dk7d70531ab57'
+		));
 
 		// Submit the POST request
 		$result = curl_exec($ch);
