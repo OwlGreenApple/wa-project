@@ -25,6 +25,7 @@ use DB;
 use Carbon\Carbon;
 use App\Helpers\ApiHelper;
 use App\PhoneNumber;
+use App\Server;
 use Storage;
 
 class CampaignController extends Controller
@@ -75,7 +76,20 @@ class CampaignController extends Controller
 
 			$phoneNumber = PhoneNumber::where("user_id",$user->id)->first();
 			$key = $phoneNumber->filename;
-			
+
+
+			if ($phoneNumber->mode == 0) {
+				$server = Server::where('phone_id',$phoneNumber->id)->first();
+				if(is_null($server)){
+					$error = array(
+						'status'=>'error',
+						'phone'=>"Contact Administrator",
+						'msg'=>"",
+						'image'=>"",
+					);
+					return response()->json($error);
+				}
+			}
 
 			/*if ($user->email=="activomnicom@gmail.com") {
 				ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$request->message,$request->phone,"reminder");
@@ -84,25 +98,30 @@ class CampaignController extends Controller
 			
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
-					$folder = $user->id."/send-test-message/";
-					Storage::disk('s3')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
-					sleep(1);
-					$url = Storage::disk('s3')->url($folder."temp.jpg");
-					ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
-					$arr = array(
-						'url'=>$url,
-						'status'=>"success",
-					);
-					return response()->json($arr);
+					if ($phoneNumber->mode == 0) {
+						ApiHelper::send_image_url_simi($request->phone,$request->file('imageWA'),$request->message,$server->url);
+					}
+					else {
+						$folder = $user->id."/send-test-message/";
+						Storage::disk('s3')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
+						sleep(1);
+						$url = Storage::disk('s3')->url($folder."temp.jpg");
+						ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
+
+						$arr = array(
+							'url'=>$url,
+							'status'=>"success",
+						);
+						return response()->json($arr);
+					}
 				}
 				else {
 					// ApiHelper::send_message($request->phone,$request->message,$key);
-					
 					$message_send = new Message;
 					$message_send->phone_number=$request->phone;
 					$message_send->message=$request->message;
 					if ($phoneNumber->mode == 0) {
-						$message_send->key="belum jadi";
+						$message_send->key=$server->url;
 						$message_send->status=6;
 					}
 					if ($phoneNumber->mode == 1) {

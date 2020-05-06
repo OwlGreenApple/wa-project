@@ -14,6 +14,7 @@ use App\BroadCastCustomers;
 use App\Sender;
 use App\Additional;
 use App\PhoneNumber;
+use App\Server;
 use App\Countries;
 use App\Message;
 use App\Console\Commands\SendWA as SendMessage;
@@ -211,6 +212,16 @@ class CustomerController extends Controller
               $customer_join = $customer->created_at;
             }
 
+						//pengecekan klo pake simi
+						if ($phoneNumber->mode == 0) {
+							$server = Server::where('phone_id',$phoneNumber->id)->first();
+							if(is_null($server)){
+								$data['success'] = false;
+								$data['message'] = 'Sorry, our system is too busy';
+								return response()->json($data);
+							}
+						}
+
             /*
             Kalo is_secure maka akan dikirim langsung message wa nya 
             */
@@ -237,7 +248,7 @@ class CustomerController extends Controller
 							$message_send->phone_number=$phone_number;
 							$message_send->message=$message;
 							if ($phoneNumber->mode == 0) {
-								$message_send->key="belum jadi";
+								$message_send->key=$server->url;
 								$message_send->status=8;
 							}
 							if ($phoneNumber->mode == 1) {

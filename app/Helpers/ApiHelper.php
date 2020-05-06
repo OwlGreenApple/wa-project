@@ -496,14 +496,18 @@ class ApiHelper
 		return $result;
 	}
 	
-	public static function send_image_url_simi($phoneNumber,$url_image,$message,$url)
+	public static function send_image_url_simi($phoneNumber,$image,$message,$url)
   {
 		$phoneNumber = str_replace("+","",$phoneNumber);
 		 
 		$data = array(
 				'to' => $phoneNumber."@c.us",
-				'body' => $message,
-				'image' => $message
+				'caption' => $message,
+				'image' => curl_file_create(
+					$image["tmp_name"],
+					$image["type"],
+					$image["name"]
+				)
 		);
 		 
 		$payload = json_encode($data);
