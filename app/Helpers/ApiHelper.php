@@ -522,8 +522,8 @@ class ApiHelper
 		// Set HTTP Header for POST request 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Content-Type: application/json',
-				'apikey:d802233599d9riz1b11dk7d70531ab57',
-				'Content-Length: ' . strlen($payload))
+				'apikey:d802233599d9riz1b11dk7d70531ab57'
+				// ,'Content-Length: ' . strlen($payload))
 		);
 
 		// Submit the POST request
