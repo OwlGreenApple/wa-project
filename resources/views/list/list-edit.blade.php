@@ -88,6 +88,13 @@
                 <!-- additional -->
             </div>
 
+            <div class="wrapper">
+              <div class="input-group form-group">
+                  <input type="text" name="button_rename" class="form-control" placeholder="Rename Submit Button" value="{{ $data['button_subscriber'] }}"/>
+                  <div class="error button_rename col-lg-12 text-left"></div>
+              </div>
+            </div>
+
           </div>
           <!-- end outer wrapper -->
 
@@ -102,7 +109,16 @@
                     </span>
 								</label>
                <textarea name="pixel" class="form-control"></textarea>
-            </div>
+            </div> 
+
+            <div class="form-group text-left">
+               <label>Confirmation Messages <span class="tooltipstered" title="<div class='panel-heading'>Messages</div><div class='panel-content'>
+                    Type your message for customer / subscriber after they registered
+                    </div>">
+                      <i class="fa fa-question-circle "></i></label>
+               <textarea name="message_conf" class="form-control">{{ $data['message_conf'] }}</textarea>
+               <div class="error message_conf col-lg-12 text-left"></div>
+            </div> 
             
             <div class="text-right">
               <button type="submit" class="btn btn-custom">Save Form</button>
@@ -747,19 +763,6 @@
           var check = (".add-contact").length;
           clearField();
 
-          if(t == 'tab2')
-          {
-
-            // $("#phone").val('');
-          } 
-
-          if(t == 'tab3')
-          {
-            /*if($("#move_form > .add-contact").exist() == false)
-            {
-              $(".add-contact").appendTo('#move_form');
-            }           */ 
-          }
           $('#'+ t + 'C').fadeIn('slow');
         }
       });
@@ -1367,8 +1370,10 @@
                 label_name : $("input[name='label_name']").val(),
                 label_phone : $("input[name='label_phone']").val(),
                 label_email : $("input[name='label_email']").val(),
+                button_rename : $("input[name='button_rename']").val(),
                 editor : CKEDITOR.instances.editor1.getData(),
                 pixel : $("textarea[name='pixel']").val(),
+                conf_message : $("textarea[name='message_conf']").val(),
                 fields : datafields,
                 dropfields : datadropfields,
              };
@@ -1407,6 +1412,8 @@
                       $(".label_name").html(result.label_name);
                       $(".label_phone").html(result.label_phone);
                       $(".label_email").html(result.label_email);
+                      $(".button_rename").html(result.button_rename);
+                      $(".message_conf").html(result.conf_message);
                    }
                 },
                 error: function(xhr,attr,throwable)

@@ -9,6 +9,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\BroadCastController;
 use App\UserList;
+use App\Customer;
 use App\Campaign;
 use App\BroadCast;
 use App\BroadCastCustomers;
@@ -124,14 +125,24 @@ class CampaignController extends Controller
 		public function CreateCampaign() 
     {
       $userid = Auth::id();
-      $lists = UserList::where([['lists.user_id',$userid],['customers.status','=',1]])
-          ->leftJoin('customers','customers.list_id','=','lists.id')
-          ->select(DB::raw('count(customers.id) as customer_count, lists.*'))
-          ->groupBy('lists.id')
-          ->get();
+      $data = array();
+      $list_users = UserList::where('user_id',$userid)->select('label','id')->get();
+
+      if($list_users->count() > 0)
+      {
+        foreach($list_users as $row)
+        {
+          $customer = Customer::where('list_id',$row->id)->get();
+          $data[] = array(
+            'id'=>$row->id,
+            'label'=>$row->label,
+            'customer_count'=>$customer->count(),
+          );
+        }
+      }
 
       $data = array(
-          'lists'=>$lists,
+          'lists'=>$data,
       );
 
       return view('campaign.create-campaign',$data);

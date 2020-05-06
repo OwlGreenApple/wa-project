@@ -43,6 +43,7 @@
     return $data;
   }
 
+  // RESIZE AND REDUCE IMAGE SIZE AND DIMENTION
   function resize_image($file, $w, $h, $crop=false,$folder_name,$file_name) {
       list($width, $height) = getimagesize($file);
       $r = $width / $height;

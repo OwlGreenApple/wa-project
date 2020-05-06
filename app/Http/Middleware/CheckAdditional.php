@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\UserList;
 use App\Http\Middleware\CheckUserLists;
 
@@ -20,59 +21,41 @@ class CheckAdditional
 
     function __construct()
     {
-        // LANGUAGE ERROR
-        $this->label_name_empty = 'Label name cannot be empty';
-        $this->label_phone_empty = 'Label phone cannot be empty';
-        $this->label_email_empty = 'Label email cannot be empty';
-        $this->label_name_gt = 'Label name cannot greater than 30 characters';
-        $this->label_phone_gt = 'Label phone cannot greater than 30 characters';
-        $this->label_email_gt = 'Label email cannot greater than 30 characters';
+       // 
     }
 
     public function handle($request, Closure $next)
     {
-        $label_name = $request->label_name;
-        $label_phone = $request->label_phone;
-        $label_email = $request->label_email;
         $fields = $request->fields;
         $dropfields = $request->dropfields;
         $data['error'] = true;
         $data['additionalerror'] = false;
         $checkuserlist = new CheckUserLists;
-        $error = array();
 
-        if($label_name == null)
-        {
-            $error['label_name'] = $this->label_name_empty;
-        }
+        $rules = [
+          'label_name'=>['required','max:30'],
+          'label_phone'=>['required','max:30'],
+          'label_email'=>['required','max:30'],
+          'button_rename'=>['required','max:30'],
+          'conf_message'=>['required','max:500'],
+        ];
 
-        if(strlen($label_name) > 30)
-        {
-            $error['label_name'] = $this->label_name_gt;
-        }
+        $messages = [
+           'required'=>'Column cannot be empty',
+        ];
 
-        if($label_phone == null)
+        $validator = Validator::make($request->all(),$rules,$messages);
+        if($validator->fails())
         {
-            $error['label_phone'] = $this->label_phone_empty;
-        }
+            $errors = $validator->errors();
+            $error = array(
+              'label_name'=>$errors->first('label_name'),
+              'label_phone'=>$errors->first('label_phone'),
+              'label_email'=>$errors->first('label_email'),
+              'button_rename'=>$errors->first('button_rename'),
+              'conf_message'=>$errors->first('conf_message')
+            );
 
-        if(strlen($label_phone) > 30)
-        {
-            $error['label_phone'] = $this->label_phone_gt;
-        }
-
-        if($label_email == null)
-        {
-            $error['label_email'] = $this->label_email_empty;
-        }
-
-        if(strlen($label_email) > 30)
-        {
-            $error['label_email'] = $this->label_email_gt;
-        }
-
-        if(count($error) > 0)
-        {
             $error['error'] = true;
             return response()->json($error);
         }

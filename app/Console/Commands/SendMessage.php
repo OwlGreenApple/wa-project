@@ -649,6 +649,7 @@ class SendMessage extends Command
         return $message;
     }
 
+    // GET STATUS AFTER SEND MESSAGE
     public function getStatus($send_message,$mode)
     {
 			//default status 
@@ -685,6 +686,7 @@ class SendMessage extends Command
       return $status;
     }
 
+    // PREVENT SYSTEM TO SEND MESSAGE AT MIDNIGHT 23:00 - 05:00
     public function avoidMidnightTime($timezone)
     {
         $time = Carbon::now()->timezone($timezone);
