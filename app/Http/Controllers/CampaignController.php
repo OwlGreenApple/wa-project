@@ -99,7 +99,7 @@ class CampaignController extends Controller
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
 					if ($phoneNumber->mode == 0) {
-						ApiHelper::send_image_url_simi($request->phone,file_get_contents($request->file('imageWA')),$request->message,$server->url);
+						ApiHelper::send_image_url_simi($request->phone,$_FILES["imageWA"],$request->message,$server->url);
 					}
 					else {
 						$folder = $user->id."/send-test-message/";
