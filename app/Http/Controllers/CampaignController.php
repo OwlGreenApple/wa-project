@@ -41,6 +41,8 @@ class CampaignController extends Controller
 
     public function sendTestMessage(Request $request) 
     {
+			// dd($_FILES["imageWA"]);
+			
 			$rules = array(
 					'phone'=>['required','max:255'],
 					'message'=>['required','max:4095'],
@@ -95,15 +97,14 @@ class CampaignController extends Controller
 				ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$request->message,$request->phone,"reminder");
 			}
 			else {*/
-			// dd($_FILES["imageWA"]);
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
 					if ($phoneNumber->mode == 0) {
-						ApiHelper::send_image_url_simi($request->phone,curl_file_create(
+						dd(ApiHelper::send_image_url_simi($request->phone,curl_file_create(
 							$_FILES["imageWA"]["tmp_name"],
 							$_FILES["imageWA"]["type"],
 							$_FILES["imageWA"]["name"]
-						),$request->message,$server->url);
+						),$request->message,$server->url));
 					}
 					else {
 						$folder = $user->id."/send-test-message/";
