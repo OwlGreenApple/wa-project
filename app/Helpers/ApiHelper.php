@@ -504,9 +504,9 @@ class ApiHelper
 				'to' => $phoneNumber."@c.us",
 				'caption' => $message,
 				'image' => curl_file_create(
-					$image["tmp_name"],
-					$image["type"],
-					$image["name"]
+					$image["imageWA"]["tmp_name"],
+					$image["imageWA"]["type"],
+					$image["imageWA"]["name"]
 				)
 		);
 		 
