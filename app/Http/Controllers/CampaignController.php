@@ -103,7 +103,7 @@ class CampaignController extends Controller
 					}
 					else {
 						$folder = $user->id."/send-test-message/";
-						Storage::disk('s3')->put($folder."temp.jpg",file_get_contents($request->file('imageWA')), 'public');
+						Storage::disk('s3')->put($folder."temp.jpg",$request->file('imageWA'), 'public');
 						sleep(1);
 						$url = Storage::disk('s3')->url($folder."temp.jpg");
 						ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
