@@ -158,7 +158,7 @@ class SendMessage extends Command
 																							'temp-send-image-simi/'.$row->image,
 																							mime_content_type('temp-send-image-simi/'.$row->image),
 																							basename($row->image)
-																						),$message,$server->url)
+																						),$message,$server->url);
 														}
 														if ($phoneNumber->mode == 1) {
 															$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
@@ -297,7 +297,7 @@ class SendMessage extends Command
 																					'temp-send-image-simi/'.$col->image,
 																					mime_content_type('temp-send-image-simi/'.$col->image),
 																					basename($col->image)
-																				),$message,$server->url)
+																				),$message,$server->url);
 												}
 												if ($phoneNumber->mode == 1) {
 													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
@@ -456,7 +456,7 @@ class SendMessage extends Command
 																					'temp-send-image-simi/'.$row->image,
 																					mime_content_type('temp-send-image-simi/'.$row->image),
 																					basename($row->image)
-																				),$message,$server->url)
+																				),$message,$server->url);
 												}
 												if ($phoneNumber->mode == 1) {
 													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
@@ -615,7 +615,7 @@ class SendMessage extends Command
 																					'temp-send-image-simi/'.$row->image,
 																					mime_content_type('temp-send-image-simi/'.$row->image),
 																					basename($row->image)
-																				),$message,$server->url)
+																				),$message,$server->url);
 												}
 												if ($phoneNumber->mode == 1) {
 													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
