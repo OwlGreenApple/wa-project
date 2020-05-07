@@ -22,7 +22,6 @@ use App\Rules\CheckEventEligibleDate;
 use App\Rules\CheckBroadcastDate;
 use App\Rules\CheckExistIdOnDB;
 use App\Rules\EligibleTime;
-use DB;
 use Carbon\Carbon;
 use App\Helpers\ApiHelper;
 use App\PhoneNumber;
@@ -42,6 +41,7 @@ class CampaignController extends Controller
 
     public function sendTestMessage(Request $request) 
     {
+			dd(Image::make(file_get_contents('https://omnilinkz.s3.us-west-2.amazonaws.com/banner/Rizky-6/2004181003-967.jpg')));
 			// dd($_FILES["imageWA"]);
 			
 			$rules = array(

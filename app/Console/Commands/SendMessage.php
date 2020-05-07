@@ -152,7 +152,17 @@ class SendMessage extends Command
 														}
 													}
 													else {
-														$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+														if ($phoneNumber->mode == 0) {
+															Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+															$send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+																							'temp-send-image-simi/'.$row->image,
+																							mime_content_type('temp-send-image-simi/'.$row->image),
+																							basename($row->image)
+																						),$message,$server->url)
+														}
+														if ($phoneNumber->mode == 1) {
+															$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+														}
 													}
 												//}
 												sleep(3);
@@ -281,7 +291,17 @@ class SendMessage extends Command
 												}
 											}
 											else {
-												$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
+												if ($phoneNumber->mode == 0) {
+													Storage::disk('local')->put('temp-send-image-simi/'.$col->image, file_get_contents(Storage::disk('s3')->url($col->image)));
+													$send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+																					'temp-send-image-simi/'.$col->image,
+																					mime_content_type('temp-send-image-simi/'.$col->image),
+																					basename($col->image)
+																				),$message,$server->url)
+												}
+												if ($phoneNumber->mode == 1) {
+													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
+												}
 											}
 										//}
 
@@ -430,7 +450,17 @@ class SendMessage extends Command
 											}
 										}
 										else {
-											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+												if ($phoneNumber->mode == 0) {
+													Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+													$send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+																					'temp-send-image-simi/'.$row->image,
+																					mime_content_type('temp-send-image-simi/'.$row->image),
+																					basename($row->image)
+																				),$message,$server->url)
+												}
+												if ($phoneNumber->mode == 1) {
+													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+												}
 										}
 									// }
 									sleep(3);
@@ -579,7 +609,17 @@ class SendMessage extends Command
 											}
 										}
 										else {
-											$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+												if ($phoneNumber->mode == 0) {
+													Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+													$send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+																					'temp-send-image-simi/'.$row->image,
+																					mime_content_type('temp-send-image-simi/'.$row->image),
+																					basename($row->image)
+																				),$message,$server->url)
+												}
+												if ($phoneNumber->mode == 1) {
+													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+												}
 										}
 									// }
 
