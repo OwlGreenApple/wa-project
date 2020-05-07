@@ -155,8 +155,8 @@ class SendMessage extends Command
 														if ($phoneNumber->mode == 0) {
 															Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
 															$send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-																							storage_path('temp-send-image-simi/'.$row->image),
-																							mime_content_type(storage_path('temp-send-image-simi/'.$row->image)),
+																							storage_path('app/temp-send-image-simi/'.$row->image),
+																							mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
 																							basename($row->image)
 																						),$message,$server->url);
 														}
@@ -294,8 +294,8 @@ class SendMessage extends Command
 												if ($phoneNumber->mode == 0) {
 													Storage::disk('local')->put('temp-send-image-simi/'.$col->image, file_get_contents(Storage::disk('s3')->url($col->image)));
 													$send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-																					storage_path('temp-send-image-simi/'.$col->image),
-																					mime_content_type(storage_path('temp-send-image-simi/'.$col->image)),
+																					storage_path('app/temp-send-image-simi/'.$col->image),
+																					mime_content_type(storage_path('app/temp-send-image-simi/'.$col->image)),
 																					basename($col->image)
 																				),$message,$server->url);
 												}
@@ -453,8 +453,8 @@ class SendMessage extends Command
 												if ($phoneNumber->mode == 0) {
 													Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
 													$send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-																					storage_path('temp-send-image-simi/'.$row->image),
-																					mime_content_type(storage_path('temp-send-image-simi/'.$row->image)),
+																					storage_path('app/temp-send-image-simi/'.$row->image),
+																					mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
 																					basename($row->image)
 																				),$message,$server->url);
 												}
@@ -612,8 +612,8 @@ class SendMessage extends Command
 												if ($phoneNumber->mode == 0) {
 													Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
 													$send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-																					storage_path('temp-send-image-simi/'.$row->image),
-																					mime_content_type(storage_path('temp-send-image-simi/'.$row->image)),
+																					storage_path('app/temp-send-image-simi/'.$row->image),
+																					mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
 																					basename($row->image)
 																				),$message,$server->url);
 												}
