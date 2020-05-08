@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         Commands\GetKey::class,
         Commands\ResetMessageCounter::class,
         Commands\QueueMessage::class,
+        Commands\notifOrder::class,
     ];
 
     /**
