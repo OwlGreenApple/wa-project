@@ -44,11 +44,14 @@ class notifOrder extends Command
      */
     public function handle()
     {
-        $users = User::where([['users.status','>',0],['orders.status','=',0]])->rightJoin(env('DB_DATABASE2').'.orders','orders.user_id','=','users.id')->select('orders.*','users.email','users.phone_number')->get();
+        $orders = Order::join(env('DB_DATABASE').'.users as db1','orders.user_id','db1.id')
+									->where([['db1.status','>',0],['orders.status','=',0]])
+									->select('orders.*','db1.email','db1.phone_number')
+									->get();
 
-        if($users->count() > 0)
+        if($orders->count() > 0)
         {
-         foreach($users as $row)
+         foreach($orders as $row)
          {
            $date_order = date_create(Carbon::parse($row->created_at)->toDateString());
            $today = date_create(Carbon::now()->toDateString());
