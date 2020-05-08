@@ -706,7 +706,7 @@ class SendMessage extends Command
 			if ($mode == 0) {
 				//status simi
 				$obj = json_decode($send_message);
-				if (!is_null($obj->sent)) {
+				if (method_exists($obj,"sent")) {
 					if ($obj->sent) {
 						$status = 1;
 					}
@@ -715,7 +715,7 @@ class SendMessage extends Command
 						$status = 3;
 					}
 				}
-				if (!is_null($obj->detail)) {
+				if (method_exists($obj,"detail")) {
 						//dari simi whatsapp instance is not running -> phone_offline
 						$status = 2;
 				}
