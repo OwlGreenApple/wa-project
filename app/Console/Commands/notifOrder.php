@@ -8,7 +8,7 @@ use App\Mail\NotifyOrder;
 use App\User;
 use App\Order;
 use Carbon\Carbon;
-use Date,Mail;
+use Date;
 use App\Helpers\ApiHelper;
 
 class notifOrder extends Command
