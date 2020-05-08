@@ -8,7 +8,7 @@ use App\Mail\NotifyOrder;
 use App\User;
 use App\Order;
 use Carbon\Carbon;
-use Date;
+use Date,Mail;
 use App\Helpers\ApiHelper;
 
 class notifOrder extends Command
@@ -44,11 +44,16 @@ class notifOrder extends Command
      */
     public function handle()
     {
-        $users = User::where([['users.status','>',0],['orders.status','=',0]])->rightJoin(env('DB_DATABASE2').'.orders','orders.user_id','=','users.id')->select('orders.*','users.email','users.phone_number')->get();
+        // $users = User::where([['users.status','>',0],['orders.status','=',0]])->rightJoin(env('DB_DATABASE2').'.orders','orders.user_id','=','users.id')->select('orders.*','users.email','users.phone_number')->get();
 
-        if($users->count() > 0)
+        $orders = Order::join(env('DB_DATABASE').'.users','orders.user_id','users.id')
+									->where([['users.status','>',0],['orders.status','=',0]])
+									->select('orders.*','users.email','users.phone_number')
+									->get();
+
+        if($orders->count() > 0)
         {
-         foreach($users as $row)
+         foreach($orders as $row)
          {
            $date_order = date_create(Carbon::parse($row->created_at)->toDateString());
            $today = date_create(Carbon::now()->toDateString());
