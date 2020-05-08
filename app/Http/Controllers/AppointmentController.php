@@ -256,9 +256,7 @@ class AppointmentController extends Controller
     function createAppointment()
     {
       $userid = Auth::id();
-      $lists = UserList::where('user_id',$userid)->get();
-
-      $data['lists'] = $lists;
+      $lists = displayListWithContact($userid);
       return view('appointment.create_apt',['lists'=>$lists]);
     }
 
@@ -307,7 +305,7 @@ class AppointmentController extends Controller
     {
         $userid = Auth::id();
         $campaign_id = $request->id;
-        $reminder = TemplateAppointments::where([['user_id',$userid],['campaign_id',$campaign_id]])->get();
+        $reminder = TemplateAppointments::where([['user_id',$userid],['campaign_id',$campaign_id]])->orderBy('days','desc')->get();
 
         return view('appointment.display_apt_reminder',['reminder'=>$reminder]);
     }
@@ -518,7 +516,9 @@ class AppointmentController extends Controller
             return redirect('create-apt');
         }
 
-        return view('appointment.form_apt',['id'=>$campaign_id,'list_id'=>$checkid->list_id]);
+        $list = UserList::find($checkid->list_id);
+
+        return view('appointment.form_apt',['id'=>$campaign_id,'list_id'=>$checkid->list_id,'list_label'=>$list->label]);
     }
 
     public function displayCustomerPhone(Request $request)

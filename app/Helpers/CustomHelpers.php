@@ -1,4 +1,6 @@
 <?php
+use App\UserList;
+use App\Customer;
 
 	function getMembership($membership)
 	{
@@ -137,6 +139,28 @@
          // Storage::disk('local')->put('test/'.$path,$image_contents);
       }
       
+   }
+
+   // TO DISPLAY LIST WITH CONTACT ON PAGE CREATE CAMPAIGN AND APPOINTMENT
+   function displayListWithContact($userid)
+   {
+      $data = array();
+      $lists = UserList::where('user_id',$userid)->select('label','id')->get();
+
+      if($lists->count() > 0)
+      {
+        foreach($lists as $row)
+        {
+          $customer = Customer::where('list_id',$row->id)->get();
+          $data[] = array(
+            'id'=>$row->id,
+            'label'=>$row->label,
+            'customer_count'=>$customer->count(),
+          );
+        }
+      }
+
+      return $data;
    }
 
 ?>
