@@ -59,25 +59,27 @@ class SettingController extends Controller
           $max_counter = number_format($phoneNumber->max_counter);
       }
 
-      $countModeSimi = PhoneNumber::
-                      where("mode",0)
-											->count();
-      $countModeWoowa = PhoneNumber::
-                      where("mode",1)
-											->count();
-
-			if (floor($countModeSimi / 3) <= $countModeWoowa) {
-				$server = Server::where("status",0)->first();
-				if (is_null($server)){
-					return "contact administrator";
+			if ($is_registered == 0) {
+				$countModeSimi = PhoneNumber::
+												where("mode",0)
+												->count();
+				$countModeWoowa = PhoneNumber::
+												where("mode",1)
+												->count();
+				if (floor($countModeSimi / 3) <= $countModeWoowa) {
+					$server = Server::where("status",0)->first();
+					if (is_null($server)){
+						// klo didatabase kita ga ready maka diarahin ke punya woowa
+						session(['mode'=>1]);
+					}
+					session([
+						'mode'=>0,
+						'server_id'=>$server->id,
+					]);
 				}
-				session([
-					'mode'=>0,
-					'server_id'=>$server->id,
-				]);
-			}
-			else {
-				session(['mode'=>1]);
+				else {
+					session(['mode'=>1]);
+				}
 			}
 		
       return view('auth.settings',[
