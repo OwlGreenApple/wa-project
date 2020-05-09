@@ -26,6 +26,7 @@ use Carbon\Carbon;
 use App\Helpers\ApiHelper;
 use App\PhoneNumber;
 use App\Server;
+use App\Jobs\CreateBroadcast;
 use Storage;
 
 class CampaignController extends Controller
@@ -306,14 +307,19 @@ class CampaignController extends Controller
             return response()->json($data_error);
         }
 
-        $broadcast = new BroadCastController;
-        $saveBroadcast = $broadcast->saveBroadCast($request);
+        // $broadcast = new BroadCastController;
+        // $saveBroadcast = $broadcast->saveBroadCast($request);
+				
+        // if(!empty($saveBroadcast))
+        // {
+            // $data['message'] = $saveBroadcast;
+            // return response()->json($data);
+        // }
 
-        if(!empty($saveBroadcast))
-        {
-            $data['message'] = $saveBroadcast;
-            return response()->json($data);
-        }
+				CreateBroadcast::dispatch($request);
+				
+				$data['message'] = "Your broadcast has been created";
+				return response()->json($data);
       }
     }
 
