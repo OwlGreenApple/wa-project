@@ -150,24 +150,8 @@ class CampaignController extends Controller
 		public function CreateCampaign() 
     {
       $userid = Auth::id();
-      $data = array();
-      $list_users = UserList::where('user_id',$userid)->select('label','id')->get();
-
-      if($list_users->count() > 0)
-      {
-        foreach($list_users as $row)
-        {
-          $customer = Customer::where('list_id',$row->id)->get();
-          $data[] = array(
-            'id'=>$row->id,
-            'label'=>$row->label,
-            'customer_count'=>$customer->count(),
-          );
-        }
-      }
-
       $data = array(
-          'lists'=>$data,
+          'lists'=>displayListWithContact($userid),
       );
 
       return view('campaign.create-campaign',$data);

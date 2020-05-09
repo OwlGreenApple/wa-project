@@ -46,7 +46,7 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Time scheduled at :</label>
+        <label class="col-sm-3 col-form-label">Message will be send at :</label>
         <div class="col-sm-9 relativity">
           <span class="inputh">
             <input name="hour" type="text" class="timepicker form-control" value="00:00" readonly />

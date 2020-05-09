@@ -6,9 +6,10 @@
 
 <div class="container act-tel-apt wrapper">
       <h3 class="title">CREATE APPOINTMENT</h3>
+      <h5 class="title">List : {{ $list_label }}</h5>
 
       <div class="col-md-12 relativ row">
-        <input id="display_phone" type="text" class="form-control custom-select-apt" placeholder="Fill by registered phone number eg : +628xxxx or by name">
+        <input id="display_phone" type="text" class="form-control custom-select-apt" placeholder="Search by Name or Phone number, example : 628xxxx">
         <span class="icon-search"></span>
 
         <div id="display_data" class="search-result col-lg-12">
@@ -81,7 +82,8 @@
   $(function () {
       $('#datetimepicker').datetimepicker({
         format : 'YYYY-MM-DD HH:mm',
-        minDate: new Date()
+        minDate: new Date(),
+        // debug : true
       }); 
       callAjax();
       fillPhoneToForm();

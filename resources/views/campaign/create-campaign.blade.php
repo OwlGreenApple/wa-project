@@ -157,6 +157,7 @@
 					</div>
 					<span class="error image"></span><br/>
           <small>Maximum image size is : <b>4Mb</b></small>
+          <div><small>Image Caption Limit is 1000 characters</small></div>
 				</div>
       </div>
 
@@ -264,7 +265,7 @@
 							  $('#loader').hide();
                 $('.div-loading').removeClass('background-load');
                 $(".error").show();
-                $(".image").html('Image width or image height cannot more than 2000px');
+                $(".image").html('Image width or image height can not be more than 2000px');
 						}
             else if(result.err == 'ev_err')
             {  
@@ -395,14 +396,15 @@
     $(".add-day").hide();
     $("#schedule").change(function(){
       var val = $(this).val();
+      var hmin = '';
 
       var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
 
-      var hmin = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=-90;$x<=-1;$x++) {
-            echo "<option value=".$x.">$x days before event</option>";
-      }?></select>'+
-      '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
-      ;
+      hmin += '<select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="day" class="form-control col-sm-7 float-left days delcols mr-3">';
+      for(x=-1;x>=-90;x--){;
+          hmin += '<option value='+x+'>'+x+' days before event</option>';
+      };
+      hmin += '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />';
 
       var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
             echo "<option value=".$x.">$x days after event</option>";

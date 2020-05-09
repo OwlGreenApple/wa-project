@@ -35,8 +35,9 @@ class ReminderController extends Controller
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
 					$dt = Carbon::now();
+          $ext = $request->file('imageWA')->getClientOriginalExtension();
 					$folder = $user->id."/broadcast-image/";
-					$filename = $dt->format('ymdHi').'.jpg';
+					$filename = $dt->format('ymdHi').'.'.$ext;
 
           if(checkImageSize($request->file('imageWA')) == true || $imagewidth > 1280 || $imageheight > 1280)
           {
