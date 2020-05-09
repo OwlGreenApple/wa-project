@@ -19,6 +19,7 @@ use App\Campaign;
 use Session;
 use DB,Storage;
 use App\Http\Controllers\ListController;
+use App\Jobs\CreateBroadcast;
 
 class BroadCastController extends Controller
 {
@@ -140,7 +141,7 @@ class BroadCastController extends Controller
         /* if successful inserted data broadcast into database then this run */
         if($broadcast->save()){         
             // retrieve customer id 
-            $customer = Customer::where([
+            $customers = Customer::where([
                 ['user_id','=',$user->id],
                 ['list_id','=',$list_id],
                 ['status','=',1],
@@ -152,12 +153,13 @@ class BroadCastController extends Controller
 
         if($customer->count() > 0)
         {
-            foreach($customer as $col){
-                $broadcastcustomer = new BroadCastCustomers;
-                $broadcastcustomer->broadcast_id = $broadcast_id;
-                $broadcastcustomer->customer_id = $col->id;
-                $broadcastcustomer->save();
-            }
+					CreateBroadcast::dispatch(serialize($customers),$broadcast_id);
+            // foreach($customer as $col){
+                // $broadcastcustomer = new BroadCastCustomers;
+                // $broadcastcustomer->broadcast_id = $broadcast_id;
+                // $broadcastcustomer->customer_id = $col->id;
+                // $broadcastcustomer->save();
+            // }
         } else if($broadcast_schedule == 0) {
             return 'Broadcast created, but will not send anything because you do not have subscriber';
         } else {

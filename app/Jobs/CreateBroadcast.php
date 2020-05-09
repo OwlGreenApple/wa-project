@@ -9,22 +9,23 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
 // use Illuminate\Http\Request;
-use App\Http\Controllers\BroadCastController;
+use App\BroadCastCustomers;
 
 class CreateBroadcast implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-		protected $request;
+		protected $customers,$broadcast_id;
 		
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($request)
+    public function __construct($customers,$broadcast_id)
     {
-        $this->request = unserialize($request);
+        $this->customers = unserialize($customers);
+        $this->broadcast_id = $broadcast_id;
     }
 
     /**
@@ -34,7 +35,11 @@ class CreateBroadcast implements ShouldQueue
      */
     public function handle()
     {
-        $broadcast = new BroadCastController;
-        $saveBroadcast = $broadcast->saveBroadCast($this->request);
+				foreach($this->customers as $col){
+						$broadcastcustomer = new BroadCastCustomers;
+						$broadcastcustomer->broadcast_id = $this->broadcast_id;
+						$broadcastcustomer->customer_id = $col->id;
+						$broadcastcustomer->save();
+				}
 		}
 }
