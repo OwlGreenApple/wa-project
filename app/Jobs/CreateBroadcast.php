@@ -17,6 +17,8 @@ class CreateBroadcast implements ShouldQueue
 
 		protected $customers,$broadcast_id;
 		
+		public $tries = 5;
+		
     /**
      * Create a new job instance.
      *
@@ -35,11 +37,13 @@ class CreateBroadcast implements ShouldQueue
      */
     public function handle()
     {
+			if ($this->attempts() == 1) {
 				foreach($this->customers as $col){
 						$broadcastcustomer = new BroadCastCustomers;
 						$broadcastcustomer->broadcast_id = $this->broadcast_id;
 						$broadcastcustomer->customer_id = $col->id;
 						$broadcastcustomer->save();
 				}
+			}
 		}
 }
