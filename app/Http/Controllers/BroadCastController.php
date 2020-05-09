@@ -151,10 +151,10 @@ class BroadCastController extends Controller
             return 'Error! Unable to create broadcast';
         }
 
-        if($customer->count() > 0)
+        if($customers->count() > 0)
         {
 					CreateBroadcast::dispatch(serialize($customers),$broadcast_id);
-            // foreach($customer as $col){
+            // foreach($customers as $col){
                 // $broadcastcustomer = new BroadCastCustomers;
                 // $broadcastcustomer->broadcast_id = $broadcast_id;
                 // $broadcastcustomer->customer_id = $col->id;
