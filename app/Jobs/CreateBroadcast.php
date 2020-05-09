@@ -24,7 +24,7 @@ class CreateBroadcast implements ShouldQueue
      */
     public function __construct(Request $request)
     {
-        $this->request = $request;
+        $this->request = unserialize($request);
     }
 
     /**
@@ -35,6 +35,6 @@ class CreateBroadcast implements ShouldQueue
     public function handle()
     {
         $broadcast = new BroadCastController;
-        $saveBroadcast = $broadcast->saveBroadCast($request);
+        $saveBroadcast = $broadcast->saveBroadCast($this->request);
 		}
 }

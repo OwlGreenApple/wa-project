@@ -300,7 +300,7 @@ class CampaignController extends Controller
             // return response()->json($data);
         // }
 
-				CreateBroadcast::dispatch($request);
+				CreateBroadcast::dispatch(serialize($request));
 				
 				$data['message'] = "Your broadcast has been created";
 				return response()->json($data);
