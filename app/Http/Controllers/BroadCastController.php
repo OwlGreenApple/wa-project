@@ -166,11 +166,11 @@ class BroadCastController extends Controller
             return 'Your broadcast has been created';
         }
 
-        if($broadcastcustomer->save()){
-            return 'Your broadcast has been created';
-        } else {
-            return 'Error!!Your broadcast failed to create';
-        }
+        // if($broadcastcustomer->save()){
+            // return 'Your broadcast has been created';
+        // } else {
+            // return 'Error!!Your broadcast failed to create';
+        // }
     }
 
     /* Display broadcast */
