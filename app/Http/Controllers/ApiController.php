@@ -17,7 +17,7 @@ class ApiController extends Controller
 {
     public function entry_google_form(Request $request)
     {
-			dd($request);
+			dd($request->all());
     }
 
 		public function testapi()
