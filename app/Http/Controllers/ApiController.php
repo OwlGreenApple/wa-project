@@ -17,7 +17,7 @@ class ApiController extends Controller
 {
     public function entry_google_form(Request $request)
     {
-			// dd(json_decode($request->getContent(), true));
+			dd(json_decode($request->getContent(), true));
 			$obj = json_decode($request->getContent(), true);
 			// dd($obj);
 			$customer = new Customer ;
