@@ -17,8 +17,6 @@ class CreateBroadcast implements ShouldQueue
 
 		protected $customers,$broadcast_id;
 		
-		public $tries = 5;
-		
     /**
      * Create a new job instance.
      *
