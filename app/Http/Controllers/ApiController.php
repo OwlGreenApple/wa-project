@@ -17,12 +17,13 @@ class ApiController extends Controller
 {
     public function entry_google_form(Request $request)
     {
+			$obj = json_decode($request);
 			$customer = new Customer ;
 			$customer->user_id = 0;
 			$customer->list_id = 0;
-			$customer->name = $request->name;
-			$customer->email = $request->email;
-			$customer->telegram_number = $request->phone_number;
+			$customer->name = $obj->name;
+			$customer->email = $obj->email;
+			$customer->telegram_number = $obj->phone_number;
 			$customer->is_pay= 0;
 			$customer->status = 1;
 			$customer->save();
