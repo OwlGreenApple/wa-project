@@ -17,7 +17,15 @@ class ApiController extends Controller
 {
     public function entry_google_form(Request $request)
     {
-			dd($request->all());
+			$customer = new Customer ;
+			$customer->user_id = 0;
+			$customer->list_id = 0;
+			$customer->name = $request->name;
+			$customer->email = $request->email;
+			$customer->telegram_number = $request->phone_number;
+			$customer->is_pay= 0;
+			$customer->status = 1;
+			$customer->save();
     }
 
 		public function testapi()
