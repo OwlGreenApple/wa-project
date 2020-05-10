@@ -24,5 +24,6 @@ class VerifyCsrfToken extends Middleware
         'is_pay',
         'connect-phone',
         'verify-phone',
+        'entry-google-form',
     ];
 }
