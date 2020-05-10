@@ -43,12 +43,12 @@ class CreateBroadcast implements ShouldQueue
 			if($logexists == true)
 			{
 					$log = Storage::get('job/log.txt');
-					$string = $log."\n".$this->customers;
+					$string = $log."\n".print_r($this->customers, true);
 					Storage::put('job/log.txt',$string);
 			}
 			else
 			{
-					$string = $this->customers;
+					$string = print_r($this->customers, true);
 					Storage::put('job/log.txt',$string);
 			}
 			if ($this->attempts() == 1) {
