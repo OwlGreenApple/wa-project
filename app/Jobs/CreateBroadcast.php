@@ -8,9 +8,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
 // use Illuminate\Http\Request;
 use App\BroadCastCustomers;
-
 class CreateBroadcast implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -35,6 +37,20 @@ class CreateBroadcast implements ShouldQueue
      */
     public function handle()
     {
+			$timegenerate = Carbon::now();
+			$logexists = Storage::disk('local')->exists('job/log.txt');
+
+			if($logexists == true)
+			{
+					$log = Storage::get('job/log.txt');
+					$string = $log."\n".$this->customers;
+					Storage::put('job/log.txt',$string);
+			}
+			else
+			{
+					$string = $this->customers;
+					Storage::put('job/log.txt',$string);
+			}
 			if ($this->attempts() == 1) {
 				foreach($this->customers as $col){
 						$broadcastcustomer = new BroadCastCustomers;
