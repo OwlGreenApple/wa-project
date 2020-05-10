@@ -15,7 +15,12 @@ use Mail;
 
 class ApiController extends Controller
 {
-    public function testapi()
+    public function entry_google_form(Request $request)
+    {
+			dd($request);
+    }
+
+		public function testapi()
     {
     	$curl = curl_init();
 
@@ -79,7 +84,7 @@ class ApiController extends Controller
         $customer_subscribe_date = $cust->created_at;
         $customerid = $cust->id;
 
-        # if customer successful sign up 
+        // if customer successful sign up 
         if($cust->save() == true){
              $valid_customer = true;
         } else {

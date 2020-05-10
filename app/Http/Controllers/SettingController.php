@@ -641,10 +641,9 @@ class SettingController extends Controller
     {
 			// A sample PHP Script to POST data using cURL
 				// Data in JSON format
-				 
+
 				$data = array(
-						// 'to' => "+628123238793@c.us",
-						'to' => "6287723238793@c.us",
+						'to' => "628123238793@c.us",
 						'body' => "test 112233 aaa"
 				);
 				 
@@ -670,6 +669,7 @@ class SettingController extends Controller
 				// Close cURL session handle
 				curl_close($ch);
 
-				return $result;				
+				// return $result;				
+				dd($result);
 		}		
 }

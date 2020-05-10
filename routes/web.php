@@ -22,6 +22,7 @@ Route::get('send','SenderController@getDeviceId');
 Route::get('justcarbon','EventController@JUSTCARBON');
 
 /* API */
+Route::post('entry-google-form','ApiController@entry_google_form');
 Route::get('testapi','ApiController@testapi');
 Route::get('testcoupon','ApiController@testcoupon');
 Route::get('testmail','ApiController@testmail');
