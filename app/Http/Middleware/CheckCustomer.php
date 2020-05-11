@@ -65,13 +65,23 @@ class CheckCustomer
           /* concat wa number so that get the correct number */
          $data = array(
             'name'=>$req['subscribername'],
-            'email'=>$req['email'],
             'phone_number'=>$req['phone_number'],
             'code_country'=>$req['code_country']
          );
 
+         if(isset($req['last_name']))
+         {
+            $data['last_name'] = $req['last_name'];
+         }
+
+         if(isset($req['email']))
+         {
+            $data['email'] = $req['email'];
+         }
+
          $rules = [
             'name'=> ['required','min:4','max:190'],
+            'last_name'=> ['min:4','max:190'],
             'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
          ];
 
