@@ -164,9 +164,11 @@
                                 <a class="nav-link {{ (request()->is('appointment')) ? 'active' : '' }}" href="{{ route('appointment') }}">Appointment</a>
                             </li>
                             @endif
+														<!--
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('google-form')) ? 'active' : '' }}" href="{{ url('google-form') }}">Google Form</a>
                             </li>
+														-->
 														@if(Auth()->user()->is_admin)
 															<li class="nav-item">
                                 <a class="nav-link {{ (request()->is('list-user')) ? 'active' : '' }}" href="{{ url('list-user') }}">Admin Page</a>

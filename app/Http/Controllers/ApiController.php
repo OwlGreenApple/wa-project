@@ -17,18 +17,21 @@ class ApiController extends Controller
 {
     public function entry_google_form(Request $request)
     {
-			// dd(json_decode($request->getContent()));
 			$obj = json_decode($request->getContent());
-			// dd($obj);
-			$customer = new Customer ;
-			$customer->user_id = 0;
-			$customer->list_id = 0;
-			$customer->name = $obj->name;
-			$customer->email = $obj->email;
-			$customer->telegram_number = $obj->phone_number;
-			$customer->is_pay= 0;
-			$customer->status = 1;
-			$customer->save();
+
+			$list = UserList::where('name',$obj->list_name)->first();
+
+			if (!is_null($list)) {
+				$customer = new Customer ;
+				$customer->user_id = $list->user_id;
+				$customer->list_id = $list->id;
+				$customer->name = $obj->name;
+				$customer->email = $obj->email;
+				$customer->telegram_number = $obj->phone_number;
+				$customer->is_pay= 0;
+				$customer->status = 1;
+				$customer->save();
+			}
     }
 
 		public function testapi()

@@ -14,9 +14,10 @@
 
 <div class="container">
   <ul id="tabs" class="row">
-      <li class="col-lg-3"><a id="tab1">Form</a></li>
-      <li class="col-lg-3"><a id="tab2">Add Contact</a></li>
-      <li class="col-lg-3"><a id="tab3">Contacts</a></li>
+      <li class="col-lg-2"><a id="tab1">Form</a></li>
+      <li class="col-lg-2"><a id="tab5">Google Form</a></li>
+      <li class="col-lg-2"><a id="tab2">Add Contact</a></li>
+      <li class="col-lg-3"><a id="tab3">Contact List</a></li>
       <li class="col-lg-3"><a id="tab4">Auto Reply</a></li>
 
   </ul>
@@ -144,7 +145,49 @@
     <!-- end tabs -->  
     </div>
 
-    <!-- TABS 2 -->
+    <!-- TABS 5 -->
+    <div class="tabs-container" id="tab5C">
+      <div class="act-tel-tab">
+
+      <h3>Copy Your Script</h3>
+
+      <div align="center">
+
+        <form>
+          @csrf
+
+          <div class="form-group mt-3">
+            <textarea name="" id="text-google-script" class="form-control custom-form text-left" rows="15">
+function init() {
+	list_name ="{{$data['list_name']}}";
+	myFunctionpost(list_name);
+}
+
+function lastValue(column) {
+  var lastRow = SpreadsheetApp.getActiveSheet().getMaxRows();
+  var values = SpreadsheetApp.getActiveSheet().getRange(column + "1:" + column + lastRow).getValues();
+
+  for (; values[lastRow - 1] == "" && lastRow > 0; lastRow--) {}
+  return values[lastRow - 1];
+}
+
+function myFunctionpost(list_name) {
+var _0x4c00=['Basic\x20_authcode_','fetch','POST','application/json','log','stringify','toString'];(function(_0x40d25a,_0x4c0086){var _0x5bdd4a=function(_0x56597d){while(--_0x56597d){_0x40d25a['push'](_0x40d25a['shift']());}};_0x5bdd4a(++_0x4c0086);}(_0x4c00,0x174));var _0x5bdd=function(_0x40d25a,_0x4c0086){_0x40d25a=_0x40d25a-0x0;var _0x5bdd4a=_0x4c00[_0x40d25a];return _0x5bdd4a;};var url='https://activrespon.com/dashboard/entry-google-form';var b=lastValue('b');var c=lastValue('c');var d=lastValue('d');Logger[_0x5bdd('0x3')](b['toString']());var data={'list_name':list_name,'name':b[_0x5bdd('0x5')](),'email':c[_0x5bdd('0x5')](),'phone_number':d[_0x5bdd('0x5')]()};var payload=JSON[_0x5bdd('0x4')](data);var headers={'Accept':_0x5bdd('0x2'),'Content-Type':_0x5bdd('0x2'),'Authorization':_0x5bdd('0x6')};var options={'method':_0x5bdd('0x1'),'contentType':_0x5bdd('0x2'),'headers':headers,'payload':payload};var response=UrlFetchApp[_0x5bdd('0x0')](url,options);Logger['log'](response);
+}
+						</textarea>
+          </div>
+          <div class="text-right">
+            <input type="button" class="btn btn-custom" id="btn-generate" value="Copy All">
+          </div>
+        </form>
+      </div>
+
+        <!-- end last wrapper -->
+      </div><!-- end actel-tab -->  
+     <!-- end tabs -->  
+    </div>
+    
+		<!-- TABS 2 -->
     <div class="tabs-container" id="tab2C">
       <div class="act-tel-tab">
         <div class="form-control wrapper message mimport">
@@ -640,6 +683,7 @@
     fixWidthPhoneInput();
     pastePhoneNumber();
     display_edit_customer_form();
+    buttonGenerateGoogleScript();
   });
 
   function pastePhoneNumber()
@@ -2020,6 +2064,20 @@
       });
   }
 
+	function buttonGenerateGoogleScript(){
+		$("body").on("click","#btn-generate",function(e){
+			var tempInput = document.createElement("input");
+			tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+			tempInput.value = $("#text-google-script").html();
+			document.body.appendChild(tempInput);
+			tempInput.select();
+			document.execCommand("copy");
+			document.body.removeChild(tempInput);
+			
+			$('#copy-link').modal('show');
+		});
+	}
+		
   /*
   function radioCheck(){
       $("#tab2, #tab-contact").click(function(){
