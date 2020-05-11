@@ -23,7 +23,7 @@
               -
             @endif
           </td>
-          <td><a id="{{ $col->id }}" data-name="{{ $col->name }}" data-email="{{ $col->email }}" data-phone="{{ $col->telegram_number }}" data-code="{{ $col->code_country }}" class="btn btn-info btn-sm text-white edit_customer">Edit</a></td>
+          <td><a id="{{ $col->id }}" data-name="{{ $col->name }}" data-last_name="{{ $col->last_name }}" data-email="{{ $col->email }}" data-phone="{{ $col->telegram_number }}" data-code="{{ $col->code_country }}" class="btn btn-info btn-sm text-white edit_customer">Edit</a></td>
           <td><a id="{{ $col->id }}" class="btn btn-danger btn-sm text-white del-customer">Delete</a></td>
         </tr>
       @endforeach
@@ -38,7 +38,7 @@
 <script type="text/javascript">
   $(document).ready(function(){
       $("#data_customer").DataTable({
-        "lengthMenu": [ 5, 25, 50, 75, 100, 250, 500 ],
+        "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
       });
   });
 </script>

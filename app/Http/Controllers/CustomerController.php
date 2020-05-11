@@ -144,12 +144,14 @@ class CustomerController extends Controller
               $status = 0;
             }
 
+            //NORMAL CASE
             if($request->data_update <> null)
             {
               $customer = Customer::find($request->data_update);
               if($request->phone_number == null)
               {
                 $customer->name = $request->subscribername;
+                $customer->last_name = $request->last_name;
                 $customer->email = $request->email;
                 $customer->code_country = $request->data_country;
                 $customer->status = 1;
@@ -157,6 +159,7 @@ class CustomerController extends Controller
               else
               {
                 $customer->name = $request->subscribername;
+                $customer->last_name = $request->last_name;
                 $customer->email = $request->email;
                 $customer->telegram_number = $phone_number;
                 $customer->code_country = $request->data_country;
@@ -177,6 +180,7 @@ class CustomerController extends Controller
               return response()->json($data);
             }
 
+            // AVAILABLE DATA CASE ON LIST EDIT UNDER IMPORT
             if($request->overwrite == 1)
             {
               $customer_phone = Customer::where([['list_id',$list->id],['telegram_number',$phone_number]]);

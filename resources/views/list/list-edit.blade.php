@@ -16,7 +16,7 @@
   <ul id="tabs" class="row">
       <li class="col-lg-3"><a id="tab1">Form</a></li>
       <li class="col-lg-3"><a id="tab2">Add Contact</a></li>
-      <li class="col-lg-3"><a id="tab3">Contacts</a></li>
+      <li class="col-lg-3"><a id="tab3">Contacts List</a></li>
       <li class="col-lg-3"><a id="tab4">Auto Reply</a></li>
 
   </ul>
@@ -550,12 +550,18 @@
             <form class="update-contact">
               <div class="form-group">
                 <label>Name:</label>
-                <input type="text" name="subscribername" class="form-control" placeholder="Input Your Name" >
+                <input type="text" name="subscribername" class="form-control" placeholder="Input Customer Name" >
                 <span class="error name"></span>
+              </div> 
+
+              <div class="form-group">
+                <label>Last Name:</label>
+                <input type="text" name="last_name" class="form-control" />
+                <span class="error last_name"></span>
               </div>
 
               <div class="form-group">
-                 <label>Your Phone Number</label>
+                 <label>Current Customer Phone Number</label>
                  <div class="col-sm-12 row">
                     <div class="col-sm-12 row">
                       <div class="form-control current_phone_number"></div>
@@ -967,12 +973,14 @@
     $("body").on("click",".edit_customer",function(){
       var customer_id = $(this).attr('id');
       var name = $(this).attr('data-name');
+      var last_name = $(this).attr('data-last_name');
       var email = $(this).attr('data-email');
       var phone = $(this).attr('data-phone');
       var code = $(this).attr('data-code');
 
       $("#change_btn").attr('data_update',customer_id);
       $("input[name='subscribername']").val(name);
+      $("input[name='last_name']").val(last_name);
       $("input[name='email']").val(email);
       $("#edit_customer").modal();
       $(".current_phone_number").html(phone);
