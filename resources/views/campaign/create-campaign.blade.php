@@ -148,7 +148,7 @@
 
       <div class="form-group row">
 				<label class="col-sm-3 col-form-label">Image :</label>
-				<div class="col-sm-9 relativity">
+				<div class="col-sm-9 relativity ml-3">
 					<div class="custom-file">
 						<input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
 

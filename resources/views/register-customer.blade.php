@@ -73,6 +73,14 @@
                       <span class="error name"></span>
                     </div>
 
+                    @if($checkbox_lastname > 0)
+                    <div class="form-group">
+                      <label>{{ $label_last_name }}*</label>
+                      <input type="text" name="last_name" class="form-control" />
+                      <span class="error last_name"></span>
+                    </div> 
+                    @endif
+
                     <div class="prep1">
                       <div class="form-group">
                           <label>{{ $label_phone }}*</label>
@@ -101,11 +109,13 @@
                       </div> -->
                     </div>
 
+                    @if($checkbox_email > 0)
                     <div class="form-group">
                       <label>{{ $label_email }}*</label>
                       <input type="email" name="email" class="form-control" />
                       <span class="error email"></span>
                     </div> 
+                    @endif
 
                     @if(count($additional) > 0)
                       @foreach($additional as $is_optional=>$row)
@@ -302,6 +312,7 @@
                     $(".error").html('');
                     $(".error").fadeIn('slow');
                     $(".name").text(result.name);
+                    $(".last_name").text(result.last_name);
                     $(".main").text(result.main);
                     $(".email").text(result.email);
                     $(".phone").text(result.phone);

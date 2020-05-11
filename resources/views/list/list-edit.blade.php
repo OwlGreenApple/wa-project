@@ -48,6 +48,17 @@
               <div class="input-group form-group">
                   <input type="text" name="label_name" class="form-control" placeholder="Label Name" value="{{ $data['label_name'] }}"/>
                   <div class="error label_name col-lg-12 text-left"></div>
+              </div> 
+
+              <div class="form-row">
+                  <div class="form-group col-lg-11">
+                    <input type="text" name="label_last_name" class="form-control" placeholder="Label Last Name" value="{{ $data['label_last_name'] }}"/>
+                  </div>
+
+                  <div class="form-group col-md-1">
+                    <input type="checkbox" name="checkbox_lastname" class="mt-2" @if($data['checkbox_lastname'] == 1) checked value="1" @else value="0" @endif />
+                  </div>
+                  <div class="error label_name col-lg-12 text-left"></div>
               </div>
 
               <div class="input-group form-group">
@@ -55,8 +66,14 @@
                   <div class="error label_phone col-lg-12 text-left"></div>
               </div>
 
-              <div class="input-group form-group">
-                  <input type="text" name="label_email" class="form-control" placeholder="Label Email" value="{{ $data['label_email'] }}"/>
+              <div class="form-row">
+                  <div class="form-group col-lg-11">
+                    <input type="text" name="label_email" class="form-control" placeholder="Label Email" value="{{ $data['label_email'] }}"/>
+                  </div>
+
+                  <div class="form-group col-md-1">
+                    <input type="checkbox" name="checkbox_email" class="mt-2" @if($data['checkbox_email'] == 1) checked value="1" @else value="0" @endif />
+                  </div>
                   <div class="error label_email col-lg-12 text-left"></div>
               </div>
             </div><!-- end form contact -->
@@ -66,11 +83,11 @@
            <!-- outer wrapper -->
           <div class="outer-wrapper">
             <div class="form-row">
-              <div class="form-group col-md-3 py-2">
+              <div class="form-group col-md-4 py-2">
                 <h6>Custom Fields</h6>
               </div>
 
-              <div class="form-group col-md-8">
+              <div class="form-group col-md-7">
                 <div class="relativity">
                    <select id="type_fields" class="form-control custom-select">
                       <option value="1">Fields</option>
@@ -602,7 +619,8 @@
   $(document).ready(function() {  
     tabs();
     display_edit_list_name();
-    open_ck_editor();    
+    open_ck_editor();  
+    getChecked();  
     //Choose();
     openImport();
     excelImportCheck();
@@ -641,6 +659,21 @@
     pastePhoneNumber();
     display_edit_customer_form();
   });
+
+  function getChecked()
+  {
+    $("input[name='checkbox_lastname'],input[name='checkbox_email']").change(function(){
+      var checked = $(this).prop('checked');
+      if(checked == true)
+      {
+        $(this).val(1);
+      }
+      else
+      {
+        $(this).val(0);
+      }
+    });
+  }
 
   function pastePhoneNumber()
   {
@@ -1368,8 +1401,11 @@
              var data = {
                 id : {!! $id !!},
                 label_name : $("input[name='label_name']").val(),
+                label_last_name : $("input[name='label_last_name']").val(),
                 label_phone : $("input[name='label_phone']").val(),
                 label_email : $("input[name='label_email']").val(),
+                checkbox_email : $("input[name='checkbox_email']").val(),
+                checkbox_lastname : $("input[name='checkbox_lastname']").val(),
                 button_rename : $("input[name='button_rename']").val(),
                 editor : CKEDITOR.instances.editor1.getData(),
                 pixel : $("textarea[name='pixel']").val(),

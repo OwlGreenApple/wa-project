@@ -637,8 +637,11 @@ class ListController extends Controller
         // $lists = UserList::where([['id',$id],['user_id','=',$userid]])->update([
         $lists = UserList::find($id);
         $lists->label_name = $label_name;
+        $lists->label_last_name = $request->label_last_name;
         $lists->label_phone = $label_phone;
         $lists->label_email = $label_email;
+        $lists->checkbox_email = $request->checkbox_email;
+        $lists->checkbox_lastname = $request->checkbox_lastname;
         $lists->button_subscriber = $request->button_rename;
         $lists->message_conf = $request->conf_message;
         $lists->content = $editor;
@@ -785,8 +788,11 @@ class ListController extends Controller
             'list_label'=>$list->label,
             'list_name'=>$list->name,
             'label_name'=>$list->label_name,
+            'label_last_name'=>$list->label_last_name,
             'label_phone'=>$list->label_phone,
             'label_email'=>$list->label_email,
+            'checkbox_email'=>$list->checkbox_email,
+            'checkbox_lastname'=>$list->checkbox_lastname,
             'content'=> $list->content,
             'message_conf'=> $list->message_conf,
             'pixel'=>$list->pixel_text,

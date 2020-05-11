@@ -79,8 +79,11 @@ class CustomerController extends Controller
         $data = [
           'id'=>encrypt($list->id),
           'label_name'=>$list->label_name,
+          'label_last_name'=>$list->label_last_name,
           'label_phone'=>$list->label_phone,
           'label_email'=>$list->label_email,
+          'checkbox_email'=>$list->checkbox_email,
+          'checkbox_lastname'=>$list->checkbox_lastname,
           'content'=>$list->content,
           'listname'=>$link_list,
           'pixel'=>$list->pixel_text,
@@ -204,6 +207,7 @@ class CustomerController extends Controller
                  'user_id'  => $list->user_id,
                  'list_id'  => $list->id,
                  'name'     => $request->subscribername,
+                 'last_name' => $request->last_name,
                  'telegram_number'=>$phone_number,
                  'code_country'=>$request->data_country,
                  'email'=> $request->email,
@@ -214,14 +218,17 @@ class CustomerController extends Controller
             }
 
 						//pengecekan klo pake simi
-						if ($phoneNumber->mode == 0) {
-							$server = Server::where('phone_id',$phoneNumber->id)->first();
-							if(is_null($server)){
-								$data['success'] = false;
-								$data['message'] = 'Sorry, our system is too busy';
-								return response()->json($data);
-							}
-						}
+            if(env('APP_ENV') !== 'local')
+            {
+  						if ($phoneNumber->mode == 0) {
+  							$server = Server::where('phone_id',$phoneNumber->id)->first();
+  							if(is_null($server)){
+  								$data['success'] = false;
+  								$data['message'] = 'Sorry, our system is too busy';
+  								return response()->json($data);
+  							}
+  						}
+            }
 
             /*
             Kalo is_secure maka akan dikirim langsung message wa nya 
