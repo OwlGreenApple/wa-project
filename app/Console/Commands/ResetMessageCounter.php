@@ -60,11 +60,11 @@ class ResetMessageCounter extends Command
 								}
 								if(substr($user->membership,0,10) === "supervalue"){
 									// $additional_day = 180;
-									print_r(explode("supervalue", $user->membership));
+									// print_r(explode("supervalue", $user->membership));
 									$type_package = explode("supervalue", $user->membership)[0];
 								}
-//print_r($users);
-echo $user->email.$user->membership.$type_package."\n";
+// echo $user->email.$user->membership.$type_package."\n";
+								$type_package = substr($user->membership,-1,1);
 								$max_counter = 0;
 								if ($type_package=="1") {
 									$phoneNumber->max_counter_day=1000;
