@@ -17,16 +17,16 @@ class CreateBroadcast implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-		protected $customers,$broadcast_id;
+		protected $customer_id,$broadcast_id;
 		
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($customers,$broadcast_id)
+    public function __construct($customer_id,$broadcast_id)
     {
-        $this->customers = unserialize($customers);
+        $this->customer_id = $customer_id;
         $this->broadcast_id = $broadcast_id;
     }
 
@@ -37,29 +37,11 @@ class CreateBroadcast implements ShouldQueue
      */
     public function handle()
     {
-
 			if ($this->attempts() == 1) {
-				foreach($this->customers as $col){
-						// $timegenerate = Carbon::now();
-						// $logexists = Storage::disk('local')->exists('job/log.txt');
-
-						// if($logexists == true)
-						// {
-								// $log = Storage::get('job/log.txt');
-								// $string = $log."\n".", Date and time : ".$timegenerate.print_r($this->customers, true);
-								// Storage::put('job/log.txt',$string);
-						// }
-						// else
-						// {
-								// $string = ", Date and time : ".$timegenerate.print_r($this->customers, true);
-								// Storage::put('job/log.txt',$string);
-						// }					
-					
 						$broadcastcustomer = new BroadCastCustomers;
 						$broadcastcustomer->broadcast_id = $this->broadcast_id;
-						$broadcastcustomer->customer_id = $col->id;
+						$broadcastcustomer->customer_id = $this->customer_id;
 						$broadcastcustomer->save();
-				}
 			}
 		}
 }
