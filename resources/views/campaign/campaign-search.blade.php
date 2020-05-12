@@ -7,7 +7,10 @@
         <div class="col-lg-4 pad-fix col-card">
           <h5>{{ $row['campaign'] }}</h5>
           <div class="notes">
-            <div>Type Campaign : <color><span class="gr">Broadcast</span></color></div>
+            <div>
+              Type Campaign : <color><span class="gr">Broadcast
+               @if($row['campaign_status'] == 0) -- draft @endif</span></color>
+            </div>
             <div>Schedule post : <b>{{ $row['day_send'] }} {{ $row['sending'] }}</b></div>
             @if($row['label'] !== null)
               <div>List : {{ $row['label'] }}</div>
@@ -52,15 +55,17 @@
         </div>
 
         <div class="col-lg-3 pad-fix col-button">
-          <button id="{{ $row['id'] }}" type="button" class="btn btn-success broadcast_duplicate" data-toggle="tooltip" title="Button Duplicate"><span class="icon-copy-text"></span><span class="tooltipstered" title="Duplicate Campaign"></span></button>
+          @if($row['campaign_status'] == 1)
+            <button id="{{ $row['id'] }}" type="button" class="btn btn-success broadcast_duplicate" data-toggle="tooltip" title="Button Duplicate"><span class="icon-copy-text"></span><span class="tooltipstered" title="Duplicate Campaign"></span></button>
+          @endif
           <button id="{{ $row['id'] }}" type="button" class="btn btn-danger broadcast-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
           <div>
-            <a title="Edit Message" data-toggle="tooltip" id="{{ $row['id'] }}" data-name="{{ $row['campaign'] }}" data-date="{{ $row['date_send'] }}" data-message="{{ $row['messages'] }}" data-time="{{ $row['sending'] }}" type="button" class="btn btn-custom edit_campaign">Edit</a>
+            <a title="Edit Message" data-toggle="tooltip" id="{{ $row['id'] }}" data-name="{{ $row['campaign'] }}" data-date="{{ $row['date_send'] }}" data-message="{{ $row['messages'] }}" data-time="{{ $row['sending'] }}" data-publish="{{ $row['campaign_status'] }}" type="button" class="btn btn-custom edit_campaign">@if($row['campaign_status'] == 1)Edit @else Edit/ Publish @endif</a>
           </div>
-
         </div>
-      </div> 
 
+      </div> 
+      <!--end  broadcast -->
     @else
     <!-- reminder -->
       <div class="bg-dashboard campaign row">

@@ -240,21 +240,53 @@ class BroadCastController extends Controller
         $date_send = $request->date_send;
         $time_sending = $request->hour;
         $message = $request->edit_message;
-
-				$folder="";
-				$filename="";
-				if($request->hasFile('imageWA')) {
+        $publish = $request->publish;
+				$folder = $filename = null;
+				
+				/*if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
 					$dt = Carbon::now();
 					$folder = $user_id."/broadcast-image/";
 					$filename = $dt->format('ymdHi').'.jpg';
 					Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
-				}
+				}*/
+
+        if($request->hasFile('imageWA')) 
+       {
+          //save ke temp local dulu baru di kirim 
+          $image_size = getimagesize($request->file('imageWA'));
+          $imagewidth = $image_size[0];
+          $imageheight = $image_size[1];
+          $imgtrue = imagecreatetruecolor($imagewidth,$imageheight);
+
+          $dt = Carbon::now();
+          $ext = $request->file('imageWA')->getClientOriginalExtension();
+          $folder = $user->id."/broadcast-image/";
+          $filename = $dt->format('ymdHi').'.'.$ext;
+          
+          if(checkImageSize($request->file('imageWA')) == true || $imagewidth > 1280 || $imageheight > 1280)
+          {
+              $scale = scaleImageRatio($imagewidth,$imageheight);
+              $imagewidth = $scale['width'];
+              $imageheight = $scale['height'];
+              resize_image($request->file('imageWA'),$imagewidth,$imageheight,false,$folder,$filename);
+          }
+          else
+          {
+              Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+          }
+          $image_path = $folder.$filename;
+        }
+        else
+        {
+          $prevbroadcast = BroadCast::find($broadcast_id);
+          $image_path = $prevbroadcast->image;
+        }
 				
         $broadcast = BroadCast::find($broadcast_id);
         $broadcast->day_send = $date_send;
         $broadcast->hour_time = $time_sending;
-				$broadcast->image = $folder.$filename;
+				$broadcast->image = $image_path;
         $broadcast->message = $message;
 
         try
@@ -271,12 +303,26 @@ class BroadCastController extends Controller
 
         $campaign = Campaign::find($campaign_id);
         $campaign->name = $campaign_name;
+        if($publish == 'publish')
+        {
+            $campaign->status = 1;
+        }
 
         try
         {
             $campaign->save();
-            $data['msg'] = 'Broadcast updated successfully.';
-            $data['success'] = 1;
+            if($publish == 'publish')
+            {
+              $data['msg'] = 'Broadcast has been published.';
+              $data['success'] = 1;
+              $data['publish'] = true;
+            }
+            else
+            {
+              $data['msg'] = 'Broadcast updated successfully.';
+              $data['success'] = 1;
+              $data['publish'] = false;
+            }
         }
         catch(Exception $e)
         {
@@ -349,6 +395,40 @@ class BroadCastController extends Controller
         $broadcast_message =  $request->message;
         $broadcast_group_name =  $request->group_name;
         $broadcast_channel =  $request->channel_name;
+        $folder = $filename = null;
+
+       if($request->hasFile('imageWA')) 
+       {
+          //save ke temp local dulu baru di kirim 
+          $image_size = getimagesize($request->file('imageWA'));
+          $imagewidth = $image_size[0];
+          $imageheight = $image_size[1];
+          $imgtrue = imagecreatetruecolor($imagewidth,$imageheight);
+
+          $dt = Carbon::now();
+          $ext = $request->file('imageWA')->getClientOriginalExtension();
+          $folder = $user->id."/broadcast-image/";
+          $filename = $dt->format('ymdHi').'.'.$ext;
+          
+          if(checkImageSize($request->file('imageWA')) == true || $imagewidth > 1280 || $imageheight > 1280)
+          {
+              $scale = scaleImageRatio($imagewidth,$imageheight);
+              $imagewidth = $scale['width'];
+              $imageheight = $scale['height'];
+              resize_image($request->file('imageWA'),$imagewidth,$imageheight,false,$folder,$filename);
+          }
+          else
+          {
+              Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+          }
+          $image_path = $folder.$filename;
+        }
+        else
+        {
+          $prevbroadcast = BroadCast::find($broadcast_id);
+          $image_path = $prevbroadcast->image;
+        }
+
         $broadcast = new BroadCast;
 
         if(empty($list_id))
@@ -361,6 +441,7 @@ class BroadCastController extends Controller
         $campaign->type = 2;
         $campaign->list_id = $list_id;
         $campaign->user_id = $user_id;
+        $campaign->status = 0;
         $campaign->save();
         $campaign_id = $campaign->id;
 
@@ -372,6 +453,7 @@ class BroadCastController extends Controller
           $broadcast->day_send = $broadcast_date;
           $broadcast->hour_time = $broadcast_sending;
           $broadcast->message = $broadcast_message;
+          $broadcast->image = $image_path;
           $broadcast->save();
           $broadcastnewID = $broadcast->id;
         }

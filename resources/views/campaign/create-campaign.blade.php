@@ -52,7 +52,7 @@
             <label class="form-check-label" for="inlineRadio2">Auto Responder</label>
           </div>
 
-          @if(getMembership(Auth()->user()->membership) > 1) 
+        <!--   @if(getMembership(Auth()->user()->membership) > 1) 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
               <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio1" value="event" />
@@ -60,7 +60,7 @@
             </label>
             <label class="form-check-label" for="inlineRadio1">Event</label>
           </div>
-          @endif
+          @endif -->
           
           <!-- -->
         </div>
@@ -148,7 +148,7 @@
 
       <div class="form-group row">
 				<label class="col-sm-3 col-form-label">Image :</label>
-				<div class="col-sm-9 relativity ml-3">
+				<div class="col-sm-9 relativity">
 					<div class="custom-file">
 						<input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
 

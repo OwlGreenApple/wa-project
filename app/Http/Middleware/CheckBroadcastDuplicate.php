@@ -41,6 +41,7 @@ class CheckBroadcastDuplicate
               'date_send'=>['required',new CheckBroadcastDate],
               'hour'=>['required',new EligibleTime($date_send)],
               'edit_message'=>['required','max:65000'],
+              'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],
             );
 
             $validator = Validator::make($request->all(),$rules);
@@ -53,6 +54,7 @@ class CheckBroadcastDuplicate
                   'event_time'=>$error->first('date_send'),
                   'time_sending'=>$error->first('hour'),
                   'edit_message'=>$error->first('edit_message'),
+                  'image'=>$error->first('imageWA'),
                   'success'=>0,
                 ];
 
@@ -68,7 +70,8 @@ class CheckBroadcastDuplicate
           'campaign_name'=>['required','max:50'],
           'date_send'=>['required',new CheckBroadcastDate],
           'hour'=>['required'],
-          'message'=>['max:4095'],
+          'message'=>['max:65000'],
+          'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],
         );
 
         if(isset($_POST['list_id']))
@@ -98,6 +101,7 @@ class CheckBroadcastDuplicate
               'date_send'=>$error->first('date_send'),
               'hour'=>$error->first('hour'),
               'message'=>$error->first('message'),
+              'image'=>$error->first('imageWA'),
               'success'=>0,
             ];
 

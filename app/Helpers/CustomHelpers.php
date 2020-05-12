@@ -2,12 +2,14 @@
 use App\UserList;
 use App\Customer;
 
+  // GET MEMBERSHIP NUMBER
 	function getMembership($membership)
 	{
 		  $membership_value = substr($membership,-1,1);
       return (int)$membership_value;
 	}
 
+  // CHECK IMAGE
   function checkImageSize($image)
   {
       $image_file_size = (int)number_format($image->getSize() / 1024, 2);
@@ -21,6 +23,7 @@ use App\Customer;
       }
   }
 
+  // SCALE IMAGE
   function scaleImageRatio($width,$height)
   {
     if($width > 1280)
