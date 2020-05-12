@@ -37,22 +37,24 @@ class CreateBroadcast implements ShouldQueue
      */
     public function handle()
     {
-			$timegenerate = Carbon::now();
-			$logexists = Storage::disk('local')->exists('job/log.txt');
 
-			if($logexists == true)
-			{
-					$log = Storage::get('job/log.txt');
-					$string = $log."\n".print_r($this->customers, true);
-					Storage::put('job/log.txt',$string);
-			}
-			else
-			{
-					$string = print_r($this->customers, true);
-					Storage::put('job/log.txt',$string);
-			}
 			if ($this->attempts() == 1) {
 				foreach($this->customers as $col){
+						$timegenerate = Carbon::now();
+						$logexists = Storage::disk('local')->exists('job/log.txt');
+
+						if($logexists == true)
+						{
+								$log = Storage::get('job/log.txt');
+								$string = $log."\n".", Date and time : ".$timegenerate.print_r($this->customers, true);
+								Storage::put('job/log.txt',$string);
+						}
+						else
+						{
+								$string = ", Date and time : ".$timegenerate.print_r($this->customers, true);
+								Storage::put('job/log.txt',$string);
+						}					
+					
 						$broadcastcustomer = new BroadCastCustomers;
 						$broadcastcustomer->broadcast_id = $this->broadcast_id;
 						$broadcastcustomer->customer_id = $col->id;

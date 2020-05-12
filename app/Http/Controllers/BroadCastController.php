@@ -153,26 +153,26 @@ class BroadCastController extends Controller
 
         if($customers->count() > 0)
         {
-					// CreateBroadcast::dispatch(serialize($customers),$broadcast_id);
-            foreach($customers as $col){
-                $broadcastcustomer = new BroadCastCustomers;
-                $broadcastcustomer->broadcast_id = $broadcast_id;
-                $broadcastcustomer->customer_id = $col->id;
-                $broadcastcustomer->save();
-            }
+					CreateBroadcast::dispatch(serialize($customers),$broadcast_id);
+            // foreach($customers as $col){
+                // $broadcastcustomer = new BroadCastCustomers;
+                // $broadcastcustomer->broadcast_id = $broadcast_id;
+                // $broadcastcustomer->customer_id = $col->id;
+                // $broadcastcustomer->save();
+            // }
         } else if($broadcast_schedule == 0) {
             return 'Broadcast created, but will not send anything because you do not have subscriber';
         } else {
             return 'Your broadcast has been created';
         }
 
-				// return 'Your broadcast has been created';
+				return 'Your broadcast has been created';
 
-        if($broadcastcustomer->save()){
-            return 'Your broadcast has been created';
-        } else {
-            return 'Error!!Your broadcast failed to create';
-        }
+        // if($broadcastcustomer->save()){
+            // return 'Your broadcast has been created';
+        // } else {
+            // return 'Error!!Your broadcast failed to create';
+        // }
     }
 
     /* Display broadcast */
