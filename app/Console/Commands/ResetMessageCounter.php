@@ -62,8 +62,8 @@ class ResetMessageCounter extends Command
 									// $additional_day = 180;
 									$type_package = explode("supervalue", $user->membership)[0];
 								}
-print_r($users);
-print_r($type_package);
+//print_r($users);
+echo $users->email.$users->membership.$type_package."\n";
 								$max_counter = 0;
 								if ($type_package=="1") {
 									$phoneNumber->max_counter_day=1000;
