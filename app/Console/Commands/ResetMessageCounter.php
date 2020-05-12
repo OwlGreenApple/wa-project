@@ -60,6 +60,7 @@ class ResetMessageCounter extends Command
 								}
 								if(substr($user->membership,0,10) === "supervalue"){
 									// $additional_day = 180;
+									print_r(explode("supervalue", $user->membership));
 									$type_package = explode("supervalue", $user->membership)[0];
 								}
 //print_r($users);
