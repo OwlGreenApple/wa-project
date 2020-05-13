@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Encryption\DecryptException;
+use App\Http\Controllers\CampaignController;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Imports\UsersImport;
@@ -16,13 +17,78 @@ use App\ReminderCustomers;
 use App\Templates;
 use App\Customer;
 use Carbon\Carbon;
-use App\Sender;
 use App\Campaign;
 use App\Helpers\Alert;
 use DB,Storage;
 
 class EventController extends Controller
 {
+
+    public function index(Request $request){
+      $userid = Auth::id();
+      $data = array();
+      $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',0]])
+                  ->join('lists','lists.id','=','campaigns.list_id')
+                  ->orderBy('campaigns.id','desc')
+                  ->select('campaigns.*','lists.label')
+                  ->paginate(1);
+
+      if($campaign->count() > 0)
+      {
+          foreach($campaign as $row)
+          {
+             $reminder = Reminder::where([['campaign_id',$row->id],['is_event',1],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
+
+             $campaigncontroller = new CampaignController;
+
+              if(!is_null($reminder))
+              {
+                $total_message = $campaigncontroller->campaignsLogic($row->id,$userid,0,'=',0); 
+                $total_delivered = $campaigncontroller->campaignsLogic($row->id,$userid,0,'>',0);
+
+                $days = (int)$reminder->days;
+                $total_template = Reminder::where('campaign_id',$row->id)->get()->count();
+
+                if($days < 0){
+                  $abs = abs($days);
+                    $event_time = Carbon::parse($reminder->event_time)->subDays($abs);
+                  }
+                else
+                {
+                    $event_time = Carbon::parse($reminder->event_time)->addDays($days);
+                }
+
+                $data[] = array(
+                  'type'=>0,
+                  'id'=>$row->id,
+                  'campaign_name'=>$row->name,
+                  'sending'=>Date('M d, Y',strtotime($event_time)),
+                  'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
+                  'label'=>$row->label,
+                  'created_at'=>Date('M d, Y',strtotime($row->created_at)),
+                  'total_template' => $total_template,
+                  'total_message' => $total_message->count(),
+                  'sent_message' => $total_delivered->count(),
+                  'published'=>$row->status
+                );
+              }
+          } // ENDFOREACH
+      }
+
+      if($request->ajax()) {
+          return view('event.event',['data'=>$data,'paginate'=>$campaign]);
+      }
+
+      return view('event.index',['data'=>$data,'paginate'=>$campaign]);
+    }
+
+    public function createEvent(){
+      $user_id = Auth::id();
+      $data = array(
+          'lists'=>displayListWithContact($user_id),
+      );
+      return view('event.event-form',$data);
+    }
 
     public function saveEvent(Request $request)
     {
@@ -226,7 +292,7 @@ class EventController extends Controller
         return response()->json(['message'=>'Your event has been deleted successfully']);
     }
 
-    function duplicateEvent(Request $request)
+    public function duplicateEvent(Request $request)
     {
         $user_id = Auth::id();
         $campaign_id = $request->id;
@@ -243,6 +309,7 @@ class EventController extends Controller
             $campaign->type = 0;
             $campaign->list_id = $old_campaign->list_id;
             $campaign->user_id = $user_id;
+            $campaign->status = 0;
             $campaign->save();
             $new_campaign_id = $campaign->id;
         }
@@ -261,6 +328,7 @@ class EventController extends Controller
               $event_day = $row->days;
               $event_sending = $row->hour_time;
               $event_message = $row->message;
+              $event_image = $row->image;
               $oldreminderid[] = $row->id;
 
               $event = new Reminder;
@@ -271,6 +339,7 @@ class EventController extends Controller
               $event->days = $event_day;
               $event->event_time = $event_date;
               $event->hour_time = $event_sending;
+              $event->image = $event_image;
               $event->message = $event_message;
               $event->save();
               $newreminderid[] = $event->id;
@@ -339,22 +408,6 @@ class EventController extends Controller
 		echo carbon::parse('2019-09-10 16:58:00')->addDays(15);
 	}
 
-    public function index(){
-    	$id = Auth::id();
-    	$eventautoreply = Reminder::where([['reminders.user_id',$id],['reminders.days',0],['reminders.hour_time','=',null],['lists.is_event','=',1]])
-    			->join('lists','reminders.list_id','=','lists.id')
-    			->select('lists.name','lists.label','reminders.*')
-    			->get();
-
-        $event = Reminder::where([['reminders.user_id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])
-                ->join('lists','reminders.list_id','=','lists.id')
-                ->select('lists.name','lists.event_date','lists.label','reminders.*')
-                ->groupBy('lists.name')
-                ->get();
-
-    	return view('event.event',['data'=>$eventautoreply,'event'=>$event]);
-    }
-
     public function eventAutoReply(){
         $id = Auth::id();
         $list = UserList::where([['user_id',$id],['is_event',1],['status',1]])->get();
@@ -401,16 +454,7 @@ class EventController extends Controller
         } else {
         	return redirect('eventautoreply')->with('status_error','Error!! failed to set event auto reply');
         }
-    }
-
-
-    /* Create scheduled message */
-    public function eventForm(){
-        $id = Auth::id();
-        $list = UserList::where([['user_id',$id],['is_event',1],['status',1]])->get();
-        $templates = Templates::where('user_id',$id)->get();
-        return view('event.event-form',['data'=>$list, 'templates'=>$templates]);
-    }
+    } 
 
     public function addEvent(Request $request){
         $user_id = Auth::id();
@@ -618,22 +662,6 @@ class EventController extends Controller
         } else {
             return redirect('event')->with('warning','Error! Unable to change event autoreply status');
         }
-    }
-
-	/* Display reminder customer */
-    public function displayEventCustomers()
-    {
-    	$id_user = Auth::id();
-    	$remindercustomer = ReminderCustomers::where([['reminder_customers.user_id','='                ,$id_user],['lists.is_event','=',1]
-                            ])
-    						->join('lists','lists.id','=','reminder_customers.list_id')
-    						->leftJoin('customers','customers.id','=','reminder_customers.customer_id')
-                            ->rightJoin('reminders','reminders.id','=','reminder_customers.reminder_id')
-    						->select('reminder_customers.*','lists.name','customers.wa_number','lists.event_date',
-                                'reminders.days','reminders.message'
-                            )->orderBy('reminder_customers.id','desc')
-    						->get();
-    	return view('event.event-customer',['data'=>$remindercustomer]);
     }
 
     public function displayEventSchedule(Request $request)

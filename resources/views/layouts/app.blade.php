@@ -146,6 +146,8 @@
                                     
                                     <a href="{{url('create-campaign')}}" class="nav-link {{ (request()->is('create-campaign')) ? 'active' : '' }}">Campaigns</a> 
                                     @if(getMembership(Auth()->user()->membership) > 1) 
+                                      <a href="{{url('create-event')}}" class="nav-link {{ (request()->is('create-event')) ? 'active' : '' }}">Event</a>  
+
                                       <a href="{{url('create-apt')}}" class="nav-link {{ (request()->is('create-apt')) ? 'active' : '' }}">Appointment</a>
                                     @endif
                                 </div>
@@ -160,6 +162,10 @@
                             </li> 
                             
                             @if(getMembership(Auth()->user()->membership) > 1) 
+                            <li class="nav-item">
+                                <a class="nav-link {{ (request()->is('event')) ? 'active' : '' }}" href="{{ url('event') }}">Event</a>
+                            </li> 
+
                             <li class="nav-item">
                                 <a class="nav-link {{ (request()->is('appointment')) ? 'active' : '' }}" href="{{ route('appointment') }}">Appointment</a>
                             </li>
