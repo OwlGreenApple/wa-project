@@ -528,7 +528,7 @@ class CampaignController extends Controller
         return view('campaign.campaign-search',['data'=>$data]);
     }
 
-    private function campaignsLogic($campaign_id,$userid,$is_event,$cond,$status)
+    public function campaignsLogic($campaign_id,$userid,$is_event,$cond,$status)
     {
         $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status',$cond,$status]])
           ->join('reminders','reminders.id','=','reminder_customers.reminder_id')

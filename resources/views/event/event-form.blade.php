@@ -2,154 +2,145 @@
 
 @section('content')
 
-<!-- navbar -->
-<div class="container mb-2">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a href="{{route('home')}}" class="nav-link">Back Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{route('event')}}" class="nav-link">Back Event</a>
-                </li>
-              </ul>
-            </nav>
-        </div>
-    </div>
-</div>
-<!-- end navbar -->
+<!-- TOP SECTION -->
+<div class="container act-tel-dashboard">
+  <div class="act-tel-dashboard-left">
+    <h2>SETUP EVENT</h2>
+  </div>
 
-<div class="container">
-    <!-- add list-->
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header"><b>Create Event Schedule Reminder</b></div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif 
-
-                    @if (session('errorsender'))
-                        <div class="alert alert-danger" role="alert">
-                            {{ session('errorsender') }}
-                        </div>
-                    @endif
-
-                    <form id="get_template">
-                        <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Choose Template</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="template_list" id="display-template">
-                                  <option>Choose</option>
-                                  @if($templates->count() > 0)
-                                    @foreach($templates as $row)
-                                      <option value="{{$row->id}}">{{$row->name}}</option>
-                                    @endforeach
-                                  @endif
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-warning btn-sm">Add</button>
-                            </div>
-                        </div> 
-                    </form>
-
-                     <form name="event_form" method="POST" action="{{ route('addevent') }}">
-                        @csrf
-
-                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Event</label>
-                            <div class="col-md-6">
-
-                              <select class="form-control" name="list_id" id="display-template">
-                                  @if($data->count() > 0)
-                                    @foreach($data as $row)
-                                      <option value="{{$row->id}}">{{$row->label}}</option>
-                                    @endforeach
-                                  @endif
-                                </select>
-
-                                <!-- end check box -->
-                                 @if (session('error'))
-                                    <div class="error">{{ session('error')->first('id') }}</div>
-                                 @endif
-                            </div>
-                        </div> 
-
-                        <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Message</label>
-                            <div class="col-md-6">
-                                <textarea id="divInput-description-post" class="form-control" name="message"></textarea>
-                                 @if (session('error'))
-                                    <div class="error">{{ session('error')->first('message') }}</div>
-                                 @endif
-                             </div>
-                             <div class="col-md-2"><input class="btn btn-default btn-sm" type="button" id="tagname" value="Add Name" /></div>
-                        </div> 
-
-                         <div class="form-group row">
-                            <label class="col-md-4 col-form-label text-md-right">Choose Schedule</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="schedule" id="schedule">
-                                  <option value="0">Hari H</option>
-                                  <option value="1">H-</option>
-                                  <option value="2">H+</option>
-                                </select>
-
-                                 @if (session('error'))
-                                    <div class="error">{{ session('error')->first('schedule') }}</div>
-                                 @endif
-                            </div>
-                        </div> 
-
-                        <div class="form-group row thedayh">
-                            <label class="col-md-4 col-form-label text-md-right">Time To send message</label>
-                            <div class="col-md-6">
-                                <span class="inputh">
-                                  <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />
-                                </span>
-                                @if (session('error'))
-                                    <div class="error">{{ session('error')->first('day') }}</div>
-                                 @endif 
-                                 @if (session('error'))
-                                    <div class="error">{{ session('error')->first('schedule') }}</div>
-                                 @endif 
-                                 @if (session('error_days'))
-                                    <div class="error">{{ session('error_days')}}</div>
-                                 @endif
-                            </div>
-                        </div>
-
-                        <!-- submit button -->
-                         <div class="form-group row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button id="submit" type="submit" class="btn btn-primary">
-                                     Submit
-                                  </button>
-                            </div>
-                        </div>
-                     </form>
-                     <!-- end form -->
-                     
-                </div>
-            </div>
-        </div>
-    </div>
-<!-- end container -->   
+  <div class="clearfix"></div>
 </div>
 
+<!-- NUMBER -->
+<div class="container act-tel-campaign">
+  <form id="save_campaign">
+      <input type="hidden" name="campaign_id" value="new">
+      <input type="hidden" name="reminder_id" value="new">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Name :</label>
+        <div class="col-sm-6">
+          <input type="text" name="campaign_name" class="form-control" />
+          <span class="error campaign_name"></span>
+        </div>
+      </div>
+
+      <div class="form-group row lists">
+        <label class="col-sm-3 col-form-label">Select List :</label>
+        <div class="col-sm-9 relativity">
+           <select name="list_id" class="custom-select-campaign form-control">
+              @if(count($lists) > 0)
+                @foreach($lists as $row)
+                  <option value="{{ $row['id'] }}">{{ $row['customer_count'] }} {{ $row['label'] }}</option>
+                @endforeach
+              @endif
+           </select>
+           <span class="icon-carret-down-circle"></span>
+           <span class="error list_id"></span>
+        </div>
+      </div>
+
+      <div class="form-group row event-time">
+        <label class="col-sm-3 col-form-label">Event Time :</label>
+        <div class="col-sm-9 relativity">
+          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
+          <span class="icon-calendar"></span>
+          <span class="error event_time"></span>
+        </div>
+      </div>
+
+      <div class="form-group row reminder">
+        <label class="col-sm-3 col-form-label">Select Day :</label>
+        <div class="col-sm-9 relativity">
+           <select name="schedule" id="schedule" class="custom-select-campaign form-control">
+              <option value="0">The Day</option>
+              <option value="1">H-</option>
+              <option value="2">H+</option>
+           </select>
+           <span class="icon-carret-down-circle"></span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Time to send Message :</label>
+        <div class="col-sm-9 relativity">
+          <span class="inputh">
+            <input name="hour" type="text" class="timepicker form-control" value="00:00" readonly />
+          </span>
+          <!-- <span class="inputh">
+             <select name="day" class="form-control col-sm-7 float-left days delcols mr-3"> @for($x=1;$x<=100;$x++) 
+                  <option value="{{ $x }}">{{ $x }} days after event</option>;
+             @endfor
+             </select>
+            <input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />
+          </span> -->
+          <span class="error day"></span><br/>
+          <span class="error hour"></span>
+          <small>Please set your timezone on : <a target="_blank" href="{{ url('settings/?mod=1') }}">Settings</a></small>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Image :</label>
+        <div class="col-sm-9 relativity">
+          <div class="custom-file">
+            <input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
+
+            <label class="custom-file-label" for="inputGroupFile01">
+            </label>
+          </div>
+          <span class="error image"></span><br/>
+          <small>Maximum image size is : <b>4Mb</b></small>
+          <div><small>Image Caption Limit is 1000 characters</small></div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Message :
+          <span class="tooltipstered" title="<div class='panel-heading'>Message</div><div class='panel-content'>
+            You can use this as 'Personalization field' <br>
+            [NAME] <br>
+            [PHONE] <br>
+            [WA] <br>
+            Do NOT use : % or & character on your message<br>
+            </div>">
+            <i class="fa fa-question-circle "></i>
+          </span>
+        </label>
+        <div class="col-sm-6">
+          <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
+          <span class="error msg"></span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+
+        <div class="text-right col-sm-9">
+          <button type="submit" class="btn btn-custom">Create</button>
+        </div>
+      </div>
+      
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Send 1 test Message
+          <span class="tooltipstered" title="<div class='panel-heading'>Send 1 test Message</div><div class='panel-content'>
+            Test Message will be send immediately
+            </div>">
+            <i class="fa fa-question-circle "></i>
+          </span>
+        </label>
+        <div class="col-sm-9 relativity">
+            <input type="text" id="phone" name="phone_number" class="form-control" />
+            <span class="error code_country"></span>
+            <span class="error phone_number"></span>
+            <button type="button" class="btn btn-test">Send Test</button>
+        </div>
+      </div>
+  </form>
+</div>
 
 <!-- give emoji -->
  <script type="text/javascript">
     $("#divInput-description-post").emojioneArea({
-        pickerPosition: "right",
-        mainPathFolder : "{{url('')}}",
+        pickerPosition: "right"
     });
 </script>
 
@@ -183,12 +174,6 @@
         //delDays();
     });
 
-     function loader(){
-         $("#submit").click(function(){
-          $(this).html('<div class="imgloader"></div>');
-           $(".imgloader").html('<img src="{{asset('assets/css/loading.gif')}}"/>');
-         });
-      }
 
       function MDTimepicker(){
         $("body").on('focus','.timepicker',function(){
@@ -204,32 +189,6 @@
             $(".timepicker").val('00:00');
         });
       }
-
-     function validateForm(){
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
-        var hh = today.getHours();
-        hh = ("0" + hh).slice(-2);
-        var min = today.getMinutes();
-        min = ("0" + min).slice(-2);
-
-        today = yyyy+'-'+mm+'-'+dd+' '+hh+':'+min;
-
-        var ed = document.forms["event_form"];
-
-        if(ed["event_date"].value == ""){
-            alert("Date event must be filled out");
-            return false;
-        }
-
-        if(ed["event_date"].value < today){
-            alert("Date or time cannot be less than today");
-            return false;
-        }
-
-     }
 
      function displayAddDaysBtn()
      {
@@ -301,23 +260,6 @@
         $("."+pos).remove();
         $("#"+pos).remove();
       });
-    }
-
-    /* Attach broadcast template into textarea message */
-    function displayTemplate(){
-        $("body").on('submit','#get_template',function(e){
-            e.preventDefault();
-            var id = document.getElementsByName("template_list")[0].value;
-            $.ajax({
-                type : 'GET',
-                url : '{{route("displaytemplate")}}',
-                data : {'id':id},
-                dataType : "text",
-                success : function(txt){
-                    $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(txt);
-                }
-            });
-        });
     }
 
 </script>

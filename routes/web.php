@@ -237,16 +237,18 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('appt-del','AppointmentController@delAppointment');
   Route::get('export_csv_appt/{campaign_id}','AppointmentController@exportAppointment');
 
+  /* EVENT */
+  Route::get('event','EventController@index');
+  Route::get('create-event','EventController@createEvent');
+
   // scheduled event --OLD CODES
   Route::post('addevent','EventController@addEvent')->name('addevent');
-  Route::get('eventform','EventController@eventForm')->name('eventform');
-  Route::get('eventcustomer','EventController@displayEventCustomers')->name('eventcustomer');
   Route::get('displayeventschedule','EventController@displayEventSchedule')->name('displayeventschedule');
   Route::post('updatevent','EventController@updateEvent')->name('updatevent');
   Route::get('deletevents','EventController@delEvent')->name('deletevents');
   Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');
 
-  Route::get('event','EventController@index')->name('event');
+ 
   // auto reply event
   Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
   Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');
@@ -308,7 +310,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	Route::get('deletetemplate','TemplatesController@delTemplate')->name('deletetemplate');
 */
 	/* Senders */
-	Route::post('addsender','SenderController@addSender')->middleware('wanumber')->name('addsender');
+	// Route::post('addsender','SenderController@addSender')->middleware('wanumber')->name('addsender');
 
 	/* CKEditor */
 	Route::get('ckbrowse', 'CKController@ck_browse')->name('ckbrowse');

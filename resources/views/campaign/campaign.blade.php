@@ -55,47 +55,6 @@
   </div>
 </div>
 
-<!-- Modal Duplicate Event -->
-  <div class="modal fade child-modal" id="modal_duplicate" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content -->
-      <div class="modal-content">
-        <div class="modal-body">
-            <div class="form-group">
-                 <div class="mb-2 act-tel-campaign">
-                  <form id="duplicate">
-                    
-                    <div class="form-group">
-                      <label>Event Name</label>
-                      <input type="text" class="form-control" name="campaign_name" />
-                      <span class="error campaign_name"></span>
-                    </div>
-
-                    <div class="form-group">
-                      <label>Event Date & Time</label>
-                      <div class="relativity">
-                        <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
-                        <span class="icon-calendar"></span>
-                      </div>
-                      <span class="error event_time"></span>
-                    </div>
-                 
-                    <div class="text-right">
-                      <button type="submit" class="btn btn-custom mr-1">Save</button>
-                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                    </div>
-                  </form>
-                </div>
-               
-            </div>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  <!-- End Modal -->
-
   <!-- Modal Duplicate Auto Responder -->
   <div class="modal fade child-modal" id="modal_duplicate_reminder" role="dialog">
     <div class="modal-dialog">
@@ -338,10 +297,6 @@
           pickerPosition: "right",
           mainPathFolder : "{{url('')}}",
       });
-
-      $('body > [data-toggle="tooltip"]').tooltip({
-        'placement':'top'
-      });   
   });
 
   $(document).ready(function(){
@@ -352,10 +307,7 @@
       displayCampaign();
       delBroadcast();
       delAutoResponder();
-      delEvent();
       searchCampaign();
-     /* duplicateEventForm();
-      duplicateEvent();*/
       duplicateResponderForm();
       duplicateResponder();
       duplicateBroadcastForm();
@@ -365,75 +317,6 @@
       sendTestMessage();
       pictureClass();
   });
-
-  function duplicateEventForm()
-  {
-    $("body").on("click",".event_duplicate",function(){
-        var id = $(this).attr('id');
-        $("#duplicate").attr('data',id);
-        $("#modal_duplicate").modal();
-    });
-  }
-
-  function duplicateEvent()
-  {
-    $("#duplicate").submit(function(e){
-        e.preventDefault();
-        var campaign_id = $(this).attr('data');
-        var option_position = $("#campaign_option").val();
-
-        var data = $(this).serializeArray();
-        data.push({name : 'id', value:campaign_id});
-
-        $.ajax({
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-          type: 'POST',
-          url: "{{ url('event-duplicate') }}",
-          data: data,
-          dataType: 'json',
-          beforeSend: function()
-          {
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success: function(result) {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-
-            if(result.success == 0)
-            { 
-              $(".error").show();
-              $(".campaign_name").html(result.campaign_name);
-              $(".event_time").html(result.event_time);
-            }
-            else
-            {
-              $(".error").hide();
-              // alert(result.message);
-              $("#modal_duplicate").modal('hide');
-              $("#duplicate:input").val('');
-
-              if(option_position == 'all')
-              {
-                displayResult();
-              }
-              else
-              {
-                displayResult(null,0);
-              }
-              
-            }
-          },
-          error : function(xhr,attr,throwable){
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            $(".error").hide();
-            alert(xhr.responseText);
-          }
-      });
-
-    });
-  }
 
   function duplicateResponderForm()
   {
@@ -993,57 +876,6 @@
             else
             {
               displayAutoResponder();
-            }
-          },
-          error : function(xhr, attr, throwable)
-          {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            console.log(xhr.responseText);
-          }
-        });
-      }
-      else 
-      {
-        return false;
-      }
-    });
-  }
-
-  function delEvent()
-  {
-    $("body").on("click",".event-del",function(){
-      var id = $(this).attr('id');
-      var option_position = $("#campaign_option").val();
-      var conf = confirm("Are you sure to delete this event?"+"\n"+"WARNING : This cannot be undone");
-
-      if(conf == true)
-      {
-        $.ajax({
-          type : 'GET',
-          url : '{{ url("campaign-del") }}',
-          data : {
-            id : id,
-            mode : "event"
-          },
-          beforeSend: function()
-          {
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success : function(result)
-          {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            alert(result.message);
-
-            if(option_position == 'all')
-            {
-              displayResult();
-            }
-            else
-            {
-              displayEvent();
             }
           },
           error : function(xhr, attr, throwable)
