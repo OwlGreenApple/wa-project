@@ -40,40 +40,40 @@
         <div class="col-10 div-range-slider">
           <input type="text" class="js-range-slider" name="my_range" value="" />
         </div>
-        <div class="col-4 ml-0 mr-0 box-pricing p-2 " data-attr="1">
+        <div class="col-md-4 col-xs-12 col-sm-12 ml-0 mr-0 box-pricing p-2 " data-attr="1">
           <div class="box-in">
             <div class="div-header w-100 p-1">
               <h5>Basic</h5>
             </div>
             <div class="div-content w-100 w-100 p-3">
-              <span>Monthly </span>
+              <span><i class="correct"></i> Monthly </span>
               <span>&nbsp</span>
               <span id="monthly-price" class="content-price">IDR 195.000</span>
               <span id="description-contact-3" class="description-contact">15.000 Messages</span>
             </div>
           </div>            
         </div>    
-        <div class="col-4 ml-0 mr-0 box-pricing p-2 selected" data-attr="2">
+        <div class="col-md-4 col-xs-12 col-sm-12 ml-0 mr-0 box-pricing p-2 selected" data-attr="2">
           <div class="box-in">
             <div class="div-header w-100 p-1">
               <i class=""></i> 
               <h5 class="pl-3">Best Seller</h5>
             </div>
             <div class="div-content w-100 w-100 p-3">
-              <span>2 Months </span>
+              <span><i class="star"></i> 2 Months </span>
               <span>&nbsp</span>
               <span id="2months-price" class="content-price">IDR 370.500</span>
               <span id="description-contact-3" class="description-contact">15.000 Messages</span>
             </div>
           </div>            
         </div>    
-        <div class="col-4 ml-0 mr-0 box-pricing p-2" data-attr="3">
+        <div class="col-md-4 col-xs-12 col-sm-12 ml-0 mr-0 box-pricing p-2" data-attr="3">
           <div class="box-in">
             <div class="div-header w-100 p-1">
               <h5>Super Value</h5>
             </div>
             <div class="div-content w-100 w-100 p-3">
-              <span>3 Months </span>
+              <span><i class="correct"></i> 3 Months </span>
               <span>&nbsp</span>
               <span id="3months-price" class="content-price">IDR 526.500</span>
               <span id="description-contact-3" class="description-contact">15.000 Messages</span>
