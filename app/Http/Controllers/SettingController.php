@@ -72,10 +72,12 @@ class SettingController extends Controller
 						// klo didatabase kita ga ready maka diarahin ke punya woowa
 						session(['mode'=>1]);
 					}
-					session([
-						'mode'=>0,
-						'server_id'=>$server->id,
-					]);
+					else {
+						session([
+							'mode'=>0,
+							'server_id'=>$server->id,
+						]);
+					}
 				}
 				else {
 					session(['mode'=>1]);
@@ -516,24 +518,36 @@ class SettingController extends Controller
     {
       $phoneNumber = PhoneNumber::find($request->id);
       $wa_number = $phoneNumber->phone_number;
-      $delete_api = ApiHelper::unreg($wa_number);
+			
+			if ($phoneNumber->mode == 0){
+				$server = Server::where("phone_id",$phoneNumber->id)->first();
+				$server->status = 0;
+				$server->save();
+				
+				$arr['status'] = 'success';
+				$arr['message'] = "The phone number has been deleted";
+				return $arr;
+			}
+			else {
+				$delete_api = ApiHelper::unreg($wa_number);
 
-      if($delete_api !== "success")
-      {
-        $phoneNumber->delete();
-        $arr['status'] = 'success';
-        $arr['message'] = "The phone number has been deleted";
-        return $arr;
-      }
+				if($delete_api !== "success")
+				{
+					$phoneNumber->delete();
+					$arr['status'] = 'success';
+					$arr['message'] = "The phone number has been deleted";
+					return $arr;
+				}
 
-      try{
-        $phoneNumber->delete();
-        $arr['status'] = 'success';
-        $arr['message'] = "The phone number has been deleted";
-      }catch(Exception $e){
-        $arr['status'] = 'error';
-        $arr['message'] = "Error! Sorry unable to delete your phone number";
-      } 
+				try{
+					$phoneNumber->delete();
+					$arr['status'] = 'success';
+					$arr['message'] = "The phone number has been deleted";
+				}catch(Exception $e){
+					$arr['status'] = 'error';
+					$arr['message'] = "Error! Sorry unable to delete your phone number";
+				} 
+			}
 
       return $arr;
     }
