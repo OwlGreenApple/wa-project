@@ -51,11 +51,13 @@
           -->
             @if($row['published'] == 1)
               <button type="button" id="{{ $row['id'] }}"  class="btn btn-success event_duplicate" data-toggle="tooltip" data-placement="top" title="Button Duplicate"><span class="icon-copy-text"></span></button>
+            @else 
+              <button type="button" id="{{ $row['id'] }}"  class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Button Publish">Publish</button>
             @endif
             <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
             <div>
               <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">
-                @if($row['published'] == 1) Add / Edit @else Publish / Edit @endif
+                Add / Edit
               </a>
             </div>
         </div>

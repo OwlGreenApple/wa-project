@@ -332,11 +332,14 @@ class CampaignController extends Controller
       }
       $lists = UserList::where('user_id',$user_id)->get();
       $current_list = UserList::where('id',$campaign->list_id)->select('label')->first();
+      $reminder = Reminder::where('campaign_id',$campaign_id)->first();
       $data['lists'] = $lists;
       $data['campaign_id'] = $campaign_id;
       $data['campaign_name'] = $campaign->name;
       $data['currentlist'] = $current_list->label;
       $data['currentlistid'] = $campaign->list_id;
+      $data['published'] = $campaign->status;
+      $data['date_event'] = $reminder->event_time;
       return view('event.add-message-event',$data);
     }
 

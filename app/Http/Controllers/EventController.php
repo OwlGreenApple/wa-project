@@ -24,9 +24,9 @@ use DB,Storage;
 class EventController extends Controller
 {
 
-    public function index(Request $request){
+    public function campaignLogic()
+    {
       $userid = Auth::id();
-      $data = array();
       $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',0]])
                   ->join('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
@@ -75,11 +75,29 @@ class EventController extends Controller
           } // ENDFOREACH
       }
 
+      $arr = [
+        'campaign'=>$campaign,
+        'data'=>$data,
+      ];
+
+      return $arr;
+    } 
+
+    public function index(Request $request){
+      $data = array();
+      $logic = $this->campaignLogic();
+
       if($request->ajax()) {
-          return view('event.event',['data'=>$data,'paginate'=>$campaign]);
+          return view('event.event',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
       }
 
-      return view('event.index',['data'=>$data,'paginate'=>$campaign]);
+      return view('event.index',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
+    }
+
+    public function loadAjaxEventPage()
+    {
+        $logic = $this->campaignLogic();
+        return view('event.event',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
     }
 
     public function createEvent(){
@@ -662,21 +680,6 @@ class EventController extends Controller
         } else {
             return redirect('event')->with('warning','Error! Unable to change event autoreply status');
         }
-    }
-
-    public function displayEventSchedule(Request $request)
-    {
-        $id = $request->id;
-        $event = Reminder::where([['reminders.id',$id],['reminders.hour_time','<>',null],['lists.is_event','=',1]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.event_date','lists.id AS list_id')->first();
-
-       $data = array(
-            'date_event'=>$event->event_date,
-            'day'=>$event->days,
-            'hour'=>$event->hour_time,
-            'list_id'=>$event->list_id,
-       );
-
-        return response()->json($data);
     }
 
     /* update event */

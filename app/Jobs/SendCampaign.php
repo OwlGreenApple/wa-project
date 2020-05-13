@@ -70,9 +70,11 @@ class SendCampaign implements ShouldQueue
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
           ->join('customers',"customers.id","=","broad_cast_customers.customer_id")
+          ->join('campaigns',"campaigns.id","=","broad_casts.campaign_id")
           ->where("broad_cast_customers.status",0)
           ->where("customers.status",1)
           ->where("phone_numbers.id",$this->phone_id)
+          ->where("campaigns.status",1)
           ->orderBy('broad_casts.user_id')
           ->get();
 
@@ -88,6 +90,8 @@ class SendCampaign implements ShouldQueue
                 if(is_null($phoneNumber)){
                   continue;
                 }
+
+                // REMARK IF NEED TO TEST ON LOCAL
 								if ($phoneNumber->mode == 0) {
 									$server = Server::where('phone_id',$phoneNumber->id)->first();
 									if(is_null($server)){
