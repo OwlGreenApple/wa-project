@@ -1,10 +1,16 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Jobs;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
 use App\UserList;
 use App\BroadCast;
 use App\BroadCastCustomers;
@@ -12,65 +18,50 @@ use App\Reminder;
 use App\ReminderCustomers;
 use App\Customer;
 use App\Helpers\Spintax;
-use Carbon\Carbon;
 use App\User;
 use App\PhoneNumber;
 use App\Server;
 use DB;
 use App\Helpers\ApiHelper;
 
-use App\Jobs\SendCampaign;
-
-class SendMessage extends Command
+class SendCampaign implements ShouldQueue
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'send:message';
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+		protected $phone_id,$broadcast_id;
+		
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Send message message to customer according on broadcast or event or auto responder or appointment';
-
-    /**
-     * Create a new command instance.
+     * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($phone_id)
     {
-        parent::__construct();
+        $this->phone_id = $phone_id;
     }
 
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
     public function handle()
     {
-			$phoneNumbers = PhoneNumber::
-											where("counter",">",0)
-											->where("status",2)
-											->get();
-			foreach($phoneNumbers as $phoneNumber) {
-				SendCampaign::dispatch($phoneNumber->id);
+			// send campaign per phone number
+			if ($this->attempts() == 1) {
+				$this->campaignBroadcast();
+		 
+				//Auto Responder
+				$this->campaignAutoResponder();
+				
+				//Event
+				$this->campaignEvent();
+				
+				//Appointment
+				$this->campaignAppointment();
 			}
-			/*
-      //Broadcast 
-      $this->campaignBroadcast();
-   
-      //Auto Responder
-      $this->campaignAutoResponder();
-      
-      //Event
-      $this->campaignEvent();
-      
-      //Appointment
-      $this->campaignAppointment();
-			*/
-    }    
- 
+		}
+		
     /* BROADCAST */
     public function campaignBroadcast()
     {
@@ -81,6 +72,7 @@ class SendMessage extends Command
           ->join('customers',"customers.id","=","broad_cast_customers.customer_id")
           ->where("broad_cast_customers.status",0)
           ->where("customers.status",1)
+          ->where("phone_numbers.id",$this->phone_id)
           ->orderBy('broad_casts.user_id')
           ->get();
 
@@ -220,12 +212,14 @@ class SendMessage extends Command
             ['reminders.is_event','=',0],
             ['reminders.status','=',1],
             ['customers.status','=',1],
+            ['phone_numbers.id','=',$this->phone_id],
             // ['customers.created_at','<=',$current_time->toDateTimeString()],
             ])
             // ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
             ->join('users','reminders.user_id','=','users.id')
             ->rightJoin('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
+						->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
             ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone','users.email as useremail')
             ->get();
 
@@ -365,10 +359,12 @@ class SendMessage extends Command
                   ['reminders.is_event',1], 
                   ['customers.status',1], 
                   ['reminders.status','=',1],
+									['phone_numbers.id','=',$this->phone_id],
           ])
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
+					->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
           ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
           ->get();
 
@@ -520,10 +516,12 @@ class SendMessage extends Command
                   ['reminders.tmp_appt_id',">",0], 
                   ['customers.status',1], 
                   ['reminders.status','=',1],
+									['phone_numbers.id','=',$this->phone_id],
           ])
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
+					->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
           ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
           ->get();
 
@@ -658,8 +656,7 @@ class SendMessage extends Command
               }//END FOR LOOP EVENT
           }
     }
-    
-
+    		
     public function generateLog($number,$campaign,$id_campaign,$error = null)
     {
         $timegenerate = Carbon::now();
@@ -768,5 +765,5 @@ class SendMessage extends Command
         }
     }
 
-/* End command class */    
+		
 }
