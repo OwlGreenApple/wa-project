@@ -349,7 +349,7 @@ class CampaignController extends Controller
 
         if($search == null && $type == null)
         {
-          if(getMembership(Auth()->user()->membership) > 1)
+         /* if(getMembership(Auth()->user()->membership) > 1)
           {
             $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
                       ->join('lists','lists.id','=','campaigns.list_id')
@@ -358,27 +358,18 @@ class CampaignController extends Controller
                       ->get();
           }
           else
-          {
+          {*/
             $campaign = Campaign::where('campaigns.user_id',$userid)
                       ->whereIn('campaigns.type',[1,2])
                       ->join('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
                       ->get();
-          }
+          // }
         }
         elseif($type <> null)
         { 
-          if(getMembership(Auth()->user()->membership) > 1)
-          {
-            $real_type = $type;
-          }
-          else
-          {
-            $real_type = null;
-          }
-
-          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',$real_type]])
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',$type]])
                       ->join('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
@@ -386,14 +377,14 @@ class CampaignController extends Controller
         }
         else
         {
-          if(getMembership(Auth()->user()->membership) > 1)
+         /* if(getMembership(Auth()->user()->membership) > 1)
           {
             $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['campaigns.type','<',3]]);
           }
           else
-          {
+          {*/
             $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',[1,2]); 
-          }
+          // }
 
           $campaign->join('lists','lists.id','=','campaigns.list_id')
           ->orderBy('campaigns.id','desc')
@@ -428,6 +419,7 @@ class CampaignController extends Controller
                       'id'=>$broadcast->id,
                       'campaign_id'=>$row->id,
                       'campaign' => $row->name,
+                      'campaign_status' => $row->status,
                       'date_send' => $broadcast->day_send,
                       'day_send' => Date('M d, Y',strtotime($broadcast->day_send)),
                       'sending' => Date('H:i',strtotime($broadcast->hour_time)),
