@@ -53,21 +53,19 @@ class SendMessage extends Command
 											where("counter",">",0)
 											->where("status",2)
 											->get();
-
 			foreach($phoneNumbers as $phoneNumber) {
 				SendCampaign::dispatch($phoneNumber->id);
 			}
-      
 			/*
       //Broadcast 
       $this->campaignBroadcast();
    
       //Auto Responder
       $this->campaignAutoResponder();
-
+      
       //Event
       $this->campaignEvent();
-  
+      
       //Appointment
       $this->campaignAppointment();
 			*/
@@ -283,7 +281,7 @@ class SendMessage extends Command
                 $now = Carbon::now()->timezone($col->timezone);
                 $adding = Carbon::parse($adding_with_hour);         
                 $number++;
-                $midnightTime = $this->avoidMidnightTime($row->timezone);
+                $midnightTime = $this->avoidMidnightTime($col->timezone);
 
                 if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) || $midnightTime == false) {
                   continue;
@@ -371,12 +369,10 @@ class SendMessage extends Command
                   ['reminders.is_event',1], 
                   ['customers.status',1], 
                   ['reminders.status','=',1],
-                  ['campaigns.status','=',1],
           ])
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->join('campaigns','campaigns.id','=','reminders.campaign_id')
           ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
           ->get();
 
@@ -404,7 +400,6 @@ class SendMessage extends Command
                 {
                   continue;
                 }
-                
 								if ($phoneNumber->mode == 0) {
 									$server = Server::where('phone_id',$phoneNumber->id)->first();
 									if(is_null($server)){
