@@ -168,7 +168,7 @@
 
       <h3>Copy Your Script
 				<span class="tooltipstered" title="<div class='panel-heading'>Copy your script</div><div class='panel-content'>
-				Make sure column B is Name, C is Email, D is Phone Number 
+				Make sure column B is Name, C is Phone Number, D is Email
 				</div>">
 					<i class="fa fa-question-circle "></i>
 				</span>
@@ -180,8 +180,7 @@
           @csrf
 
           <div class="form-group mt-3">
-            <textarea name="" id="text-google-script" class="form-control custom-form text-left" rows="15">
-function init() {
+            <textarea name="" id="text-google-script" class="form-control custom-form text-left" rows="15">function init() {
 	list_name ="{{$data['list_name']}}";
 	myFunctionpost(list_name);
 }
@@ -195,9 +194,8 @@ function lastValue(column) {
 }
 
 function myFunctionpost(list_name) {
-var _0x4c00=['Basic\x20_authcode_','fetch','POST','application/json','log','stringify','toString'];(function(_0x40d25a,_0x4c0086){var _0x5bdd4a=function(_0x56597d){while(--_0x56597d){_0x40d25a['push'](_0x40d25a['shift']());}};_0x5bdd4a(++_0x4c0086);}(_0x4c00,0x174));var _0x5bdd=function(_0x40d25a,_0x4c0086){_0x40d25a=_0x40d25a-0x0;var _0x5bdd4a=_0x4c00[_0x40d25a];return _0x5bdd4a;};var url='https://activrespon.com/dashboard/entry-google-form';var b=lastValue('b');var c=lastValue('c');var d=lastValue('d');Logger[_0x5bdd('0x3')](b['toString']());var data={'list_name':list_name,'name':b[_0x5bdd('0x5')](),'email':c[_0x5bdd('0x5')](),'phone_number':d[_0x5bdd('0x5')]()};var payload=JSON[_0x5bdd('0x4')](data);var headers={'Accept':_0x5bdd('0x2'),'Content-Type':_0x5bdd('0x2'),'Authorization':_0x5bdd('0x6')};var options={'method':_0x5bdd('0x1'),'contentType':_0x5bdd('0x2'),'headers':headers,'payload':payload};var response=UrlFetchApp[_0x5bdd('0x0')](url,options);Logger['log'](response);
-}
-						</textarea>
+var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','application/json','toString','log','stringify','Basic\x20_authcode_'];(function(_0x36ee5d,_0x279935){var _0x646ae4=function(_0x1dc43e){while(--_0x1dc43e){_0x36ee5d['push'](_0x36ee5d['shift']());}};_0x646ae4(++_0x279935);}(_0x2799,0x14a));var _0x646a=function(_0x36ee5d,_0x279935){_0x36ee5d=_0x36ee5d-0x0;var _0x646ae4=_0x2799[_0x36ee5d];return _0x646ae4;};var url=_0x646a('0x6');var b=lastValue('b');var c=lastValue('c');var d=lastValue('d');Logger[_0x646a('0x3')](b['toString']());var data={'list_name':list_name,'name':b[_0x646a('0x2')](),'email':d[_0x646a('0x2')](),'phone_number':c[_0x646a('0x2')]()};var payload=JSON[_0x646a('0x4')](data);var headers={'Accept':'application/json','Content-Type':'application/json','Authorization':_0x646a('0x5')};var options={'method':'POST','contentType':_0x646a('0x1'),'headers':headers,'payload':payload};var response=UrlFetchApp[_0x646a('0x0')](url,options);Logger[_0x646a('0x3')](response);
+}</textarea>
           </div>
           <div class="text-right">
             <input type="button" class="btn btn-custom" id="btn-generate" value="Copy All">
