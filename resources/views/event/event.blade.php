@@ -16,7 +16,11 @@
           </div>
 
           <div class="created">
-            Created On : {{ $row['created_at'] }}
+            <!-- Created On :  $row['created_at'] -->
+            Date Event : <span class="campaign_event_id-{{$row['id']}} mr-1">{{ $row['sending'] }}</span>
+            <span>
+              <a data-toggle="tooltip" data-toggle="tooltip" data-placement="right" title="Edit Event Date" data-name="{{ $row['event_time'] }}" id="{{ $row['id'] }}" class="edit_date icon-calendar"></a>
+            </span>  
           </div>
         </div>
 
@@ -55,11 +59,11 @@
           <a href="{{url('report-reminder')}}" id="{{ $row['id'] }}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></a>
           -->
             @if($row['published'] == 1)
-              <button type="button" id="{{ $row['id'] }}"  class="btn btn-success event_duplicate" data-toggle="tooltip" data-placement="top" title="Button Duplicate"><span class="icon-copy-text"></span></button>
+              <button type="button" id="{{ $row['id'] }}"  class="btn btn-success event_duplicate" data-toggle="tooltip" title="Button Duplicate"><span class="icon-copy-text"></span></button>
             @else 
-              <button type="button" id="{{ $row['id'] }}"  class="btn btn-primary published" data-toggle="tooltip" data-placement="top" title="Button Publish">Publish</button>
+              <button type="button" id="{{ $row['id'] }}"  class="btn btn-primary published" data-toggle="tooltip" title="Button Publish">Publish</button>
             @endif
-            <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
+            <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del" data-toggle="tooltip" data-toggle="tooltip" data-placement="top" title="Button Publish" title="Button Delete"><span class="icon-delete"></span></button>
             <div>
               <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">
                 Add / Edit
@@ -75,4 +79,12 @@
   </div>
 
   @endif
+
+  <script type="text/javascript">
+   $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip({
+        'placement':'top'
+      });   
+   });
+</script>
 </div>

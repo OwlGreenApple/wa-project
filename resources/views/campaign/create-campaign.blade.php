@@ -267,7 +267,7 @@
                 $(".error").show();
                 $(".image").html('Image width or image height can not be more than 2000px');
 						}
-            else if(result.err == 'ev_err')
+          /*  else if(result.err == 'ev_err')
             {  
                 $('#loader').hide();
                 $('.div-loading').removeClass('background-load');
@@ -279,7 +279,7 @@
                 $(".hour").html(result.hour);
                 $(".msg").html(result.msg);
                 $(".image").html(result.image);
-            }
+            }*/
             else if(result.err == 'responder_err')
             {
                 $('#loader').hide();
@@ -366,10 +366,13 @@
         $(".date-send").hide();
       }
       else if(val == 'auto'){
-				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=30;$x++) {
-              echo "<option value=".$x.">$x days after subscribed</option>";
-        }?></select>'+
-        '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+				var hplus = '';
+        hplus += '<select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="day" class="form-control col-sm-7 float-left days delcols mr-3">';
+          for(x=1;x<=100;x++) {
+                hplus += "<option value="+x+">"+x+" days after event</option>";
+          }
+        hplus += '</select>';
+        hplus +='<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
         ;
 
         $("input[name=event_time]").prop('disabled',true);
@@ -397,6 +400,7 @@
     $("#schedule").change(function(){
       var val = $(this).val();
       var hmin = '';
+      var hplus = '';
 
       var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
 
@@ -406,10 +410,12 @@
       };
       hmin += '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />';
 
-      var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=100;$x++) {
-            echo "<option value=".$x.">$x days after event</option>";
-      }?></select>'+
-      '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+      hplus += '<select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="day" class="form-control col-sm-7 float-left days delcols mr-3">';
+      for(x=1;x<=100;x++) {
+            hplus += "<option value="+x+">"+x+" days after event</option>";
+      }
+      hplus += '</select>';
+      hplus +='<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
       ;
 
       if(val == 0){
@@ -423,7 +429,8 @@
     });
   }
 
-  function MDTimepicker(){
+  function MDTimepicker()\
+  {
     $("body").on('focus','.timepicker',function(){
         $(this).mdtimepicker({
           format: 'hh:mm',
