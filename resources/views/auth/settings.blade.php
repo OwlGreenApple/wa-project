@@ -664,9 +664,7 @@
 	function buttonConnect(){
 		<?php if (session('mode')==0) { ?>
 			console.log("a");
-			$('#button-connect').click(function(){
-				$("#modal-start-connect").modal();
-			});
+
 		<?php } ?>
 		<?php if (session('mode')==1) { ?>
 			console.log("b");

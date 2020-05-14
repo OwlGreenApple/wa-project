@@ -28,13 +28,13 @@ class ApiController extends Controller
 				$customer->list_id = $list->id;
 				$customer->name = $obj->name;
 				$customer->email = $obj->email;
-				$customer->telegram_number = $obj->phone_number;
+				$customer->telegram_number = "+".$obj->phone_number;
 				$customer->is_pay= 0;
 				$customer->status = 1;
 				$customer->save();
 
 				if ($list->is_secure) {
-					$ret = $this->sendListSecure($list->id,$customer->id,$obj->name,$customer->user_id,$list->name,$obj->phone_number);
+					$ret = $this->sendListSecure($list->id,$customer->id,$obj->name,$customer->user_id,$list->name,"+".$obj->phone_number);
 				}
         $customerController = new CustomerController;
         $saveSubscriber = $customerController->addSubscriber($list->id,$customer->id,$customer->created_at,$customer->user_id);
