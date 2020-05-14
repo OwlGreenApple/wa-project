@@ -240,10 +240,11 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   /* EVENT */
   Route::get('event','EventController@index');
   Route::get('create-event','EventController@createEvent');
+  Route::get('display-event','EventController@loadAjaxEventPage');
 
   // scheduled event --OLD CODES
   Route::post('addevent','EventController@addEvent')->name('addevent');
-  Route::get('displayeventschedule','EventController@displayEventSchedule')->name('displayeventschedule');
+
   Route::post('updatevent','EventController@updateEvent')->name('updatevent');
   Route::get('deletevents','EventController@delEvent')->name('deletevents');
   Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');

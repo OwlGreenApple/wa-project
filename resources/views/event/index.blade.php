@@ -238,23 +238,14 @@
               // alert(result.message);
               $("#modal_duplicate").modal('hide');
               $("#duplicate:input").val('');
-
-              if(option_position == 'all')
-              {
-                displayResult();
-              }
-              else
-              {
-                displayResult(null,0);
-              }
-              
+              displayEvent();
             }
           },
           error : function(xhr,attr,throwable){
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
             $(".error").hide();
-            alert(xhr.responseText);
+            console.log(xhr.responseText);
           }
       });
 
@@ -286,16 +277,7 @@
           {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
-            alert(result.message);
-
-            if(option_position == 'all')
-            {
-              displayResult();
-            }
-            else
-            {
-              displayEvent();
-            }
+            displayEvent();
           },
           error : function(xhr, attr, throwable)
           {
@@ -310,6 +292,32 @@
         return false;
       }
     });
+  }
+
+  function displayEvent()
+  {
+      $.ajax({
+          type : 'GET',
+          url : '{{ url("display-event") }}',
+          dataType : 'html',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(data)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            $('#display_list').html(data);
+          },
+          error : function(xhr, attr, throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
+          }
+        });
   }
 
     /*function getText(){

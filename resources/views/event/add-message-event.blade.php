@@ -47,14 +47,16 @@
 
 <!-- NUMBER -->
 <div class="container act-tel-campaign">
+  <div id="notification"><!-- notification --></div>
+
   <form id="save_campaign">
       <input type="hidden" name="campaign_type" value="event">
       <input type="hidden" name="campaign_id" value="<?php echo $campaign_id; ?>">
       <input type="hidden" name="reminder_id" value="new">
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Type Campaign :</label>
+        <label class="col-sm-3 col-form-label">Status Event :</label>
         <div class="col-sm-9 py-2">
-          <strong>Event</strong>
+          <strong>@if($published == 1) Published @else Draft @endif</strong>
         </div>
       </div>
 
@@ -84,7 +86,7 @@
       <div class="form-group row event-time">
         <label class="col-sm-3 col-form-label">Event Time :</label>
         <div class="col-sm-9 relativity">
-          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
+          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" autocomplete="off" value="{{ $date_event }}" />
           <span class="icon-calendar"></span>
           <span class="error event_time"></span>
         </div>
@@ -121,6 +123,9 @@
 
 						<label class="custom-file-label" for="inputGroupFile01">
 						</label>
+            <small>Maximum image size is : <b>4Mb</b></small>
+            <div><small>Image Caption Limit is 1000 characters</small></div>
+            <span class="error image"></span>
 					</div>
 				</div>
       </div>
@@ -134,11 +139,11 @@
       </div>
 
       <div class="text-right col-sm-9">
-        <button type="submit" class="btn btn-custom">Save</button>
+        <button type="button" id="save" class="btn btn-custom">Save</button>
         <button type="button" id="btn-clear" class="btn btn-custom">Clear</button>
       </div>
 
-			<div class="form-group row">
+			<div class="form-group row mt-3">
 			<label class="col-sm-3 col-form-label">Send 1 test Message
 					<span class="tooltipstered" title="<div class='panel-heading'>Send 1 test Message</div><div class='panel-content'>
 						Test Message will be send immediately
@@ -185,64 +190,66 @@
 
       $("#divInput-description-post").emojioneArea({
           pickerPosition: "right",
-          //mainPathFolder : "aaaaaa",
       });
   });
 
-  function saveEvent()
+  function saveUpdate()
   {
-    $("#save_campaign").submit(function(e){
-      e.preventDefault();
-      // var data = $(this).serializeArray();
-			var form = $('#save_campaign')[0];
-			var formData = new FormData(form);
-      // formData.push({name:'list_id',value:'{!! $currentlistid !!}'},{ name:'campaign_name', value:'<php echo $campaign_name;?>'});
+    $("#save").click(function()
+    {
+      var form = $('#save_campaign')[0];
+      var formData = new FormData(form);
+
       formData.append('list_id','{!! $currentlistid !!}');
       formData.append('campaign_name','{!! $campaign_name !!}');
-
-      $.ajax({
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-          type : 'POST',
-          url : '{{url("save-campaign")}}',
-          data : formData,
-					cache: false,
-					contentType: false,
-					processData: false,
-          dataType : 'json',
-          beforeSend: function()
-          {
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success : function(result){
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            loadEvent();
-
-            if(result.err == 0)
-            {
-              alert(result.message);
-              $("input[name='event_time']").val('')
-              $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
-              $(".error").hide();
-            }
-            else
-            {
-              $(".error").show();
-              $(".event_time").html(result.event_time);
-              $(".day").html(result.day);
-              $(".hour").html(result.hour);
-              $(".message").html(result.msg);
-            }
-          },
-          error : function(xhr,attribute,throwable)
-          {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-          }
-      });
-      //ajax
+      saveEvent(formData)
     });
+  }
+
+  function saveEvent(formData)
+  {
+    $.ajax({
+      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+      type : 'POST',
+      url : '{{url("save-campaign")}}',
+      data : formData,
+			cache: false,
+			contentType: false,
+			processData: false,
+      dataType : 'json',
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success : function(result){
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        loadEvent();
+
+        if(result.err == 0)
+        {
+          $("#notification").html('<div class="alert alert-success">'+result.message+'</div>');
+          $("input[name='event_time']").val('')
+          $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+          $(".error").hide();
+        }
+        else
+        {
+          $(".error").show();
+          $(".event_time").html(result.event_time);
+          $(".day").html(result.day);
+          $(".hour").html(result.hour);
+          $(".message").html(result.msg);
+        }
+      },
+      error : function(xhr,attribute,throwable)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+      }
+    });
+    //ajax
   }
   
   function loadEvent()
@@ -274,7 +281,7 @@
       displayAddDaysBtn();
       MDTimepicker();
       neutralizeClock();
-      saveEvent();
+      saveUpdate();
       loadEvent();
       clickButtonEdit();
       clickButtonDelete();

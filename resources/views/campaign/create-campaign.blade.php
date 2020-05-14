@@ -155,9 +155,9 @@
 						<label class="custom-file-label" for="inputGroupFile01">
 						</label>
 					</div>
-					<span class="error image"></span><br/>
           <small>Maximum image size is : <b>4Mb</b></small>
           <div><small>Image Caption Limit is 1000 characters</small></div>
+          <span class="error image"></span>
 				</div>
       </div>
 
