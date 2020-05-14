@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\QueryException;
 use App\Http\Controllers\CampaignController;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
@@ -24,14 +25,26 @@ use DB,Storage;
 class EventController extends Controller
 {
 
-    public function campaignLogic()
+    public function campaignLogic($search)
     {
       $userid = Auth::id();
-      $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',0]])
+
+      if($search == null)
+      {
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',0]])
                   ->join('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
                   ->select('campaigns.*','lists.label')
-                  ->paginate(1);
+                  ->paginate(5);
+      }
+      else
+      {
+           $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['campaigns.type','=',0]])
+                  ->join('lists','lists.id','=','campaigns.list_id')
+                  ->orderBy('campaigns.id','desc')
+                  ->select('campaigns.*','lists.label')
+                  ->paginate(5);
+      }
 
       if($campaign->count() > 0)
       {
@@ -43,8 +56,8 @@ class EventController extends Controller
 
               if(!is_null($reminder))
               {
-                $total_message = $campaigncontroller->campaignsLogic($row->id,$userid,0,'=',0); 
-                $total_delivered = $campaigncontroller->campaignsLogic($row->id,$userid,0,'>',0);
+                $total_message = $campaigncontroller->campaignsLogic($row->id,$userid,1,'=',0); 
+                $total_delivered = $campaigncontroller->campaignsLogic($row->id,$userid,1,'>',0);
 
                 $days = (int)$reminder->days;
                 $total_template = Reminder::where('campaign_id',$row->id)->get()->count();
@@ -85,7 +98,7 @@ class EventController extends Controller
 
     public function index(Request $request){
       $data = array();
-      $logic = $this->campaignLogic();
+      $logic = $this->campaignLogic(null);
 
       if($request->ajax()) {
           return view('event.event',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
@@ -97,6 +110,12 @@ class EventController extends Controller
     public function loadAjaxEventPage()
     {
         $logic = $this->campaignLogic();
+        return view('event.event',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
+    }
+
+    public function searchEvent(Request $request)
+    {
+        $logic = $this->campaignLogic($request->search);
         return view('event.event',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
     }
 
@@ -115,6 +134,10 @@ class EventController extends Controller
 				$filename="";
 				if($request->hasFile('imageWA')) {
 					//save ke temp local dulu baru di kirim 
+          $image_size = getimagesize($request->file('imageWA'));
+          $imagewidth = $image_size[0];
+          $imageheight = $image_size[1];
+
 					$dt = Carbon::now();
           $ext = $request->file('imageWA')->getClientOriginalExtension();
 					$folder = $user->id."/broadcast-image/";
@@ -150,6 +173,15 @@ class EventController extends Controller
         }
         else {
           $campaign_id = $request->campaign_id;
+          // UPDATE EVENT DATE
+          try
+          {
+            $event = Reminder::where([['campaign_id',$campaign_id],['is_event',1]])->update(['event_time'=>$request->event_time]);
+          }catch(QueryException $e){
+            // dd($e->getMessage());
+            return 'Sorry, our database is too busy';
+          }
+         
         }
 
         if ($request->reminder_id=="new") {
@@ -158,13 +190,13 @@ class EventController extends Controller
         else {
           $reminder = Reminder::find($request->reminder_id);
         }
+
         $reminder->user_id = $user->id;
         $reminder->list_id = $request->list_id;
         $reminder->campaign_id = $campaign_id;
         $reminder->is_event = 1;
         $reminder->days = $request->day;
         $reminder->hour_time = $request->hour;
-        $reminder->event_time = $request->event_time;
         $reminder->image = $folder.$filename;
         $reminder->message = $request->message;
         $reminder->save();
@@ -293,8 +325,9 @@ class EventController extends Controller
           Campaign::where([['id',$campaign_id],['user_id',$user_id]])->delete();
           $success = true;
         }
-        catch(Exception $e)
+        catch(QueryException $e)
         {
+          // dd($e->getMessage())
           return response()->json(['message'=>'Sorry, unable to delete auto responder, contact administrator']);
         }
 
@@ -405,7 +438,7 @@ class EventController extends Controller
 
              return response()->json(['message'=>'Your campaign duplicated successfully']);
            }
-           catch(Exception $e)
+           catch(\Illuminate\Database\QueryException $e)
            {
              return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
            }
@@ -416,6 +449,25 @@ class EventController extends Controller
             return response()->json(['message'=>'Your campaign duplicated successfully']);
         }
     }
+
+     public function publishEvent(Request $request)
+    {
+        $userid = Auth::id();
+        $campaign_id = $request->campaign_id;
+        $campaign = Campaign::find($campaign_id);
+        $campaign->status = 1;
+
+        try{
+          $campaign->save();
+          $err['status'] = 'success';
+          $err['message'] = 'Your event has published';  
+        }catch(\Illuminate\Database\QueryException $e){
+          $err['status'] = FALSE;
+          $err['message'] = 'Sorry, currently our server is too busy, please try again later.';
+        }
+        return response()->json($err);
+    }
+
 
     /***************************************************************************** 
                                     OLD CODES
@@ -682,90 +734,6 @@ class EventController extends Controller
         }
     }
 
-    /* update event */
-
-    public function updateEvent(Request $request)
-    {
-        $user_id = Auth::id();
-        $sender = Sender::where('user_id',$user_id)->first();
-        $id = $request->id;
-        $list_id = $request->list_id;
-        $data['error'] = false;
-        $today = Carbon::now()->format('Y-m-d h:i');
-
-         if($request->date_event < $today){
-            $data = array(
-                'error'=>true,
-                'date_event'=>'Date event cannot be less than today',
-            );
-            return response()->json($data);
-        } 
-
-        $rules = array(
-            'id'=>['required','numeric'],
-            'list_id'=>['required','numeric'],
-            'day'=>['required'],
-            'hour'=>['required'],
-            'date_event'=>['required'],
-        );
-
-        $validator = Validator::make($request->all(),$rules);
-        $errors = $validator->errors();
-
-        if($validator->fails()){
-            $data = array(
-                'id'=>$errors->first('id'),
-                'list_id'=>$errors->first('list_id'),
-                'day'=>$errors->first('day'),
-                'hour'=>$errors->first('hour'),
-                'date_event'=>$errors->first('date_event'),
-                'error'=>true
-            );
-            return response()->json($data);
-        }
-
-        $event = Reminder::where('id',$id)->update([
-            'days'=>$request->day,
-            'hour_time'=>$request->hour,
-        ]);
-
-        if($event == true){
-            $list = UserList::where('id',$list_id)->update(['event_date'=>$request->date_event]);
-        } else {
-            $data['message'] = 'Error, unable to update event date';
-            return response()->json($data);
-        }
-
-        // if reminder and lists updated successfully
-        if($list == true){
-            $remindercustomer = ReminderCustomers::where('reminder_id',$id)->get();
-        } else {
-            $data['message'] = 'Error, unable to update event';
-        } 
-
-        if($remindercustomer->count() > 0){
-           foreach($remindercustomer as $row){
-                $wa_sender_id = $row->id_wa;
-                if($wa_sender_id !== null){
-                    $update_send_target = ReminderCustomers::where('id',$row->id)->update(['id_wa'=>null, 'status'=>0]);
-                } else {
-                    $update_send_target = null; //nothing to update
-                }
-            }
-        } else {
-            $update_send_target = null; //nothing to update
-        }
-
-        if($update_send_target == true || $update_send_target == null){
-            $data['message'] = 'Your event reminder has been updated';
-        } else {
-            $data['message'] = 'Error, unable to update event';
-        }
-
-        return response()->json($data);
-
-    }
-
     /* Change reminder and reminder-customer status */
     public function setEventStatus($id_reminder,$status){
 
@@ -837,23 +805,6 @@ class EventController extends Controller
                       ]);
 
       return $arr;
-    }
-
-    public function deleteEvent(Request $request)
-    {
-        $id = $request->id;
-
-        try{
-          Reminder::find($id)->delete();
-          $err['status'] = 'success';
-          $err['message'] = 'Data catalog telah dihapus';  
-        }catch(\Illuminate\Database\QueryException $e){
-          $err['status'] = FALSE;
-          $err['message'] = 'Data catalog gagal dihapus';
-        }
-
-
-        return response()->json($err);
     }
 
 /* End event controller */

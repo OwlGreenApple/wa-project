@@ -197,10 +197,12 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('event-duplicate','EventController@duplicateEvent')->middleware('checkeventduplicate');
   Route::get('load-event','EventController@loadEvent');
   Route::get('delete-event','EventController@deleteEvent');
-
-  //not used anymore (EVENT)
+  Route::get('event','EventController@index');
+  Route::get('create-event','EventController@createEvent');
+  Route::get('display-event','EventController@loadAjaxEventPage');
+  Route::get('event-publish','EventController@publishEvent');
   Route::get('event-list','EventController@displayEventList')->name('eventlist');
-  ////////////////////////////////////////////////
+  Route::post('event-search','EventController@searchEvent');
 
   /* REMINDER */
   Route::get('reminder-list','ReminderController@displayReminderList')->name('reminderlist');
@@ -237,17 +239,10 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('appt-del','AppointmentController@delAppointment');
   Route::get('export_csv_appt/{campaign_id}','AppointmentController@exportAppointment');
 
-  /* EVENT */
-  Route::get('event','EventController@index');
-  Route::get('create-event','EventController@createEvent');
-  Route::get('display-event','EventController@loadAjaxEventPage');
-
-  // scheduled event --OLD CODES
-  Route::post('addevent','EventController@addEvent')->name('addevent');
-
-  Route::post('updatevent','EventController@updateEvent')->name('updatevent');
-  Route::get('deletevents','EventController@delEvent')->name('deletevents');
-  Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');
+  //not used anymore (EVENT)
+  ////////////////////////////////////////////////
+  /*Route::post('addevent','EventController@addEvent')->name('addevent');
+  Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');*/
 
  
   // auto reply event

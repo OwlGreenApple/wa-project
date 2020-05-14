@@ -3,10 +3,15 @@
     @foreach($data as $row)
       <div class="bg-dashboard campaign row">
         <div class="col-lg-4 pad-fix col-card">
-          <h5>{{ $row['campaign_name'] }}</h5> 
+          <h5>
+            <span class="campaignid-{{$row['id']}}">{{ $row['campaign_name'] }}</span>
+            <span>
+              <a data-name="{{ $row['campaign_name'] }}" id="{{ $row['id'] }}" class="edit icon-edit"></a>
+            </span>  
+          </h5> 
 
           <div class="notes">
-            <div>Type Campaign : <color>Event @if($row['published'] == 0) -- draft @endif</color></div>
+            <div>Status : <color>@if($row['published'] == 0) draft @else published @endif</color></div>
             <div>List : {{ $row['label'] }}</div>
           </div>
 
@@ -52,7 +57,7 @@
             @if($row['published'] == 1)
               <button type="button" id="{{ $row['id'] }}"  class="btn btn-success event_duplicate" data-toggle="tooltip" data-placement="top" title="Button Duplicate"><span class="icon-copy-text"></span></button>
             @else 
-              <button type="button" id="{{ $row['id'] }}"  class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Button Publish">Publish</button>
+              <button type="button" id="{{ $row['id'] }}"  class="btn btn-primary published" data-toggle="tooltip" data-placement="top" title="Button Publish">Publish</button>
             @endif
             <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
             <div>

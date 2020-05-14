@@ -86,7 +86,7 @@
       <div class="form-group row event-time">
         <label class="col-sm-3 col-form-label">Event Time :</label>
         <div class="col-sm-9 relativity">
-          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" autocomplete="off" value="{{ $date_event }}" />
+          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" autocomplete="off" />
           <span class="icon-calendar"></span>
           <span class="error event_time"></span>
         </div>
@@ -183,14 +183,16 @@
 
    /* Datetimepicker + emojione */
   $(function () {
-      $('#datetimepicker').datetimepicker({
-        format : 'YYYY-MM-DD HH:mm',
-        minDate : new Date()
-      }); 
+    $('#datetimepicker').datetimepicker({
+      format : 'YYYY-MM-DD HH:mm',
+      minDate : new Date()
+    }); 
 
-      $("#divInput-description-post").emojioneArea({
-          pickerPosition: "right",
-      });
+     $("#datetimepicker").val('{{ $date_event }}');
+
+    $("#divInput-description-post").emojioneArea({
+        pickerPosition: "right",
+    });
   });
 
   function saveUpdate()
@@ -230,7 +232,7 @@
         if(result.err == 0)
         {
           $("#notification").html('<div class="alert alert-success">'+result.message+'</div>');
-          $("input[name='event_time']").val('')
+          // $("input[name='event_time']").val('')
           $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
           $(".error").hide();
         }
@@ -334,7 +336,7 @@
     $("body").on('click','.icon-edit',function(e){
       e.preventDefault();
       $('input[name="reminder_id"]').val($(this).attr("data-id"));
-      $('input[name="event_time"]').val($(this).attr("data-event_time"));
+      // $('input[name="event_time"]').val($(this).attr("data-event_time"));
       if ( $(this).attr("data-days") == 0 ) {
         $('select[name="schedule"]').val(0).trigger('change');
         displayAddDaysBtn();
@@ -362,7 +364,7 @@
   function clickButtonClear(){
     $("body").on('click','#btn-clear',function(e){
       $('input[name="reminder_id"]').val("new");
-      $('input[name="event_time"]').val("");
+      // $('input[name="event_time"]').val("");
       $('select[name="list_id"]').val("");
       $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
       $("#btn-clear").hide();
