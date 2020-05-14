@@ -364,11 +364,13 @@ class SendCampaign implements ShouldQueue
                   ['customers.status',1], 
                   ['reminders.status','=',1],
 									['phone_numbers.id','=',$this->phone_id],
+                  ['campaigns.status','=',1],
           ])
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
 					->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
+          ->join('campaigns','campaigns.id','=','reminders.campaign_id')
           ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
           ->get();
 

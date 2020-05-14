@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\QueryException;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\BroadCastController;
@@ -905,8 +906,9 @@ class CampaignController extends Controller
             'campaign_name'=>$campaign_name,
           );
         }
-        catch(Exception $e)
+        catch(QueryException $e)
         {
+          //dd($e->getMessage());
            $data = array(
             'success'=>0,
             'error_server'=>'Sorry, unable to update your campaign name, try again later',

@@ -29,9 +29,9 @@
       <div class="col-lg-6"></div>
 
       <div class="clearfix"></div>
-
     </div>
   </div>
+  <div class="notification_err col-lg-12"></div>
 </div>
 
 <div class="container" id="display_list">
@@ -85,6 +85,39 @@
   </div>
   <!-- End Modal -->
 
+  <!-- Modal Edit Campaign Name -->
+  <div class="modal fade child-modal" id="edit-campaign" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2">
+                  <form id="edit_campaign_name">
+                    <label>Edit Event Name</label>
+                    <div class="form-group">
+                      <input type="text" class="form-control" name="campaign_name" />
+                      <span class="error campaign_name"></span>
+                    </div>
+                    <input type="hidden" name="campaign_id" />
+                    <span class="error campaign_id"></span>
+                 
+                    <div class="text-right">
+                      <button  type="submit" class="btn btn-custom mr-1">Save</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+                
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
 <script type="text/javascript">
 
     /* $(function(){
@@ -102,11 +135,125 @@
     // getText();
     emojiOne();
     pagination();
+    editCampaignName();
+    saveCampaignEditName();
+    callSearch();
     MDTimepicker();
     duplicateEventForm();
     duplicateEvent();
+    publishEvent();
     delEvent();
   });
+
+  function editCampaignName(){
+      $("body").on("click",".edit",function(){
+        var id = $(this).attr('id');
+        var name = $(this).attr('data-name');
+
+        $("#edit-campaign").modal();
+        $("input[name='campaign_name']").val(name);
+        $("input[name='campaign_id']").val(id);
+      });
+
+  } 
+
+  function saveCampaignEditName()
+  {
+      $("#edit_campaign_name").submit(function(e){
+        e.preventDefault();
+        var data = $(this).serialize();
+
+        $.ajax({
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          type : 'POST',
+          url : '{{ url("edit-campaign-name") }}',
+          data : data,
+          dataType : 'json',
+          beforeSend : function(){
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            $(".search-result").hide();
+
+            if(result.success == 1)
+            {
+              $(".campaignid-"+result.id).html(result.campaign_name);
+              $("#edit-campaign").modal('hide');
+              $(".error").hide();
+            }
+            else
+            {
+              $(".error").show(); 
+              $(".campaign_name").html(result.campaign_name);
+              $(".campaign_id").html(result.campaign_id);
+              if(result.error_server !== undefined)
+              {
+                alert(result.error_server);
+              }
+            }
+            
+          },
+          error : function(xhr)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
+          }
+        });
+      });
+  }
+
+  function delay(callback, ms) 
+  {
+    var timer = 0;
+    return function() {
+      var context = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        callback.apply(context, args);
+      }, ms || 0);
+    };
+  } 
+
+  function callSearch()
+  {
+    $(".search-box").keyup(delay(function(e){
+      var val = $(this).val();
+      searchEvent(val);
+    },500))
+  }
+
+  function searchEvent(data)
+  {
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type : 'POST',
+        url : '{{ url("event-search") }}',
+        data : {search : data},
+        dataType : 'html',
+        beforeSend : function(){
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success : function(result)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          $('#display_list').html(result); 
+        },
+        error : function(xhr)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
+        }
+      });
+      //ajax
+  }
 
   /* Datetimepicker */
   $(function () {
@@ -248,6 +395,55 @@
             console.log(xhr.responseText);
           }
       });
+
+    });
+  }
+
+  function publishEvent()
+  {
+    $("body").on("click",".published",function(){
+      var campaign_id = $(this).attr('id');
+      var warning = confirm('Are you sure to publish this event?'+"\n"+"WARNING : This cannot be undone");
+
+      if(warning == true)
+      {
+        $.ajax({
+          type: 'GET',
+          url: "{{ url('event-publish') }}",
+          data: {campaign_id : campaign_id},
+          dataType: 'json',
+          beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+          success : function(result)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            if(result.status == 'success')
+            {
+                $(".notification_err").html('<div class="alert alert-success">'+result.message+'</div>')
+            }
+            else
+            {
+                $(".notification_err").html('<div class="alert alert-danger">'+result.message+'</div>')
+            }
+            displayEvent();
+          },
+          error : function(xhr,attribute,throwable)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
+          }
+        });
+        //end ajax
+      }
+      else
+      {
+        return false;
+      }
 
     });
   }
