@@ -166,7 +166,13 @@
     <div class="tabs-container" id="tab5C">
       <div class="act-tel-tab">
 
-      <h3>Copy Your Script</h3>
+      <h3>Copy Your Script
+				<span class="tooltipstered" title="<div class='panel-heading'>Copy your script</div><div class='panel-content'>
+				Make sure column B is Name, C is Email, D is Phone Number 
+				</div>">
+					<i class="fa fa-question-circle "></i>
+				</span>
+			</h3>
 
       <div align="center">
 

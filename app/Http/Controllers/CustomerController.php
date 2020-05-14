@@ -221,54 +221,18 @@ class CustomerController extends Controller
               $customer_join = $customer->created_at;
             }
 
-						//pengecekan klo pake simi
-            if(env('APP_ENV') !== 'local')
-            {
-  						if ($phoneNumber->mode == 0) {
-  							$server = Server::where('phone_id',$phoneNumber->id)->first();
-  							if(is_null($server)){
-  								$data['success'] = false;
-  								$data['message'] = 'Sorry, our system is too busy';
-  								return response()->json($data);
-  							}
-  						}
-            }
+
 
             /*
             Kalo is_secure maka akan dikirim langsung message wa nya 
             */
             if ($list->is_secure) {
-              $phoneNumber = PhoneNumber::where("user_id",$list->user_id)->first();
-              $key = $phoneNumber->filename;
-              
-              $reminder = Reminder::
-                          where("is_event",0)
-                          ->where("days",0)
-                          ->where("list_id",$list->id)
-                          ->first();
-              $message = "";
-              if (!is_null($reminder)){
-                $message = $reminder->message;
-                $message = str_replace( "[NAME]" , $request->subscribername, $message);
-                // $message = str_replace( "[REPLY_CHAT]" , "whatsapp://send/?phone=".$phoneNumber->phone_number."&text=" . "Hi Nama saya ".$request->subscribername.", saya bergabung digroup ini", $message);
-
-                $message = str_replace( "[START]" , env("APP_URL")."link/activate/".$list->name."/".$customer_id, $message);
-                $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$customer_id, $message);
-              }
-              // ApiHelper::send_message($phone_number,$message,$key);
-							$message_send = new Message;
-							$message_send->phone_number=$phone_number;
-							$message_send->message=$message;
-							if ($phoneNumber->mode == 0) {
-								$message_send->key=$server->url;
-								$message_send->status=8;
+							$ret = $this->sendListSecure($list_id,$customer_id,$request->subscribername,$user_id,$list->name,$phone_number);
+							if (!$ret->success){
+								$data['success'] = false;
+								$data['message'] = 'Sorry, our system is too busy';
+								return response()->json($data);
 							}
-							if ($phoneNumber->mode == 1) {
-								$message_send->key=$key;
-								$message_send->status=9;
-							}
-							$message_send->customer_id=$customer_id;
-							$message_send->save();
             }
 
             // if customer successful sign up 
@@ -285,6 +249,54 @@ class CustomerController extends Controller
             return response()->json($data);
         }
     }
+		
+		function sendListSecure($list_id,$customer_id,$subscribername,$user_id,$list_name,$phone_number)
+		{
+			$phoneNumber = PhoneNumber::where("user_id",$user_id)->first();
+			$key = $phoneNumber->filename;
+
+			//pengecekan klo pake simi
+			if(env('APP_ENV') !== 'local')
+			{
+				if ($phoneNumber->mode == 0) {
+					$server = Server::where('phone_id',$phoneNumber->id)->first();
+					if(is_null($server)){
+						$data['success'] = false;
+						$data['message'] = 'Sorry, our system is too busy';
+						return response()->json($data);
+					}
+				}
+			}
+
+			$reminder = Reminder::
+									where("is_event",0)
+									->where("days",0)
+									->where("list_id",$list_id)
+									->first();
+			$message = "";
+			if (!is_null($reminder)){
+				$message = $reminder->message;
+				$message = str_replace( "[NAME]" , $subscribername, $message);
+				// $message = str_replace( "[REPLY_CHAT]" , "whatsapp://send/?phone=".$phoneNumber->phone_number."&text=" . "Hi Nama saya ".$request->subscribername.", saya bergabung digroup ini", $message);
+
+				$message = str_replace( "[START]" , env("APP_URL")."link/activate/".$list_name."/".$customer_id, $message);
+				$message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list_name."/".$customer_id, $message);
+			}
+			// ApiHelper::send_message($phone_number,$message,$key);
+			$message_send = new Message;
+			$message_send->phone_number=$phone_number;
+			$message_send->message=$message;
+			if ($phoneNumber->mode == 0) {
+				$message_send->key=$server->url;
+				$message_send->status=8;
+			}
+			if ($phoneNumber->mode == 1) {
+				$message_send->key=$key;
+				$message_send->status=9;
+			}
+			$message_send->customer_id=$customer_id;
+			$message_send->save();
+		}
 
     private function checkDuplicateSubscriberPhone($wa_number,$list_id)
     {

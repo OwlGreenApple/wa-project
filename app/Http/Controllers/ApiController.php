@@ -12,6 +12,7 @@ use App\Sender;
 use App\Mail\SendWAEmail;
 use App\Console\Commands\SendWA as wamessage;
 use Mail;
+use App\Http\Controllers\CustomerController;
 
 class ApiController extends Controller
 {
@@ -31,6 +32,13 @@ class ApiController extends Controller
 				$customer->is_pay= 0;
 				$customer->status = 1;
 				$customer->save();
+
+				if ($list->is_secure) {
+					$ret = $this->sendListSecure($list->id,$customer->id,$obj->name,$customer->user_id,$list->name,$obj->phone_number);
+				}
+        $customerController = new CustomerController;
+        $saveSubscriber = $customerController->addSubscriber($list_id,$customer->id,$customer->created_at,$customer->user_id);
+				
 			}
     }
 
