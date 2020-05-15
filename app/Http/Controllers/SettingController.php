@@ -543,6 +543,11 @@ class SettingController extends Controller
 								$phoneNumber->status = 2;
 								$phoneNumber->mode = session('mode');
 								$phoneNumber->save();
+								if (session('mode')==0) {
+									$server->phone_id = $phoneNumber->id;
+									$server->status = 1;
+									$server->save();
+								}
 
 								$response['status'] = 'Congratulations, your phone is connected';
 							}catch(Exception $e){
