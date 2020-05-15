@@ -664,7 +664,9 @@
 	function buttonConnect(){
 		<?php if (session('mode')==0) { ?>
 			console.log("a");
-			getQRCodeSimi($(".iti__selected-flag").attr('data-code')+$("#phone").val());
+			$('#button-connect').click(function(){
+				getQRCodeSimi($(".iti__selected-flag").attr('data-code')+$("#phone").val());
+			});
 		<?php } ?>
 		<?php if (session('mode')==1) { ?>
 			console.log("b");
