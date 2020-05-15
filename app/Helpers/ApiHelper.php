@@ -532,8 +532,6 @@ class ApiHelper
 
  	public static function get_qr_code_simi($url)
   {
-		$phoneNumber = str_replace("+","",$phoneNumber);
-
 		// Prepare new cURL resource
 		$ch = curl_init($url.'/api/whatsapp/instance/scan');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
