@@ -662,16 +662,9 @@
      });
   }
 	function buttonConnect(){
-		<?php if (session('mode')==0) { ?>
-			console.log("a");
-
-		<?php } ?>
-		<?php if (session('mode')==1) { ?>
-			console.log("b");
 			$('#button-connect').click(function(){
 				$("#modal-start-connect").modal();
 			});
-		<?php } ?>
 	}
 	function buttonStartConnect(){
     $('#button-start-connect').click(function(){
@@ -940,7 +933,6 @@
       getQRCode(phone_number);
     });
 	}
-	
 </script>
 
 @endsection

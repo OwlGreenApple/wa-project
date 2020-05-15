@@ -115,8 +115,8 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('verify-phone', 'SettingController@verify_phone')->middleware('checkphone');
 	
 	//simi
-  Route::get('req-qrcode-0', 'SettingController@req_qrcode_simi');
-  Route::get('check-qr-0', 'SettingController@check_qrcode_simi');
+  // Route::get('req-qrcode-0', 'SettingController@req_qrcode_simi');
+  // Route::get('check-qr-0', 'SettingController@check_qrcode_simi');
 	
   Route::get('delete-phone', 'SettingController@delete_phone');
   Route::get('check-qr', 'SettingController@check_connected_phone');
