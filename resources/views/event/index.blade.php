@@ -118,6 +118,41 @@
   </div>
   <!-- End Modal -->
 
+  <!-- Modal Edit Event Date -->
+  <div class="modal fade child-modal" id="edit-date" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group">
+                 <div class="mb-2">
+
+                  <form id="edit_event_date">
+                    <label>Edit Event Date</label>
+                    <div class="form-group relativity">
+                      <input type="text" class="form-control datetimepicker custom-select-campaign" name="event_time" autocomplete="off" />
+                      <span class="icon-calendar"></span>
+                      <span class="error event_time"></span>
+                    </div>
+                    <input type="hidden" name="campaign_id" />
+                    <span class="error campaign_id"></span>
+                 
+                    <div class="text-right">
+                      <button  type="submit" class="btn btn-custom mr-1">Save</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+
+                </div>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
 <script type="text/javascript">
 
     /* $(function(){
@@ -131,12 +166,20 @@
         });
      }); */
 
+  $(function () {
+      $('.datetimepicker').datetimepicker({
+        format : 'YYYY-MM-DD HH:mm',
+        minDate : new Date()
+      });
+  });
+
   $(document).ready(function(){
     // getText();
     emojiOne();
     pagination();
     editCampaignName();
     saveCampaignEditName();
+    editEventDate();
     callSearch();
     MDTimepicker();
     duplicateEventForm();
@@ -145,7 +188,8 @@
     delEvent();
   });
 
-  function editCampaignName(){
+  function editCampaignName()
+  {
       $("body").on("click",".edit",function(){
         var id = $(this).attr('id');
         var name = $(this).attr('data-name');
@@ -154,7 +198,18 @@
         $("input[name='campaign_name']").val(name);
         $("input[name='campaign_id']").val(id);
       });
+  }  
 
+  function editEventDate()
+  {
+      $("body").on("click",".edit_date",function(){
+        var id = $(this).attr('id');
+        var date = $(this).attr('data-name');
+
+        $("#edit-date").modal();
+        $("input[name='event_time']").val(date);
+        $("input[name='campaign_id']").val(id);
+      });
   } 
 
   function saveCampaignEditName()

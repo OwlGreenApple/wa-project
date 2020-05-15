@@ -42,7 +42,7 @@
       <div class="form-group row event-time">
         <label class="col-sm-3 col-form-label">Event Time :</label>
         <div class="col-sm-9 relativity">
-          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
+          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" autocomplete="off" />
           <span class="icon-calendar"></span>
           <span class="error event_time"></span>
         </div>
@@ -150,117 +150,142 @@
      $(function () {
           $('#datetimepicker').datetimepicker({
             format : 'YYYY-MM-DD HH:mm',
+            minDate : new Date()
           });
       });
 
-     $(function(){
-        $('#tagname').on('click', function(){
-            var tag = '{name}';
-            var cursorPos = $('#divInput-description-post').prop('selectionStart');
-            var v = $('#divInput-description-post').val();
-            var textBefore = v.substring(0,  cursorPos );
-            var textAfter  = v.substring( cursorPos, v.length );
-            $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText(textBefore+ tag +textAfter );
-        });
-     });
-
     $(document).ready(function(){
-        displayTemplate();
         displayAddDaysBtn();
         MDTimepicker();
         neutralizeClock();
-        //loader();
-        //addDays();
-        //delDays();
+        saveCampaign();
+        pictureClass();
     });
 
-
-      function MDTimepicker(){
-        $("body").on('focus','.timepicker',function(){
-            $(this).mdtimepicker({
-              format: 'hh:mm',
-            });
+    function saveCampaign()
+    {
+      $("#save_campaign").submit(function(e){
+        e.preventDefault();
+          var form = $('#save_campaign')[0];
+          var formData = new FormData(form);
+          formData.append('campaign_type','event');
+          formData.append('campaign_id','new');
+          formData.append('reminder_id','new');
+          
+        $.ajax({
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            type : 'POST',
+            url : '{{url("save-campaign")}}',
+            data : formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType : 'json',
+            beforeSend: function()
+            {
+              $('#loader').show();
+              $('.div-loading').addClass('background-load');
+            },
+            success : function(result){
+              if(result.err == 'imgerr')
+              {  
+                  $('#loader').hide();
+                  $('.div-loading').removeClass('background-load');
+                  $(".error").show();
+                  $(".image").html('Image width or image height can not be more than 2000px');
+              }
+              else if(result.err == 'ev_err')
+              {  
+                  $('#loader').hide();
+                  $('.div-loading').removeClass('background-load');
+                  $(".error").show();
+                  $(".campaign_name").html(result.campaign_name);
+                  $(".list_id").html(result.list_id);
+                  $(".event_time").html(result.event_time);
+                  $(".day").html(result.day);
+                  $(".hour").html(result.hour);
+                  $(".msg").html(result.msg);
+                  $(".image").html(result.image);
+              }
+              else
+              {
+                  /*$('#loader').hide();
+                  $('.div-loading').removeClass('background-load');*/
+                  $(".error").hide();
+                  $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+                  // alert(result.message);
+                  location.href='{{ url("event") }}';
+              }
+            },
+            error : function(xhr,attribute,throwable)
+            {
+              $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
+              console.log(xhr.responseText);
+            }
         });
-      }
-
-      /* prevent empty col if user click cancel on clock */
-      function neutralizeClock(){
-         $("body").on("click",".mdtp__button.cancel",function(){
-            $(".timepicker").val('00:00');
-        });
-      }
-
-     function displayAddDaysBtn()
-     {
-        $(".add-day").hide();
-        $("#schedule").change(function(){
-          var val = $(this).val();
-
-          var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
-
-          var hmin = '<select name="day" class="form-control col-sm-8 float-left days delcols"><?php for($x=-90;$x<=-1;$x++) {
-                echo "<option value=".$x.">$x days before event</option>";
-          }?></select>'+
-          '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
-          ;
-
-          var hplus = '<select name="day" class="form-control col-sm-8 float-left days delcols"><?php for($x=1;$x<=100;$x++) {
-                echo "<option value=".$x.">$x days after event</option>";
-          }?></select>'+
-          '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
-          ;
-
-          if(val == 0){
-           // $(".thedayh").show();
-            //$("#hour").prop('disabled',false);
-            //$(".add-day").hide();
-            //$(".delcols").remove();
-            $(".inputh").html(hday);
-          } else if(val == 1) {
-            //$(".thedayh").hide();
-           // $("#hour").prop('disabled',true);
-            //$(".add-day").show();
-             $(".inputh").html(hmin);
-          } else {
-             $(".inputh").html(hplus);
-          }
-
-        });
-     }
-
-
-    function addDays(){
-      $(".add-day").click(function(){
-        var day = $("#schedule").val();
-        var pos = $(".days").length;
-        
-        if(day == 1){
-             var box_html = '<select name="day" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=-90;$x<=-1;$x++) {
-                echo "<option value=".$x.">$x</option>";
-          }?></select>'+
-          '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
-          '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
-          '<div class="clearfix"></div>';
-        } else {
-             var box_html = '<select name="day" class="form-control col-sm-4 float-left days pos-'+pos+' delcols"><?php for($x=1;$x<=100;$x++) {
-                echo "<option value=".$x.">$x</option>";
-          }?></select>'+
-            '<input name="hour[]" type="text" class="timepicker form-control float-left col-sm-4 pos-'+pos+' delcols" value="00:00" readonly />'+
-            '<span><a id="pos-'+pos+'" class="btn btn-warning float-left del delcols">Delete</a></span>'+
-            '<div class="clearfix"></div>';
-        }
-
-        $("#append").append(box_html);
+        //ajax
       });
     }
 
-    function delDays(){
-      $("body").on("click",".del",function(){
-        var pos = $(this).attr('id');
-        $("."+pos).remove();
-        $("#"+pos).remove();
+    function MDTimepicker(){
+      $("body").on('focus','.timepicker',function(){
+          $(this).mdtimepicker({
+            format: 'hh:mm',
+          });
       });
     }
+
+    /* prevent empty col if user click cancel on clock */
+    function neutralizeClock(){
+       $("body").on("click",".mdtp__button.cancel",function(){
+          $(".timepicker").val('00:00');
+      });
+    }
+
+   function displayAddDaysBtn()
+  {
+    $(".add-day").hide();
+    $("#schedule").change(function(){
+      var val = $(this).val();
+      var hmin = '';
+      var hplus = '';
+
+      var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
+
+      hmin += '<select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="day" class="form-control col-sm-7 float-left days delcols mr-3">';
+      for(x=-1;x>=-90;x--){;
+          hmin += '<option value='+x+'>'+x+' days before event</option>';
+      };
+      hmin += '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />';
+
+      hplus += '<select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="day" class="form-control col-sm-7 float-left days delcols mr-3">';
+      for(x=1;x<=100;x++) {
+            hplus += "<option value="+x+">"+x+" days after event</option>";
+      }
+      hplus += '</select>';
+      hplus +='<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+      ;
+
+      if(val == 0){
+        $(".inputh").html(hday);
+      } else if(val == 1) {
+         $(".inputh").html(hmin);
+      } else {
+         $(".inputh").html(hplus);
+      }
+
+    });
+  }
+
+  function pictureClass(){
+    // Add the following code if you want the name of the file appear on select
+    $(document).on("change", ".custom-file-input",function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+  }
 
 </script>
+<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 @endsection

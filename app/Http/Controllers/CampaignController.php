@@ -328,6 +328,12 @@ class CampaignController extends Controller
     {
       $user_id = Auth::id();
       $campaign = Campaign::find($campaign_id);
+
+      if(is_null($campaign))
+      {
+        return redirect('home');
+      }
+
       if ($campaign->user_id<>$user_id){
         return "Not Authorized";
       }
@@ -851,6 +857,7 @@ class CampaignController extends Controller
             }
             BroadCast::where([['campaign_id',$campaign->id],['user_id',$user_id]])->delete();
           }
+
           if( ($request->mode == "event") || ($request->mode == "auto_responder") ) {
             $reminders = Reminder::where([['campaign_id',$campaign->id],['user_id',$user_id]])->get();
             foreach($reminders as $reminder) {
@@ -858,14 +865,13 @@ class CampaignController extends Controller
             }
             Reminder::where([['campaign_id',$campaign->id],['user_id',$user_id]])->delete();
           }
+
+           return response()->json(['message'=>'Your campaign has been deleted successfully']);
         }
         catch(Exception $e)
         {
            return response()->json(['message'=>'Sorry, unable to delete , contact administrator']);
         }
-
-
-        return response()->json(['message'=>'Your campaign has been deleted successfully']);
     }
 
     public function editCampaign(Request $request)

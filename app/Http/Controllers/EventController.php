@@ -75,6 +75,7 @@ class EventController extends Controller
                   'type'=>0,
                   'id'=>$row->id,
                   'campaign_name'=>$row->name,
+                  'event_time'=>$event_time,
                   'sending'=>Date('M d, Y',strtotime($event_time)),
                   'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
                   'label'=>$row->label,
@@ -109,7 +110,7 @@ class EventController extends Controller
 
     public function loadAjaxEventPage()
     {
-        $logic = $this->campaignLogic();
+        $logic = $this->campaignLogic(null);
         return view('event.event',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
     }
 
@@ -181,7 +182,6 @@ class EventController extends Controller
             // dd($e->getMessage());
             return 'Sorry, our database is too busy';
           }
-         
         }
 
         if ($request->reminder_id=="new") {
@@ -199,6 +199,11 @@ class EventController extends Controller
         $reminder->hour_time = $request->hour;
         $reminder->image = $folder.$filename;
         $reminder->message = $request->message;
+
+        if ($request->reminder_id=="new") {
+          $reminder->event_time = $request->event_time;
+        }
+
         $reminder->save();
 
         // if reminder stored / save successfully 
