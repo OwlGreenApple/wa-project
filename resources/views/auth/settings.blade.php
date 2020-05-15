@@ -973,8 +973,7 @@
 						$('#div-verify').show();
 						$("#qr-code").html(result.data);
 						$(window).scrollTop(700);
-						clearInterval(tm);
-						countDownTimer(phone_number);
+						countDownTimerSimi(phone_number);
 					}
 					flagtm = false;
 					// new system loadPhoneNumber();
@@ -988,6 +987,84 @@
 			});
 
 	}	
+	
+	var timerCheckQrCodeSimi,flagTimerCheckQrCodeSimi;
+	function countDownTimerSimi(phone_number)
+	{
+		var sec = 25; //countdown timer
+		var word = '<h3>Please scan qr-code before time\'s up :</h3>';
+		flagTimerCheckQrCodeSimi=false;
+		timerCheckQrCodeSimi = setInterval( function(){
+
+				if( (sec == 20) || (sec == 15) || (sec == 10) || (sec == 1) ) {
+					if (flagTimerCheckQrCodeSimi == false ) {
+						flagTimerCheckQrCodeSimi = true;
+						checkQRcodeSimi(phone_number);
+					}
+				}
+				
+				if(sec < 1){
+					clearInterval(timerCheckQrCodeSimi);
+				}
+
+				if(sec < 10){
+					$("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
+				}
+				else
+				{
+					$("#timer").html(word+'<h4><b>'+sec+'</b></h4>');
+				}
+				sec--;
+		},1000);
+	}
+	
+	function checkQRcodeSimi(phone_number)
+	{
+		$.ajax({
+			type: 'GET',
+			url: "{{ url('check-qr') }}",
+			data: {
+				no_wa : phone_number,
+			},
+			dataType: 'json',
+			beforeSend: function()
+			{
+				/* new system $('#loader').show();
+				$('.div-loading').addClass('background-load');*/
+			},
+			success: function(result) {
+				/* new system $('#loader').hide();
+				$('.div-loading').removeClass('background-load');
+
+				$('#div-verify').hide();
+				$("#timer, #qr-code").html('');*/
+
+				if (result.status!="none"){
+					$('.message').show();
+					$('.message').html(result.status);
+				}  
+				if (result.status=="Congratulations, your phone is connected"){
+					$('#div-verify').hide();
+					$("#timer, #qr-code").html('');
+					$('#phone-table').show();
+					loadPhoneNumber();
+					clearInterval(timerCheckQrCodeSimi);
+				}
+				flagTimerCheckQrCode=false;
+				/* new system loadPhoneNumber();*/
+			},
+			error : function(xhr){
+				/* new system $('#loader').hide();
+				$('.div-loading').removeClass('background-load');
+				$('#div-verify').hide();
+				$("#timer, #qr-code").html('');*/
+
+				// alert('Sorry, unable to check if your phone verified, please try again later');
+				console.log(xhr.responseText);
+			}
+		});
+	}	
+	
 	
 </script>
 
