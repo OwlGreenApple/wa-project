@@ -49,147 +49,116 @@
 <div class="container act-tel-campaign">
   <div id="notification"><!-- notification --></div>
 
-  <form id="save_campaign">
-      <input type="hidden" name="campaign_type" value="event">
-      <input type="hidden" name="campaign_id" value="<?php echo $campaign_id; ?>">
-      <input type="hidden" name="reminder_id" value="new">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Status Event :</label>
-        <div class="col-sm-9 py-2">
-          <strong>@if($published == 1) Published @else Draft @endif</strong>
-        </div>
-      </div>
-
-      <div class="form-group row lists">
-        <label class="col-sm-3 col-form-label">Current List :</label>
-        <div class="col-sm-9 relativity">
-          {{ $currentlist }}
-           <!-- <select name="list_id" class="custom-select-campaign form-control">
-              @if($lists->count() > 0)
-                @foreach($lists as $row)
-                  <option value="{{$row->id}}">{{$row->label}}</option>
-                @endforeach
-              @endif
-           </select> 
-           <span class="icon-carret-down-circle"></span>
-           -->
-        </div>
-      </div>
-
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Campaign Name :</label>
-        <div class="col-sm-6">
-          <div>{{ $campaign_name }}</div>
-        </div>
-      </div>
-
-      <div class="form-group row event-time">
-        <label class="col-sm-3 col-form-label">Event Time :</label>
-        <div class="col-sm-9 relativity">
-          <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" autocomplete="off" />
-          <span class="icon-calendar"></span>
-          <span class="error event_time"></span>
-        </div>
-      </div>
-
-      <div class="form-group row reminder">
-        <label class="col-sm-3 col-form-label">Select Reminder :</label>
-        <div class="col-sm-9 relativity">
-           <select name="schedule" id="schedule" class="custom-select-campaign form-control">
-              <option value="0">The Day</option>
-              <option value="1">H-</option>
-              <option value="2">H+</option>
-           </select>
-           <span class="icon-carret-down-circle"></span>
-        </div>
-      </div>
-
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Time to send Message :</label>
-        <div class="col-sm-9 relativity">
-          <div class="inputh">
-            <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
+    <form id="save_campaign">
+        <input type="hidden" name="campaign_type" value="event">
+        <input type="hidden" name="campaign_id" value="<?php echo $campaign_id; ?>">
+        <input type="hidden" name="reminder_id" value="new">
+        <div class="form-group row">
+          <label class="col-sm-3 col-form-label">Status Event :</label>
+          <div class="col-sm-9 py-2">
+            <strong>@if($published == 1) Published @else Draft @endif</strong>
           </div>
-          <span class="error day"></span>
-          <span class="error hour"></span>
         </div>
-      </div>
 
-      <div class="form-group row">
-				<label class="col-sm-3 col-form-label">Image :</label>
-				<div class="col-sm-9 relativity">
-					<div class="custom-file">
-						<input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
-
-						<label class="custom-file-label" for="inputGroupFile01">
-						</label>
-            <small>Maximum image size is : <b>4Mb</b></small>
-            <div><small>Image Caption Limit is 1000 characters</small></div>
-            <span class="error image"></span>
-					</div>
-				</div>
-      </div>
-
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Message :</label>
-        <div class="col-sm-6">
-          <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
-          <span class="error message"></span>
+        <div class="form-group row lists">
+          <label class="col-sm-3 col-form-label">Current List :</label>
+          <div class="col-sm-9 relativity">
+            {{ $currentlist }}
+          </div>
         </div>
-      </div>
 
-      <div class="text-right col-sm-9">
-        <button type="button" id="save" class="btn btn-custom">Save</button>
-        <button type="button" id="btn-clear" class="btn btn-custom">Clear</button>
-      </div>
+        <div class="form-group row">
+          <label class="col-sm-3 col-form-label">Campaign Name :</label>
+          <div class="col-sm-6">
+            <div>{{ $campaign_name }}</div>
+          </div>
+        </div>
 
-			<div class="form-group row mt-3">
-			<label class="col-sm-3 col-form-label">Send 1 test Message
-					<span class="tooltipstered" title="<div class='panel-heading'>Send 1 test Message</div><div class='panel-content'>
-						Test Message will be send immediately
-						</div>">
-						<i class="fa fa-question-circle "></i>
-					</span>
-			</label>
-			<div class="col-sm-9 relativity">
-					<input type="text" id="phone" name="phone_number" class="form-control" />
-					<span class="error code_country"></span>
-					<span class="error phone_number"></span>
-					<button type="button" class="btn btn-test">Send Test</button>
-			</div>
-		</div>
-</form>
+        <div class="form-group row event-time">
+          <label class="col-sm-3 col-form-label">Event Time :</label>
+          <div class="col-sm-9"><b>{{ Date('Y-M-d h:i:s A',strtotime($date_event)) }}</b></div>
+        </div>
+
+        <div class="form-group row reminder">
+          <label class="col-sm-3 col-form-label">Select Reminder :</label>
+          <div class="col-sm-9 relativity">
+             <select name="schedule" id="schedule" class="custom-select-campaign form-control">
+                <option value="0">The Day</option>
+                <option value="1">H-</option>
+                <option value="2">H+</option>
+             </select>
+             <span class="icon-carret-down-circle"></span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-3 col-form-label">Time to send Message :</label>
+          <div class="col-sm-9 relativity">
+            <div class="inputh">
+              <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
+            </div>
+            <span class="error day"></span>
+            <span class="error hour"></span>
+            <span class="error event_time"></span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+    			<label class="col-sm-3 col-form-label">Image :</label>
+    			<div class="col-sm-9 relativity">
+    				<div class="custom-file">
+    					<input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
+
+    					<label class="custom-file-label" for="inputGroupFile01">
+    					</label>
+              <small>Maximum image size is : <b>4Mb</b></small>
+              <div><small>Image Caption Limit is 1000 characters</small></div>
+              <span class="error image"></span>
+    				</div>
+    			</div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-3 col-form-label">Message :</label>
+          <div class="col-sm-6">
+            <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
+            <span class="error message"></span>
+          </div>
+        </div>
+
+        <div class="text-right col-sm-9">
+          <button type="button" id="save" class="btn btn-custom">Save</button>
+          <button type="button" id="btn-clear" class="btn btn-custom">Clear</button>
+        </div>
+
+    		<div class="form-group row mt-3">
+    		<label class="col-sm-3 col-form-label">Send 1 test Message
+    				<span class="tooltipstered" title="<div class='panel-heading'>Send 1 test Message</div><div class='panel-content'>
+    					Test Message will be send immediately
+    					</div>">
+    					<i class="fa fa-question-circle "></i>
+    				</span>
+    		</label>
+    		<div class="col-sm-9 relativity">
+    				<input type="text" id="phone" name="phone_number" class="form-control" />
+    				<span class="error code_country"></span>
+    				<span class="error phone_number"></span>
+    				<button type="button" class="btn btn-test">Send Test</button>
+    		</div>
+    	</div>
+    </form>
+
 </div>
 
-<!-- Table -->
+<!-- Event List -->
 <div class="container act-tel-campaign">
-    <table class="table table-bordered mt-4">
-      <thead class="bg-dashboard">
-        <tr>
-          <th class="text-center" style="width : 100px">Reminder Time</th>
-          <th class="text-center" style="width : 100px">Time Sending</th>
-          <th class="text-center">Reminder Messages</th>
-          <th class="text-center" style="width : 60px">Edit</th>
-          <th class="text-center" style="width : 60px">Delete</th>
-        </tr>
-      </thead>
-
-      <tbody id="tbody-event">
-      </tbody>
-    </table>
+    <div id="tbody-event"></div>
 </div>
 
 <script type="text/javascript">
 
    /* Datetimepicker + emojione */
   $(function () {
-    $('#datetimepicker').datetimepicker({
-      format : 'YYYY-MM-DD HH:mm',
-      minDate : new Date()
-    }); 
-
-     $("#datetimepicker").val('{{ $date_event }}');
-
     $("#divInput-description-post").emojioneArea({
         pickerPosition: "right",
     });
@@ -204,6 +173,7 @@
 
       formData.append('list_id','{!! $currentlistid !!}');
       formData.append('campaign_name','{!! $campaign_name !!}');
+      formData.append('event_time','{!! $date_event !!}');
       saveEvent(formData)
     });
   }
@@ -232,9 +202,10 @@
         if(result.err == 0)
         {
           $("#notification").html('<div class="alert alert-success">'+result.message+'</div>');
-          // $("input[name='event_time']").val('')
+          $(".custom-file-label selected").html('');
           $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
           $(".error").hide();
+          clearForm();
         }
         else
         {
@@ -252,6 +223,14 @@
       }
     });
     //ajax
+  }
+
+  function showReminder()
+  {
+      $("body").on('click','.icon-carret-down-circle',function(){
+        var id = $(this).attr('id');
+        $(".board-"+id).slideToggle(1000);
+      });
   }
   
   function loadEvent()
@@ -275,6 +254,12 @@
 
         var data = jQuery.parseJSON(result);
         $('#tbody-event').html(data.view);
+      },
+      error : function(xhr,attribute,throwable)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        console.log(xhr.responseText);
       }
     });
   }
@@ -292,29 +277,42 @@
       $("#btn-clear").hide();
       sendTestMessage();
       pictureClass();
+      showReminder();
   });
 
   function displayAddDaysBtn()
   {
-      $(".add-day").hide();
-      $("#schedule").change(function(){
-        var val = $(this).val();
+    $(".add-day").hide();
+    $("#schedule").change(function(){
+      var val = $(this).val();
+      var hmin = '';
+      var hplus = '';
 
-        var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
+      var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
 
-        var hmin = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3">'+'<?php for($x=-90;$x<=-1;$x++) {echo "<option value=".$x.">$x days before event</option>";}?></select><input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />';
+      hmin += '<select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="day" class="form-control col-sm-7 float-left days delcols mr-3">';
+      for(x=-1;x>=-90;x--){;
+          hmin += '<option value='+x+'>'+x+' days before event</option>';
+      };
+      hmin += '<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />';
 
-        var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3">'+'<?php for($x=1;$x<=100;$x++) {echo "<option value=".$x.">$x days after event</option>";}?></select><input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />';
+      hplus += '<select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="day" class="form-control col-sm-7 float-left days delcols mr-3">';
+      for(x=1;x<=100;x++) {
+            hplus += "<option value="+x+">"+x+" days after event</option>";
+      }
+      hplus += '</select>';
+      hplus +='<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
+      ;
 
-        if(val == 0){
-          $(".inputh").html(hday);
-        } else if(val == 1) {
-           $(".inputh").html(hmin);
-        } else {
-           $(".inputh").html(hplus);
-        }
+      if(val == 0){
+        $(".inputh").html(hday);
+      } else if(val == 1) {
+         $(".inputh").html(hmin);
+      } else {
+         $(".inputh").html(hplus);
+      }
 
-      });
+    });
   }
 
   function MDTimepicker(){
@@ -363,12 +361,17 @@
 
   function clickButtonClear(){
     $("body").on('click','#btn-clear',function(e){
-      $('input[name="reminder_id"]').val("new");
-      // $('input[name="event_time"]').val("");
-      $('select[name="list_id"]').val("");
-      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
-      $("#btn-clear").hide();
+      clearForm();
     });
+  }
+
+  function clearForm()
+  {
+    $('input[name="reminder_id"]').val("new");
+    // $('input[name="event_time"]').val("");
+    $('select[name="list_id"]').val("");
+    $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+    $("#btn-clear").hide();
   }
   
   function clickIconDelete(){
@@ -398,8 +401,14 @@
           $('.div-loading').removeClass('background-load');
 
           var data = jQuery.parseJSON(result);
-          alert(data.message);
+          $("#notification_events").html('<div class="alert alert-success">'+data.message+'</div>');
           loadEvent();
+        },
+        error : function(xhr,attribute,throwable)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
         }
       });
     });

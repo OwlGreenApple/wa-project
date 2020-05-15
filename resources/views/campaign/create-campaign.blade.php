@@ -429,7 +429,7 @@
     });
   }
 
-  function MDTimepicker()\
+  function MDTimepicker()
   {
     $("body").on('focus','.timepicker',function(){
         $(this).mdtimepicker({

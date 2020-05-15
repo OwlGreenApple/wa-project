@@ -203,6 +203,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('event-publish','EventController@publishEvent');
   Route::get('event-list','EventController@displayEventList')->name('eventlist');
   Route::post('event-search','EventController@searchEvent');
+  Route::post('edit-event-date','EventController@editEventDate');
 
   /* REMINDER */
   Route::get('reminder-list','ReminderController@displayReminderList')->name('reminderlist');
@@ -241,7 +242,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 
   //not used anymore (EVENT)
   ////////////////////////////////////////////////
-  /*Route::post('addevent','EventController@addEvent')->name('addevent');
+  /*
   Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');*/
 
  

@@ -185,7 +185,7 @@ class CampaignController extends Controller
             'campaign_name'=>['required','max:50'],
             'list_id'=>['required',new CheckValidListID],
             'event_time'=>['required',new CheckDateEvent,new CheckEventEligibleDate($request->day)],
-            'hour'=>['required','date_format:H:i',new EligibleTime($request->event_time)],
+            'hour'=>['required','date_format:H:i',new EligibleTime($request->event_time,$request->day)],
             'message'=>['required','max:65000'],
 						'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],
         );
@@ -267,7 +267,7 @@ class CampaignController extends Controller
           'campaign_name'=>['required','max:50'],
           'list_id'=>['required', new CheckValidListID],
           'date_send'=>['required',new CheckBroadcastDate],
-          'hour'=>['required','date_format:H:i',new EligibleTime($request->date_send)],
+          'hour'=>['required','date_format:H:i',new EligibleTime($request->date_send,0)],
           'message'=>['required','max:65000'],
           'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],
         );

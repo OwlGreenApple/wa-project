@@ -243,7 +243,7 @@
       });
     }
 
-   function displayAddDaysBtn()
+  function displayAddDaysBtn()
   {
     $(".add-day").hide();
     $("#schedule").change(function(){

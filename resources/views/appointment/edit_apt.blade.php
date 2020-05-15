@@ -57,6 +57,21 @@
       </div>
 
       <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Image :</label>
+        <div class="col-sm-9 relativity text-left">
+          <div class="custom-file">
+            <input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
+
+            <label class="custom-file-label" for="inputGroupFile01">
+            </label>
+          </div>
+          <span class="error image"></span><br/>
+          <small>Maximum image size is : <b>4Mb</b></small>
+          <div><small>Image Caption Limit is 1000 characters</small></div>
+        </div>
+      </div>
+
+      <div class="form-group row">
         <label class="col-sm-3 col-form-label">Message :  <span class="tooltipstered" title="<div class='panel-heading'>Info personalization field</div><div class='panel-content'>
                     [NAME] <br>
                     [PHONE] <br>
@@ -91,6 +106,7 @@
    $(function () {
         $('#datetimepicker').datetimepicker({
           format : 'YYYY-MM-DD HH:mm',
+          minDate : new Date()
         }); 
 
         $('#datetimepicker-date').datetimepicker({
@@ -99,7 +115,6 @@
 
         $("#divInput-description-post").emojioneArea({
             pickerPosition: "top",
-            mainPathFolder: "{{ url('/assets') }}",
         });
     });
 
@@ -113,13 +128,14 @@
     MDTimepicker();
     neutralizeClock();
     cancelUpdate();
+    pictureClass();
   });
 
   function cancelUpdate()
   {
       $("#cancel").hide();
       $("#cancel").click(function(){
-        $('#btn-submit').html('Create Reminder').removeAttr('data-update');
+        $('#btn-submit').html('Save').removeAttr('data-update');
         $('#btn-submit').removeAttr('data-oldtime');
         $('#btn-submit').removeAttr('data-oldday');
         $("input[name='schedule'][value='0']").prop('checked',true);
@@ -213,7 +229,8 @@
         {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          alert(result.message);
+          $("#status_db").html('<div class="alert alert-success">'+result.message+'</div>');
+          $("#cancel").trigger("click");
           if(result.success == 1)
           {
               displayAppointment();
@@ -235,20 +252,23 @@
       var is_update = $("#btn-submit").attr('data-update'); 
       var oldtime = $("#btn-submit").attr('data-oldtime');
       var oldday = $("#btn-submit").attr('data-oldday');
-      var data = $(this).serializeArray();
 
-      data.push(
-        {name:'campaign_id',value : {!! $id !!} },
-        {name : 'is_update', value : is_update},
-        {name:'old_day',value : oldday},
-        {name:'oldtime',value : oldtime},
-      );
+      var form = $("#save_template_apt")[0];
+      var data = new FormData(form);
+
+      data.append('campaign_id','{!! $id !!}');
+      data.append('is_update',is_update);
+      data.append('old_day',oldday);
+      data.append('oldtime',oldtime);
 
       $.ajax({
           headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
           type : 'POST',
           url : '{{url("save-template-appoinments")}}',
           data : data,
+          cache: false,
+          contentType: false,
+          processData: false,
           dataType : 'json',
           beforeSend: function()
           {
@@ -274,6 +294,7 @@
                 $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
                 $("#status_db").attr('class','status');
                 $("#status_db").html(result.message);
+                $(".custom-file-label").html('');
                 $("#cancel").trigger("click");
                 displayAppointment();
             }
@@ -331,6 +352,14 @@
           buttonTime(val);
       });
    }
+
+  function pictureClass(){
+    // Add the following code if you want the name of the file appear on select
+    $(document).on("change", ".custom-file-input",function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+  }
 
   function buttonTime(val,day)
   {
