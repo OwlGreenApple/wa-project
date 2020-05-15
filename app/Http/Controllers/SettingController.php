@@ -481,6 +481,7 @@ class SettingController extends Controller
     */
     public function check_connected_phone(Request $request)
     {
+			exit;
         $user = Auth::user();
         $counter = $this->checkIsPay();
         if($counter == 0)
