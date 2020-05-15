@@ -662,18 +662,9 @@
      });
   }
 	function buttonConnect(){
-		<?php if (session('mode')==0) { ?>
-			console.log("a");
-			$('#button-connect').click(function(){
-				getQRCodeSimi($(".iti__selected-flag").attr('data-code')+$("#phone").val());
-			});
-		<?php } ?>
-		<?php if (session('mode')==1) { ?>
-			console.log("b");
 			$('#button-connect').click(function(){
 				$("#modal-start-connect").modal();
 			});
-		<?php } ?>
 	}
 	function buttonStartConnect(){
     $('#button-start-connect').click(function(){
@@ -942,130 +933,6 @@
       getQRCode(phone_number);
     });
 	}
-	
-	function getQRCodeSimi(phone_number)
-	{
-		$.ajax({
-				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-				type: 'GET',
-				url: "{{ url('req-qrcode-0') }}",
-				data: {
-					phone_number : phone_number,
-				},
-				dataType: 'json',
-				beforeSend: function()
-				{
-					$('#loader').show();
-					$('.div-loading').addClass('background-load');
-				},
-				success: function(result) {
-					$('#loader').hide();
-					$('.div-loading').removeClass('background-load');
-
-					if(result.status == 'error'){
-						/* new system $('.message').show();
-						$('.message').append(result.phone_number);*/
-						// getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
-						console.log(result);
-					}
-					else
-					{
-						$('#div-verify').show();
-						$("#qr-code").html(result.data);
-						$(window).scrollTop(700);
-						countDownTimerSimi(phone_number);
-					}
-					flagtm = false;
-					// new system loadPhoneNumber();
-				},
-				error : function(xhr,attr,throwable){
-					$('#loader').hide();
-					$('.div-loading').removeClass('background-load');
-					console.log(xhr.responseText);
-					alert('Sorry, unable to display QR-CODE, there is something wrong with our server, please try again later')
-				}
-			});
-
-	}	
-	
-	var timerCheckQrCodeSimi,flagTimerCheckQrCodeSimi;
-	function countDownTimerSimi(phone_number)
-	{
-		var sec = 25; //countdown timer
-		var word = '<h3>Please scan qr-code before time\'s up :</h3>';
-		flagTimerCheckQrCodeSimi=false;
-		timerCheckQrCodeSimi = setInterval( function(){
-
-				if( (sec == 20) || (sec == 15) || (sec == 10) || (sec == 1) ) {
-					if (flagTimerCheckQrCodeSimi == false ) {
-						flagTimerCheckQrCodeSimi = true;
-						checkQRcodeSimi(phone_number);
-					}
-				}
-				
-				if(sec < 1){
-					clearInterval(timerCheckQrCodeSimi);
-				}
-
-				if(sec < 10){
-					$("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
-				}
-				else
-				{
-					$("#timer").html(word+'<h4><b>'+sec+'</b></h4>');
-				}
-				sec--;
-		},1000);
-	}
-	
-	function checkQRcodeSimi(phone_number)
-	{
-		$.ajax({
-			type: 'GET',
-			url: "{{ url('check-qr') }}",
-			data: {
-				no_wa : phone_number,
-			},
-			dataType: 'json',
-			beforeSend: function()
-			{
-				/* new system $('#loader').show();
-				$('.div-loading').addClass('background-load');*/
-			},
-			success: function(result) {
-				/* new system $('#loader').hide();
-				$('.div-loading').removeClass('background-load');
-
-				$('#div-verify').hide();
-				$("#timer, #qr-code").html('');*/
-
-				if (result.status!="none"){
-					$('.message').show();
-					$('.message').html(result.status);
-				}  
-				if (result.status=="Congratulations, your phone is connected"){
-					$('#div-verify').hide();
-					$("#timer, #qr-code").html('');
-					$('#phone-table').show();
-					loadPhoneNumber();
-					clearInterval(timerCheckQrCodeSimi);
-				}
-				flagTimerCheckQrCode=false;
-				/* new system loadPhoneNumber();*/
-			},
-			error : function(xhr){
-				/* new system $('#loader').hide();
-				$('.div-loading').removeClass('background-load');
-				$('#div-verify').hide();
-				$("#timer, #qr-code").html('');*/
-
-				// alert('Sorry, unable to check if your phone verified, please try again later');
-				console.log(xhr.responseText);
-			}
-		});
-	}	
-	
-	
 </script>
 
 @endsection

@@ -555,5 +555,55 @@ class ApiHelper
 		return $result;
 
 	}
+	
+ 	public static function start_simi($url)
+  {
+		// Prepare new cURL resource
+		$ch = curl_init($url.'/api/whatsapp/instance/start');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+
+		// Set HTTP Header for POST request 
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Content-Type: application/json',
+				'apikey:d802233599d9riz1b11dk7d70531ab57'
+		));
+
+		// Submit the POST request
+		$result = curl_exec($ch);
+
+		// Close cURL session handle
+		curl_close($ch);
+
+		// return $qrcode;
+		return $result;
+
+	}
+	
+ 	public static function status_simi($url)
+  {
+		// Prepare new cURL resource
+		$ch = curl_init($url.'/api/whatsapp/instance/status');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+
+		// Set HTTP Header for POST request 
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Content-Type: application/json',
+				'apikey:d802233599d9riz1b11dk7d70531ab57'
+		));
+
+		// Submit the POST request
+		$result = curl_exec($ch);
+
+		// Close cURL session handle
+		curl_close($ch);
+
+		// return $qrcode;
+		return $result;
+
+	}	
 /* END CLASS */
 }
