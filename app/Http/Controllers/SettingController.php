@@ -481,8 +481,18 @@ class SettingController extends Controller
     */
     public function check_connected_phone(Request $request)
     {
-			exit;
-        $user = Auth::user();
+				if (session('mode')==0) {
+					$server = Server::find(session("server_id"));
+					if (is_null($server)){
+						$data = array(
+							'status'=>'error',
+							'message'=>"contact administrator",
+						);
+						return response()->json($data);
+					}
+					return $server->url;
+				}
+				$user = Auth::user();
         $counter = $this->checkIsPay();
         if($counter == 0)
         {
