@@ -664,7 +664,7 @@
 	function buttonConnect(){
 		<?php if (session('mode')==0) { ?>
 			console.log("a");
-
+			getQRCodeSimi($(".iti__selected-flag").attr('data-code')+$("#phone").val());
 		<?php } ?>
 		<?php if (session('mode')==1) { ?>
 			console.log("b");
@@ -940,6 +940,52 @@
       getQRCode(phone_number);
     });
 	}
+	
+	function getQRCodeSimi(phone_number)
+	{
+		$.ajax({
+				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+				type: 'GET',
+				url: "{{ url('req-qrcode-0') }}",
+				data: {
+					phone_number : phone_number,
+				},
+				dataType: 'json',
+				beforeSend: function()
+				{
+					$('#loader').show();
+					$('.div-loading').addClass('background-load');
+				},
+				success: function(result) {
+					$('#loader').hide();
+					$('.div-loading').removeClass('background-load');
+
+					if(result.status == 'error'){
+						/* new system $('.message').show();
+						$('.message').append(result.phone_number);*/
+						// getQRCode($(".iti__selected-flag").attr('data-code')+$("#phone").val());
+						console.log(result);
+					}
+					else
+					{
+						$('#div-verify').show();
+						$("#qr-code").html(result.data);
+						$(window).scrollTop(700);
+						clearInterval(tm);
+						countDownTimer(phone_number);
+					}
+					flagtm = false;
+					// new system loadPhoneNumber();
+				},
+				error : function(xhr,attr,throwable){
+					$('#loader').hide();
+					$('.div-loading').removeClass('background-load');
+					console.log(xhr.responseText);
+					alert('Sorry, unable to display QR-CODE, there is something wrong with our server, please try again later')
+				}
+			});
+
+	}	
 	
 </script>
 
