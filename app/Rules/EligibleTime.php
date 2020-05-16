@@ -13,10 +13,13 @@ class EligibleTime implements Rule
      * @return void
      */
 
-    public $day_send;
-    public function __construct($day_send)
+    public $date;
+    public $days;
+
+    public function __construct($date,$days)
     {
-        $this->day = $day_send;
+        $this->date = $date;
+        $this->days = $days;
     }
 
     /**
@@ -26,12 +29,23 @@ class EligibleTime implements Rule
      * @param  mixed  $value
      * @return bool
      */
+
     public function passes($attribute, $value)
     {
-        $day = Carbon::parse($this->day)->toDateString();
+        $days = abs($this->days);
+        if($this->days < 0)
+        {
+          $date_send = Carbon::parse($this->date)->subDays($days);
+        }
+        else
+        {
+          $date_send = Carbon::parse($this->date)->addDays($days);
+        }
+
+        $date_send->toDateString();
         $today = Carbon::now();
         $time = explode(':',$value);
-        $destination_day = explode('-',$day);
+        $destination_day = explode('-',$date_send);
 
         $hour = (int)$time[0];
         $min = (int)$time[1];

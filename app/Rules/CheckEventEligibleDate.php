@@ -35,9 +35,9 @@ class CheckEventEligibleDate implements Rule
 
     public function checkEligible($date,$day)
     { 
-        $today = Carbon::now();
+        $today = Carbon::today();
         $day = (int)$day;
-        $date = Carbon::parse($date)->addDays($day);
+        $date = Carbon::parse($date)->addDays($day)->setTime(0, 0, 0);
 
         if($date->gte($today))
         {

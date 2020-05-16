@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Imports\UsersImport;
 use App\Rules\CheckDateEvent;
+use App\Rules\CheckExistIdOnDB;
 use App\UserList;
 use App\Reminder;
 use App\ReminderCustomers;
@@ -75,7 +76,7 @@ class EventController extends Controller
                   'type'=>0,
                   'id'=>$row->id,
                   'campaign_name'=>$row->name,
-                  'event_time'=>$event_time,
+                  'event_time'=>$reminder->event_time,
                   'sending'=>Date('M d, Y',strtotime($event_time)),
                   'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
                   'label'=>$row->label,
@@ -174,14 +175,6 @@ class EventController extends Controller
         }
         else {
           $campaign_id = $request->campaign_id;
-          // UPDATE EVENT DATE
-          try
-          {
-            $event = Reminder::where([['campaign_id',$campaign_id],['is_event',1]])->update(['event_time'=>$request->event_time]);
-          }catch(QueryException $e){
-            // dd($e->getMessage());
-            return 'Sorry, our database is too busy';
-          }
         }
 
         if ($request->reminder_id=="new") {
@@ -293,7 +286,7 @@ class EventController extends Controller
                        $data[] = array(
                         'id'=>$row->id,
                         'campaign_name' => $row->name,
-                        'sending' => Date('M d, Y',strtotime($event_time)),
+                        'sending' => Date('M d, Y',strtotime($reminder->event_time)),
                         'label' => $row->label,
                         'created_at' => Date('M d, Y',strtotime($row->created_at)),
                         'total_message' => $reminder_customer->total_message,
@@ -317,6 +310,50 @@ class EventController extends Controller
           }
     
           return view('event.event-table',['event' => $data]);
+    }
+
+    public function editEventDate(Request $request)
+    {
+       $user_id = Auth::id();
+       $campaign_id = $request->campaign_id;
+       $campaign = [['id','=',$campaign_id]];
+
+       $rules = [
+          'event_time'=>['required',new CheckDateEvent],
+          'campaign_id'=>['required', new CheckExistIdOnDB('campaigns',$campaign)],
+       ];
+       $validator = Validator::make($request->all(),$rules);
+
+       if($validator->fails())
+       {
+          $errors = $validator->errors();
+          return response()->json(
+            [
+              'success'=>0,
+              'event_time'=>$errors->first('event_time'),
+              'campaign_id'=>$errors->first('campaign_id')
+            ]
+          );
+       }
+
+       try
+       {
+         Reminder::where([['campaign_id',$campaign_id],['is_event',1]])->update(['event_time'=>$request->event_time]);
+         $data = array(
+            'success'=>1,
+            'message'=>'Date Event has been updated',
+            'id' =>$campaign_id,
+            'event_date' =>Date('M d, Y',strtotime($request->event_time)),
+         );
+       }catch(QueryException $e){
+        // dd($e->getMessage());
+          $data = array(
+            'success'=>0,
+            'message'=>'Sorry, our database is too busy'
+          );
+       }
+
+       return response()->json($data);
     }
 
     public function delEvent(Request $request){
@@ -443,7 +480,7 @@ class EventController extends Controller
 
              return response()->json(['message'=>'Your campaign duplicated successfully']);
            }
-           catch(\Illuminate\Database\QueryException $e)
+           catch(QueryException $e)
            {
              return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
            }
@@ -473,6 +510,34 @@ class EventController extends Controller
         return response()->json($err);
     }
 
+     public function loadEvent(Request $request){
+      $id = Auth::id();
+      $events = Reminder::where([['user_id',$id],['is_event','=',1],['campaign_id','=',$request->campaign_id]])
+                // ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
+                ->orderBy('days','asc')
+                ->get();
+      $arr['view'] =(string) view('event.load-event')
+                      ->with([
+                        "events"=>$events,
+                      ]);
+
+      return $arr;
+    }
+
+    public function deleteEvent(Request $request)
+    {
+        $id = $request->id;
+        try{
+          Reminder::find($id)->delete();
+          $err['status'] = 'success';
+          $err['message'] = 'Day event deleted successfully';  
+        }catch(QueryException $e){
+          $err['status'] = FALSE;
+          $err['message'] = 'Sorry, our server is too busy';
+        }
+
+        return response()->json($err);
+    }
 
     /***************************************************************************** 
                                     OLD CODES
@@ -530,184 +595,6 @@ class EventController extends Controller
         	return redirect('eventautoreply')->with('status_error','Error!! failed to set event auto reply');
         }
     } 
-
-    public function addEvent(Request $request){
-        $user_id = Auth::id();
-
-        if($request->schedule == 0){
-            $request->day = 0;
-        }
-
-        if($request->schedule > 0 &&  $request->day == 0){
-           return redirect('eventform')->with('error_days','Please do not modify event days, if you want to use 0 days please use Hari H instead');
-        }
-
-        $rules = array(
-            'list_id'=>['required'],
-            'message'=>['required','max:3000'],
-            'schedule'=>['required','numeric'],
-            'day'=>['numeric'],
-        );
-
-        $validator = Validator::make($request->all(),$rules);
-        $err = $validator->errors();
-
-        /* Validator */
-        if($validator->fails()){
-            return redirect('eventform')->with('error',$err);
-        } else {
-            //$req['id'] == checkbox list
-            $reminder = new Reminder;
-            $reminder->user_id = $user_id;
-            $reminder->list_id = $request->list_id;
-            $reminder->days = $request->day;
-            $reminder->hour_time = $request->hour;
-            $reminder->message = $request->message;
-            $reminder->save();
-        }
-
-        /* if reminder stored / save successfully */
-        if($reminder->save() == true){
-            /* retrieve customer id */
-            $event = Reminder::where([
-                    ['reminders.id','=',$reminder->id],
-                    ['reminders.status','=',1],
-                    ['customers.status','=',1],
-                    ['customers.list_id','=',$request->list_id],
-                    ])->join('customers','customers.list_id','=','reminders.list_id')->select('reminders.*','customers.id AS csid')->get();
-        } else {
-            return redirect('eventform')->with('status_error','Error!! failed to set event');
-        }
-
-        /* check whether user have customer */
-        if($event->count() == 0){
-            return redirect('eventform')->with('status','Your event has been set!');
-        } else {
-             foreach($event as $col){
-                $remindercustomer = new ReminderCustomers;
-                $remindercustomer->user_id = $user_id;
-                $remindercustomer->list_id = $col->list_id;
-                $remindercustomer->reminder_id = $col->id;
-                $remindercustomer->customer_id = $col->csid;
-                $remindercustomer->save();
-             }  
-        }
-
-        /* If successful insert data into event customer */
-        if($remindercustomer->save() == true){
-            return redirect('eventform')->with('status','Your event has been set!!');
-        } else {
-            return redirect('eventform')->with('status_error','Error!! failed to set event for customer');
-        }
-    }
-
-    public function addEventoldcode(Request $request){
-        $user_id = Auth::id();
-        $req = $request->all();
-        $message = $req['message'];
-        $event_date = $req['event_date'];
-        $schedule = $req['schedule'];
-        $sender = Sender::where('user_id',$user_id)->first();
-
-
-        if((empty($req['day']) || empty($req['hour'])) && $schedule == 0)
-        {
-            $req['day'] = array(0);
-            $req['hour'] = array($req['hour']);
-            $days = $req['day'];
-            $hour = $req['hour'];
-        } else if((empty($req['day']) || empty($req['hour'])) && $schedule > 0) {
-            $days = null;
-            $hour = null;
-        } else {
-            $days = $req['day'];
-            $hour = $req['hour'];
-        }
-
-        if($days == null || $hour == null) {
-             return redirect('eventform')->with('errorday','Days and time should not blank');
-        }
-
-        $gettime = array_combine($days,$hour);
-
-        $rules = array(
-            'id'=>['required'],
-            'message'=>['required','max:3000'],
-            'event_date'=>['required',new CheckDateEvent],
-        );
-
-        $validator = Validator::make($request->all(),$rules);
-        $err = $validator->errors();
-
-        /* Validator */
-        if($validator->fails()){
-            return redirect('eventform')->with('error',$err);
-        } else {
-            /* prevent duplicate days */
-            if($this->has_dupes($req['day']) == false){
-                return redirect('eventform')->with('error_day','Do not use same value for day');
-            } 
-            //$req['id'] == checkbox list
-            foreach($gettime as $day=>$hour){
-                foreach($req['id'] as $row=>$list_id){
-                    $reminder = new Reminder;
-                    $reminder->user_id = $user_id;
-                    $reminder->list_id = $list_id;
-                    $reminder->event_date = $event_date;
-                    $reminder->days = $day;
-                    $reminder->hour_time = $hour;
-                    $reminder->message = $message;
-                    $reminder->save();
-                }
-            }
-            $created_date = $reminder->created_at;
-        }
-
-        /* if reminder stored / save successfully */
-        if($reminder->save() == true){
-            /* retrieve customer id */
-            foreach($req['id'] as $row=>$list_id){
-                /* get customer data accoring on list */
-                $event = Reminder::where([
-                            ['reminders.event_date','=',$event_date],
-                            ['reminders.list_id','=',$list_id],
-                            ['reminders.status','=',1],
-                            ['customers.status','=',1],
-                            ['customers.list_id','=',$list_id],
-                            ])->join('customers','customers.list_id','=','reminders.list_id')->select('reminders.*','customers.id AS csid')->get();
-
-                foreach($event as $rows){
-                    $eventcustomer[] = $rows;
-                }
-
-            }
-        } else {
-            return redirect('eventform')->with('status_error','Error!! failed to set event');
-        }
-
-        /* check whether user have customer */
-        if(count($eventcustomer) == 0){
-            return redirect('eventform')->with('status','Your event has been set!');
-        } else {
-             foreach($eventcustomer as $col){
-                $remindercustomer = new ReminderCustomers;
-                $remindercustomer->user_id = $user_id;
-                $remindercustomer->list_id = $col->list_id;
-                $remindercustomer->sender_id = $sender->id;
-                $remindercustomer->reminder_id = $col->id;
-                $remindercustomer->customer_id = $col->csid;
-                $remindercustomer->message = $message;
-                $remindercustomer->save();
-             }  
-        }
-
-        /* If successful insert data into event customer */
-        if($remindercustomer->save() == true){
-            return redirect('eventform')->with('status','Your event has been set!!');
-        } else {
-            return redirect('eventform')->with('status_error','Error!! failed to set event for customer');
-        }
-    }
 
     /* To check duplicate array */
     function has_dupes($array) {
@@ -795,21 +682,6 @@ class EventController extends Controller
 
         $file = $request->file('csv_file');
         Excel::import(new UsersImport($id_list), $file);
-    }
-
-
-    function loadEvent(Request $request){
-      $id = Auth::id();
-      $events = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',1],['reminders.campaign_id','=',$request->campaign_id]])
-                // ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
-                ->orderBy('id','desc')
-                ->get();
-      $arr['view'] =(string) view('event.load-event')
-                      ->with([
-                        "events"=>$events,
-                      ]);
-
-      return $arr;
     }
 
 /* End event controller */

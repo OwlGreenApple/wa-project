@@ -104,8 +104,8 @@
                     <span class="error campaign_id"></span>
                  
                     <div class="text-right">
-                      <button  type="submit" class="btn btn-custom mr-1">Save</button>
-                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                      <button  type="submit" class="btn btn-custom btn-sm mr-1">Save</button>
+                      <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
                     </div>
                   </form>
                 </div>
@@ -125,6 +125,7 @@
       <!-- Modal content -->
       <div class="modal-content">
         <div class="modal-body">
+            <div class="ev_notification"><!-- notification --></div>
             <div class="form-group">
                  <div class="mb-2">
 
@@ -139,8 +140,8 @@
                     <span class="error campaign_id"></span>
                  
                     <div class="text-right">
-                      <button  type="submit" class="btn btn-custom mr-1">Save</button>
-                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                      <button  type="submit" class="btn btn-custom btn-sm mr-1">Save</button>
+                      <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
                     </div>
                   </form>
 
@@ -180,6 +181,7 @@
     editCampaignName();
     saveCampaignEditName();
     editEventDate();
+    saveEventDateEdit();
     callSearch();
     MDTimepicker();
     duplicateEventForm();
@@ -212,54 +214,109 @@
       });
   } 
 
+  function saveEventDateEdit()
+  {
+    $("#edit_event_date").submit(function(e){
+      e.preventDefault();
+      var data = $(this).serialize();
+
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type : 'POST',
+        url : '{{ url("edit-event-date") }}',
+        data : data,
+        dataType : 'json',
+        beforeSend : function(){
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success : function(result)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          $(".search-result").hide();
+
+          if(result.success == 1)
+          {
+            $(".campaign_event_id-"+result.id).html(result.event_date);
+            $(".error").hide();
+            $(".ev_notification").html('<div class="alert alert-success">'+result.message+'</div>');
+            $(".alert-success").delay(1000).hide();
+            setTimeout(function(){
+              $("#edit-date").modal('hide');
+            },1000);
+          }
+          else
+          {
+            $(".error").show(); 
+            $(".event_time").html(result.event_time);
+            $(".campaign_id").html(result.campaign_id);
+            if(result.message !== undefined)
+            {
+              $(".ev_notification").html('<div class="alert alert-success">'+result.message+'</div>');
+            }
+          }
+          
+        },
+        error : function(xhr)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
+        }
+      });
+      //end ajax
+    });
+  }
+
   function saveCampaignEditName()
   {
-      $("#edit_campaign_name").submit(function(e){
-        e.preventDefault();
-        var data = $(this).serialize();
+    $("#edit_campaign_name").submit(function(e){
+      e.preventDefault();
+      var data = $(this).serialize();
 
-        $.ajax({
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-          type : 'POST',
-          url : '{{ url("edit-campaign-name") }}',
-          data : data,
-          dataType : 'json',
-          beforeSend : function(){
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success : function(result)
-          {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            $(".search-result").hide();
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type : 'POST',
+        url : '{{ url("edit-campaign-name") }}',
+        data : data,
+        dataType : 'json',
+        beforeSend : function(){
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success : function(result)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          $(".search-result").hide();
 
-            if(result.success == 1)
-            {
-              $(".campaignid-"+result.id).html(result.campaign_name);
-              $("#edit-campaign").modal('hide');
-              $(".error").hide();
-            }
-            else
-            {
-              $(".error").show(); 
-              $(".campaign_name").html(result.campaign_name);
-              $(".campaign_id").html(result.campaign_id);
-              if(result.error_server !== undefined)
-              {
-                alert(result.error_server);
-              }
-            }
-            
-          },
-          error : function(xhr)
+          if(result.success == 1)
           {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            console.log(xhr.responseText);
+            $(".campaignid-"+result.id).html(result.campaign_name);
+            $("#edit-campaign").modal('hide');
+            $(".error").hide();
           }
-        });
+          else
+          {
+            $(".error").show(); 
+            $(".campaign_name").html(result.campaign_name);
+            $(".campaign_id").html(result.campaign_id);
+            if(result.error_server !== undefined)
+            {
+              alert(result.error_server);
+            }
+          }
+          
+        },
+        error : function(xhr)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
+        }
       });
+    });
   }
 
   function delay(callback, ms) 

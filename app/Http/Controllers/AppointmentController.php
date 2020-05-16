@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\QueryException;
 // use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use App\UserList;
@@ -16,7 +17,7 @@ use App\ReminderCustomers;
 use App\TemplateAppointments;
 // use App\Exports\UsersExport;
 use App\Helpers\Alert;
-use Excel;
+use Excel,Storage;
 
 class AppointmentController extends Controller
 {
@@ -153,7 +154,7 @@ class AppointmentController extends Controller
         try{
           Reminder::where([['campaign_id',$campaign_id],['is_event',2],['user_id',$userid],['event_time',$oldtime]])->update(['event_time'=>$date_send]);
         }
-        catch(Exception $e)
+        catch(QueryException $e)
         {
           $status['success'] = 0;
           $status['message'] = 'Sorry unable to update your appointment, please try again later. -';
@@ -170,7 +171,7 @@ class AppointmentController extends Controller
           $status['success'] = 1;
           $status['message'] = 'Your appointment list has been updated!';
         }
-        catch(Exception $e)
+        catch(QueryException $e)
         {
           $status['success'] = 0;
           $status['message'] = 'Sorry unable to update your appointment, please try again later. --';
@@ -189,7 +190,7 @@ class AppointmentController extends Controller
           $data['success'] = 1;
           $data['message'] = 'Your list appointment has been cancelled';
         }
-        catch(Exception $e)
+        catch(QueryException $e)
         {
           $data['success'] = 0;
           $data['message'] = 'Sorry unable to cancel your list appointment, please try again later';
@@ -275,7 +276,7 @@ class AppointmentController extends Controller
         $data['success'] = 1;
         $data['message'] = 'Your appointment has been created';
       }
-      catch(Exception $e)
+      catch(QueryException $e)
       {
         $data['success'] = 0;
         $data['message'] = 'Sorry currently our server is too busy, please try again later';
@@ -318,6 +319,7 @@ class AppointmentController extends Controller
         $save = false;
         $count = 0;
         $reminderid = $customerid = $newcustomer = array();
+        $path = null;
 
         if(isset($_POST['day']))
         {
@@ -328,8 +330,33 @@ class AppointmentController extends Controller
             $days = 0;
         }
 
+        if($request->hasFile('imageWA')) {
+          //save ke temp local dulu baru di kirim 
+          $image_size = getimagesize($request->file('imageWA'));
+          $imagewidth = $image_size[0];
+          $imageheight = $image_size[1];
+
+          $dt = Carbon::now();
+          $ext = $request->file('imageWA')->getClientOriginalExtension();
+          $folder = $userid."/appointment-image/";
+          $filename = $dt->format('ymdHi').'.'.$ext;
+
+          if(checkImageSize($request->file('imageWA')) == true || $imagewidth > 1280 || $imageheight > 1280)
+          {
+              $scale = scaleImageRatio($imagewidth,$imageheight);
+              $imagewidth = $scale['width'];
+              $imageheight = $scale['height'];
+              resize_image($request->file('imageWA'),$imagewidth,$imageheight,false,$folder,$filename);
+          }
+          else
+          {
+              Storage::disk('s3')->put($folder.$filename,file_get_contents($request->file('imageWA')), 'public');
+          }
+          $path = $folder.$filename;
+        }
+
         //UPDATE CASE
-        if($request->is_update <> null)
+        if($request->is_update <> 'undefined')
         {
             try 
             {
@@ -344,6 +371,7 @@ class AppointmentController extends Controller
               $update_reminder = array(
                 'days'=>$days,
                 'hour_time'=>$request->hour,
+                'image'=>$path,
                 'message'=>$request->message,
               );
 
@@ -353,7 +381,7 @@ class AppointmentController extends Controller
                $data['message'] = 'Your template appointment has been updated!';
                return response()->json($data);
             }
-            catch(Exception $e)
+            catch(QueryException $e)
             {
                $data['success'] = 0;
                $data['message'] = 'Sorry unable to update your template appointment, please try again later';
@@ -404,6 +432,7 @@ class AppointmentController extends Controller
                 $reminder->days = $days;
                 $reminder->hour_time = $request->hour;
                 $reminder->event_time = $row->event_time;
+                $reminder->image = $path;
                 $reminder->message = $request->message;
 
                 try {
@@ -485,7 +514,35 @@ class AppointmentController extends Controller
     public function deleteAppointmentTemplate(Request $request)
     {
         $userid = Auth::id();
-        $template_id = $request->id;
+        $template_id = (int)$request->id;
+        $reminder = Reminder::where('tmp_appt_id',$template_id)->select('id','image')->get();
+        $reminder_id = array();
+
+        if($reminder->count() > 0)
+        {
+          foreach($reminder as $row)
+          {
+            $reminder_id[$row->id] = $row->image;
+            $reminder_customer = ReminderCustomers::where('reminder_id',$row->id)->get();
+            if($reminder_customer->count() > 0)
+            {
+              ReminderCustomers::where('reminder_id',$row->id)->delete();
+            }
+          }// ENDFOREACH
+        }
+
+        if(count($reminder_id) > 0)
+        {
+          foreach($reminder_id as $id=>$image)
+          {
+              if(!empty($image) || $image <> "")
+              {
+                Storage::disk('s3')->delete($image);
+              }
+              Reminder::find($id)->delete();
+              sleep(0.15);
+          }
+        }
 
         try 
         {
@@ -493,7 +550,7 @@ class AppointmentController extends Controller
           $data['success'] = 1;
           $data['message'] = 'Your schedule template deleted successfully';
         }
-        catch(Exception $e)
+        catch(QueryException $e)
         {
           $data['success'] = 0;
           $data['message'] = 'Sorry, unable to delete your schedule template, please try again later';
@@ -567,7 +624,7 @@ class AppointmentController extends Controller
                 $reminder->save();
                 $reminderid[] = $reminder->id;
               }
-              catch(Exception $e)
+              catch(QueryException $e)
               {
                 $result = array(
                     'success'=>0,

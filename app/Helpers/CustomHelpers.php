@@ -1,6 +1,7 @@
 <?php
 use App\UserList;
 use App\Customer;
+use Illuminate\Support\Facades\Storage;
 
   // GET MEMBERSHIP NUMBER
 	function getMembership($membership)
