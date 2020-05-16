@@ -17,10 +17,14 @@
 
           <div class="created">
             <!-- Created On :  $row['created_at'] -->
-            Date Event : <span class="campaign_event_id-{{$row['id']}} mr-1">{{ Date('M d, Y',strtotime($row['event_time'])) }}</span>
-            <span>
-              <a data-toggle="tooltip" data-toggle="tooltip" data-placement="right" title="Edit Event Date" data-name="{{ $row['event_time'] }}" id="{{ $row['id'] }}" class="edit_date icon-calendar"></a>
-            </span>  
+            @if($row['event_time'] == '-')
+              Date Event :  -
+            @else
+              Date Event : <span class="campaign_event_id-{{$row['id']}} mr-1">{{ Date('M d, Y',strtotime($row['event_time'])) }}</span>
+              <span>
+                <a data-toggle="tooltip" data-toggle="tooltip" data-placement="right" title="Edit Event Date" data-name="{{ $row['event_time'] }}" id="{{ $row['id'] }}" class="edit_date icon-calendar"></a>
+              </span> 
+            @endif 
           </div>
         </div>
 

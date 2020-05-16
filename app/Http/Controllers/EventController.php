@@ -87,6 +87,23 @@ class EventController extends Controller
                   'published'=>$row->status
                 );
               }
+              else
+              {
+                $data[] = array(
+                  'type'=>0,
+                  'id'=>$row->id,
+                  'campaign_name' => $row->name,
+                  'event_time'=>'-',
+                  'sending' => '-',
+                  'sending_time' => '-',
+                  'label' => $row->label,
+                  'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                  'total_template' => 0,
+                  'total_message' => 0,
+                  'sent_message' => 0,
+                  'published' => $row->status
+                );
+              }
           } // ENDFOREACH
       }
 
