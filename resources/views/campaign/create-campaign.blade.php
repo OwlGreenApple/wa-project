@@ -347,7 +347,6 @@
   {
       var hday = '<input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" readonly />';
 
-
       if(val == 'event')
       {
 				var hplus = '<select name="day" class="form-control col-sm-7 float-left days delcols mr-3"><?php for($x=1;$x<=30;$x++) {
@@ -367,10 +366,21 @@
       }
       else if(val == 'auto'){
 				var hplus = '';
-        hplus += '<select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="day" class="form-control col-sm-7 float-left days delcols mr-3">';
-          for(x=1;x<=100;x++) {
-                hplus += "<option value="+x+">"+x+" days after event</option>";
+        var option = '';
+
+        for(x=1;x<=100;x++) {
+          if(x == 1)
+          {
+            option += "<option value="+x+">"+x+" day after registered</option>";
           }
+          else
+          {
+            option += "<option value="+x+">"+x+" days after registered</option>";
+          }
+        }
+
+        hplus += '<select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="day" class="form-control col-sm-7 float-left days delcols mr-3">';
+        hplus += option;
         hplus += '</select>';
         hplus +='<input name="hour" type="text" class="timepicker form-control col-sm-4 delcols" value="00:00" readonly />'
         ;
