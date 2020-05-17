@@ -46,7 +46,10 @@ class GetKey extends Command
 
     public function handle()
     {
-        $phoneNumber = PhoneNumber::where("filename","")->get();
+        $phoneNumber = PhoneNumber::
+												where("filename","")
+												->where("mode",1)
+												->get();
 
         foreach($phoneNumber as $row){
             $ret = json_decode(ApiHelper::get_key($row->phone_number),1);
