@@ -490,7 +490,6 @@ class SettingController extends Controller
 						);
 						return response()->json($data);
 					}
-					return $server->url;
 				}
 				$user = Auth::user();
         $counter = $this->checkIsPay();
