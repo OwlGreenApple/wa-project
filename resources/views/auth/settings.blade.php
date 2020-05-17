@@ -119,7 +119,7 @@
                 </div>
 
                 <div class="text-right">
-                  <button type="button" id="button-connect" class="btn btn-custom" <?php if ($is_registered) { echo "disabled"; } ?>>Connect</button>
+                  <button type="button" id="button-connect" class="btn btn-custom" <?php if ($is_registered) { echo "disabled"; } ?> data-attr="<?php if (session('mode')==0) { echo session("server_id"); }?>">Connect</button>
                 </div>
             </form>
 
