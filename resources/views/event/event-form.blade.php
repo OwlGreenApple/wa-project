@@ -97,11 +97,14 @@
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Message :
           <span class="tooltipstered" title="<div class='panel-heading'>Message</div><div class='panel-content'>
-            You can use this as 'Personalization field' <br>
-            [NAME] <br>
-            [PHONE] <br>
-            [WA] <br>
-            Do NOT use : % or & character on your message<br>
+						You can use this as 'Personalization field' <br>
+						[NAME] <br>
+						[PHONE] <br>
+						[EMAIL] <br>
+            Do NOT use : % or & character on your message<br><br>
+Please use Spintax in your message<br>
+example: {1|2|3} for 3 variations<br>
+use min 5 spintax variations is recommended	<br>
             </div>">
             <i class="fa fa-question-circle "></i>
           </span>
