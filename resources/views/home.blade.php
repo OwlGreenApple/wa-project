@@ -22,8 +22,8 @@
 <!-- NUMBER -->
 <div class="container">
   <div class="row justify-content-center act-tel-number">
-    <div class="col-center col-lg-3 act-tel-number-left bg-dashboard">{{ $lists }} <br/><small>Lists</small></div>
-    <div class="col-center col-lg-3 act-tel-number-right bg-dashboard">{{ $campaign }} <br/><small>Campaigns</small></div>
+    <div class="col-center col-lg-3 act-tel-number-left bg-dashboard"><a href="{{ url('lists') }}">{{ $lists }} <br/><small>Lists</small></a></div>
+    <div class="col-center col-lg-3 act-tel-number-right bg-dashboard"><a href="{{ url('campaign') }}">{{ $campaign }} <br/><small>Campaigns</small></a></div>
   </div>
 </div>
 

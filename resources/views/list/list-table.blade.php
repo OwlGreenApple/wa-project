@@ -44,7 +44,7 @@
   </div>
   @else
   <div class="bg-dashboard cardlist row">
-    Sorry, the page you're looking not available.
+    Sorry, you have not create any list.
   </div>
 @endif
 

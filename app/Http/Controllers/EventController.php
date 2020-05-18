@@ -29,6 +29,7 @@ class EventController extends Controller
     public function campaignLogic($search)
     {
       $userid = Auth::id();
+      $data = array();
 
       if($search == null)
       {
