@@ -47,7 +47,9 @@
             @elseif($row->status == 2)
               <span class="act-tel-apt-create">Phone Offline</span> 
             @elseif($row->status == 3)
-              <span class="act-tel-apt-create">Phone Not Available</span>
+              <span class="act-tel-apt-create">Number Not Found</span>
+						@elseif($rows->status == 5)
+							<span class="act-tel-apt-create">On Queue</span>
             @else
               <span class="act-tel-apt-create">Cancelled</span>
             @endif

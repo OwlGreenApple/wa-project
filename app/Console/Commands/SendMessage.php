@@ -74,6 +74,7 @@ class SendMessage extends Command
     /* BROADCAST */
     public function campaignBroadcast()
     {
+				$spintax = new Spintax;
         $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","customers.*","users.timezone","users.email")
           ->join('users','broad_casts.user_id','=','users.id')
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
@@ -113,6 +114,7 @@ class SendMessage extends Command
                 // if(!is_null($customers))
                 // {
                     $message = $this->replaceMessage($customer_message,$row->name,$row->email,$customer_phone);
+										$message = $spintax->process($message);  //spin text
                     $chat_id = $row->chat_id;  
                     $counter = $phoneNumber->counter;
                     $max_counter = $phoneNumber->max_counter;
@@ -180,7 +182,7 @@ class SendMessage extends Command
 														}
 													}
 												//}
-												sleep(3);
+												// sleep(3);
                         // $this->generateLog($number,$campaign,$id_campaign,$status);
                         $this->generateLog($number,$campaign,$id_campaign,$send_message);
                         $status = $this->getStatus($send_message,$phoneNumber->mode);
@@ -208,7 +210,7 @@ class SendMessage extends Command
                         $this->generateLog($number,$campaign,$id_campaign,$status);
                     }
                 // }
-                sleep(7);
+                sleep(mt_rand(5, 15));
             }//END LOOPING
 
         } // END BROADCAST 
@@ -217,6 +219,7 @@ class SendMessage extends Command
     /* AUTO RESPONDER */
     public function campaignAutoResponder()
     {
+				$spintax = new Spintax;
         // Reminder 
         // $current_time = Carbon::now();
         $reminder = Reminder::where([
@@ -291,7 +294,7 @@ class SendMessage extends Command
                 if($adding->lte($now) && $counter > 0)
                 {        
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
-
+										$message = $spintax->process($message);  //spin text
 										/*if ($col->useremail=="activomnicom@gmail.com") {
 											$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										}
@@ -320,7 +323,7 @@ class SendMessage extends Command
 											}
 										//}
 
-										sleep(3);
+										// sleep(3);
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
                     $status = 'Sent';
@@ -352,7 +355,7 @@ class SendMessage extends Command
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(7);
+                sleep(mt_rand(5, 15));
             }//END LOOPING
         }
     }
@@ -360,6 +363,7 @@ class SendMessage extends Command
     /* EVENT */
     public function campaignEvent()
     {
+					$spintax = new Spintax;
           $idr = null;
           $event = null;
           $today = Carbon::now();
@@ -447,7 +451,7 @@ class SendMessage extends Command
                   $id_reminder = $row->id_reminder;
                   
                   $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
-
+									$message = $spintax->process($message);  //spin text
 									/*if ($row->useremail=="activomnicom@gmail.com") {
 										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										if ($send_message) {
@@ -478,7 +482,7 @@ class SendMessage extends Command
 												}
 										}
 									// }
-									sleep(3);
+									// sleep(3);
                   $status =  $this->getStatus($send_message,$phoneNumber->mode);
                   $this->generateLog($number,$campaign,$id_campaign,$status);
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
@@ -505,7 +509,7 @@ class SendMessage extends Command
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(7);
+                sleep(mt_rand(5, 15));
               }//END FOR LOOP EVENT
           }
     }
@@ -514,6 +518,7 @@ class SendMessage extends Command
     /* Appointment */
     public function campaignAppointment()
     {
+					$spintax = new Spintax;
           $idr = null;
           $event = null;
           $today = Carbon::now();
@@ -605,6 +610,7 @@ class SendMessage extends Command
                   $status = 'Sent';
 
                   $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt);
+									$message = $spintax->process($message);  //spin text
                   $id_reminder = $row->id_reminder;
      
 									/*if ($row->useremail=="activomnicom@gmail.com") {
@@ -638,7 +644,7 @@ class SendMessage extends Command
 										}
 									// }
 
-									sleep(3);
+									// sleep(3);
                   $status =  $this->getStatus($send_message,$phoneNumber->mode);
                   $this->generateLog($number,$campaign,$id_campaign,$status);
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
@@ -658,7 +664,7 @@ class SendMessage extends Command
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(7);
+                sleep(mt_rand(5, 15));
               }//END FOR LOOP EVENT
           }
     }
