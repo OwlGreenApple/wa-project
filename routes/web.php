@@ -61,6 +61,11 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
 	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');//home.blade
 	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');*/
   Route::get('superadmin', 'AdminController@index');//home.blade
+  Route::get('configs', 'AdminController@config');
+  Route::get('status-server', 'AdminController@changeStatusServer');
+  Route::get('setupconfig', 'AdminController@setupConfig');
+  Route::post('save-config', 'AdminController@saveConfig');
+  Route::get('config-show', 'AdminController@displayConfig');
   Route::get('loginuser/{id_user}', 'AdminController@LoginUser');//home.blade
   Route::get('broadcast-admin','AdminController@BroadcastAdmin');
   Route::post('broadcast-user','AdminController@BroadcastUser');

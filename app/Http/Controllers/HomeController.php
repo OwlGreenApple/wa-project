@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
 use App\PhoneNumber;
+use App\Config;
 use App\Server;
 use App\UserList;
 use App\Customer;
@@ -65,13 +66,12 @@ class HomeController extends Controller
         $campaign = Campaign::where('user_id',$id)->get()->count();
         $contact = Customer::where('user_id',$id)->get()->count();
         $phone_number = PhoneNumber::where('user_id',$id)->first();
+        $server = Config::where('config_name','status_server')->first();
+        (!is_null($server))?$server_status = $server->value : $server_status = '-';
 
         if(!is_null($phone_number))
         {
           $phone_id = $phone_number->id;
-          $server = Server::where('phone_id',$phone_id)->first();
-          (!is_null($server))?$server_status = $server->status : $server_status = '-';
-
           if($phone_number->status == 2)
           {
             $phone_status = 'Connected';

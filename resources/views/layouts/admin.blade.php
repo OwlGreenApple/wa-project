@@ -115,6 +115,9 @@
                             </li>  
                             <li class="nav-item">
                               <a class="nav-link {{ (request()->is('country-code')) ? 'active' : '' }}" href="{{ url('country-code') }}">Insert Country</a>
+                            </li>  
+                            <li class="nav-item">
+                              <a class="nav-link {{ (request()->is('configs')) ? 'active' : '' }}" href="{{ url('configs') }}">Configs</a>
                             </li> 
                             <li class="nav-item">
                               <a class="nav-link {{ (request()->is('broadcast-admin')) ? 'active' : '' }}" href="{{ url('broadcast-admin') }}">Broadcast</a>

@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Database\QueryException;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
 use App\AdminSetting;
 use App\Countries;
+use App\Config;
 use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,13 +20,112 @@ class AdminController extends Controller
 
     public function index()
     {
-        $user = User::all();
-        return view('admin.admin',['data'=>$user]);
+      $user = User::all();
+      return view('admin.admin',['data'=>$user]);
     }
 
     public function LoginUser($id){
       Auth::loginUsingId($id, true);
       return redirect('home');
+    }
+
+    public function config()
+    {
+        return view('admin.configs');
+    }
+
+    public function setupConfig()
+    {
+        return view('admin.setconfig');
+    }
+
+    public function saveConfig(Request $request)
+    {
+        $config_name = $request->config_name;
+        $config_value = $request->config_value;
+        $update = $request->update;
+
+        if($update == null)
+        {
+          $config = new Config;
+          $config->config_name = $config_name;
+          $config->value = $config_value;
+
+          try {
+            $config->save();
+            $data['success'] = 1;
+            $data['msg'] = 'Config has been saved';
+          }
+          catch(QueryException $e)
+          {
+            $data['success'] = 0;
+            $data['msg'] = $e->getMessage();
+          }
+          return response()->json($data);
+        }
+        else 
+        {
+          $col = array(
+            'config_name'=>$config_name,
+            'value'=>$config_value,
+          );
+
+          try {
+              Config::where('id',$update)->update($col);
+              $data['success'] = 1;
+              $data['msg'] = 'Config has been edited';
+          }
+          catch(QueryException $e)
+          {
+            $data['success'] = 0;
+            $data['msg'] = $e->getMessage();
+          }
+          return response()->json($data);
+        }
+    }
+
+    public function displayConfig(Request $request)
+    {
+        if($request->superadmin == 0)
+        {
+            $panel = true;
+        }
+        else
+        {
+            $panel = false;
+        }
+        $configs = Config::orderBy('config_name','asc')->get();
+        return view('admin.config_table',['configs'=>$configs,'panel'=>$panel]);
+    }
+
+    public function changeStatusServer(Request $request)
+    {
+        $config_id = $request->id;
+        $status = $request->status;
+
+        if($status == 'maintenance')
+        {
+            $new_status = 'active';
+        }
+        else
+        {
+            $new_status = 'maintenance';
+        }
+        $config = Config::find($config_id);
+        $config->value = $new_status;
+
+        try{
+          $config->save();
+          $data['err'] = 0;
+          $data['msg'] = 'Server status has chnaged';
+        }
+        catch(QueryException $e)
+        {
+          $data['err'] = 1;
+          $data['msg'] = $e->getMessage();
+        }
+
+        return response()->json($data);
     }
 
     public function InsertCountry()
