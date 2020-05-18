@@ -2,7 +2,7 @@
   <thead class="bg-dashboard">
     <tr>
       <th class="text-center">No</th>
-      <th class="text-center">Day Send</th>
+      <!--<th class="text-center">Day Send</th>-->
       <th class="text-center">Time Send</th>
       <th class="text-center">Name Contact</th>
       <th class="text-center">WA Contact</th>
@@ -20,8 +20,8 @@
       @foreach($campaigns as $rows)
         <tr>
           <td class="text-center">{{ $x }}</td>
-          <td class="text-center">{{ $rows->day_send }}</td>
-          <td class="text-center">{{ $rows->hour_time }}</td>
+          <!--<td class="text-center">{{ $rows->day_send }}</td>-->
+          <td class="text-center">{{ $rows->updated_at }}</td>
           <td class="text-center">{{ $rows->name }}</td>
           <td class="text-center">{{ $rows->telegram_number }}</td>
           @if($active == 1)
