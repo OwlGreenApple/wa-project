@@ -573,7 +573,7 @@ class CampaignController extends Controller
         $campaigns = BroadCastCustomers::where([['broad_casts.campaign_id',$campaign_id],['broad_casts.user_id',$userid],['broad_cast_customers.status',$cond,$status]])
                   ->join('broad_casts','broad_casts.id','=','broad_cast_customers.broadcast_id')
                   ->join('customers','customers.id','=','broad_cast_customers.customer_id')
-                  ->select('customers.name','customers.telegram_number','broad_casts.day_send','broad_casts.hour_time','broad_cast_customers.id AS bcsid','broad_cast_customers.status')
+                  ->select('customers.name','customers.telegram_number','broad_casts.day_send','broad_casts.hour_time','broad_cast_customers.id AS bcsid','broad_cast_customers.status','broad_cast_customers.updated_at')
                   ->get();
 
         return $campaigns;

@@ -15,7 +15,7 @@ class PhoneNumber extends Model
 	0 -> Simi
 	1 -> Woowa
 	
-	if mode == 0 -> filename -> port
+	if mode == 0 -> filename -> ""
 	if mode == 1 -> filename -> key
   */
 	

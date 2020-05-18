@@ -483,6 +483,30 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
       
   </div>
 </div>
+  <!-- Modal Copy Script -->
+<div class="modal fade" id="copy-script" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modaltitle">
+          Copy Script
+        </h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        You have copied the script!
+      </div>
+      <div class="modal-footer" id="foot">
+        <button class="btn btn-primary" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+      
+  </div>
+</div>
 
 <!-- Modal Copy Link -->
 <div class="modal fade" id="display_attribute" role="dialog">
@@ -2122,7 +2146,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
 			document.execCommand("copy");
 			document.body.removeChild(tempInput);
 			
-			$('#copy-link').modal('show');
+			$('#copy-script').modal('show');
 		});
 	}
 		
