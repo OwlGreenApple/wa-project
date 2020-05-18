@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\User;
 use App\PhoneNumber;
+use App\Server;
 use App\UserList;
 use App\Customer;
 use App\Campaign;
@@ -63,6 +64,29 @@ class HomeController extends Controller
         $lists = UserList::where('user_id',$id)->get()->count();
         $campaign = Campaign::where('user_id',$id)->get()->count();
         $contact = Customer::where('user_id',$id)->get()->count();
+        $phone_number = PhoneNumber::where('user_id',$id)->first();
+
+        if(!is_null($phone_number))
+        {
+          $phone_id = $phone_number->id;
+          $server = Server::where('phone_id',$phone_id)->first();
+          (!is_null($server))?$server_status = $server->status : $server_status = '-';
+
+          if($phone_number->status == 2)
+          {
+            $phone_status = 'Connected';
+          }
+          else
+          {
+            $phone_status = 'Disconnected';
+          }
+          
+        }
+        else
+        {
+          $phone_status = '-';
+        }
+        
 
         $latest_list = DB::select('select * from lists where user_id ='.$id.' and DATE(created_at) > (NOW() - INTERVAL 7 DAY)');
         (count($latest_list) > 0)? $latest = '+'.count($latest_list) : $latest = count($latest_list);
@@ -104,6 +128,8 @@ class HomeController extends Controller
           'expired'=>Date("d M Y",strtotime($expired)),
           'status'=>$users->status,
           'quota'=>$max_counter,
+          'phone_status'=>$phone_status,
+          'server_status'=>$server_status,
         );
 
         return view('home',$data);

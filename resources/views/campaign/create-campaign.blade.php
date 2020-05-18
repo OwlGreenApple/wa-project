@@ -49,7 +49,7 @@
               <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio2" value="auto" />
               <span class="checkmark"></span>
             </label>
-            <label class="form-check-label" for="inlineRadio2">Auto Responder</label>
+            <label class="form-check-label" for="inlineRadio2">Auto Schedule</label>
           </div>
 
         <!--   @if(getMembership(Auth()->user()->membership) > 1) 
@@ -167,7 +167,7 @@
 						You can use this as 'Personalization field' <br>
 						[NAME] <br>
 						[PHONE] <br>
-						[WA] <br>
+						[EMAIL] <br>
             Do NOT use : % or & character on your message<br>
 						</div>">
 						<i class="fa fa-question-circle "></i>

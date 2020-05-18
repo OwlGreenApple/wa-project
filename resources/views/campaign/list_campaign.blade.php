@@ -6,7 +6,8 @@
 <div class="container act-tel-dashboard">
   <div class="act-tel-dashboard-left">
     <h2>List Users</h2>
-    <h4>Campaign Name : {{ $campaign_name }}</h4>
+    <h5>Campaign Name : {{ $campaign_name }}</h5>
+    <h5>List Name : {{ $list_name }}</h5>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -41,14 +42,17 @@
               <tr>
                 <th class="text-center">No</th>
                 @if($is_event == 1)
-                <th class="text-center">Date Event</th>
-                <th class="text-center">H</th>
+                  <th class="text-center">Date Event</th>
+                  <th class="text-center">H</th>
                 @endif
                 @if($is_event == 0)
-                <th class="text-center">H+</th>
+                  <th class="text-center">H+</th>
                 @endif
-                <th class="text-center">Name Contact</th>
-                <th class="text-center">WA Contact</th>
+                @if($active == 0)
+                  <th class="text-center">Date</th>
+                @endif
+                  <th class="text-center">Name Contact</th>
+                  <th class="text-center">WA Contact</th>
                 @if($active == 1)
                   <!-- <th class="text-center">Edit</th> -->
                   <th class="text-center">Delete</th>
@@ -71,6 +75,26 @@
     </div>
 </div>
 
+<!-- Modal open message -->
+  <div class="modal fade child-modal" id="campaign_message" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-header"><h3>Message :</h3></div>
+        <div class="modal-body">
+           <div id="display_message"></div>
+        </div>
+        <div class="modal-footer" id="foot">
+          <button class="btn btn-primary" data-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End Modal -->
+
 <script type="text/javascript">
   $(document).ready(function(){
     $('#datetimepicker').datetimepicker({
@@ -80,7 +104,17 @@
     display_broadcast_data();
     deleteCampaign();
     tableData();
+    openCampaignMessage();
   });
+
+  function openCampaignMessage()
+  {
+    $("body").on("click",".open_message",function(){
+      var message = $(this).attr('data-message')
+      $("#display_message").html(message);
+      $("#campaign_message").modal();
+    });
+  }
 
   function tableData()
   {

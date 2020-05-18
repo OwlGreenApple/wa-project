@@ -38,8 +38,8 @@
   @if(count($data) > 0)
     @include('event.event')
   @else
-    <div class="bg-dashboard cardlist row">
-      Sorry, the page you're currently page not available.
+    <div class="alert alert-info text-center">
+      Sorry, you haven't create any event.
     </div>
   @endif
 </div>

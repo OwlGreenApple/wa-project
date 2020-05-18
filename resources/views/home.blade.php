@@ -8,14 +8,16 @@
     <h2>DASHBOARD</h2>
   </div>
 
-  <div class="act-tel-dashboard-right">
+<!--   <div class="act-tel-dashboard-right">
     @if($status > 0)
       <div>Current plan : <b>{{ $membership }}</b></div>
       <div>Valid Until {{ $expired }}</div>
       <div>MESSAGES Quota {{ $quota }}</div>
+      <div>Phone Status : {{ $phone_status }}</div>
+      <div>Server Status : {{ $server_status }}</div>
       <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
     @endif
-  </div>
+  </div> -->
   <div class="clearfix"></div>
 </div>
 
@@ -24,6 +26,16 @@
   <div class="row justify-content-center act-tel-number">
     <div class="col-center col-lg-3 act-tel-number-left bg-dashboard"><a href="{{ url('lists') }}">{{ $lists }} <br/><small>Lists</small></a></div>
     <div class="col-center col-lg-3 act-tel-number-right bg-dashboard"><a href="{{ url('campaign') }}">{{ $campaign }} <br/><small>Campaigns</small></a></div>
+    <div class="col-center col-lg-3 account_status">
+       @if($status > 0)
+        <div>Current plan : <b>{{ $membership }}</b></div>
+        <div>Valid Until {{ $expired }}</div>
+        <div>MESSAGES Quota {{ $quota }}</div>
+        <div>Phone Status : {{ $phone_status }}</div>
+        <div>Server Status : {{ $server_status }}</div>
+        <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
+      @endif
+    </div>
   </div>
 </div>
 
