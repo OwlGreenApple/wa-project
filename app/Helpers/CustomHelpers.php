@@ -167,4 +167,25 @@ use Illuminate\Support\Facades\Storage;
       return $data;
    }
 
+   //  MESSAGE DELIVERY STATUS
+   function message_status($status)
+    {
+      if($status == 1)
+      {
+        return 'Success';
+      }
+      elseif($status == 2)
+      {
+        return '<span class="act-tel-apt-create">Phone Offline</span>';
+      }
+      elseif($status == 3)
+      {
+        return '<span class="act-tel-apt-create">Phone Not Available</span>';
+      }
+      else
+      {
+        return '<span class="act-tel-apt-create">Cancelled</span>';
+      }
+    }
+
 ?>
