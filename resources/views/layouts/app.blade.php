@@ -104,6 +104,9 @@
     <link href="{{ asset('/assets/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet" />
     <script type="text/javascript" src="{{ asset('/assets/select2/js/select2.min.js') }}"></script>
 
+    <!-- Canvas JS -->
+    <script type="text/javascript" src="{{ asset('canvasjs/canvasjs.min.js') }}"></script>
+
 </head>
 <body>
 

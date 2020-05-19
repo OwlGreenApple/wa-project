@@ -67,18 +67,33 @@ class HomeController extends Controller
         $contact = Customer::where('user_id',$id)->get()->count();
         $phone_number = PhoneNumber::where('user_id',$id)->first();
         $server = Config::where('config_name','status_server')->first();
-        (!is_null($server))?$server_status = $server->value : $server_status = '-';
+        
+        if(!is_null($server))
+        {
+          if($server->value == 'active')
+          {
+             $server_status = '<span class="span-connected">'.$server->value.'</span>'; 
+          }
+          else
+          {
+             $server_status = '<span class="down">'.$server->value.'</span>';
+          }
+        }
+        else
+        {
+          $server_status = '-';
+        } 
 
         if(!is_null($phone_number))
         {
           $phone_id = $phone_number->id;
           if($phone_number->status == 2)
           {
-            $phone_status = 'Connected';
+            $phone_status = '<span class="span-connected">Connected</span>';
           }
           else
           {
-            $phone_status = 'Disconnected';
+            $phone_status = '<span class="down">Disconnected</span>';
           }
           
         }
@@ -117,6 +132,58 @@ class HomeController extends Controller
             $max_counter = number_format($phone->max_counter);
         }
 
+        // STATISTIC
+
+        //LIST
+        $graphlist = Customer::where('user_id',$id)->select(DB::raw('COUNT(DATE_FORMAT(created_at,"%Y-%m-%d")) AS total_contacts,DATE_FORMAT(created_at,"%Y-%m-%d") AS join_date'))->groupBy('join_date')->orderBy('join_date','asc');
+
+        $total_graphic = $graphlist->get()->count() - 30;
+
+        if($total_graphic < 30)
+        {
+          $graph_contacts = $graphlist->get();
+        }
+        else
+        {
+          $graph_contacts = $graphlist->skip($total_graphic)->take(30)->get();
+        }
+
+        $graph_list = array();
+        if($graph_contacts->count() > 0)
+        {
+          foreach($graph_contacts as $row)
+          {
+            $graph_list[$row->join_date] = $row->total_contacts;
+          }
+        }
+
+        //MESSAGE
+        $graph_broadcast_message = BroadCastCustomers::where([['broad_casts.user_id',$id],['broad_cast_customers.status','>',0]])
+          ->join('broad_casts','broad_casts.id','=','broad_cast_customers.broadcast_id')
+          ->select(DB::raw('COUNT(DATE_FORMAT(broad_cast_customers.updated_at,"%Y-%m-%d")) AS total_messages,DATE_FORMAT(broad_cast_customers.updated_at,"%Y-%m-%d") AS date_send'))->groupBy('date_send')->orderBy('date_send','asc');
+
+        $graph_message = ReminderCustomers::where([['user_id',$id],['status','>',0]])->select(DB::raw('COUNT(DATE_FORMAT(updated_at,"%Y-%m-%d")) AS total_messages,DATE_FORMAT(updated_at,"%Y-%m-%d") AS date_send'))->union($graph_broadcast_message)->groupBy('date_send')->orderBy('date_send','asc');
+
+        $total_send_message = $graph_message->get()->count() - 30;
+
+        if($total_send_message < 30)
+        {
+          $graph_send = $graph_message->get();
+        }
+        else
+        {
+          $graph_send = $graph_message->skip($total_send_message)->take(30)->get();
+        }
+
+        $graph_send_message = array();
+        if($graph_send->count() > 0)
+        {
+          foreach($graph_send as $row)
+          {
+            $graph_send_message[$row->date_send] = $row->total_messages;
+          }
+        }
+
         $data = array(
           'lists'=>$lists,
           'latest_lists'=>$latest,
@@ -130,6 +197,8 @@ class HomeController extends Controller
           'quota'=>$max_counter,
           'phone_status'=>$phone_status,
           'server_status'=>$server_status,
+          'graph_contacts'=>$graph_list,
+          'graph_messages'=>$graph_send_message
         );
 
         return view('home',$data);

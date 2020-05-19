@@ -31,8 +31,8 @@
         <div>Current plan : <b>{{ $membership }}</b></div>
         <div>Valid Until {{ $expired }}</div>
         <div>MESSAGES Quota {{ $quota }}</div>
-        <div>Phone Status : {{ $phone_status }}</div>
-        <div>Server Status : {{ $server_status }}</div>
+        <div>Phone Status : {!! $phone_status !!}</div>
+        <div>Server Status : {!! $server_status !!}</div>
         <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
       @endif
     </div>
@@ -64,7 +64,8 @@
       </div>
 
       <div class="col-md-7 act-tel-bg-list">
-        <!-- sec column -->
+        <!-- new contact list per day -->
+        <div id="user-charts" style="height: 300px; width: 100%;"></div>
       </div>
     </div>
 
@@ -98,7 +99,8 @@
       </div>
 
       <div class="col-md-7 act-tel-bg-list">
-        <!-- sec column -->
+        <!-- Total message sent -->
+        <div id="message-charts" style="height: 200px; width: 100%;"></div>
       </div>
     </div>
 
@@ -131,6 +133,70 @@
   $(document).ready(function(){
     checkPhone();
   });
+
+  window.onload = function () 
+  {
+    /** TOTAL CONTACTS ADDING PER DAY **/
+    var contacts = [];
+    $.each(<?php echo json_encode($graph_contacts);?>, function( i, item ) {
+        contacts.push({'x': new Date(i), 'y': item});
+    });
+
+    var chart = new CanvasJS.Chart("user-charts", {
+      animationEnabled: true,
+      theme: "light2",
+      title:{
+        text: "Total registered users in 30 days",
+        fontFamily: "Nunito,sans-serif",
+        fontSize : 18
+      },
+      axisY: {
+          titleFontFamily: "Nunito,sans-serif",
+          titleFontSize : 14,
+          title : "Total registered users",
+          titleFontColor: "#b7b7b7",
+          includeZero: false
+      },
+      data: [{        
+        type: "line",       
+        dataPoints: contacts,
+        color : "#2cb06a"
+      }]
+    });
+    chart.render();
+    //{x : new Date('2019-12-04'), y: 520, indexLabel: "highest",markerColor: "red", markerType: "triangle" },
+
+    /** TOTAL SENT MESSAGE PER DAY **/
+
+    var sends = [];
+    $.each(<?php echo json_encode($graph_messages);?>, function( i, item ) {
+        sends.push({'x': new Date(i), 'y': item});
+    });
+
+    var chart_message = new CanvasJS.Chart("message-charts", {
+      animationEnabled: true,
+      theme: "light2",
+      title:{
+        text: "Total Message Sent in 30 Days",
+        fontFamily: "Nunito,sans-serif"
+      },
+      axisY: {
+          titleFontFamily: "Nunito,sans-serif",
+          titleFontSize : 14,
+          title : "Total Message sent",
+          titleFontColor: "#b7b7b7",
+          includeZero: false
+      },
+      data: [{        
+        type: "line",       
+        dataPoints: sends,
+        color : "#f99f1b"
+      }]
+    });
+    chart_message.render();
+    //{x : new Date('2019-12-04'), y: 520, indexLabel: "highest",markerColor: "red", markerType: "triangle" },
+  }
+
 
   function checkPhone() {
       $.ajax({
