@@ -13,6 +13,7 @@ use App\User;
 use App\Order;
 use App\Server;
 use App\PhoneNumber;
+use App\Config;
 use App\Rules\TelNumber;
 use App\Rules\AvailablePhoneNumber;
 use App\Helpers\ApiHelper;
@@ -83,7 +84,44 @@ class SettingController extends Controller
 					session(['mode'=>1]);
 				}
 			}
-		
+
+      $phone_number = PhoneNumber::where('user_id',$user->id)->first();
+      $server = Config::where('config_name','status_server')->first();
+      
+      if(!is_null($server))
+      {
+        if($server->value == 'active')
+        {
+           $server_status = '<span class="span-connected">'.$server->value.'</span>'; 
+        }
+        else
+        {
+           $server_status = '<span class="down">'.$server->value.'</span>';
+        }
+      }
+      else
+      {
+        $server_status = '-';
+      } 
+
+      if(!is_null($phone_number))
+      {
+        $phone_id = $phone_number->id;
+        if($phone_number->status == 2)
+        {
+          $phone_status = '<span class="span-connected">Connected</span>';
+        }
+        else
+        {
+          $phone_status = '<span class="down">Disconnected</span>';
+        }
+        
+      }
+      else
+      {
+        $phone_status = '-';
+      }
+    
       return view('auth.settings',[
         'user'=>$user,
         'is_registered'=>$is_registered,
@@ -91,7 +129,9 @@ class SettingController extends Controller
         'expired'=>Date('d M Y',strtotime($expired)),
         'user_timezone'=>$user_timezone,
         'mod'=>$mod,
-        'quota'=>$max_counter
+        'quota'=>$max_counter,
+        'phone_status'=>$phone_status,
+        'server_status'=>$server_status,
       ]);
     }
 
