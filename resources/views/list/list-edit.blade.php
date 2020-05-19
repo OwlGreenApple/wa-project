@@ -2195,7 +2195,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
 			// tempInput.select();
 			// document.execCommand("copy");
 			// document.body.removeChild(tempInput);
-			copyToClipboard($("#text-google-script"));
+			copyToClipboard(document.getElementById("text-google-script"));
 			$('#copy-script').modal('show');
 		});
 	}
