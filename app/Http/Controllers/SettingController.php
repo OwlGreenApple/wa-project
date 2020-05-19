@@ -597,6 +597,8 @@ class SettingController extends Controller
 				$server->status = 0;
 				$server->save();
 				
+				$phoneNumber->delete();
+				
 				$arr['status'] = 'success';
 				$arr['message'] = "The phone number has been deleted";
 				return $arr;

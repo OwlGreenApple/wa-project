@@ -52,7 +52,7 @@
       </div>
   </nav>-->
 
-  <main class="py-4">
+  <main class="p-5">
 
     <div class="container">
         <div class="row justify-content-center">
