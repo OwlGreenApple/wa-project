@@ -154,7 +154,7 @@
           
           <div class="form-group text-left">
               <label>COPY / PASTE on your Site&nbsp;&nbsp;<a class="structure-form"><span class="icon-copy"></span></a></label>
-              <textarea class="form-control" id="structure-form" readonly="readonly"><iframe src="{{url($listname)}}" style="border:0px #ffffff none;" name="myiFrame" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="600px" width="900px" allowfullscreen></iframe></textarea>
+              <textarea class="form-control" id="structure-form" readonly="readonly"><iframe src="{{url($listname)}}" style="border:0px;" name="myiFrame" scrolling="no" marginheight="0px" marginwidth="0px" height="600px" width="900px" allowfullscreen allowtransparency="true"></iframe></textarea>
           </div>
         </div>
         <!-- end last wrapper -->
