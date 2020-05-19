@@ -180,7 +180,7 @@
           @csrf
 
           <div class="form-group mt-3">
-            <textarea name="" id="text-google-script" class="form-control custom-form text-left" rows="15">function init() {
+            <textarea name="" id="text-google-script" class="form-control custom-form text-left" rows="25">function init() {
 	list_name ="{{$data['list_name']}}";
 	myFunctionpost(list_name);
 }
@@ -2136,16 +2136,66 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
       });
   }
 
+	function copyToClipboard(elem) {
+			// create hidden text element, if it doesn't already exist
+			var targetId = "_hiddenCopyText_";
+			var isInput = elem.tagName === "INPUT" || elem.tagName === "TEXTAREA";
+			var origSelectionStart, origSelectionEnd;
+			if (isInput) {
+					// can just use the original source element for the selection and copy
+					target = elem;
+					origSelectionStart = elem.selectionStart;
+					origSelectionEnd = elem.selectionEnd;
+			} else {
+					// must use a temporary form element for the selection and copy
+					target = document.getElementById(targetId);
+					if (!target) {
+							var target = document.createElement("textarea");
+							target.style.position = "absolute";
+							target.style.left = "-9999px";
+							target.style.top = "0";
+							target.id = targetId;
+							document.body.appendChild(target);
+					}
+					target.textContent = elem.textContent;
+			}
+			// select the content
+			var currentFocus = document.activeElement;
+			target.focus();
+			target.setSelectionRange(0, target.value.length);
+			
+			// copy the selection
+			var succeed;
+			try {
+					succeed = document.execCommand("copy");
+			} catch(e) {
+					succeed = false;
+			}
+			// restore original focus
+			if (currentFocus && typeof currentFocus.focus === "function") {
+					currentFocus.focus();
+			}
+			
+			if (isInput) {
+					// restore prior selection
+					elem.setSelectionRange(origSelectionStart, origSelectionEnd);
+			} else {
+					// clear temporary content
+					target.textContent = "";
+			}
+			return succeed;
+	}
+	
 	function buttonGenerateGoogleScript(){
 		$("body").on("click","#btn-generate",function(e){
-			var tempInput = document.createElement("input");
-			tempInput.style = "position: absolute; left: -1000px; top: -1000px";
-			tempInput.value = $("#text-google-script").html();
-			document.body.appendChild(tempInput);
-			tempInput.select();
-			document.execCommand("copy");
-			document.body.removeChild(tempInput);
-			
+			// var tempInput = document.createElement("input");
+			// tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+			// tempInput.value = $("#text-google-script").html();
+			// document.body.appendChild(tempInput);
+			// tempInput.select();
+			// document.execCommand("copy");
+			// document.body.removeChild(tempInput);
+			copyToClipboard($("#text-google-script"));
 			$('#copy-script').modal('show');
 		});
 	}
