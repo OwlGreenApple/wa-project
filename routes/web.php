@@ -54,6 +54,19 @@ Route::get('history-order', 'HomeController@historyOrder');
 /* User Customer */
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
+/* Admin Woowa*/
+Route::group(['middleware'=>['auth','web','is_admin_woowa']],function(){
+  Route::get('/list-woowa',function(){
+    return view('admin.list-woowa.index');
+  });
+  Route::get('/list-woowa/load-woowa','Admin\OrderController@load_woowa');
+
+  Route::get('/list-invoice',function(){
+    return view('admin.list-woowa-invoice.index');
+  });
+  Route::get('/list-invoice/load','Admin\OrderController@load_invoice');
+});
+	
 /* Admin */
 Route::group(['middleware'=>['auth','web','is_admin']],function(){
 	/*Route::get('sendingrate', 'AdminController@SendingRate');
@@ -95,12 +108,6 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
   });
   Route::get('/list-order/load-order','Admin\OrderController@load_list_order');
   Route::get('/list-order/confirm','Admin\OrderController@confirm_order');
-  
-  //admin Woowa
-  Route::get('/list-woowa',function(){
-    return view('admin.list-woowa.index');
-  });
-  Route::get('/list-woowa/load-woowa','Admin\OrderController@load_woowa');
   
   //list phone
   Route::get('/list-phone',function(){

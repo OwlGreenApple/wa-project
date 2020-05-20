@@ -148,5 +148,17 @@ class WooWAController extends Controller
   }
 
   
+  public function load_invoice(Request $request){
+    //halaman list order admin
+    $orders = Order::join(env('DB_DATABASE').'.users','orders.user_id','users.id')  
+                ->select('orders.*','users.email')
+                ->orderBy('created_at','descend')
+                ->get();
+    $arr['view'] = (string) view('admin.list-woowa.content')
+                      ->with('orders',$orders);
+    return $arr;
+  }
+  
+
 /* end class */
 }

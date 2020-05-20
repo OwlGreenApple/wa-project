@@ -65,7 +65,9 @@
     <script type="text/javascript" src="{{ asset('/canvasjs/canvasjs.min.js') }}"></script>
 </head>
 <body>
-
+		<?php 
+		$user = Auth::user();
+		?>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -95,6 +97,7 @@
                                 </li>
                             @endif
                         @else
+													@if ($user->is_admin == 1)
                             <li class="nav-item">
                               <a class="nav-link {{ (request()->is('home')) ? 'active' : '' }}" href="{{ url('home') }}">User Page</a>
                             </li> 
@@ -108,9 +111,6 @@
                               <a class="nav-link {{ (request()->is('list-coupon')) ? 'active' : '' }}" href="{{ url('list-coupon') }}">Coupon</a>
                             </li> 
                             <li class="nav-item">
-                              <a class="nav-link {{ (request()->is('list-woowa')) ? 'active' : '' }}" href="{{ url('list-woowa') }}">WooWA</a>
-                            </li> 
-                            <li class="nav-item">
                               <a class="nav-link {{ (request()->is('list-phone')) ? 'active' : '' }}" href="{{ url('list-phone') }}">Phone</a>
                             </li>  
                             <li class="nav-item">
@@ -121,10 +121,19 @@
                             </li> 
                             <li class="nav-item">
                               <a class="nav-link {{ (request()->is('broadcast-admin')) ? 'active' : '' }}" href="{{ url('broadcast-admin') }}">Broadcast</a>
+                            </li>
+													@endif
+													@if ( ($user->is_admin == 1) or ($user->is_admin == 2) )
+                            <li class="nav-item">
+                              <a class="nav-link {{ (request()->is('list-woowa')) ? 'active' : '' }}" href="{{ url('list-woowa') }}">WooWA order</a>
                             </li> 
+                            <li class="nav-item">
+                              <a class="nav-link {{ (request()->is('list-woowa')) ? 'active' : '' }}" href="{{ url('list-woowa') }}">WooWA Invoice</a>
+                            </li> 
+													@endif
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                    {{ $user->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">

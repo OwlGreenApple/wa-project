@@ -60,7 +60,7 @@ class LoginController extends Controller
             return redirect('list-user');
         }
         if ( $user->is_admin  == 2) {// Halaman woowa
-            // return redirect('list-user');
+            return redirect('list-woowa');
         }
     }
 
