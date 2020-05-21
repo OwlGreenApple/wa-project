@@ -34,10 +34,295 @@ class CampaignController extends Controller
     public function index()
     {
       $userid = Auth::id();
+      $data = array();
       $lists = UserList::where('user_id',$userid)->get();
 
       $data['lists'] = $lists;
       return view('campaign.campaign',$data);
+    }
+
+    public function searchCampaign(Request $request)
+    {
+        $userid = Auth::id();
+        $search = $request->search;
+        $type = $request->type;
+        $start = $request->start;
+
+        if(!is_numeric($start))
+        {
+          $start = 0;
+        }
+
+        $data = array();
+
+        if($search == null && $type == null)
+        {
+         /* if(getMembership(Auth()->user()->membership) > 1)
+          {
+            $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
+                      ->join('lists','lists.id','=','campaigns.list_id')
+                      ->orderBy('campaigns.id','desc')
+                      ->select('campaigns.*','lists.label')
+                      ->get();
+          }
+          else
+          {*/
+            $campaign = Campaign::where('campaigns.user_id',$userid)
+                      ->whereIn('campaigns.type',[1,2])
+                      ->join('lists','lists.id','=','campaigns.list_id')
+                      ->orderBy('campaigns.id','desc')
+                      ->select('campaigns.*','lists.label')
+                      ->get();
+          // }
+        }
+        elseif($type <> null)
+        { 
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',$type]])
+                      ->join('lists','lists.id','=','campaigns.list_id')
+                      ->orderBy('campaigns.id','desc')
+                      ->select('campaigns.*','lists.label')
+                      ->get();
+        }
+        else
+        {
+         /* if(getMembership(Auth()->user()->membership) > 1)
+          {
+            $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['campaigns.type','<',3]]);
+          }
+          else
+          {*/
+            $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',[1,2]); 
+          // }
+
+          $campaign->join('lists','lists.id','=','campaigns.list_id')
+          ->orderBy('campaigns.id','desc')
+          ->select('campaigns.*','lists.label')
+          ->get();
+        }
+
+        if($campaign->count() > 0)
+        {
+            foreach($campaign as $row)
+            {
+                if($row->type == 2) 
+                {
+                  $broadcast = BroadCast::where('campaign_id',$row->id)->first();
+                  $list_id = $row->list_id;
+                  $lists = UserList::find($list_id);
+                  
+                  if(!is_null($lists))
+                  {
+                      $label = $lists->label;
+                  }
+                  else 
+                  {
+                      $label = null;
+                  }
+
+                  $total_message = $this->broadcastCampaign($row->id,'=',0)->count();
+                  $total_delivered = $this->broadcastCampaign($row->id,'>',0)->count();
+
+                  $data[] = array(
+                      'type'=>2,
+                      'id'=>$broadcast->id,
+                      'campaign_id'=>$row->id,
+                      'campaign' => $row->name,
+                      'campaign_status' => $row->status,
+                      'date_send' => $broadcast->day_send,
+                      'day_send' => Date('M d, Y',strtotime($broadcast->day_send)),
+                      'sending' => Date('H:i',strtotime($broadcast->hour_time)),
+                      'label' => $label,
+                      'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                      'total_message' => $total_message,
+                      'sent_message' => $total_delivered,
+                      'messages' => $broadcast->message,
+                  );
+                }
+                else //REMINDER
+                {
+                    if($row->type == 0)
+                    {
+                        $reminder = Reminder::where([['campaign_id',$row->id],['is_event',1],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
+
+                        $total_message = $this->campaignsLogic($row->id,$userid,1,'=',0);
+                        $total_delivered = $this->campaignsLogic($row->id,$userid,1,'>',0);
+                    }
+                    else
+                    {           
+                        $reminder = Reminder::where([['campaign_id',$row->id],['is_event',0],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
+
+                        $total_message = $this->campaignsLogic($row->id,$userid,0,'=',0); 
+                        $total_delivered = $this->campaignsLogic($row->id,$userid,0,'>',0);
+                    } 
+
+                    if(!is_null($reminder))
+                    {
+                        $days = (int)$reminder->days;
+                        $total_template = Reminder::where('campaign_id',$row->id)->get()->count();
+
+                        if($row->type == 0)
+                        {
+                          // EVENT
+                          if($days < 0){
+                            $abs = abs($days);
+                              $event_time = Carbon::parse($reminder->event_time)->subDays($abs);
+                            }
+                          else
+                          {
+                              $event_time = Carbon::parse($reminder->event_time)->addDays($days);
+                          }
+
+                          $data[] = array(
+                            'type'=>0,
+                            'id'=>$row->id,
+                            'campaign_name'=>$row->name,
+                            'sending'=>Date('M d, Y',strtotime($event_time)),
+                            'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
+                            'label'=>$row->label,
+                            'created_at'=>Date('M d, Y',strtotime($row->created_at)),
+                            'total_template' => $total_template,
+                            'total_message' => $total_message->count(),
+                            'sent_message' => $total_delivered->count()
+                          );
+                        }
+                        else
+                        {
+                          // AUTORESPONDER
+                          if($days > 1)
+                          {
+                              $message = 'Days from after Subscribed';
+                          }
+                          else{
+                              $message = 'Day from after Subscribed';
+                          }
+                          $data[] = array(
+                            'type'=>1,
+                            'id'=>$row->id,
+                            'campaign_name' => $row->name,
+                            'sending' => $days.' '.$message,
+                            'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
+                            'label' => $row->label,
+                            'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                            'total_template' => $total_template,
+                            'total_message' => $total_message->count(),
+                            'sent_message' => $total_delivered->count()
+                          );
+                        }
+                    }
+                    else
+                    {
+                      // IF REMINDER IS EMPTY
+                      ($row->type == 0)?$type = 0 : $type = 1;
+                      
+                      $data[] = array(
+                        'type'=>$type,
+                        'id'=>$row->id,
+                        'campaign_name' => $row->name,
+                        'sending' => '-',
+                        'sending_time' => '-',
+                        'label' => $row->label,
+                        'created_at' => Date('M d, Y',strtotime($row->created_at)),
+                        'total_message' => 0,
+                        'sent_message' => 0,
+                        'total_template' => 0
+                      );
+                    }
+
+                } //END IF CAMPAIGN
+
+            }//ENDFOREACH
+        }
+
+        //PAGINATION
+
+        if(!is_numeric($request->page))
+        {
+          $currentPage = 1;
+        }
+        else
+        {
+          $currentPage = $request->page;
+        }
+
+        $take = 5; // please do not use 1 to fill take, because this code still little flaw
+        $startPage = $currentPage - $take;
+
+        $total_page = count($data);
+        $pagination = array();
+
+        $pageLength = $total_page / $take;
+        $pageModulus = $total_page % $take;
+        $pageLength = (int)$pageLength;
+        $diff = $take - 1;
+
+        if($pageModulus > 0)
+        {
+          $pageLength = $pageLength + 1;
+        }
+
+        // START LOGIC
+        if($startPage < 0)
+        {
+          $startPage = 1;
+          $endPage = $take;
+        }
+        else
+        {
+          $currentModulus = $currentPage % $take;  
+
+          if($currentModulus == 0)
+          {
+              $startPage = $currentPage + 1;
+              $endPage = $currentPage + $take;
+          }
+
+          if($currentModulus == 0 && $currentPage == $pageLength)
+          {
+              echo 'yy';
+              $startPage = $currentPage - $diff;
+              $endPage = $currentPage;
+          }
+
+          if($currentModulus == 1)
+          {
+              $startPage = $currentPage - $take;
+          }
+
+          if($currentModulus == 1 && $startPage == 1)
+          {
+             $endPage = $startPage + $take - 1;
+          }
+
+          if($currentModulus == 1 && $startPage > 1)
+          {
+             $endPage = $startPage + $diff;
+          }
+
+          if($currentModulus > 1)
+          {
+            $getModulusDiff = $currentModulus - 1;
+            $startPage = $currentPage - $getModulusDiff;
+            $endPage = $startPage + $diff;
+          }
+
+        } // END START LOGIC
+
+        if($endPage > $pageLength)
+        {
+          $endPage = $pageLength;
+        }
+
+        if($total_page > $take)
+        {
+          for($no=$startPage;$no<=$endPage;$no++)
+          {
+            $arr_page = ($no - 1) * $take;
+            $pagination[] = '<a class="paging" id="'.$arr_page.'">'.$no.'</a>';
+          }
+        }
+
+        return view('campaign.campaign-search',['data'=>array_slice($data,$start,$take),'paginate'=>$pagination]);
+        // return view('campaign.campaign-search',['data'=>$data,'paginate'=>$pagination]);
     }
 
     public function sendTestMessage(Request $request) 
@@ -348,194 +633,6 @@ class CampaignController extends Controller
       $data['published'] = $campaign->status;
       $data['date_event'] = $reminder->event_time;
       return view('event.add-message-event',$data);
-    }
-
-    public function searchCampaign(Request $request)
-    {
-        $userid = Auth::id();
-        $search = $request->search;
-        $type = $request->type;
-        $data = array();
-
-        if($search == null && $type == null)
-        {
-         /* if(getMembership(Auth()->user()->membership) > 1)
-          {
-            $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','<',3]])
-                      ->join('lists','lists.id','=','campaigns.list_id')
-                      ->orderBy('campaigns.id','desc')
-                      ->select('campaigns.*','lists.label')
-                      ->get();
-          }
-          else
-          {*/
-            $campaign = Campaign::where('campaigns.user_id',$userid)
-                      ->whereIn('campaigns.type',[1,2])
-                      ->join('lists','lists.id','=','campaigns.list_id')
-                      ->orderBy('campaigns.id','desc')
-                      ->select('campaigns.*','lists.label')
-                      ->get();
-          // }
-        }
-        elseif($type <> null)
-        { 
-          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',$type]])
-                      ->join('lists','lists.id','=','campaigns.list_id')
-                      ->orderBy('campaigns.id','desc')
-                      ->select('campaigns.*','lists.label')
-                      ->get();
-        }
-        else
-        {
-         /* if(getMembership(Auth()->user()->membership) > 1)
-          {
-            $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['campaigns.type','<',3]]);
-          }
-          else
-          {*/
-            $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',[1,2]); 
-          // }
-
-          $campaign->join('lists','lists.id','=','campaigns.list_id')
-          ->orderBy('campaigns.id','desc')
-          ->select('campaigns.*','lists.label')
-          ->get();
-        }
-
-        if($campaign->count() > 0)
-        {
-            foreach($campaign as $row)
-            {
-                if($row->type == 2) 
-                {
-                  $broadcast = BroadCast::where('campaign_id',$row->id)->first();
-                  $list_id = $row->list_id;
-                  $lists = UserList::find($list_id);
-                  
-                  if(!is_null($lists))
-                  {
-                      $label = $lists->label;
-                  }
-                  else 
-                  {
-                      $label = null;
-                  }
-
-                  $total_message = $this->broadcastCampaign($row->id,'=',0)->count();
-                  $total_delivered = $this->broadcastCampaign($row->id,'>',0)->count();
-
-                  $data[] = array(
-                      'type'=>2,
-                      'id'=>$broadcast->id,
-                      'campaign_id'=>$row->id,
-                      'campaign' => $row->name,
-                      'campaign_status' => $row->status,
-                      'date_send' => $broadcast->day_send,
-                      'day_send' => Date('M d, Y',strtotime($broadcast->day_send)),
-                      'sending' => Date('H:i',strtotime($broadcast->hour_time)),
-                      'label' => $label,
-                      'created_at' => Date('M d, Y',strtotime($row->created_at)),
-                      'total_message' => $total_message,
-                      'sent_message' => $total_delivered,
-                      'messages' => $broadcast->message,
-                  );
-                }
-                else //REMINDER
-                {
-                    if($row->type == 0)
-                    {
-                        $reminder = Reminder::where([['campaign_id',$row->id],['is_event',1],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
-
-                        $total_message = $this->campaignsLogic($row->id,$userid,1,'=',0);
-                        $total_delivered = $this->campaignsLogic($row->id,$userid,1,'>',0);
-                    }
-                    else
-                    {           
-                        $reminder = Reminder::where([['campaign_id',$row->id],['is_event',0],['tmp_appt_id','=',0]])->join('lists','lists.id','=','reminders.list_id')->select('reminders.*','lists.label','lists.created_at')->first();
-
-                        $total_message = $this->campaignsLogic($row->id,$userid,0,'=',0); 
-                        $total_delivered = $this->campaignsLogic($row->id,$userid,0,'>',0);
-                    } 
-
-                    if(!is_null($reminder))
-                    {
-                        $days = (int)$reminder->days;
-                        $total_template = Reminder::where('campaign_id',$row->id)->get()->count();
-
-                        if($row->type == 0)
-                        {
-                          // EVENT
-                          if($days < 0){
-                            $abs = abs($days);
-                              $event_time = Carbon::parse($reminder->event_time)->subDays($abs);
-                            }
-                          else
-                          {
-                              $event_time = Carbon::parse($reminder->event_time)->addDays($days);
-                          }
-
-                          $data[] = array(
-                            'type'=>0,
-                            'id'=>$row->id,
-                            'campaign_name'=>$row->name,
-                            'sending'=>Date('M d, Y',strtotime($event_time)),
-                            'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
-                            'label'=>$row->label,
-                            'created_at'=>Date('M d, Y',strtotime($row->created_at)),
-                            'total_template' => $total_template,
-                            'total_message' => $total_message->count(),
-                            'sent_message' => $total_delivered->count()
-                          );
-                        }
-                        else
-                        {
-                          // AUTORESPONDER
-                          if($days > 1)
-                          {
-                              $message = 'Days from after Subscribed';
-                          }
-                          else{
-                              $message = 'Day from after Subscribed';
-                          }
-                          $data[] = array(
-                            'type'=>1,
-                            'id'=>$row->id,
-                            'campaign_name' => $row->name,
-                            'sending' => $days.' '.$message,
-                            'sending_time' => Date('H:i',strtotime($reminder->hour_time)),
-                            'label' => $row->label,
-                            'created_at' => Date('M d, Y',strtotime($row->created_at)),
-                            'total_template' => $total_template,
-                            'total_message' => $total_message->count(),
-                            'sent_message' => $total_delivered->count()
-                          );
-                        }
-                    }
-                    else
-                    {
-                      // IF REMINDER IS EMPTY
-                      ($row->type == 0)?$type = 0 : $type = 1;
-                      
-                      $data[] = array(
-                        'type'=>$type,
-                        'id'=>$row->id,
-                        'campaign_name' => $row->name,
-                        'sending' => '-',
-                        'sending_time' => '-',
-                        'label' => $row->label,
-                        'created_at' => Date('M d, Y',strtotime($row->created_at)),
-                        'total_message' => 0,
-                        'sent_message' => 0,
-                        'total_template' => 0
-                      );
-                    }
-
-                } //END IF CAMPAIGN
-
-            }//ENDFOREACH
-        }
-
-        return view('campaign.campaign-search',['data'=>$data]);
     }
 
     public function campaignsLogic($campaign_id,$userid,$is_event,$cond,$status)

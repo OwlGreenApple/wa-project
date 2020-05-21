@@ -31,7 +31,7 @@
 <div class="container">
   <div class="act-tel-tab">
       <div class="col-lg-12" id="display_list">
-        @if(count($lists) > 0)
+        @if($lists->count() > 0)
           @include('list.list-table')
         @else
           <div class="bg-dashboard cardlist row">

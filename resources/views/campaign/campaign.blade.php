@@ -303,6 +303,7 @@
       editBroadcast();
       saveEditBroadcast(); 
       publishDraftBroadcast();
+      pagingButton();
       displayResult();
       displayCampaign();
       delBroadcast();
@@ -681,12 +682,22 @@
       });
   }
 
-  function displayResult(query,type)
+  function pagingButton()
+  {
+    $("body").on("click",".paging",function(){
+        var start_data = $(this).attr('id');
+        var current_page = $(this).text();
+        displayResult(null,null,start_data,current_page);
+        // console.log(current_page);
+    });
+  }
+
+  function displayResult(query,type,start,current_page)
   {
     $.ajax({
       type : 'GET',
       url : '{{ url("search-campaign") }}',
-      data : {'search' : query, 'type':type},
+      data : {'search' : query, 'type':type, 'start':start, 'page':current_page},
       dataType : 'html',
       beforeSend: function()
       {

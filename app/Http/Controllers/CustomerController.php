@@ -391,6 +391,7 @@ class CustomerController extends Controller
         return response()->json($data);
     }
 
+    // redirect page
 
     public function link_activate($list_name,$customer_id)
     {
