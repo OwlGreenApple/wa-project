@@ -167,10 +167,10 @@ class RegisterController extends Controller
             "diskon"=> $diskon,
             "namapakettitle"=> session('order')['namapakettitle'],
             "phone"=>$req['code_country'].$req['phone']
+            "month"=> session('order')['month'],
           ];
       
           $order = Order::create_order($data);
-
           Auth::loginUsingId($signup->id);
           return redirect('thankyou');
         }
