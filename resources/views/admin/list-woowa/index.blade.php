@@ -36,81 +36,49 @@
 
         var data = jQuery.parseJSON(result);
         $('#content').html(data.view);
-        
+        var spantagihan = (parseInt($('#total_tagihan').val())).toLocaleString('en');
+        $('#span-tagihan').html('Rp. '+ spantagihan );
+
         table = $('#myTable').DataTable({
                   responsive : true,
                   destroy: true,
                   "order": [],
                 });
-
       }
     });
   }
 
-  function delete_order(){
-    $.ajax({
-      type : 'GET',
-      url : "<?php echo url('/list-order/delete') ?>",
-      data: {
-        id : $('#id_delete').val(),
-      },
-      dataType: 'text',
-      beforeSend: function()
-      {
-        $('#loader').show();
-        $('.div-loading').addClass('background-load');
-      },
-      success: function(result) {
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
+	function create_invoice(){
+		$( "body" ).on( "click", "#button-create-ok", function() {
 
-        var data = jQuery.parseJSON(result);
+			$.ajax({
+				url: '<?php echo url('/list-woowa/create-invoice'); ?>',
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				type: 'post',
+				data: {
+					id:1 //no need data
+				},
+				
+				dataType: 'text',
+				success: function(result)
+				{
+					var data = jQuery.parseJSON(result);
+					console.log("success");
+					
+					if(data.status=='error'){
+						$('#pesan').html('<div class="alert alert-warning"><strong>Warning!</strong> '+data.message+'</div>');
+					} else {
+						$('#pesan').html('<div class="alert alert-success"><strong>Success!</strong> '+data.message+'</div>');
+						refresh_page();
+					}
+				}
+			});
+		});
 
-        if(data.status=='success'){
-          refresh_page();
-        } else {
-          $('#pesan').html(data.message);
-          $('#pesan').removeClass('alert-success');
-          $('#pesan').addClass('alert-warning');
-          $('#pesan').show();
-        }
-      }
-    });
-  }
+	}
 
-  function confirm_order(){
-    $.ajax({
-      type : 'GET',
-      url : "<?php echo url('/list-order/confirm') ?>",
-      data: { id:$('#id_confirm').val() },
-      dataType: 'text',
-      beforeSend: function()
-      {
-        $('#loader').show();
-        $('.div-loading').addClass('background-load');
-      },
-      success: function(result) {
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-
-        var data = jQuery.parseJSON(result);
-        
-        if(data.status=='success'){
-          $('#pesan').html(data.message);
-          $('#pesan').removeClass('alert-warning');
-          $('#pesan').addClass('alert-success');
-          $('#pesan').show();
-
-          refresh_page();
-        } else {
-          $('#pesan').html(data.message);
-          $('#pesan').removeClass('alert-success');
-          $('#pesan').addClass('alert-warning');
-          $('#pesan').show();
-        }
-      }
-    });  
-  }
 </script>
 
 <section id="tabs" class="col-md-10 offset-md-1 col-12 pl-0 pr-0 project-tab" style="margin-top:30px;margin-bottom: 120px;">
@@ -126,9 +94,17 @@
       
       <hr>
 
-      <div id="pesan" class="alert"></div>
+      <div id="pesan" class="alert" style="display: none;"></div>
 
-      <br>  
+                <div class="row" style="margin-bottom: 15px; margin-left: 1px;">
+                  <div class="col-md-6 col-12 row">
+
+                    
+                  </div>
+                  <div class="col-md-6 col-12 div-tagihan" align="right">
+                    Total Tagihan = <span id="span-tagihan"></span>
+                  </div>
+                </div>
 
       <form>
         <table class="table" id="myTable">
@@ -136,100 +112,56 @@
             <th data-priority="1" action="no_order all">
               No Order
             </th>
-            <th data-priority="2" action="email all">
-              License ID
-            </th>
-            <th action="package none">
-              Nama
-            </th>
-            <th action="total all">
-              Harga
-            </th>
-            <th action="discount all">
-              Discount
+            <th action="created_at none">
+              Created
             </th>
             <th action="grand_total all">
               Total
             </th>
-            <th action="created_at none">
-              Created
+            <th action="month">
+              Month
             </th>
-            <th class="all">
-              Status
-            </th>
-            <th action="keterangan none">
-              Date Paid
+            <th action="tagihan">
+              Tagihan
             </th>
           </thead>
           <tbody id="content"></tbody>
         </table>
 
         <div id="pager"></div>    
+				<button type="button" class="btn btn-primary btn-create" data-toggle="modal" id="btn-create-ex" data-target="#confirm-create" data-action="extend" style="margin-bottom: 10px"> Create Invoice </button>
       </form>
     </div>
   </div>
 </div>
 
-<!-- Modal Confirm Delete -->
-<div class="modal fade" id="confirm-delete" role="dialog">
+<!-- Modal confirm create-->
+<div class="modal fade" id="confirm-create" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    
-    <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modaltitle">
-          Delete Confirmation
-        </h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4>Create Invoice</h4>
       </div>
       <div class="modal-body">
-        Are you sure you want to delete?
-
-        <input type="hidden" name="id_delete" id="id_delete">
+        <input type="hidden" name="totalorder" id="totalorder">
+        Total : <span id="totaltagihan"></span> <br>
+        Create Invoice?
       </div>
-      <div class="modal-footer" id="foot">
-        <button class="btn btn-primary" id="btn-delete-ok" data-dismiss="modal">
+
+      <input type="hidden" name="type" id="type">
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          Cancel
+        </button>
+        <button type="button" data-dismiss="modal" class="btn btn-primary" id="button-create-ok">
           Yes
         </button>
-        <button class="btn" data-dismiss="modal">
-          Cancel
-        </button>
       </div>
     </div>
-      
   </div>
 </div>
 
-<!-- Modal Confirm Order -->
-<div class="modal fade" id="confirm-order" role="dialog">
-  <div class="modal-dialog">
-    
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modaltitle">
-          Confirm Order
-        </h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        Confirm this order? 
-
-        <input type="hidden" name="id_confirm" id="id_confirm">
-      </div>
-      <div class="modal-footer" id="foot">
-        <button class="btn btn-primary" id="btn-confirm-ok" data-dismiss="modal">
-          Confirm
-        </button>
-        <button class="btn" data-dismiss="modal">
-          Cancel
-        </button>
-      </div>
-    </div>
-      
-  </div>
-</div>
-</section>
 
 <script type="text/javascript">
   $( "body" ).on( "click", ".btn-search", function() {
@@ -237,37 +169,12 @@
     refresh_page();
   });
 
-  $( "body" ).on( "click", ".btn-confirm", function() {
-    $('#id_confirm').val($(this).attr('data-id'));
-  });
-
-  $( "body" ).on( "click", "#btn-confirm-ok", function() 
-  {
-    confirm_order();
-  });
-
-  $( "body" ).on( "click", ".popup-newWindow", function()
-  {
-    event.preventDefault();
-    window.open($(this).attr("href"), "popupWindow", "width=600,height=600,scrollbars=yes");
-  });
-
-  $( "body" ).on( "click", ".btn-delete", function() {
-    $('#id_delete').val($(this).attr('data-id'));
-  });
-
-  $( "body" ).on( "click", "#btn-delete-ok", function() {
-    delete_order();
-  });
-
-  $(document).on('click', '.checkAll', function (e) {
-    $('input:checkbox').not(this).prop('checked', this.checked);
-  });
 
   $(document).on('click', '.pagination a', function (e) {
     e.preventDefault();
     currentPage = $(this).attr('href');
     refresh_page();
+		create_invoice();
   });
 </script>
 @endsection

@@ -600,6 +600,17 @@ class SettingController extends Controller
 									$server->status = 1;
 									$server->save();
 								}
+								else if (session('mode')==1) {
+									$order = Order::
+															->where('status',2) // paid
+															->where('user_id',$user->id)
+															->orderBy('created_at','desc')
+															->first();
+									if (!is_null($order)) {
+										$order->mode = 1;
+										$order->save();
+									}
+								}
 
 								$response['status'] = 'Congratulations, your phone is connected';
 							}catch(Exception $e){

@@ -50,6 +50,9 @@ class Order extends Model
     $order->status = 0;
     $order->buktibayar = "";
     $order->keterangan = "";
+    $order->status_woowa = 0;
+    $order->mode = 0;
+    $order->month = $data['month'];
     $order->save();
 
     if($order->grand_total!=0){

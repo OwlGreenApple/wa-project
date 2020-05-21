@@ -158,6 +158,7 @@ class RegisterController extends Controller
             "priceupgrade"=> 0,
             "diskon"=> $diskon,
             "namapakettitle"=> session('order')['namapakettitle'],
+            "month"=> session('order')['month'],
           ];
       
           $order = Order::create_order($data);

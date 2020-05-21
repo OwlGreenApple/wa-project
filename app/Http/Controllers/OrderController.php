@@ -212,12 +212,24 @@ class OrderController extends Controller
       return redirect($pathUrl)->with("error", $arr['message']);
     }
 
+		$month = 1;
+		if(substr($request->namapaket,0,5) === "basic"){
+			$month = 1;
+    }
+		if(substr($request->namapaket,0,10) === "bestseller"){
+			$month = 2;
+    }
+		if(substr($request->namapaket,0,10) === "supervalue"){
+			$month = 3;
+    }
+
     $order = array(
       "price"=>$request->price,
       "namapaket"=>$request->namapaket,
       "namapakettitle"=>$request->namapakettitle,
       "coupon_code"=>$request->kupon,
-      "idpaket" => $request->idpaket
+      "idpaket" => $request->idpaket,
+      "month" => $month,
     );
 
     if(session('order') == null)
@@ -243,6 +255,17 @@ class OrderController extends Controller
     if($arr['status']=='error'){
       // return redirect("checkout/1")->with("error", $arr['message']);
       return redirect($pathUrl)->with("error", $arr['message']);
+    }
+
+		$month = 1;
+		if(substr($request->namapaket,0,5) === "basic"){
+			$month = 1;
+    }
+		if(substr($request->namapaket,0,10) === "bestseller"){
+			$month = 2;
+    }
+		if(substr($request->namapaket,0,10) === "supervalue"){
+			$month = 3;
     }
 
     $diskon = 0;
@@ -272,6 +295,7 @@ class OrderController extends Controller
 			"priceupgrade"=> $request->priceupgrade,
 			"diskon"=> $diskon,
 			"namapakettitle"=> $request->namapakettitle,
+			"month"=> $month,
 		];
 		
 		$order = Order::create_order($data);

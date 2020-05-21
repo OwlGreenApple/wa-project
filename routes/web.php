@@ -60,6 +60,7 @@ Route::group(['middleware'=>['auth','web','is_admin_woowa']],function(){
     return view('admin.list-woowa.index');
   });
   Route::get('/list-woowa/load-woowa','Admin\OrderController@load_woowa');
+  Route::post('/list-woowa/create-invoice','Admin\OrderController@create_invoice');
 
   Route::get('/list-invoice',function(){
     return view('admin.list-woowa-invoice.index');
