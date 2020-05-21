@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Order;
+use App\Helpers\ApiHelper;
 
 use Carbon\Carbon;
 use Mail, DB, Session;
@@ -35,6 +36,8 @@ class Order extends Model
 		$user = $data['user'];
 
     $dt = Carbon::now();
+    $grand_total = $data['price'] + $data['priceupgrade'] - $data['diskon'] + $unique_code;
+
     $order = new Order;
     $str = 'ACT'.$dt->format('ymdHi');
     $order_number = Order::autoGenerateID($order, 'no_order', $str, 3, '0');
@@ -46,7 +49,8 @@ class Order extends Model
     $order->total = $data['price'] + $unique_code;
     $order->total_upgrade = $data['priceupgrade'];
     $order->discount = $data['diskon'];
-    $order->grand_total = $data['price'] + $data['priceupgrade'] - $data['diskon'] + $unique_code;
+    $order->grand_total = $grand_total;
+    // $order->grand_total = $data['price'] + $data['priceupgrade'] - $data['diskon'] + $unique_code;
     $order->status = 0;
     $order->buktibayar = "";
     $order->keterangan = "";
@@ -64,8 +68,40 @@ class Order extends Model
           'no_order' => $order_number,
       ];
 
+      // WA MESSAGE
+      $phone = $data['phone'];
+      $message = null;
+      $message .= 'Terima kasih, anda telah melakukan pemesanan Activrespon service.'."\n";
+      $message .= 'Info Order anda adalah sebagai berikut'."\n"."\n";
+      $message .= '*No Order :* '.$order_number.''."\n";
+      $message .= '*Nama :* '.$user->name.''."\n";
+      $message .= '*Status Order :* Pending'."\n";
+      $message .= 'Anda telah memesan Paket '.$data['namapaket'].''."\n"."\n";
+
+      $message .= '*Rp. '.number_format($data['price'] + $unique_code).'*'."\n";
+      if($data['priceupgrade'] > 0)
+      {
+        $message .= '*Upgrade Price :*'.number_format($data['priceupgrade'])."\n";
+      }
+      $message .= '*Diskon :* Rp.'. number_format($data['diskon'])."\n";
+      $message .= '*Total :* Rp.'. number_format($grand_total)."\n"."\n";
+
+      $message .= 'Harap SEGERA melakukan pembayaran,'."\n";
+      $message .= '*TRANSFER Melalui :*'."\n"."\n";
+      $message .= '*Bank BCA*'."\n";
+      $message .= '8290-812-845'."\n";
+      $message .= 'Sugiarto Lasjim'."\n"."\n";
+      $message .= 'Dan setelah selesai membayar'."\n";
+      $message .= 'Silahkan lakukan konfirmasi pembayaran di menu Orders, atau bisa dengan mengklik  ► '.url('orders').' <-- disini'."\n"."\n";
+
+      $message .= 'Salam hangat,'."\n";
+      $message .= 'Activrespon';
+
+      ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+
       if(env('APP_ENV') <> 'local')
       {
+          
           Mail::send('emails.order', $emaildata, function ($message) use ($user,$order_number) {
             $message->from('no-reply@activrespon.com', 'Activrespon');
             $message->to($user->email);

@@ -156,6 +156,8 @@
               <!-- END MESSAGE_ID -->
               </div>
 
+              <div id="button_add_appointment"><a class="btn btn-custom" href="{{ $link_add_customer }}">Add More Customer</a></div>
+
               <div class="text-left marketing">
                   <div>Marketing by</div>
                   <div><img src="{{asset('assets/img/marketing-logo.png')}}"/></div>
@@ -271,6 +273,7 @@
   // End Display Country
 
   function saveSubscriber(){
+      $("#button_add_appointment").hide();
       $("#addcustomer").submit(function(e){
           e.preventDefault();
           var code_country = $(".iti__selected-flag").attr('data-code');
@@ -304,6 +307,10 @@
 
                 if(result.success == true){
                   $("#message_id").html(result.message);
+                  if(result.is_appointment == 1)
+                  {
+                    $("#button_add_appointment").show();
+                  }
                   /*  $(".modal-body > p").text(result.message);
                     $("#myModal").modal();*/
                     // setTimeout(function(){$("#myModal").modal('hide')} , 1500);   

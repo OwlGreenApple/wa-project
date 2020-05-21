@@ -863,6 +863,10 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
       $('#tabs li a:not(:first)').addClass('inactive');
       $('.tabs-container').hide();
       $('.tabs-container:first').show();
+      $("#tab1").addClass('inactive');
+      $("#tab1C").hide();
+      $("#tab3").removeClass('inactive');
+      $("#tab3C").fadeIn('slow');
 
       $('#tabs li a').click(function(){
         var t = $(this).attr('id');

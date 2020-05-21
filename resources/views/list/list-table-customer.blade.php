@@ -6,6 +6,7 @@
         <th>Email</th>
         <th>Phone Number</th>
         <th>Additional</th>
+        <th>Date Added</th>
         <th>Edit</th>
         <th>Delete</th>
       </tr>
@@ -23,6 +24,7 @@
               -
             @endif
           </td>
+          <td>{{ Date('Y-M-d H:i:s',strtotime($col->created_at)) }}</td>
           <td><a id="{{ $col->id }}" data-name="{{ $col->name }}" data-last_name="{{ $col->last_name }}" data-email="{{ $col->email }}" data-phone="{{ $col->telegram_number }}" data-code="{{ $col->code_country }}" class="btn btn-info btn-sm text-white edit_customer">Edit</a></td>
           <td><a id="{{ $col->id }}" class="btn btn-danger btn-sm text-white del-customer">Delete</a></td>
         </tr>
