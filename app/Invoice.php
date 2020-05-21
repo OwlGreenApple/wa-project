@@ -8,7 +8,7 @@ use App\Order;
 use Carbon\Carbon;
 use Mail, DB, Session;
 
-class Order extends Model
+class Invoice extends Model
 {
 	/*
 	* status 
@@ -16,17 +16,8 @@ class Order extends Model
 	* 1 => confirmed bukti transfer, waiting admin response
 	* 2 => paid
 	*
-	*	Mode 
-	* 0 => simi
-	* 1 => woowa
-	*
-	*	status_woowa 
-	* 0 => not paid or full paid to woowa
-	* 1 => paid
-	*
-	* if package not basic -> order is more than 1 month
 	*/
-  protected $table = 'orders';
+  protected $table = 'invoices';
   protected $connection = 'mysql2';
 
 	public static function create_order($data){

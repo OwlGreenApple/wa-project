@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'template' => \App\Http\Middleware\TemplateValidation::class,
         'wanumber' => \App\Http\Middleware\WACheckValidation::class,
         'is_admin' => \App\Http\Middleware\AdminUser::class,
+        'is_admin_woowa' => \App\Http\Middleware\AdminWoowa::class,
         'checkadditional' => \App\Http\Middleware\CheckAdditional::class,
         'cors' => \App\Http\Middleware\Cors::class,
         'checkdevicename' => \App\Http\Middleware\CheckDeviceName::class,

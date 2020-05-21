@@ -8,6 +8,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+	
+		/*
+		*
+		* if is_admin
+		* 0 -> user activrespon
+		* 1 -> admin user activrespon
+		* 2 -> admin woowa
+		*
+		*/
     use Notifiable;
 
     /**
