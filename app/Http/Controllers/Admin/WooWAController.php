@@ -23,8 +23,10 @@ class WooWAController extends Controller
   public function load_woowa(Request $request){
     //halaman list order admin
     $orders = Order::join(env('DB_DATABASE').'.users','orders.user_id','users.id')  
+								->where('mode',1) // mode woowa
+								// ->where('status_woowa',0)
                 ->select('orders.*','users.email')
-                ->orderBy('created_at','descend')
+                ->orderBy('created_at','desc')
                 ->get();
     $arr['view'] = (string) view('admin.list-woowa.content')
                       ->with('orders',$orders);
@@ -152,7 +154,7 @@ class WooWAController extends Controller
     //halaman list order admin
     $orders = Order::join(env('DB_DATABASE').'.users','orders.user_id','users.id')  
                 ->select('orders.*','users.email')
-                ->orderBy('created_at','descend')
+                ->orderBy('created_at','desc')
                 ->get();
     $arr['view'] = (string) view('admin.list-woowa.content')
                       ->with('orders',$orders);

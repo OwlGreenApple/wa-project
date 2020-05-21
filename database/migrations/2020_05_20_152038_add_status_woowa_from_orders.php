@@ -16,6 +16,7 @@ class AddStatusWoowaFromOrders extends Migration
         Schema::connection('mysql2')->table('orders', function (Blueprint $table) {
             $table->smallInteger('status_woowa')->nullable();
             $table->smallInteger('mode')->nullable();
+            $table->integer('month')->nullable();
         });
     }
 
