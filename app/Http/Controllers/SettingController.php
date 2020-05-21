@@ -602,7 +602,7 @@ class SettingController extends Controller
 								}
 								else if (session('mode')==1) {
 									$order = Order::
-															->where('status',2) // paid
+															where('status',2) // paid
 															->where('user_id',$user->id)
 															->orderBy('created_at','desc')
 															->first();
