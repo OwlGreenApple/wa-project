@@ -8,12 +8,13 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Rules\CheckPlusCode;
 use App\Rules\CheckCallCode;
 use App\Rules\InternationalTel;
 use App\Rules\CheckUserPhone;
-use Illuminate\Support\Facades\Mail;
+use App\Helpers\ApiHelper;
 use App\Mail\RegisteredEmail;
 use App\Order;
 use Auth;
@@ -95,6 +96,7 @@ class RegisterController extends Controller
         $generated_password = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'),0,10);
         $name = $data['username'];
         $timezone = 'Asia/Jakarta';
+        $phone = $data['code_country'].$data['phone'];
 
         $user = User::create([
           'name' => $data['username'],
@@ -105,9 +107,14 @@ class RegisterController extends Controller
           'gender'=>$data['gender'],
           'timezone'=>$timezone,
         ]);
+
+        $message = null;
+        $message .= 'Welcome to Activrespon,'."\n";
+        $message .= 'Your Password is : *'.$generated_password.'*';
            
         if(env('APP_ENV') <> 'local')
         {
+          ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
           Mail::to($data['email'])->send(new RegisteredEmail($generated_password));
         }
 
@@ -118,6 +125,7 @@ class RegisterController extends Controller
     {   
         $signup = $this->create($request->all());
         $order = null;
+        $req = $request->all();
 
         if(session('order') <> null)
         {
@@ -158,9 +166,11 @@ class RegisterController extends Controller
             "priceupgrade"=> 0,
             "diskon"=> $diskon,
             "namapakettitle"=> session('order')['namapakettitle'],
+            "phone"=>$req['code_country'].$req['phone']
           ];
       
           $order = Order::create_order($data);
+
           Auth::loginUsingId($signup->id);
           return redirect('thankyou');
         }

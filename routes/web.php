@@ -169,7 +169,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('list-search','ListController@searchList')->name('searchlist');
   Route::get('list-edit/{list_id}','ListController@editList');
   Route::get('list-additional','ListController@additionalList')->name('additionalList');
-  Route::get('list-contacts/{list_id}','ListController@ListContacts');
+  // Route::get('list-contacts/{list_id}','ListController@ListContacts');
   Route::get('list-table-customer','ListController@listTableCustomer');
   Route::get('list-delete-customer','ListController@deleteSubscriber');
   Route::post('list-update','ListController@updateListContent')->middleware('checkadditional')->name('listupdate');

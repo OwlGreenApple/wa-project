@@ -636,9 +636,13 @@ class SettingController extends Controller
 			
 			if ($phoneNumber->mode == 0){
 				$server = Server::where("phone_id",$phoneNumber->id)->first();
-				$server->status = 0;
-				$server->save();
-				
+
+        if(!is_null($server))
+        {
+          $server->status = 0;
+          $server->save();
+        }
+			
 				$phoneNumber->delete();
 				
 				$arr['status'] = 'success';

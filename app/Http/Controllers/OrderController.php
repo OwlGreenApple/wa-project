@@ -272,6 +272,7 @@ class OrderController extends Controller
 			"priceupgrade"=> $request->priceupgrade,
 			"diskon"=> $diskon,
 			"namapakettitle"=> $request->namapakettitle,
+      "phone"=>$user->phone_number
 		];
 		
 		$order = Order::create_order($data);

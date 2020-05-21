@@ -88,7 +88,8 @@ class CustomerController extends Controller
           'listname'=>$link_list,
           'pixel'=>$list->pixel_text,
           'additional'=>$arr,
-          'btn_message'=>$list->button_subscriber
+          'btn_message'=>$list->button_subscriber,
+          'link_add_customer'=>url($link_list)
         ];
 
         return view('register-customer',$data);
@@ -221,8 +222,6 @@ class CustomerController extends Controller
               $customer_join = $customer->created_at;
             }
 
-
-
             /*
             Kalo is_secure maka akan dikirim langsung message wa nya 
             */
@@ -239,8 +238,7 @@ class CustomerController extends Controller
             if($customer->save()){
                $user_id = $list->user_id;
                $list_id = $list->id;
-
-              return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
+               return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
             } 
             else {
               $data['success'] = false;
@@ -385,9 +383,21 @@ class CustomerController extends Controller
               $broadcastcustomer->save();
           }
         }
+
+        // DETERMINE WHETHER APPOINTMENT OR NOT
+        $userid = Auth::id();
+        if($userid <> null)
+        {
+          $is_appointment = 1;
+        }
+        else
+        {
+          $is_appointment = 0;
+        }
         
         $data['success'] = true;
         $data['message'] = $confirmation->message_conf;
+        $data['is_appointment'] = $is_appointment;
         return response()->json($data);
     }
 

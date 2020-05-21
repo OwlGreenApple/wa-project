@@ -317,12 +317,19 @@ class CampaignController extends Controller
           for($no=$startPage;$no<=$endPage;$no++)
           {
             $arr_page = ($no - 1) * $take;
-            $pagination[] = '<a class="paging" id="'.$arr_page.'">'.$no.'</a>';
+            if($currentPage == $no)
+            {
+              $pagination[] = '<a class="paging current_link" id="'.$arr_page.'">'.$no.'</a>';
+            }
+            else
+            {
+              $pagination[] = '<a class="paging" id="'.$arr_page.'">'.$no.'</a>';
+            }
           }
         }
 
-        return view('campaign.campaign-search',['data'=>array_slice($data,$start,$take),'paginate'=>$pagination]);
-        // return view('campaign.campaign-search',['data'=>$data,'paginate'=>$pagination]);
+        // return view('campaign.campaign-search',['data'=>array_slice($data,$start,$take),'paginate'=>$pagination]);
+        return view('campaign.campaign-search',['data'=>$data,'paginate'=>$pagination]);
     }
 
     public function sendTestMessage(Request $request) 
