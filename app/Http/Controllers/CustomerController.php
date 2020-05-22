@@ -227,7 +227,7 @@ class CustomerController extends Controller
             Kalo is_secure maka akan dikirim langsung message wa nya 
             */
             if ($list->is_secure) {
-							$ret = $this->sendListSecure($list->id,$customer_id,$request->subscribername,$user_id,$list->name,$phone_number);
+							$ret = json_decode($this->sendListSecure($list->id,$customer_id,$request->subscribername,$list->user_id,$list->name,$phone_number),1);
 							if (!$ret->success){
 								$data['success'] = false;
 								$data['message'] = 'Sorry, our system is too busy';
@@ -262,6 +262,7 @@ class CustomerController extends Controller
 					if(is_null($server)){
 						$data['success'] = false;
 						$data['message'] = 'Sorry, our system is too busy';
+						// return response()->json($data);
 						return response()->json($data);
 					}
 				}
@@ -298,13 +299,14 @@ class CustomerController extends Controller
       try{
         $message_send->save();
         $data['success'] = true;
-        $data['message'] = 'Your customer has been added';
+        $data['message'] = "Data saved";
       }
       catch(QueryException $e)
       {
         $data['success'] = false;
         $data['message'] = 'Sorry, our system is too busy';
       }
+			return response()->json($data);
 		}
 
     private function checkDuplicateSubscriberPhone($wa_number,$list_id)
