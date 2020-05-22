@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\QueryException;
 use App\Customer;
 use App\UserList;
 use Carbon\Carbon;
@@ -173,7 +174,7 @@ class CustomerController extends Controller
                   $data['update'] = true;
                   $data['message'] = 'Success, your contact has updated';
               }
-              catch(Exception $e)
+              catch(QueryException $e)
               {
                   $data['update'] = false;
                   $data['message'] = 'Sorry, our system is too busy';
@@ -199,7 +200,7 @@ class CustomerController extends Controller
                 $data['success'] = true;
                 $data['message'] = 'Success, your contact has been overwritten';
               }
-              catch(Exception $e)
+              catch(QueryException $e)
               {
                 $data['success'] = false;
                 $data['message'] = 'Sorry, our system is too busy';
@@ -293,7 +294,17 @@ class CustomerController extends Controller
 				$message_send->status=9;
 			}
 			$message_send->customer_id=$customer_id;
-			$message_send->save();
+
+      try{
+        $message_send->save();
+        $data['success'] = true;
+        $data['message'] = 'Your customer has been added';
+      }
+      catch(QueryException $e)
+      {
+        $data['success'] = false;
+        $data['message'] = 'Sorry, our system is too busy';
+      }
 		}
 
     private function checkDuplicateSubscriberPhone($wa_number,$list_id)
