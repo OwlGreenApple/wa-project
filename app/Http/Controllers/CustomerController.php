@@ -227,8 +227,7 @@ class CustomerController extends Controller
             Kalo is_secure maka akan dikirim langsung message wa nya 
             */
             if ($list->is_secure) {
-							$ret = json_decode($this->sendListSecure($list->id,$customer_id,$request->subscribername,$list->user_id,$list->name,$phone_number),1);
-              dd($ret);
+							$ret = $this->sendListSecure($list->id,$customer_id,$request->subscribername,$list->user_id,$list->name,$phone_number);
 
 							if($ret['success'] == false)
               {
@@ -260,12 +259,12 @@ class CustomerController extends Controller
 			//pengecekan klo pake simi
 			if(env('APP_ENV') !== 'local')
 			{
-				if ($phoneNumber->mode == 0) {
+				if ($phoneNumber->mode == 0) 
+        {
 					$server = Server::where('phone_id',$phoneNumber->id)->first();
 					if(is_null($server)){
 						$data['success'] = false;
 						$data['message'] = 'Sorry, our system is too busy';
-						// return response()->json($data);
 						return response()->json($data);
 					}
 				}
@@ -289,6 +288,7 @@ class CustomerController extends Controller
 			$message_send = new Message;
 			$message_send->phone_number=$phone_number;
 			$message_send->message=$message;
+      
 			if ($phoneNumber->mode == 0) {
 				$message_send->key=$server->url;
 				$message_send->status=8;
@@ -309,7 +309,8 @@ class CustomerController extends Controller
         $data['success'] = false;
         $data['message'] = $e->getMessage();
       }
-			return response()->json($data);
+      dd($data['message']);
+			// return response()->json($data);
 		}
 
     private function checkDuplicateSubscriberPhone($wa_number,$list_id)
