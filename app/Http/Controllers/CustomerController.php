@@ -294,6 +294,10 @@ class CustomerController extends Controller
 			}
 			$message_send->customer_id=$customer_id;
 			$message_send->save();
+			
+			$data['success'] = true;
+			$data['message'] = "Data saved";
+			return response()->json($data);
 		}
 
     private function checkDuplicateSubscriberPhone($wa_number,$list_id)
