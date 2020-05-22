@@ -56,7 +56,7 @@
              <div class="col-lg-9">
                <div class="subscriber-big-font">Sorry to see you go</div>
                <div class="subscriber-small-font px-2 mt-2">you have been unsubscribed from:</div>
-               <div class="subscriber-list">webinar fast dropship</div>
+               <div class="subscriber-list">{{ $label }}</div>
                <div class="subscriber-small-font">Contact us if you have any questions</div>
                <a class="btn btn-subscribe btn-lg">Contact Now</a>
              </div>

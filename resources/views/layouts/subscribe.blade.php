@@ -56,7 +56,7 @@
              <div class="col-lg-9">
                <div class="subscriber-big-font">Thank you</div>
                <div class="subscriber-small-font px-2 mt-2">for subscribing to:</div>
-               <div class="subscriber-list">webinar fast dropship</div>
+               <div class="subscriber-list">{{ $label }}<!-- webinar fast dropship --></div>
                <div class="subscriber-small-font">Contact us if you have any questions</div>
                <a class="btn btn-subscribe btn-lg">Contact Now</a>
              </div>
