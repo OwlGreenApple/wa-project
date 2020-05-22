@@ -28,7 +28,7 @@ class WooWAController extends Controller
 								->where('mode',1) // mode woowa
 								->where('status',2) // paid
 								// ->where('status_woowa',0)
-                ->select('orders.*','users.email')
+                ->select('orders.*')
                 ->orderBy('created_at','desc')
                 ->orderBy('status_woowa','asc')
                 ->get();
@@ -87,11 +87,64 @@ class WooWAController extends Controller
   
   public function load_invoice(Request $request){
     //halaman list order admin
-    $orders = Order::join(env('DB_DATABASE').'.users','orders.user_id','users.id')  
-                ->select('orders.*','users.email')
+    $invoices = Invoice::
+                orderBy('created_at','desc')
+                ->get();
+    $arr['view'] = (string) view('admin.list-woowa-invoice.content')
+                      ->with('invoices',$invoices);
+    return $arr;
+  }
+  
+  //klo dilunasi lewat admin page woowa
+  public function confirm_invoice(Request $request){
+    //konfirmasi pembayaran admin
+    $invoice = Invoice::find($request->id);
+    
+    if($invoice->status==0)
+    {
+      $invoice->status = 1;
+
+      if($request->hasFile('buktibayar'))
+      {
+        // $path = Storage::putFile('bukti',$request->file('buktibayar'));
+        $dir = 'woowa_bukti_bayar/';
+        $filename = $invoice->no_invoice.'.jpg';
+        Storage::disk('s3')->put($dir."/".$filename, file_get_contents($request->file('buktibayar')), 'public');
+        $invoice->buktibayar = $dir."/".$filename;
+        
+      } else {
+        $arr['status'] = 'error';
+        $arr['message'] = 'Upload file buktibayar terlebih dahulu';
+        return $arr;
+        // $pathUrl = str_replace(url('/'), '', url()->previous());
+        // return redirect($pathUrl)->with("error", "Upload file buktibayar terlebih dahulu");
+      }  
+      $invoice->keterangan = $request->keterangan;
+      $invoice->save();
+
+    } else {
+      $arr['status'] = 'error';
+      $arr['message'] = 'invoice telah atau sedang dikonfirmasi oleh admin';
+			return $arr;
+        // $pathUrl = str_replace(url('/'), '', url()->previous());
+        // return redirect($pathUrl)->with("error", "Order telah atau sedang dikonfirmasi oleh admin.");
+    }
+		
+		
+    $arr['status'] = 'success';
+    $arr['message'] = 'Invoice berhasil dikonfirmasi';
+    return $arr;
+  }
+
+  public function load_invoice_order(Request $request){
+    //halaman list order admin
+    $orders = InvoiceOrder::
+								join("orders","orders.id","=","invoice_orders.order_id")
+								->where("order_id",$request->id)
+								->select("orders.*")
                 ->orderBy('created_at','desc')
                 ->get();
-    $arr['view'] = (string) view('admin.list-woowa.content')
+    $arr['view'] = (string) view('admin.list-woowa-invoice.content')
                       ->with('orders',$orders);
     return $arr;
   }

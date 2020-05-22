@@ -59,13 +59,15 @@ Route::group(['middleware'=>['auth','web','is_admin_woowa']],function(){
   Route::get('/list-woowa',function(){
     return view('admin.list-woowa.index');
   });
-  Route::get('/list-woowa/load-woowa','Admin\OrderController@load_woowa');
-  Route::post('/list-woowa/create-invoice','Admin\OrderController@create_invoice');
+  Route::get('/list-woowa/load-woowa','Admin\WooWAController@load_woowa');
+  Route::post('/list-woowa/create-invoice','Admin\WooWAController@create_invoice');
 
   Route::get('/list-invoice',function(){
     return view('admin.list-woowa-invoice.index');
   });
-  Route::get('/list-invoice/load','Admin\OrderController@load_invoice');
+  Route::get('/list-invoice/load','Admin\WooWAController@load_invoice');
+  Route::get('/list-invoice/load-invoice-order','Admin\WooWAController@load_invoice_order');
+	Route::post('/list-invoice/confirm','Admin\WooWAController@confirm_invoice');
 });
 	
 /* Admin */
