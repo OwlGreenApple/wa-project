@@ -232,7 +232,7 @@ class CustomerController extends Controller
 							if($ret['success'] == false)
               {
 								$data['success'] = false;
-								$data['message'] = $ret['message'];
+								$data['message'] = 'test';
 								return response()->json($data);
 							}
             }
@@ -306,7 +306,7 @@ class CustomerController extends Controller
       catch(QueryException $e)
       {
         $data['success'] = false;
-        $data['message'] = 'Sorry, our system is too busy';
+        $data['message'] = $e->getMessage();
       }
 			return response()->json($data);
 		}
