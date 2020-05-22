@@ -329,6 +329,9 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 });
 
 /* Customers */
+Route::get('testsub',function(){
+  return view('layouts.subscribe');
+});
 // Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
 //Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
 Route::post('subscriber/save','CustomerController@saveSubscriber')->middleware('customer')->name('savesubscriber');
