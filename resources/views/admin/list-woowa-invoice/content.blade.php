@@ -3,20 +3,9 @@
     <td data-label="No Order">
       {{$order->no_order}}
     </td>
-    <td data-label="Email">
-      {{$order->email}}
-    </td>
-    <td data-label="Package">
-      {{$order->package}}
-    </td> 
+
     <td data-label="Total">
       Rp. <?php echo number_format($order->total) ?>
-    </td>
-    <td data-label="Discount">
-      Rp. <?php echo number_format($order->discount) ?>
-    </td>
-    <td data-label="Discount">
-      Rp. <?php echo number_format($order->grand_total) ?>
     </td>
     <td data-label="Date">
       {{$order->created_at}}
@@ -26,7 +15,6 @@
         -
       @else
         <a class="popup-newWindow" href="<?php 
-          // echo Storage::disk('public')->url('app/'.$order->buktibayar);
             echo Storage::disk('s3')->url($order->buktibayar); 
           ?>">
           View
