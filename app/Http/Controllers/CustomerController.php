@@ -229,12 +229,10 @@ class CustomerController extends Controller
             if ($list->is_secure) {
 							$ret = $this->sendListSecure($list->id,$customer_id,$request->subscribername,$list->user_id,$list->name,$phone_number);
 
-              dd($ret->getData());
-
-							if($ret['success'] == false)
+							if($ret->getData()->success == false)
               {
 								$data['success'] = false;
-								$data['message'] = 'test';
+								$data['message'] = $ret->getData()->message;
 								return response()->json($data);
 							}
             }
@@ -304,12 +302,13 @@ class CustomerController extends Controller
       try{
         $message_send->save();
         $data['success'] = true;
-        // $data['message'] = "Data saved";
+        $data['message'] = "Data saved";
       }
       catch(QueryException $e)
       {
+        //$e->getMessage()
         $data['success'] = false;
-        // $data['message'] = $e->getMessage();
+        $data['message'] = 'Sorry, our server is too busy please try again later';
       }
 			return response()->json($data);
 		}
