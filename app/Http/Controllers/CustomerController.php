@@ -229,6 +229,8 @@ class CustomerController extends Controller
             if ($list->is_secure) {
 							$ret = $this->sendListSecure($list->id,$customer_id,$request->subscribername,$list->user_id,$list->name,$phone_number);
 
+              dd($ret);
+
 							if($ret['success'] == false)
               {
 								$data['success'] = false;
@@ -288,7 +290,7 @@ class CustomerController extends Controller
 			$message_send = new Message;
 			$message_send->phone_number=$phone_number;
 			$message_send->message=$message;
-      
+
 			if ($phoneNumber->mode == 0) {
 				$message_send->key=$server->url;
 				$message_send->status=8;
@@ -302,15 +304,14 @@ class CustomerController extends Controller
       try{
         $message_send->save();
         $data['success'] = true;
-        $data['message'] = "Data saved";
+        // $data['message'] = "Data saved";
       }
       catch(QueryException $e)
       {
         $data['success'] = false;
-        $data['message'] = $e->getMessage();
+        // $data['message'] = $e->getMessage();
       }
-      dd($data['message']);
-			// return response()->json($data);
+			return response()->json($data);
 		}
 
     private function checkDuplicateSubscriberPhone($wa_number,$list_id)
