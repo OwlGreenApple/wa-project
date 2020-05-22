@@ -226,7 +226,7 @@ class CustomerController extends Controller
             Kalo is_secure maka akan dikirim langsung message wa nya 
             */
             if ($list->is_secure) {
-							$ret = $this->sendListSecure($list->id,$customer_id,$request->subscribername,$user_id,$list->name,$phone_number);
+							$ret = $this->sendListSecure($list->id,$customer_id,$request->subscribername,$list->user_id,$list->name,$phone_number);
 							if (!$ret->success){
 								$data['success'] = false;
 								$data['message'] = 'Sorry, our system is too busy';
