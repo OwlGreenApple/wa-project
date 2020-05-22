@@ -228,9 +228,11 @@ class CustomerController extends Controller
             */
             if ($list->is_secure) {
 							$ret = json_decode($this->sendListSecure($list->id,$customer_id,$request->subscribername,$list->user_id,$list->name,$phone_number),1);
-							if (!$ret->success){
+
+							if($ret['success'] == false)
+              {
 								$data['success'] = false;
-								$data['message'] = 'Sorry, our system is too busy';
+								$data['message'] = $ret['message'];
 								return response()->json($data);
 							}
             }
