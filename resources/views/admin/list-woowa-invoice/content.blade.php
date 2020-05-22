@@ -1,36 +1,36 @@
-@foreach($orders as $order)
+@foreach($invoices as $invoice)
   <tr>
-    <td data-label="No Order">
-      {{$order->no_order}}
+    <td data-label="No Invoice">
+      {{$invoice->no_invoice}}
     </td>
 
     <td data-label="Total">
-      Rp. <?php echo number_format($order->total) ?>
+      Rp. <?php echo number_format($invoice->total) ?>
     </td>
     <td data-label="Date">
-      {{$order->created_at}}
+      {{$invoice->created_at}}
     </td>
     <td data-label="Bukti Bayar" align="center">
-      @if($order->buktibayar=='' or $order->buktibayar==null)
+      @if($invoice->buktibayar=='' or $invoice->buktibayar==null)
         -
       @else
         <a class="popup-newWindow" href="<?php 
-            echo Storage::disk('s3')->url($order->buktibayar); 
+            echo Storage::disk('s3')->url($invoice->buktibayar); 
           ?>">
           View
         </a>
       @endif
     </td>
     <td data-label="Keterangan">
-      @if($order->keterangan=='' or $order->keterangan==null)
+      @if($invoice->keterangan=='' or $invoice->keterangan==null)
         -
       @else
-        {{$order->keterangan}}
+        {{$invoice->keterangan}}
       @endif
     </td>
     <td data-label="Status">
-      @if($order->status==0 or $order->status==1)
-        <button type="button" class="btn btn-primary btn-confirm" data-toggle="modal" data-target="#confirm-order" data-id="{{$order->id}}">
+      @if($invoice->status==0)
+        <button type="button" class="btn btn-primary btn-confirm" data-toggle="modal" data-target="#confirm-invoice" data-id="{{$invoice->id}}" data-no-invoice="{{$invoice->no_invoice}}" data-total="{{$invoice->total}}" data-date="{{$invoice->created_at}}" data-keterangan="{{$invoice->keterangan}}">
           Confirm
         </button>
       @else 
@@ -38,6 +38,9 @@
           <b>Confirmed</b>
         </span>
       @endif
+        <button type="button" class="btn btn-primary btn-show" data-toggle="modal" data-target="#view-details" data-id="{{$invoice->id}}">
+          Lihat Order
+        </button>
     </td>
   </tr>
 @endforeach
