@@ -278,7 +278,6 @@ class CampaignController extends Controller
 
           if($currentModulus == 0 && $currentPage == $pageLength)
           {
-              echo 'yy';
               $startPage = $currentPage - $diff;
               $endPage = $currentPage;
           }
@@ -314,17 +313,19 @@ class CampaignController extends Controller
 
         if($total_page > $take)
         {
+          $pos = 1;
           for($no=$startPage;$no<=$endPage;$no++)
           {
             $arr_page = ($no - 1) * $take;
             if($currentPage == $no)
             {
-              $pagination[] = '<a class="paging current_link" id="'.$arr_page.'">'.$no.'</a>';
+              $pagination[] = '<a class="paging current_link" pos="'.$pos.'" id="'.$arr_page.'">'.$no.'</a>';
             }
             else
             {
-              $pagination[] = '<a class="paging" id="'.$arr_page.'">'.$no.'</a>';
+              $pagination[] = '<a class="paging" pos="'.$pos.'" id="'.$arr_page.'">'.$no.'</a>';
             }
+            $pos++;
           }
         }
 
