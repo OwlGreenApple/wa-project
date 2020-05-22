@@ -229,7 +229,7 @@ class CustomerController extends Controller
             if ($list->is_secure) {
 							$ret = $this->sendListSecure($list->id,$customer_id,$request->subscribername,$list->user_id,$list->name,$phone_number);
 
-              dd(json_decode($ret,true));
+              dd($ret->getData());
 
 							if($ret['success'] == false)
               {
