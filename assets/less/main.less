@@ -389,6 +389,60 @@ li.calling_code:hover {
 	color : #fff;
 }
 
+/* Subscribe / Unsubscribe */
+
+.bg-subscribe-top {
+	background-image : url('../img/subscribe_top.png');
+	background-position : right;
+	background-repeat : no-repeat;
+}
+
+.bg-subscribe-bottom {
+	background-image : url('../img/subscribe_bottom.png');
+	background-position : right;
+	background-repeat : no-repeat;
+}
+
+.subscribe-img {
+	margin-top : 96px;
+	margin-left : 50px;
+}
+
+.subscriber-big-font {
+	font-family: opensansbold;
+    color: #fff;
+    font-size: 60px;
+    height : 75px;
+    margin-top : 80px;
+}
+
+.subscriber-small-font {
+	font-family: opensanslight;
+	font-size : 18px;
+}
+
+.subscriber-list{
+	text-transform : capitalize;
+	font-family: opensansbold;
+	font-size: 36px;
+	padding-top : 90px;
+	padding-bottom : 65px;
+}
+
+.btn-subscribe {
+	font-family : opensansxbold;
+	background-color : #fff;
+	text-transform : uppercase;
+	color : #30307c !important;
+	margin-top : 15px;
+	margin-bottom: 166px;
+	padding: 12px 30px;
+	box-shadow : 0px 4px 10px 0px #000;
+	-m-box-shadow : 0px 4px 10px 0px #000;
+	-o-box-shadow : 0px 4px 10px 0px #000;
+	-webkit-box-shadow : 0px 4px 10px 0px #000;
+}
+
 /* Footer */
 
 .footer {
@@ -434,6 +488,41 @@ li.calling_code:hover {
 	.act-tel-list-data .left h4.form-control {
 		word-wrap : break-word;
 		height : auto;
+	}
+
+	/* Subscribe */
+
+	.bg-subscribe-bottom,.bg-subscribe-top {
+		background-image : none;
+	}
+
+	.subscribe-img {
+		margin-left : auto;
+		margin-right : auto;
+		margin-top : 0;
+		width : 100%;
+		max-width : 300px;
+	}
+
+	.subscriber-big-font{
+		font-size : 42px;
+	}
+
+	.subscriber-list {
+		font-size : 24px;
+	}
+
+	.subscribe-icon {
+		margin-bottom : 45px;
+		background-color : #fff;
+		border-radius : 140px 0px 0px 150px;
+		-moz-border-radius : 140px 0px 0px 150px;
+		-o-border-radius : 140px 0px 0px 150px;
+		-webkit-border-radius : 140px 0px 0px 150px;
+	}
+
+	.btn-subscribe {
+		margin-bottom : 45px;
 	}
 }
 

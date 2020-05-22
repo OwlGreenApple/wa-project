@@ -418,8 +418,8 @@ class CustomerController extends Controller
 				$message = $list->start_custom_message;
 				$message = str_replace("[LIST_NAME]",$list->label,$message);
 			}
-      return redirect($list->name)
-							->with('message',$message)
+      // return redirect($list->name)->with('message',$message)
+			return view('layouts.subscribe',['label'=>$list->label]);
 			;
     }
 
@@ -438,9 +438,9 @@ class CustomerController extends Controller
 				$message = $list->unsubs_custom_message;
 				$message = str_replace("[LIST_NAME]",$list->label,$message);
 			}
-      return redirect($list->name)
-							->with('message',$message)
-			;
+
+      // return redirect($list->name)->with('message',$message);
+      return view('layouts.unsubscribe',['label'=>$list->label]);
     }
 
     public function Country(Request $request)
