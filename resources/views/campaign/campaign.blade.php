@@ -50,7 +50,7 @@
 <div class="container">
   <div class="act-tel-tab">
       <div id="display_campaign" class="col-lg-12">
-        <!-- display campaign -->
+          @include('campaign.index')
       </div>
   </div>
 </div>
@@ -299,12 +299,13 @@
       });
   });
 
+  var global_url = "{{ url('campaign') }}";
+
   $(document).ready(function(){
       editBroadcast();
       saveEditBroadcast(); 
       publishDraftBroadcast();
-      pagingButton();
-      displayResult();
+      // displayResult();
       displayCampaign();
       delBroadcast();
       delAutoResponder();
@@ -317,7 +318,86 @@
       neutralizeClock();
       sendTestMessage();
       pictureClass();
+      pagination();
   });
+
+  //ajax pagination
+  function pagination()
+  {
+      $(".page-item").removeClass('active').removeAttr('aria-current');
+      var mulr = window.location.href;
+      getActiveButtonByUrl(mulr)
+    
+      $('body').on('click', '.pagination .page-link', function (e) {
+          e.preventDefault();
+          var url = $(this).attr('href');
+          window.history.pushState("", "", url);
+          var type =  $("#campaign_option").val();
+          var search = $(".search-box").val();
+          loadPagination(url,type,search);
+      });
+  }
+
+  function loadPagination(url,type,search) {
+      $.ajax({
+        beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+        url: url,
+        data : {'type':type,'search':search},
+      }).done(function (data) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          getActiveButtonByUrl(url);
+          $('#display_campaign').html(data);
+      }).fail(function (xhr,attr,throwable) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          $('#display_campaign').html("<div class='alert alert-warning'>Sorry, Failed to load data! please contact administrator</div>");
+          console.log(xhr.responseText);
+      });
+  }
+
+  function getActiveButtonByUrl(url)
+  {
+    var page = url.split('?');
+    if(page[1] !== undefined)
+    {
+      var pagevalue = page[1].split('=');
+      $(".page-link").each(function(){
+         var text = $(this).text();
+         if(text == pagevalue[1])
+          {
+            $(this).attr('href',url);
+            $(this).addClass('on');
+          } else {
+            $(this).removeClass('on');
+          }
+      });
+    }
+    else {
+        var mod_url = url+'?page=1';
+        getActiveButtonByUrl(mod_url);
+    }
+  }
+  //end ajax pagination
+
+  function displayCampaign() {
+    $("#campaign_option").change(function(){
+        var val = $(this).val();
+        loadPagination(global_url,val);
+    });
+  }
+
+  function searchCampaign()
+  {
+    $(".search-icon").click(function(){
+      var search = $(".search-box").val();
+      loadPagination(global_url,null,search);
+    });
+  }
 
   function duplicateResponderForm()
   {
@@ -365,14 +445,14 @@
             // alert(result.message);
             $("#modal_duplicate_reminder").modal('hide');
             $("#duplicate_reminder :input").val('');
-
+          
             if(option_position == 'all')
             {
-              displayResult();
+              loadPagination(global_url,null,null);
             }
             else
             {
-              displayResult(null,1);
+              loadPagination(global_url,1,null);
             }        
           }
         },
@@ -380,7 +460,7 @@
           $(".error").hide();
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          alert(xhr.responseText);
+          console.log(xhr.responseText);
         }
       });
 
@@ -485,7 +565,7 @@
           {
             $("#publish").hide();
           }
-          displayResult(null,2);
+          loadPagination(global_url,2,null);
         }
       },
       error : function(xhr,attr,throwable){
@@ -633,11 +713,11 @@
 
             if(option_position == 'all')
             {
-              displayResult();
+              loadPagination(global_url,null,null);
             }
             else
             {
-              displayResult(null,2)
+              loadPagination(global_url,2,null);
             }
           }
         },
@@ -647,49 +727,6 @@
           alert(xhr.responseText);
         }
       });
-  }
-
-  function displayCampaign() {
-      $("#campaign_option").change(function(){
-          var val = $(this).val();
-
-          if(val == 'all')
-          {
-            displayResult();
-          }
-         /* else if(val == 0){
-            displayResult(null,val);
-            // displayEvent();
-          }*/
-          else if(val == 1)
-          {
-            displayResult(null,val);
-            // displayAutoResponder();
-          }
-          else 
-          {
-            displayResult(null,2);
-          }
-          
-      });
-  }
-
-  function searchCampaign()
-  {
-      $(".search-icon").click(function(){
-        var search = $(".search-box").val();
-        displayResult(search);
-      });
-  }
-
-  function pagingButton()
-  {
-    $("body").on("click",".paging",function(){
-        var start_data = $(this).attr('id');
-        var current_page = $(this).text();
-        displayResult(null,null,start_data,current_page);
-        // console.log(current_page);
-    });
   }
 
   function displayResult(query,type,start,current_page)
@@ -834,7 +871,7 @@
             // alert(result.message);
             if(option_position == 'all')
             {
-              displayResult();
+              loadPagination(global_url,null,null);
             }
             else
             {
@@ -882,7 +919,7 @@
             // alert(result.message);
             if(option_position == 'all')
             {
-              displayResult();
+              loadPagination(global_url,null,null);
             }
             else
             {

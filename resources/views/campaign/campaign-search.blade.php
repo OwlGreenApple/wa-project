@@ -152,9 +152,10 @@
     @endif
   @endforeach
 
-  @foreach($paginate as $row=>$link)
-    {!! $link !!}
-  @endforeach
+  <!-- PAGINATION -->
+  <div class="paging">
+    {{ $paginate }}
+  </div>
 
 @endif
 

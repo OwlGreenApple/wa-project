@@ -31,21 +31,65 @@ use Storage;
 
 class CampaignController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
       $userid = Auth::id();
       $data = array();
       $lists = UserList::where('user_id',$userid)->get();
+      $paging = 5;
+      $type = $request->type;
+      $search = $request->search;
+
+      if($type == null || $type == 'all')
+      {
+          $campaign = Campaign::where('campaigns.user_id',$userid)
+                ->whereIn('campaigns.type',[1,2])
+                ->join('lists','lists.id','=','campaigns.list_id')
+                ->orderBy('campaigns.id','desc')
+                ->select('campaigns.*','lists.label')
+                ->paginate($paging);
+      }
+
+      if($type <> null && $type <> 'all')
+      {
+          $campaign = Campaign::where('campaigns.user_id',$userid)
+                      ->where('campaigns.type',$type)
+                      ->join('lists','lists.id','=','campaigns.list_id')
+                      ->orderBy('campaigns.id','desc')
+                      ->select('campaigns.*','lists.label')
+                      ->paginate($paging);
+      }
+
+      if($search <> null)
+      {
+          $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',[1,2])
+            ->join('lists','lists.id','=','campaigns.list_id')
+            ->orderBy('campaigns.id','desc')
+            ->select('campaigns.*','lists.label')
+            ->paginate($paging); 
+      }
 
       $data['lists'] = $lists;
+      $data['paginate'] = $campaign;
+      $data['campaign'] = $campaign;
+      $data['broadcast'] = new BroadCast;
+      $data['userlist'] = new UserList;
+      $data['campaign_controller'] = new CampaignController;
+      $data['autoschedule'] = new Reminder;
+      $data['userid'] = $userid;
+
+      if($request->ajax())
+      {
+        return view('campaign.index',$data);
+      }
       return view('campaign.campaign',$data);
     }
 
     public function searchCampaign(Request $request)
     {
         $userid = Auth::id();
-        $search = $request->search;
-        $type = $request->type;
+        
+        
         $start = $request->start;
 
         if(!is_numeric($start))
@@ -91,13 +135,10 @@ class CampaignController extends Controller
           }
           else
           {*/
-            $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',[1,2]); 
+          
           // }
 
-          $campaign->join('lists','lists.id','=','campaigns.list_id')
-          ->orderBy('campaigns.id','desc')
-          ->select('campaigns.*','lists.label')
-          ->get();
+        
         }
 
         if($campaign->count() > 0)
@@ -233,104 +274,7 @@ class CampaignController extends Controller
             }//ENDFOREACH
         }
 
-        //PAGINATION
-
-        if(!is_numeric($request->page))
-        {
-          $currentPage = 1;
-        }
-        else
-        {
-          $currentPage = $request->page;
-        }
-
-        $take = 5; // please do not use 1 to fill take, because this code still little flaw
-        $startPage = $currentPage - $take;
-
-        $total_page = count($data);
-        $pagination = array();
-
-        $pageLength = $total_page / $take;
-        $pageModulus = $total_page % $take;
-        $pageLength = (int)$pageLength;
-        $diff = $take - 1;
-
-        if($pageModulus > 0)
-        {
-          $pageLength = $pageLength + 1;
-        }
-
-        // START LOGIC
-        if($startPage < 0)
-        {
-          $startPage = 1;
-          $endPage = $take;
-        }
-        else
-        {
-          $currentModulus = $currentPage % $take;  
-
-          if($currentModulus == 0)
-          {
-              $startPage = $currentPage + 1;
-              $endPage = $currentPage + $take;
-          }
-
-          if($currentModulus == 0 && $currentPage == $pageLength)
-          {
-              $startPage = $currentPage - $diff;
-              $endPage = $currentPage;
-          }
-
-          if($currentModulus == 1)
-          {
-              $startPage = $currentPage - $take;
-          }
-
-          if($currentModulus == 1 && $startPage == 1)
-          {
-             $endPage = $startPage + $take - 1;
-          }
-
-          if($currentModulus == 1 && $startPage > 1)
-          {
-             $endPage = $startPage + $diff;
-          }
-
-          if($currentModulus > 1)
-          {
-            $getModulusDiff = $currentModulus - 1;
-            $startPage = $currentPage - $getModulusDiff;
-            $endPage = $startPage + $diff;
-          }
-
-        } // END START LOGIC
-
-        if($endPage > $pageLength)
-        {
-          $endPage = $pageLength;
-        }
-
-        if($total_page > $take)
-        {
-          $pos = 1;
-          for($no=$startPage;$no<=$endPage;$no++)
-          {
-            $arr_page = ($no - 1) * $take;
-            if($currentPage == $no)
-            {
-              $pagination[] = '<a class="paging current_link" pos="'.$pos.'" id="'.$arr_page.'">'.$no.'</a>';
-            }
-            else
-            {
-              $pagination[] = '<a class="paging" pos="'.$pos.'" id="'.$arr_page.'">'.$no.'</a>';
-            }
-            $pos++;
-          }
-        }
-
-        // return view('campaign.campaign-search',['data'=>array_slice($data,$start,$take),'paginate'=>$pagination]);
-        return view('campaign.campaign-search',['data'=>$data,'paginate'=>$pagination]);
+        // return view('campaign.campaign-search',['data'=>$data,'paginate'=>$pagination]);
     }
 
     public function sendTestMessage(Request $request) 
@@ -672,7 +616,7 @@ class CampaignController extends Controller
         return view('campaign.list_broadcast_table',['active'=>$active,'campaigns'=>$campaigns]);
     }
 
-    private function broadcastCampaign($campaign_id,$cond,$status)
+    public function broadcastCampaign($campaign_id,$cond,$status)
     {
         $userid = Auth::id();
         $campaigns = BroadCastCustomers::where([['broad_casts.campaign_id',$campaign_id],['broad_casts.user_id',$userid],['broad_cast_customers.status',$cond,$status]])
