@@ -23,7 +23,7 @@ class Order extends Model
 	*
 	*	status_woowa 
 	* 0 => not paid or full paid to woowa
-	* 1 => paid
+	* 1 => invoice generated
 	*
 	* if package not basic -> order is more than 1 month
 	*/

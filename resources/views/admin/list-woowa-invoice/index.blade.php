@@ -4,21 +4,6 @@
 <script type="text/javascript">
   var table;
 
-  $(document).ready(function() {
-    table = $('#myTable').DataTable({
-                responsive : true,
-                destroy: true,
-                "order": [],
-            });
-    $.fn.dataTable.moment( 'ddd, DD MMM YYYY' );
-
-    refresh_page();
-
-    // $('.formatted-date').datepicker({
-    //   dateFormat: 'yy/mm/dd',
-    // });
-  });
-
   function refresh_page(){
     table.destroy();
     $.ajax({
@@ -53,7 +38,7 @@
     var formData = new FormData(form);
     $.ajax({
       type : 'POST',
-      url : "<?php echo url('/list-invoice/confirm') ?>",
+      url : "<?php echo url('/list-invoice/confirm'); ?>",
       data: formData,
       dataType: 'json',
       cache: false,
@@ -195,7 +180,7 @@
           </div>
         </div>
         <div class="modal-footer" id="foot">
-          <input type="button" class="btn btn-primary" id="btn-confirm-ok" value="Confirm">
+          <input type="button" class="btn btn-primary" id="btn-confirm-ok" value="Confirm" data-dismiss="modal">
           <button class="btn" data-dismiss="modal">
             Cancel
           </button>
@@ -217,13 +202,13 @@
 
       <div class="modal-body">
 
-        <input type="hidden" name="id-details" id="id-details">
+        <input type="hidden" name="id-detail" id="id-detail">
 
         <table class="table">
           <thead align="center">
-            <th>No.</th>
             <th>No Order</th>
             <th>Total</th>
+            <th>Month</th>
             <th>Tagihan</th>
             <th>Created order</th>
           </thead>
@@ -280,7 +265,12 @@
     refresh_page();
   });
 	
-	
+  $( "body" ).on( "click", ".popup-newWindow", function()
+  {
+    event.preventDefault();
+    window.open($(this).attr("href"), "popupWindow", "width=600,height=600,scrollbars=yes");
+  });
+
 	//show detail
   $( "body" ).on( "click", ".btn-show", function() {
     var id = $(this).attr('data-id');
@@ -292,7 +282,7 @@
 	
   function refresh_detail(){
     $.ajax({
-      url: <?php echo url('/list-invoice/load-invoice-order'); ?>,
+      url: "<?php echo url('/list-invoice/load-invoice-order'); ?>",
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
@@ -316,5 +306,22 @@
       }        
     });
   }	
+	
+  $(document).ready(function() {
+    table = $('#myTable').DataTable({
+                responsive : true,
+                destroy: true,
+                "order": [],
+            });
+    // $.fn.dataTable.moment( 'ddd, DD MMM YYYY' );
+
+    refresh_page();
+
+    // $('.formatted-date').datepicker({
+    //   dateFormat: 'yy/mm/dd',
+    // });
+  });
+
+	
 </script>
 @endsection
