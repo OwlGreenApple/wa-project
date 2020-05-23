@@ -125,13 +125,9 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::post('save-settings', 'SettingController@settingsUser')->middleware('usersettings');
   Route::get('load-phone-number', 'SettingController@load_phone_number');
 	
-	//woowa
+	//woowa + simi 
   Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkcall');
   Route::get('verify-phone', 'SettingController@verify_phone')->middleware('checkphone');
-	
-	//simi
-  // Route::get('req-qrcode-0', 'SettingController@req_qrcode_simi');
-  // Route::get('check-qr-0', 'SettingController@check_qrcode_simi');
 	
   Route::get('delete-phone', 'SettingController@delete_phone');
   Route::get('check-qr', 'SettingController@check_connected_phone');

@@ -128,7 +128,7 @@
                               <a class="nav-link {{ (request()->is('list-woowa')) ? 'active' : '' }}" href="{{ url('list-woowa') }}">WooWA order</a>
                             </li> 
                             <li class="nav-item">
-                              <a class="nav-link {{ (request()->is('list-woowa')) ? 'active' : '' }}" href="{{ url('list-woowa') }}">WooWA Invoice</a>
+                              <a class="nav-link {{ (request()->is('list-invoice')) ? 'active' : '' }}" href="{{ url('list-invoice') }}">WooWA Invoice</a>
                             </li> 
 													@endif
                             <li class="nav-item dropdown">

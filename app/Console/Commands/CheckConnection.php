@@ -54,8 +54,10 @@ class CheckConnection extends Command
 							$server = Server::where("phone_id",$idphone_number)->first();
 							if (!is_null($server)){
 								$status_connect = json_decode(ApiHelper::status_simi($server->url));
-								if ($status_connect->connected) {
-									$status = true;
+								if (method_exists($status_connect,"connected")) {
+									if ($status_connect->connected) {
+										$status = true;
+									}
 								}
 							}
 						}
