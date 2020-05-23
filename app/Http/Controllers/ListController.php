@@ -1420,6 +1420,10 @@ class ListController extends Controller
         return $additional_result;
     }
 
+    public function listForm(){
+        return view('list.list-form');
+    }
+
     /*public function exportListCSVSubscriber($list_id,$import){
         $id_user = Auth::id();
         $check = UserList::where('id',$list_id)->first();
@@ -1445,9 +1449,7 @@ class ListController extends Controller
     /* *************************************** 
         OLD CODES
      *************************************** */
-    public function listForm(){
-        return view('list.list-form');
-    }
+   
 
     public function addList(Request $request)
     {

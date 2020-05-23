@@ -305,7 +305,6 @@
       editBroadcast();
       saveEditBroadcast(); 
       publishDraftBroadcast();
-      // displayResult();
       displayCampaign();
       delBroadcast();
       delAutoResponder();
@@ -729,33 +728,6 @@
       });
   }
 
-  function displayResult(query,type,start,current_page)
-  {
-    $.ajax({
-      type : 'GET',
-      url : '{{ url("search-campaign") }}',
-      data : {'search' : query, 'type':type, 'start':start, 'page':current_page},
-      dataType : 'html',
-      beforeSend: function()
-      {
-        $('#loader').show();
-        $('.div-loading').addClass('background-load');
-      },
-      success : function(result)
-      {
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-        $("#display_campaign").html(result);
-      },
-      error : function(xhr, attr, throwable)
-      {
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-        console.log(xhr.responseText);
-      }
-    });
-  }
-
   function MDTimepicker(){
     $("body").on('focus','.timepicker, #time_sending',function(){
         $(this).mdtimepicker({
@@ -769,30 +741,6 @@
      $("body").on("click",".mdtp__button.cancel",function(){
         $(".timepicker").val('00:00');
     });
-  }
-
-  function displayEvent()
-  {
-     $.ajax({
-        type : 'GET',
-        // url : '{{ route("eventlist") }}',
-        data : {type : 0},
-        dataType : 'html',
-        beforeSend: function()
-        {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
-        },
-        success : function(result){
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-          $("#display_campaign").html(result);
-        },
-        error : function(xhr,attributes,throwable){
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-        }
-     });
   }
 
   function displayBroadcast()
@@ -916,7 +864,6 @@
           },
           success : function(result)
           {
-            // alert(result.message);
             if(option_position == 'all')
             {
               loadPagination(global_url,null,null);
