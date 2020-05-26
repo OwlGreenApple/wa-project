@@ -166,7 +166,7 @@ class RegisterController extends Controller
             "priceupgrade"=> 0,
             "diskon"=> $diskon,
             "namapakettitle"=> session('order')['namapakettitle'],
-            "phone"=>$req['code_country'].$req['phone']
+            "phone"=>$req['code_country'].$req['phone'],
             "month"=> session('order')['month'],
           ];
       
