@@ -97,10 +97,10 @@
 
                     <div class="form-group">
                         <label class="custom-checkbox">
-                            <input type="checkbox" name="agreement" required/>
+                            <input type="checkbox" name="agreement" required id="check-terms"/>
                             <span class="checkmark-check"></span>
                         </label>
-                        <label class="checkbox-left"><sb>I Agree with <a>Terms and Condition</a></sb></label>
+                        <label class="checkbox-left" for="check-terms"><sb>I Agree with <a>Terms and Condition</a></sb></label>
                     </div>
 
                     <div class="text-left">
