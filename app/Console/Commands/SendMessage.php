@@ -161,8 +161,18 @@ class SendMessage extends Command
 
                         $broad_cast_id = $broadcastCustomer->broadcast_id;
                         $broad_cast = BroadCast::find($broad_cast_id);
-                        $broad_cast->status = 2;
-                        $broad_cast->save();
+
+                        if(is_null($broad_cast))
+                        {
+                          continue;
+                        }
+
+                        $status_broadcast = $broad_cast->status;
+                        if($status_broadcast == 1)
+                        {
+                          $broad_cast->status = 2;
+                          $broad_cast->save();
+                        }
 
 												/*if ($row->email=="activomnicom@gmail.com") {
 													$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
@@ -382,19 +392,14 @@ class SendMessage extends Command
           $event = null;
           $today = Carbon::now();
 
-          $reminder = Reminder::where([
-                  ['reminder_customers.status',0], 
-                  ['reminders.is_event',1], 
-                  ['customers.status',1], 
-                  ['reminders.status','>',0],
-                  ['campaigns.status','>',0],
-          ])
+          $reminder = Reminder::select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
-          ->get();
-
+          ->join('campaigns',"campaigns.id","=","reminders.campaign_id")
+          ->where([['reminder_customers.status',0],['reminders.is_event',1],['customers.status',1],['reminders.status','>',0],['campaigns.status','>',0]])
+           ->get();        
+               
           if($reminder->count() > 0)
           {
               $number = $counter = 0;
@@ -465,10 +470,26 @@ class SendMessage extends Command
                   $remindercustomer_update->save();
 
                   $status = 'Sent';
-                  $id_reminder = $row->id_reminder;
+                  $reminder_id = $remindercustomer_update->reminder_id;
+                  $reminder_event = Reminder::find($reminder_id);
+
+                  if(is_null($reminder_event))
+                  {
+                      continue;
+                  }
+
+                  $status_reminder = $reminder_event->status;
+                  if($status_reminder == 1)
+                  {
+                      $reminder_event->status = 2;
+                      $reminder_event->save();
+                  }
                   
                   $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
 									$message = $spintax->process($message);  //spin text
+
+                  // =======================================================
+
 									/*if ($row->useremail=="activomnicom@gmail.com") {
 										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										if ($send_message) {
@@ -813,7 +834,7 @@ class SendMessage extends Command
       {
          $broadcast_customer->status = 4;
          $broadcast_customer->save();
-         return false; // message would igonre
+         return false; // message would ignore
       } 
     }
 
