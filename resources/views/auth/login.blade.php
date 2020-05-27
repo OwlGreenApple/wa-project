@@ -26,7 +26,7 @@
                     <div class="form-group">
                       <label>Password *</label>
                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" value="{{ Cookie::get('password') }}" placeholder="Input Your Password">
-                      
+
                        @error('password')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -36,10 +36,10 @@
 
                     <div class="form-group">
                       <label class="custom-checkbox">
-                          <input type="checkbox" name="remember"/>
+                          <input type="checkbox" name="remember" id="remember"/>
                           <span class="checkmark-check"></span>
                       </label>
-                      <label class="checkbox-left"><sb>Remember Me</sb></label>
+                      <label class="checkbox-left" for="remember">Remember Me</label>
                     </div>
 
                     @if (Route::has('password.request'))
@@ -55,7 +55,7 @@
 
                <hr class="mt-5" />
 
-              <div class="mt-4 mb-3"><sb>Need a Activtele account? <a href="{{route('register')}}">Register Here</a></sb></div>
+              <div class="mt-4 mb-3"><sb>Need a Activtele account? <a href="{{route('pricing')}}">Register Here</a></sb></div>
             <!-- end wrapper -->
             </div>
 
@@ -68,7 +68,7 @@
     rememberMe();
   });
 
-   function rememberMe(){
+  function rememberMe(){
     $("input[name=remember]").click(function(){
       var val = $(this).val();
 

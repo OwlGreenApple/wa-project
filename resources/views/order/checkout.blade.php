@@ -15,10 +15,11 @@
             </div>
           @endif
 
+          <form method="POST" action="{{url('summary')}}">
           <?php if (Auth::check()) {?>
-          <form method="POST" action="{{url('submit-checkout')}}">
+          <!--<form method="POST" action="{{url('submit-checkout')}}">-->
             <?php } else {?>
-            <form method="POST" action="{{url('submit-checkout-register')}}">
+            <!--<form method="POST" action="{{url('submit-checkout-register')}}">-->
               <?php }?>
               {{ csrf_field() }}
               <input type="hidden" id="price" name="price">
@@ -205,7 +206,7 @@
               </div>
               <div class="form-group">
                 <div class="col-12 col-md-12">
-                  <input type="submit" name="submit" id="submit" class="col-md-12 col-12 btn btn-primary bsub btn-block" value="Order Now"/>
+                  <input type="submit" name="submit" id="submit" class="col-md-12 col-12 btn btn-primary bsub btn-block" value="Proceed"/>
                 </div>
               </div>
             </form>

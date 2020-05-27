@@ -77,18 +77,18 @@
                       <div>
                         <div class="form-check form-check-inline">
                           <label class="custom-radio">
-                            <input class="form-check-input" type="radio" name="gender" value="male" checked>
+                            <input class="form-check-input" type="radio" name="gender" value="male" id="radio-male" checked>
                             <span class="checkmark"></span>
                           </label>
-                          <label class="form-check-label">Male</label>
+                          <label class="form-check-label" for="radio-male">Male</label>
                         </div>
 
                         <div class="form-check form-check-inline">
                           <label class="custom-radio">
-                            <input class="form-check-input" type="radio" name="gender" value="female">
+                            <input class="form-check-input" type="radio" name="gender" value="female" id="radio-female">
                             <span class="checkmark"></span>
                           </label>
-                          <label class="form-check-label">Female</label>
+                          <label class="form-check-label" for="radio-female">Female</label>
                         </div>
 
                       </div>
@@ -100,7 +100,7 @@
                             <input type="checkbox" name="agreement" required id="check-terms"/>
                             <span class="checkmark-check"></span>
                         </label>
-                        <label class="checkbox-left" for="check-terms"><sb>I Agree with <a>Terms and Condition</a></sb></label>
+                        <label class="checkbox-left" for="check-terms">I Agree with <a>Terms and Condition</a></label>
                     </div>
 
                     <div class="text-left">

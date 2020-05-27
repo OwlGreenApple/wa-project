@@ -70,6 +70,11 @@ class OrderController extends Controller
     }
   }
 
+  public function summary(){
+    //halaman order user
+    return view('order.summary');
+  }
+  
   public function pricing(Request $request){
     return view('order.pricing');
   }
