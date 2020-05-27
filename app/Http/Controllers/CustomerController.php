@@ -332,7 +332,7 @@ class CustomerController extends Controller
 
     function addSubscriber($list_id,$customer_id,$customer_join,$user_id)
     {
-        $reminder = Reminder::where([['list_id','=',$list_id],['user_id','=',$user_id],['status','=',1],])->get();
+        $reminder = Reminder::where([['list_id','=',$list_id],['user_id','=',$user_id],['status','=',1]])->get();
         $confirmation = UserList::find($list_id);
 
         if($reminder->count() > 0)
@@ -388,7 +388,7 @@ class CustomerController extends Controller
         }
 
         //BROADCAST 
-        $broadcast = BroadCast::where([['list_id',$list_id],['user_id',$user_id]],['status',1])->get();
+        $broadcast = BroadCast::where([['list_id',$list_id],['user_id',$user_id],['status','=',1]])->get();
 
         if($broadcast->count() > 0)
         {
