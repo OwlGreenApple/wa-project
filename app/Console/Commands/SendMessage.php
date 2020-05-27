@@ -56,13 +56,14 @@ class SendMessage extends Command
 			foreach($phoneNumbers as $phoneNumber) {
 				SendCampaign::dispatch($phoneNumber->id);
 			}
+
 			/*
       //Broadcast 
       $this->campaignBroadcast();
    
       //Auto Responder
       $this->campaignAutoResponder();
-      
+     
       //Event
       $this->campaignEvent();
       
@@ -125,9 +126,11 @@ class SendMessage extends Command
                     $time_sending = $date->toDateString().' '.$hour;
                     $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
                     // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
+
                     $midnightTime = $this->avoidMidnightTime($row->timezone);
+                    $check_valid_customer_join = $this->preventBroadcastNewCustomer($row->bccsid,$time_sending);
                     
-                    if($deliver_time < 0 || $midnightTime == false){
+                    if($deliver_time < 0 || $midnightTime == false || $check_valid_customer_join == false){
                       //klo blm hour_time di skip dulu
                       continue;
                     }
@@ -142,24 +145,34 @@ class SendMessage extends Command
                         $id_campaign = $row->bccsid;
 
                         //status
-												$broadcastCustomer = BroadCastCustomers::find($row->bccsid);
+												$broadcastCustomer = BroadCastCustomers::find($id_campaign);
 												if (is_null($broadcastCustomer)) {
 													continue;
 												}
 												if ($broadcastCustomer->status==5) {
 													continue;
 												}
+
 												$broadcastCustomer->status = 5;
 												$broadcastCustomer->save();
 
                         $status = 'Sent';
                         $number ++;
 
+                        $broad_cast_id = $broadcastCustomer->broadcast_id;
+                        $broad_cast = BroadCast::find($broad_cast_id);
+                        $broad_cast->status = 2;
+                        $broad_cast->save();
+
 												/*if ($row->email=="activomnicom@gmail.com") {
 													$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 												}
 												else {*/
-													if ($row->image==""){
+
+                          //====================================
+
+													if ($row->image=="")
+                          {
 														// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 														if ($phoneNumber->mode == 0) {
 															$send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
@@ -201,6 +214,7 @@ class SendMessage extends Command
                         
 												$broadcastCustomer->status = $status;
 												$broadcastCustomer->save();
+                        
                     }
                     else {
                         $campaign = 'broadcast';
@@ -372,7 +386,8 @@ class SendMessage extends Command
                   ['reminder_customers.status',0], 
                   ['reminders.is_event',1], 
                   ['customers.status',1], 
-                  ['reminders.status','=',1],
+                  ['reminders.status','>',0],
+                  ['campaigns.status','>',0],
           ])
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
@@ -404,6 +419,8 @@ class SendMessage extends Command
                 {
                   continue;
                 }
+
+                
 								if ($phoneNumber->mode == 0) {
 									$server = Server::where('phone_id',$phoneNumber->id)->first();
 									if(is_null($server)){
@@ -459,6 +476,9 @@ class SendMessage extends Command
 										}
 									}
 									else {*/
+
+                    // ======================================================
+
 										if ($row->image==""){
 											// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 											if ($phoneNumber->mode == 0) {
@@ -764,18 +784,37 @@ class SendMessage extends Command
     // PREVENT SYSTEM TO SEND MESSAGE AT MIDNIGHT 23:00 - 05:00
     public function avoidMidnightTime($timezone)
     {
-        $time = Carbon::now()->timezone($timezone);
-        $start = Carbon::createFromTime(23,0,0,$timezone);
-        $end = Carbon::createFromTime(5,0,0,$timezone)->addDays(1);
+      $time = Carbon::now()->timezone($timezone);
+      $start = Carbon::createFromTime(23,0,0,$timezone);
+      $end = Carbon::createFromTime(5,0,0,$timezone)->addDays(1);
 
-        if($time->gte($start) && $time->lte($end))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+      if($time->gte($start) && $time->lte($end))
+      {
+          return false;
+      }
+      else
+      {
+          return true;
+      }
+    }
+
+    // TO PREVENT BROADCAST SEND MESSAGE FOR NEW CUSTOMER WHO JOIN AFTER BROADCAST DATE SEND (TEMP) 
+    public function preventBroadcastNewCustomer($broadcast_customer_id,$date_send)
+    {
+      $broadcast_customer = BroadCastCustomers::find($broadcast_customer_id);
+      $customer_register_broadcast = Carbon::parse($broadcast_customer->created_at);
+      $delivered_day = Carbon::parse($date_send);
+
+      if($customer_register_broadcast->lte($delivered_day))
+      {
+          return true; //message would be send
+      }
+      else
+      {
+         $broadcast_customer->status = 4;
+         $broadcast_customer->save();
+         return false; // message would igonre
+      } 
     }
 
 /* End command class */    
