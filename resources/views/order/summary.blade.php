@@ -39,7 +39,7 @@
         <div class="card checkout-card card-step-1 filled" id="cardStep1">
         <div class="card-header">
           <div class="d-flex align-items-center">
-            <h2 class="h3">1. <?php if ($is_login) { ?>Account verification<?php } else { ?>Create an account <?php } ?></h2>
+            <h2 class="h3" id="header-step1">1. <?php if ($is_login) { ?>Account verification<?php } else { ?>Create an account <?php } ?></h2>
           </div>
         </div>
         <!-- End Card Header -->
@@ -167,10 +167,10 @@
 
 											<div class="form-group">
 												<label class="custom-checkbox">
-														<input type="checkbox" name="remember"/>
+														<input type="checkbox" name="remember"/ id="remember-login">
 														<span class="checkmark-check"></span>
 												</label>
-												<label class="checkbox-left"><sb>Remember Me</sb></label>
+												<label class="checkbox-left" for="remember-login"><sb>Remember Me</sb></label>
 											</div>
 
 
@@ -633,12 +633,14 @@
 			e.preventDefault();
       $("#div-login").show();
       $("#div-register").hide();
+      $("#header-step1").html("1. Login");
 			$('html, body').animate({scrollTop: '0px'}, 300);
     });
     $("body").on("click", "#link-to-register", function(e) {
 			e.preventDefault();
       $("#div-login").hide();
       $("#div-register").show();
+      $("#header-step1").html("1. Create an account");
 			$('html, body').animate({scrollTop: '0px'}, 300);
     });
 

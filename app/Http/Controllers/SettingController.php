@@ -85,7 +85,7 @@ class SettingController extends Controller
 				}
 			}
 			
-			session(['mode'=>0]);
+			// session(['mode'=>0]);
 
       $phone_number = PhoneNumber::where('user_id',$user->id)->first();
       $server = Config::where('config_name','status_server')->first();
