@@ -40,7 +40,7 @@
 <script type="text/javascript">
   $(document).ready(function(){
       $("#data_customer").DataTable({
-        "lengthMenu": [ 5, 10, 25, 50, 75, 100, 250, 500 ],
+        "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
         "bStateSave": true,
         "fnStateSave": function (oSettings, oData) {
             localStorage.setItem('offersDataTables', JSON.stringify(oData));
