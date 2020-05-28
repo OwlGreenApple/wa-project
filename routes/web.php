@@ -18,6 +18,8 @@ Route::get('/', function () {
 })->name('visitor');
 
 //Route::get('ck','ListController@generateRandomListName');
+// Route::get('preg', 'ApiController@test');
+
 Route::get('send','SenderController@getDeviceId');
 Route::get('justcarbon','EventController@JUSTCARBON');
 

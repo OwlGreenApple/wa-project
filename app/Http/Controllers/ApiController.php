@@ -16,6 +16,26 @@ use App\Http\Controllers\CustomerController;
 
 class ApiController extends Controller
 {
+    public function test()
+    {
+        $phone_number = null;
+        $str = '5812345628';
+
+        if(preg_match('/^62[0-9]*$/',$str)){
+          $phone_number = '+'.$str;
+        }
+
+        if(preg_match('/^0[0-9]*$/',$str)){
+          $phone_number = preg_replace("/^0/", "+62", $str);
+        }
+
+         if(preg_match('/^[^62][0-9]*$/',$str)){
+          $phone_number = preg_replace("/^[0-9]/", "+62", $str);
+        }
+
+        dd($phone_number);
+    }
+
     public function entry_google_form(Request $request)
     {
 			$obj = json_decode($request->getContent());
@@ -24,18 +44,19 @@ class ApiController extends Controller
 
 			if (!is_null($list)) {
 				$phone_number = $obj->phone_number;
-				if(preg_match('/^[62][0-9]*$/',$phone_number)){
-					$phone_number = '+'.$phone_number;
-				}
 
-				if(preg_match('/^[0][0-9]*$/',$phone_number)){
-					$phone_number = str_replace('0','+62',$phone_number);
-				}
+				 if(preg_match('/^62[0-9]*$/',$phone_number)){
+          $phone_number = '+'.$phone_number;
+        }
 
-				if(preg_match('/^[1-9][0-9]*$/',$phone_number)){
-					$phone_number = '+62'.$phone_number;
-				}
-				
+        if(preg_match('/^0[0-9]*$/',$phone_number)){
+          $phone_number = preg_replace("/^0/", "+62", $phone_number);
+        }
+
+        if(preg_match('/^[^62][0-9]*$/',$phone_number)){
+          $phone_number = preg_replace("/^[0-9]/", "+62", $phone_number);
+        }
+
 				$customer = new Customer ;
 				$customer->user_id = $list->user_id;
 				$customer->list_id = $list->id;
