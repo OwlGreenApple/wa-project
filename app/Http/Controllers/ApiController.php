@@ -32,9 +32,9 @@ class ApiController extends Controller
 					$phone_number = str_replace('0','+62',$phone_number);
 				}
 
-				if(preg_match('/^[1-9][0-9]*$/',$phone_number)){
+			/*	if(preg_match('/^[^62][0-9]*$/',$phone_number)){
 					$phone_number = '+62'.$phone_number;
-				}
+				}*/
 				
 				$customer = new Customer ;
 				$customer->user_id = $list->user_id;
