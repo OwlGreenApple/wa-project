@@ -24,11 +24,11 @@ class ApiController extends Controller
 
 			if (!is_null($list)) {
 				$phone_number = $obj->phone_number;
-				if(preg_match('/^[62][0-9]*$/',$phone_number)){
+				if(preg_match('/^62[0-9]*$/',$phone_number)){
 					$phone_number = '+'.$phone_number;
 				}
 
-				if(preg_match('/^[0][0-9]*$/',$phone_number)){
+				if(preg_match('/^0[0-9]*$/',$phone_number)){
 					$phone_number = str_replace('0','+62',$phone_number);
 				}
 

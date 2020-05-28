@@ -40,7 +40,14 @@
 <script type="text/javascript">
   $(document).ready(function(){
       $("#data_customer").DataTable({
-        "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
+        "lengthMenu": [ 5, 10, 25, 50, 75, 100, 250, 500 ],
+        "bStateSave": true,
+        "fnStateSave": function (oSettings, oData) {
+            localStorage.setItem('offersDataTables', JSON.stringify(oData));
+        },
+        "fnStateLoad": function (oSettings) {
+            return JSON.parse(localStorage.getItem('offersDataTables'));
+        }
       });
   });
 </script>
