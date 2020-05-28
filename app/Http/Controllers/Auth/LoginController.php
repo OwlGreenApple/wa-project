@@ -56,12 +56,20 @@ class LoginController extends Controller
             $this->delCookie($request->email,$request->password);
         }
 
-        if ( $user->is_admin  == 1) {// do your magic here
-            return redirect('list-user');
-        }
-        if ( $user->is_admin  == 2) {// Halaman woowa
-            return redirect('list-woowa');
-        }
+				if ($request->ajax()) {
+						return response()->json([
+								'success' => 1,
+								'email' => $request->email,
+						]);
+				}
+				else {
+						if ( $user->is_admin  == 1) {// do your magic here
+								return redirect('list-user');
+						}
+						if ( $user->is_admin  == 2) {// Halaman woowa
+								return redirect('list-woowa');
+						}
+				}
     }
 
     private function setCookie($email,$password)

@@ -127,6 +127,7 @@ class RegisterController extends Controller
         $order = null;
         $req = $request->all();
 
+				/* OLD system
         if(session('order') <> null)
         {
           $diskon = 0;
@@ -175,10 +176,18 @@ class RegisterController extends Controller
           return redirect('thankyou');
         }
         else
-        {
-          Auth::loginUsingId($signup->id);
+        {*/
+				Auth::loginUsingId($signup->id);
+				if ($request->ajax()) {
+						return response()->json([
+								'success' => 1,
+								'email' => $signup->email,
+						]);
+				}
+				else {
           return redirect('home');
-        }
+				}
+        // }
 
     }
 

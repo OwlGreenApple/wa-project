@@ -200,7 +200,95 @@ class OrderController extends Controller
 		return $arr;
 	}
 	
-	//order dengan register
+	//store to session first
+  public function submit_checkout(Request $request) {
+		// ditaruh ke session dulu
+    $stat = $this->cekharga($request->namapaket,$request->price);
+
+    $pathUrl = str_replace(url('/'), '', url()->previous());
+    if($stat==false){
+      // return redirect("checkout/1")->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
+      return redirect($pathUrl)->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
+    }
+
+    $arr = $this->check_coupon($request);
+    if($arr['status']=='error'){
+      // return redirect("checkout/1")->with("error", $arr['message']);
+      return redirect($pathUrl)->with("error", $arr['message']);
+    }
+
+		$month = 1;
+		if(substr($request->namapaket,0,5) === "basic"){
+			$month = 1;
+    }
+		if(substr($request->namapaket,0,10) === "bestseller"){
+			$month = 2;
+    }
+		if(substr($request->namapaket,0,10) === "supervalue"){
+			$month = 3;
+    }
+
+		
+    $diskon = 0;
+    // $total = $request->price;
+    $kuponid = null;
+    if($request->kupon!==''){
+      $arr = $this->check_coupon($request);
+
+      if($arr['status']=='error'){
+        return redirect($pathUrl)->with("error", $arr['message']);
+      } else {
+        $diskon = $arr['diskon'];
+        
+        if($arr['coupon']!=null){
+          $kuponid = $arr['coupon']->id;
+        }
+      }
+    }
+		
+    $order = array(
+      "price"=>$request->price,
+      "namapaket"=>$request->namapaket,
+      "namapakettitle"=>$request->namapakettitle,
+      "coupon_code"=>$request->kupon,
+      "idpaket" => $request->idpaket,
+      "month" => $month,
+			
+      "kuponid" => $kuponid,
+      "priceupgrade" => $request->priceupgrade,
+      "diskon" => $diskon,
+    );
+
+    if(session('order') == null)
+    {
+      session(['order'=>$order]);
+    }
+    
+    return redirect('summary');
+  }
+
+  public function submit_summary(Request $request){
+    $user = Auth::user();
+
+		$data = [
+			"user"=> $user,
+			"namapaket"=> session('order')['namapaket'],
+			"kuponid"=> session('order')['kuponid'],
+			"price"=> session('order')['price'],
+			"priceupgrade"=> session('order')['priceupgrade'],
+			"diskon"=> session('order')['diskon'],
+			"namapakettitle"=> session('order')['namapakettitle'],
+      "phone"=>$user->phone_number,
+			"month"=> session('order')['month'],
+		];
+		
+		$order = Order::create_order($data);
+    return view('order.thankyou')->with(array(
+              'order'=>$order,    
+            ));
+  }
+
+	/*//order dengan register
   public function submit_checkout_register(Request $request) {
 		// ditaruh ke session dulu
     $stat = $this->cekharga($request->namapaket,$request->price);
@@ -243,10 +331,11 @@ class OrderController extends Controller
     }
     
     return redirect('register');
-  }
+  }*/
 
+	
   //checkout klo uda login
-  public function submit_checkout(Request $request){
+  public function submit_checkout_login(Request $request){
     //buat order user lama
     $stat = $this->cekharga($request->namapaket,$request->price);
 
