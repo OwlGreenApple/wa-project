@@ -15,10 +15,11 @@
             </div>
           @endif
 
-          <form method="POST" action="{{url('summary')}}">
           <?php if (Auth::check()) {?>
           <!--<form method="POST" action="{{url('submit-checkout')}}">-->
+						<form method="POST" action="{{url('submit-checkout-login')}}">
             <?php } else {?>
+							<form method="POST" action="{{url('submit-checkout')}}">
             <!--<form method="POST" action="{{url('submit-checkout-register')}}">-->
               <?php }?>
               {{ csrf_field() }}
@@ -299,6 +300,7 @@
 			dayleft = <?php echo $dayleft;?>;
 			priceupgrade = <?php echo $priceupgrade;?>;
 		<?php }?>
+		$("#priceupgrade").val(0);
 		$( "#select-auto-manage" ).change(function() {
 			var price = $(this).find("option:selected").attr("data-price");
 			var namapaket = $(this).find("option:selected").attr("data-paket");

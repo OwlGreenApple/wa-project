@@ -109,6 +109,13 @@
 
 </head>
 <body>
+		<?php 
+			$is_nav_show = true;
+			$arr_segment = ["pricing","checkout","summary"];
+			if (in_array(request()->segment(1), $arr_segment)) {
+				$is_nav_show = false;
+			}
+		?>
 
     <!-- Loading lama
     <div id="div-loading">
@@ -138,7 +145,7 @@
                         @guest
 
                         @else
-                          @if(!request()->is('pricing'))
+                          @if($is_nav_show)
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link {{ (request()->is('home') || request()->is('list-form') || request()->is('list-create') || request()->is('create-campaign') || request()->is('create-apt')) ? 'active' : '' }} dropdown-toggle" href="{{ route('home') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     Create<span class="caret"></span>
@@ -186,7 +193,7 @@
                         @endif 
                     </ul>
                     <ul class="navbar-nav mr-auto"><!-- separator --></ul>
-                    @if(!request()->is('pricing'))
+                    @if($is_nav_show)
                      <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
 												@if(!Auth()->user()->is_admin)

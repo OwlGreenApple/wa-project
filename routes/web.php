@@ -11,6 +11,8 @@
 |
 */
 
+Auth::routes();
+
 Route::get('logs-0312', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('/', function () {
@@ -35,16 +37,15 @@ Route::get('testdirectsendmail','ApiController@testDirectSendMail')->name('testd
 Route::post('is_pay','ApiController@customerPay');
 Route::post('private-list','ApiController@register_list');
 
-Auth::routes();
-
 Route::get('pricing','OrderController@pricing')->name('pricing');
 Route::get('summary','OrderController@summary');
-Route::post('summary','OrderController@summary');
 Route::get('checkout/{id}','OrderController@checkout');
 Route::get('thankyou','OrderController@thankyou');
 Route::post('/check-coupon','OrderController@check_coupon');
-Route::post('/submit-checkout-register','OrderController@submit_checkout_register');
-Route::post('/submit-checkout','OrderController@submit_checkout');
+// Route::post('/submit-checkout-register','OrderController@submit_checkout_register');
+Route::post('/submit-checkout-login','OrderController@submit_checkout_login'); //new system to summary
+Route::post('/submit-checkout','OrderController@submit_checkout'); //new system to summary
+Route::post('/submit-summary','OrderController@submit_summary'); //new system to summary
 
 /* PROTOTYPE */
 //Route::get('createlists', 'HomeController@formList');

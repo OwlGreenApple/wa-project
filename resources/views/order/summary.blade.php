@@ -45,14 +45,14 @@
         <!-- End Card Header -->
         <div class="card-body">
           <!-- Card Data Summary -->
-          <div class="card-data-summary show">
+          <div class="card-data-summary show" id="step-1">
 						<?php if ($is_login) { ?>
             <p>Your order confirmation will be emailed to:</p>
             <span class="sumo-psuedo-link">{{Auth::user()->email}}</span>
 						<?php } else { ?>
 
 							<div id="div-register">
-                <form class="add-contact" method="POST" action="{{ route('register') }}">
+                <form class="add-contact" method="POST" id="form-register">
                     @csrf
 
                     <div class="form-group">
@@ -141,7 +141,7 @@
                 <div class="mt-4 mb-3"><sb>Already Have An Account? <a href="" id="link-to-login">Log in Here</a></sb></div>
 							</div>
 							<div id="div-login" style="display:none;">
-								<form class="add-contact" method="POST" action="{{ route('login') }}">
+								<form class="add-contact" method="POST" id="form-login">
 										@csrf
 										 <div class="form-group">
 												<label>Email*</label>
@@ -191,7 +191,7 @@
 
       <!-- Card 2 -->
       <div class="checkout-step-container">
-        <div class="card checkout-card card-step-2 inactive" id="cardStep2">
+        <div class="card checkout-card" id="cardStep2">
         <div class="card-header">
           <div class="d-flex align-items-center">
             <h2 class="h3">2. Order Review</h2>
@@ -200,7 +200,7 @@
         <!-- End Card Header -->
         <div class="card-body">
           <!-- Card Data Entry -->
-          <div class="card-data-entry hide"> <!-- style="display: none;" -->
+          <div class="card-data-entry step-2" <?php if (!$is_login) { ?> style="display:none;"<?php } ?>> <!-- style="display: none;" -->
             <p>
               <b>
                 While we're sure you got everything right, please review your order summary,
@@ -209,47 +209,34 @@
             </p>
             <!-- Mobile Checkout Summary  -->
             <div id="cart-checkout-summary-mobile" class="d-block d-md-none">
-              
+
 <!-- Table -->
 <table class="table sumo-purchases-table">
   <tbody>
     
       <tr>
-        <td class="sumo-td-img">
-          
-            
-              <img class="rounded-border" src="https://appsumo2.b-cdn.net/media/cache/76/b2/76b25a10485370cb56ef7795e21883c9.jpg" width="25" height="auto">
-            
-          
-        </td>
         <td class="sumo-td-name">
           <div class="sumo-title">
-            <b>SuiteDash</b>
+            <b><?php echo session('order')['namapakettitle'] ?></b>
             
           </div>
-          <div class="quantity">QTY: 1</div>
         </td>
-        <td class="sumo-td-price text-right sumo-checkout-item cart-item" data-item-id="2101">$79.00
-        
+				<!--
+        <td class="sumo-td-price text-right sumo-checkout-item cart-item">
+					Rp. <?php echo number_format(session('order')['price'], 0, '', '.'); ?>
         </td>
+				-->
       </tr>
     
   </tbody>
 </table>
 <!-- End Table -->
 <div>
-    <div class="as-checkout-entry">
-      <strong>Subtotal</strong>
-      <strong>$79.00</strong>
-    </div>
-    <!-- TODO: ANNIVERSARY_PROMOTION_OVER? remove me -->
-    
-    
-    
-    
     <div class="as-checkout-entry" id="checkout-total" data-total="79.00">
       <strong class="as-checkout-total">Total</strong>
-      <strong class="as-checkout-total-price" id="totalprice_sidebar totalprice_mobile">$ 79.00</strong>
+      <strong class="as-checkout-total-price" id="totalprice_sidebar totalprice_mobile">
+				Rp. <?php echo number_format(session('order')['price'], 0, '', '.'); ?>
+			</strong>
     </div>
 </div>
 
@@ -259,23 +246,8 @@
 
             </div>
             <!-- Checkout Button Container -->
-            <div class="checkout-button-container mt-30 show d-md-none" id="checkout-buttons-2">
-              <button type="submit" class="btn btn-secure-checkout full-width hide waves-effect waves-light" data-pay-select="option1">
-                <img src="https://appsumo2.b-cdn.net/static/images/svg/baseline-lock-24px.svg" width="auto" height="20">
-                <span>Place Order via Secure Checkout</span>
-              </button>
-              <button type="submit" class="btn btn-paypal-checkout full-width hide waves-effect waves-light" data-pay-select="option2">
-                <img src="https://appsumo2.b-cdn.net/static/images/checkout/payment-methods/paypal.svg" width="auto" height="17">
-                <span>Checkout</span>
-              </button>
-              <button type="submit" class="btn btn-g-pay-checkout full-width hide waves-effect waves-light" data-pay-select="option3">
-                <span>Order with</span>
-                <img src="https://appsumo2.b-cdn.net/static/images/checkout/payment-methods/gpay-white.svg" width="auto" height="17">
-              </button>
-              <button type="submit" class="btn btn-apple-pay-checkout full-width hide waves-effect waves-light" data-pay-select="option4">
-                <span>Order with</span>
-                <img src="https://appsumo2.b-cdn.net/static/images/checkout/payment-methods/applepay-white.svg" width="auto" height="17">
-              </button>
+            <div class="checkout-button-container mt-30 step-2" id="checkout-buttons-2" <?php if (!$is_login) { ?> style="display:none;"<?php } ?>>
+							
               <div class="sumo-product-note light mt-20">
                 By clicking the "Place Order" button, you confirm that you have read, understand,
                 and accept our Terms and Conditions, Return Policy, and Privacy Policy.
@@ -314,7 +286,7 @@
               </div>
               <!-- End Card Header -->
               <div class="card-body pt-20">
-                
+
 <div id="cart-checkout-summary">
   <!-- Desktop Table -->
   <!-- Table -->
@@ -322,88 +294,46 @@
     <tbody>
       
         <tr>
-          <td class="sumo-td-img">
-            
-              
-                <img class="rounded-border" src="https://appsumo2.b-cdn.net/media/cache/76/b2/76b25a10485370cb56ef7795e21883c9.jpg" width="25" height="auto">
-              
-            
-          </td>
           <td class="sumo-td-name">
             <div class="sumo-title">
-              <b>SuiteDash</b>
+              <b><?php echo session('order')['namapakettitle'] ?></b>
               
             </div>
-            <div class="quantity">QTY: 1</div>
           </td>
-          <td class="sumo-td-price text-right sumo-checkout-item" data-item-id="2101">$ 79.00
-            
-
-            
+					<!--
+          <td class="sumo-td-price text-right sumo-checkout-item" data-item-id="2101">
+						Rp. <?php echo number_format(session('order')['price'], 0, '', '.'); ?>
           </td>
+					-->
         </tr>
       
     </tbody>
   </table>
   <!-- End Table -->
   <div>
-    <div class="as-checkout-entry">
-      <strong>Subtotal</strong>
-      <strong>$79.00</strong>
-    </div>
-    <!-- TODO: ANNIVERSARY_PROMOTION_OVER? remove me -->
     
-    
-    
-    
-    <div class="as-checkout-entry" id="checkout-total" data-total="79.00">
+    <div class="as-checkout-entry" id="checkout-total">
       <strong class="as-checkout-total">Total</strong>
-      <strong class="as-checkout-total-price" id="totalprice_sidebar totalprice_mobile">$ 79.00</strong>
+      <strong class="as-checkout-total-price" id="totalprice_sidebar totalprice_mobile">
+			Rp. <?php echo number_format(session('order')['price'], 0, '', '.'); ?>
+			</strong>
     </div>
 </div>
   
   
   
-  <!-- Checkout Button Container -->
-  <form id="cart-checkout-form" class="d-none" action="/checkout/" method="post">
-    <input type="hidden" name="csrfmiddlewaretoken" value="kz6X1dZDJ2V5PIibeTaIOypQC4EZgJj9An4FFSMe7gXoJcqiIZjNHxYwPEecHWHF">
-  </form>
+
 </div>
-
-
-
-
-
-
-
-                
-                  
-                    
-                        <div class="checkout-button-container mt-30 hide" id="checkout-buttons-1">
-                      <button type="submit" class="btn btn-secure-checkout full-width hide waves-effect waves-light" data-pay-select="option1">
-                        <img src="https://appsumo2.b-cdn.net/static/images/svg/baseline-lock-24px.svg" width="auto" height="20">
-                        <span>Place Order via Secure Checkout</span>
-                      </button>
-                      <button type="submit" class="btn btn-paypal-checkout full-width hide waves-effect waves-light" data-pay-select="option2">
-                        <img src="https://appsumo2.b-cdn.net/static/images/checkout/payment-methods/paypal.svg" width="auto" height="17">
-                        <span>Checkout</span>
-                      </button>
-                      <button type="submit" class="btn btn-g-pay-checkout full-width hide waves-effect waves-light" data-pay-select="option3">
-                        <span>Order with</span>
-                        <img src="https://appsumo2.b-cdn.net/static/images/checkout/payment-methods/gpay-white.svg" width="auto" height="17">
-                      </button>
-                      <button type="submit" class="btn btn-apple-pay-checkout full-width hide waves-effect waves-light" data-pay-select="option4">
-                        <span>Order with</span>
-                        <img src="https://appsumo2.b-cdn.net/static/images/checkout/payment-methods/applepay-white.svg" width="auto" height="17">
-                      </button>
+									<form method="POST" action="{{url('submit-summary')}}">
+										{{ csrf_field() }}
+                    <div class="checkout-button-container mt-30 step-2" id="checkout-buttons-1" <?php if (!$is_login) { ?> style="display:none;"<?php } ?>>
+												<input type="submit" name="submit" id="submit" class="col-md-12 col-12 btn btn-primary bsub btn-block" value="Order Now"/>
                       <div class="sumo-product-note light mt-20">
                         By clicking the "Place Order" button, you confirm that you have read, understand,
                         and accept our Terms and Conditions, Return Policy, and Privacy Policy.
                       </div>
                     </div>
-                    
-                  
-                
+									</form>
               <!-- Close Desktop Table -->
               </div>
             </div>
@@ -441,74 +371,6 @@
 
 <script type="text/javascript">
 
-  function check_kupon(){
-    $.ajax({
-      type: 'POST',
-      url: "{{url('/check-coupon')}}",
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      data: {
-        harga : $('#price').val(),
-        kupon : $('#kupon').val(),
-        idpaket : $( "#select-auto-manage" ).val(),
-      },
-      dataType: 'text',
-      beforeSend: function() {
-        $('#loader').show();
-        $('.div-loading').addClass('background-load');
-      },
-      success: function(result) {
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-
-        var data = jQuery.parseJSON(result);
-
-        $('#pesan').html(data.message);
-        $('#pesan').show();
-        if (data.message=="") {
-          $('#pesan').hide();
-        }
-        
-        if (data.status == 'success') {
-          $('.total').html('IDR ' + formatNumber(parseInt(data.total)+parseInt(totalPriceUpgrade)));
-          $('#pesan').removeClass('alert-danger');
-          $('#pesan').addClass('alert-success');
-        } 
-        else if (data.status == 'success-paket') {
-          $('.total').html('IDR ' + formatNumber(parseInt(data.total)+parseInt(totalPriceUpgrade)));
-          $('#pesan').removeClass('alert-danger');
-          $('#pesan').addClass('alert-success');
-          
-          flagSelect = false;
-          $("#select-auto-manage option").each(function() {
-            console.log($(this).val());
-            if ($(this).val() == data.paketid) {
-              flagSelect = true;
-            }
-          });
-
-          if (flagSelect == false) {
-            labelPaket = data.paket;
-            if (data.kodekupon=="SPECIAL12") {
-              labelPaket = "Paket Special Promo 1212 - IDR 295.000";
-            }
-            $('#select-auto-manage').append('<option value="'+data.paketid+'" data-price="'+data.dataPrice+'" data-paket="'+data.dataPaket+'" selected="selected">'+labelPaket+'</option>');
-          }
-          $("#price").val(data.dataPrice);
-          $("#namapaket").val(data.dataPaket);
-          
-          $('#select-auto-manage').val(data.paketid);
-          $( "#select-auto-manage" ).change();
-        }
-        else {
-          $('#pesan').removeClass('alert-success');
-          $('#pesan').addClass('alert-danger');
-        }
-      }
-    });
-  }
-  
 	function formatNumber(num) {
 		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 	}
@@ -568,15 +430,11 @@
     $("body").on("click", "#button-login", function() {
 			$.ajax({
 				type: 'POST',
-				url: "{{url('/check-coupon')}}",
+				url: "{{url('/login')}}",
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				},
-				data: {
-					harga : $('#price').val(),
-					kupon : $('#kupon').val(),
-					idpaket : $( "#select-auto-manage" ).val(),
-				},
+				data: $("#form-login").serializeArray(),
 				dataType: 'text',
 				beforeSend: function() {
 					$('#loader').show();
@@ -588,17 +446,14 @@
 
 					var data = jQuery.parseJSON(result);
 
-					$('#pesan').html(data.message);
-					$('#pesan').show();
-					if (data.message=="") {
-						$('#pesan').hide();
-					}
+
 					
-					if (data.status == 'success') {
+					if (data.success == '1') {
+						$(".step-2").show();
+						$("#step-1").html('<p>Your order confirmation will be emailed to:</p><span class="sumo-psuedo-link">'+data.email+'</span>');
 					} 
 					else {
-						$('#pesan').removeClass('alert-success');
-						$('#pesan').addClass('alert-danger');
+						alert('login failed');
 					}
 				}
 			});
@@ -611,24 +466,42 @@
 
       if(val == 'on'){
         alert('Please Check Agreement Box');
+				return false;
       }
+
+			$.ajax({
+				type: 'POST',
+				url: "{{url('/register')}}",
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				data: $("#form-register").serializeArray(),
+				dataType: 'text',
+				beforeSend: function() {
+					$('#loader').show();
+					$('.div-loading').addClass('background-load');
+				},
+				success: function(result) {
+					$('#loader').hide();
+					$('.div-loading').removeClass('background-load');
+
+					var data = jQuery.parseJSON(result);
+
+					if (data.success == '1') {
+						$(".step-2").show();
+						$("#step-1").html('<p>Your order confirmation will be emailed to:</p><span class="sumo-psuedo-link">'+data.email+'</span>');
+					} 
+					else {
+						alert('login failed');
+					}
+				}
+			});
+			
+			
     });
 	}
-
-  $(document).ready(function() {
-		agreement();
-		fixLayoutInputPhoneCountry();
-		getDataFromCountry();
-		countryChange();
-		rememberMe();
-		
-		loginAjax();
-		registerAjax();
-
-    $("body").on("click", ".btn-kupon", function() {
-      check_kupon();
-    });
-
+	
+	function initButton(){
     $("body").on("click", "#link-to-login", function(e) {
 			e.preventDefault();
       $("#div-login").show();
@@ -643,36 +516,19 @@
       $("#header-step1").html("1. Create an account");
 			$('html, body').animate({scrollTop: '0px'}, 300);
     });
+	}
 
-		<?php if (Auth::check()) {?>
-			dayleft = <?php echo $dayleft;?>;
-			priceupgrade = <?php echo $priceupgrade;?>;
-		<?php }?>
-		$( "#select-auto-manage" ).change(function() {
-			var price = $(this).find("option:selected").attr("data-price");
-			var namapaket = $(this).find("option:selected").attr("data-paket");
-			var namapakettitle = $(this).find("option:selected").attr("data-paket-title");
+  $(document).ready(function() {
+		agreement();
+		fixLayoutInputPhoneCountry();
+		getDataFromCountry();
+		countryChange();
+		rememberMe();
+		
+		loginAjax();
+		registerAjax();
 
-			<?php if (Auth::check()) {?>
-				totalPriceUpgrade = dayleft * ((price-priceupgrade)/30);
-				if (parseInt(totalPriceUpgrade)< 0 ) {
-					$("#label-priceupgrade").html("Tidak dapat downgrade");
-					totalPriceUpgrade = 0;
-				}
-				else {
-					$("#label-priceupgrade").html("IDR "+formatNumber(totalPriceUpgrade));
-				}
-				$("#priceupgrade").val(totalPriceUpgrade);
-			<?php }?>
-			
-			$("#price").val(price);
-			$("#namapaket").val(namapaket);
-			$("#namapakettitle").val(namapakettitle);
-			// $('#kupon').val("");
-			check_kupon();
-		});
-		$( "#select-auto-manage" ).change();
-		$(".btn-kupon").trigger("click");
+		initButton();
   });
     
 </script>
