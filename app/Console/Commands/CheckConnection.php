@@ -55,11 +55,11 @@ class CheckConnection extends Command
 							if (!is_null($server)){
 								$status_connect = json_decode(ApiHelper::status_simi($server->url));
 								print_r($status_connect);
-								// if (method_exists($status_connect,"connected")) {
+								if (method_exists($status_connect,"connected")) {
 									if ($status_connect->connected) {
 										$status = true;
 									}
-								// }
+								}
 							}
 						}
 						if ($row->mode == 1 ) {
@@ -72,11 +72,14 @@ class CheckConnection extends Command
 							}
 						}
 						
+						$phone = PhoneNumber::find($idphone_number);
 						if (!$status) {
-							$phone = PhoneNumber::find($idphone_number);
 							$phone->status = 1;
-							$phone->save();
 						}
+						else if ($status) {
+							$phone->status = 2;
+						}
+						$phone->save();
 						
           } // END FOREACH
         }
