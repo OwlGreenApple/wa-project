@@ -147,23 +147,24 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('send-image', 'SettingController@send_image_url');
   Route::get('test-send-message-temp', 'SettingController@test_send_message');
   // Route::post('edit-phone', 'SettingController@editPhone');
-});
-
-/* HOME */
-Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');
-Route::get('checkphone', 'HomeController@checkPhone');
-
-/*** USER ***/
-Route::group(['middleware'=>['auth','web','authsettings']],function(){
-  Route::get('google-form','HomeController@google_form');
-  Route::get('jsonEncode','HomeController@jsonEncode');
-
+	
 	//Orders 
 	Route::get('/order','OrderController@index_order');
 	Route::get('/order/load-order','OrderController@load_order');
 	Route::post('order-confirm-payment','OrderController@confirm_payment_order');
 
-		/* LIST */
+});
+
+/*** USER ***/
+Route::group(['middleware'=>['auth','web','authsettings']],function(){
+	/* HOME */
+	Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');
+	Route::get('checkphone', 'HomeController@checkPhone');
+
+  Route::get('google-form','HomeController@google_form');
+  Route::get('jsonEncode','HomeController@jsonEncode');
+
+	/* LIST */
   Route::get('lists', 'ListController@index');
   Route::get('lists-table', 'ListController@dataList');
   Route::get('list-form', 'ListController@formList');
@@ -257,72 +258,16 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 
   //not used anymore (EVENT)
   ////////////////////////////////////////////////
-  /*
-  Route::post('import_csv_ev','EventController@importCSVEvent')->name('import_csv_ev');*/
 
- 
   // auto reply event
   Route::get('eventautoreply','EventController@eventAutoReply')->name('eventautoreply');
   Route::post('addeventautoreply','EventController@addEventAutoReply')->name('addeventautoreply');
   Route::get('eventautoreplyturn/{id}/{status}','EventController@turnEventAutoReply');
   Route::get('eventstatus/{id}/{status}','EventController@setEventStatus');
 
-  /*old code
-	Route::get('usercustomer/{id_list}','ListController@userCustomer');
-  Route::get('createlist','ListController@listForm')->name('createlist');
-	Route::post('addlist','ListController@addList')->name('addlist'); 
-	
-	Route::get('userlist','ListController@userList')->name('userlist');
-	
-	Route::post('exportlistsubscriber','ListController@exportListSubscriber')->name('exportlistsubscriber');
-	
-	*/
-	/* old BroadCast 
-	Route::get('broadcast','BroadCastController@index')->name('broadcast');
-	// form to create broadcast reminder
-	Route::get('broadcastform','BroadCastController@FormBroadCast')->name('broadcastform');
-	// form to create broadcast event
-	Route::get('broadcasteventform','BroadCastController@eventFormBroadCast')->name('broadcasteventform');
-	//insert broadcast and broadcast-customer data
-	Route::post('createbroadcast','BroadCastController@createBroadCast')->name('createbroadcast');
-	//see broadcast customer
-*/
-	//old reminder
-	// Route::get('reminder','ReminderController@index')->name('reminder'); 
-	
-	// form to create reminder
-	/*Route::get('reminderform','ReminderController@reminderForm')->name('reminderform'); 
-	// set reminder into database
-	Route::post('reminderadd','ReminderController@addReminder')->name('reminderadd');
-	// retrieve data from reminder customer
-	Route::get('reminder_customer','ReminderController@displayReminderCustomers')->name('reminder_customer');
-	// change reminder's status
-	Route::get('reminder-status/{id_reminder}/{status}','ReminderController@setReminderStatus');
-	Route::post('remindermessage','ReminderController@updateReminderMessage')->name('remindermessage');
-	Route::post('reminderdays','ReminderController@updateReminderDays')->name('reminderdays');
-	Route::get('delreminder','ReminderController@delReminder')->name('delreminder');
-	Route::get('export_reminder_subscriber','ReminderController@exportSubscriber')->name('export_reminder_subscriber');
-	Route::get('export_reminder_csv/{id_list}','ReminderController@exportReminderSubscriber');
-	*/
 	// reminder auto reply
 	Route::get('reminderautoreply','ReminderController@reminderAutoReply')->name('reminderautoreply');
 	Route::post('addreminderautoreply','ReminderController@addReminderAutoReply')->name('addreminderautoreply');
-
-	/* Templates 
-	Route::get('templates','TemplatesController@templateForm')->name('templates');
-	//insert into database broadcast template
-	Route::post('addtemplate','TemplatesController@createTemplate')->middleware('template')->name('addtemplate');
-	//get broadcast template list name
-	Route::get('templatelist','TemplatesController@displayTemplateList')->name('templatelist');
-	// get message from broadcast template
-	Route::get('displaytemplate','TemplatesController@displayTemplate')->name('displaytemplate');
-	// update template
-	Route::post('updatetemplate','TemplatesController@updateTemplate')->middleware('template')->name('updatetemplate');
-	// delete template
-	Route::get('deletetemplate','TemplatesController@delTemplate')->name('deletetemplate');
-*/
-	/* Senders */
-	// Route::post('addsender','SenderController@addSender')->middleware('wanumber')->name('addsender');
 
 	/* CKEditor */
 	Route::get('ckbrowse', 'CKController@ck_browse')->name('ckbrowse');
@@ -331,9 +276,6 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 });
 
 /* Customers */
-/*Route::get('testsub',function(){
-  return view('layouts.subscribe');
-});*/
 // Route::post('customer/add','CustomerController@addCustomer')->middleware('customer')->name('addcustomer');
 //Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
 Route::post('subscriber/save','CustomerController@saveSubscriber')->middleware('customer')->name('savesubscriber');

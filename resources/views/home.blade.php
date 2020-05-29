@@ -130,10 +130,6 @@
   <!-- End Modal -->
 
 <script type="text/javascript">
-  $(document).ready(function(){
-    checkPhone();
-  });
-
   window.onload = function () 
   {
     /** TOTAL CONTACTS ADDING PER DAY **/
@@ -194,6 +190,7 @@
       }]
     });
     chart_message.render();
+		$(".canvasjs-chart-credit").hide();
     //{x : new Date('2019-12-04'), y: 520, indexLabel: "highest",markerColor: "red", markerType: "triangle" },
   }
 
@@ -235,5 +232,11 @@
         }
       });
   }
+	
+  $(document).ready(function(){
+    checkPhone();
+		$(".canvasjs-chart-credit").hide();
+  });
+
 </script>
 @endsection

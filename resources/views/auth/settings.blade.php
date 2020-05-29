@@ -289,7 +289,7 @@
   </div>
   <!-- End Modal -->
 
-  <!-- Modal Import Contact -->
+  <!-- Modal Buy Now -->
   <div class="modal fade child-modal" id="leadsettings" role="dialog">
     <div class="modal-dialog">
 
