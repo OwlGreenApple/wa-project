@@ -26,8 +26,8 @@ window.intlTelInput(input, {
     },
     dropdownContainer: document.body,
     pageHiddenInput : url[4],
-    // initialCountry: settings.code_country,  
-    onlyCountries: ['us', 'gb', 'sg', 'au', 'id','my'],
+    initialCountry: "id",  
+    onlyCountries: ['id','us', 'gb', 'sg', 'au', 'my'],
     placeholderNumberType: "MOBILE",
     utilsScript: path+"/intl-tel-input/js/utils.js",
 });

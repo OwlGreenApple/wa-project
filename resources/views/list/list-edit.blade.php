@@ -1350,6 +1350,8 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                  $(".update_notif").html('<div class="alert alert-success text-center">'+result.message+'</div>')
                  $(".error").hide();
                  $(".alert-success").delay(3000).fadeOut(3000);
+                 $('input[name="phone_number"]').val('');
+                 $(".current_phone_number").html(result.newnumber)
                  displayCustomer();
               }
               else if(result.success == false || result.update == false) {
