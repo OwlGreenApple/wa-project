@@ -147,6 +147,12 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('send-image', 'SettingController@send_image_url');
   Route::get('test-send-message-temp', 'SettingController@test_send_message');
   // Route::post('edit-phone', 'SettingController@editPhone');
+	
+	//Orders 
+	Route::get('/order','OrderController@index_order');
+	Route::get('/order/load-order','OrderController@load_order');
+	Route::post('order-confirm-payment','OrderController@confirm_payment_order');
+
 });
 
 /* HOME */
@@ -157,11 +163,6 @@ Route::get('checkphone', 'HomeController@checkPhone');
 Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('google-form','HomeController@google_form');
   Route::get('jsonEncode','HomeController@jsonEncode');
-
-	//Orders 
-	Route::get('/order','OrderController@index_order');
-	Route::get('/order/load-order','OrderController@load_order');
-	Route::post('order-confirm-payment','OrderController@confirm_payment_order');
 
 	/* LIST */
   Route::get('lists', 'ListController@index');
