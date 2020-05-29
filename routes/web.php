@@ -155,12 +155,12 @@ Route::group(['middleware'=>['auth','web']],function(){
 
 });
 
-/* HOME */
-Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');
-Route::get('checkphone', 'HomeController@checkPhone');
-
 /*** USER ***/
 Route::group(['middleware'=>['auth','web','authsettings']],function(){
+	/* HOME */
+	Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');
+	Route::get('checkphone', 'HomeController@checkPhone');
+
   Route::get('google-form','HomeController@google_form');
   Route::get('jsonEncode','HomeController@jsonEncode');
 
