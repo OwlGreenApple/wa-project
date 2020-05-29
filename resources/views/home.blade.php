@@ -190,6 +190,7 @@
       }]
     });
     chart_message.render();
+		$(".canvasjs-chart-credit").hide();
     //{x : new Date('2019-12-04'), y: 520, indexLabel: "highest",markerColor: "red", markerType: "triangle" },
   }
 
