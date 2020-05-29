@@ -76,7 +76,7 @@
         </div>
 
         <div class="col-lg-3 pad-fix col-button">
-          @if($row->campaign_status == 1)
+          @if($row->status == 1)
             <button id="{{ $broad_cast->id }}" type="button" class="btn btn-success broadcast_duplicate" data-toggle="tooltip" title="Button Duplicate"><span class="icon-copy-text"></span><span class="tooltipstered" title="Duplicate Campaign"></span></button>
           @endif
           <button id="{{ $broad_cast->id }}" type="button" class="btn btn-danger broadcast-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>

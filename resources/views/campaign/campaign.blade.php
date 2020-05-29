@@ -192,8 +192,8 @@
     
       <!-- Modal content -->
       <div class="modal-content">
-        
         <div class="modal-body">
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <div class="msg col-lg-12 mb-2"><!-- --></div>
             <div class="form-group">
                  <div class="mb-2 act-tel-campaign">
@@ -248,7 +248,6 @@
 											<div class="text-right">
                         <button id="publish" type="button" data="publish" class="btn btn-primary mr-1">Publish</button>
 												<button id="broadcast_edit" type="button" class="btn btn-custom mr-1">Save</button>
-												<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 											</div>
 										</div>
 										
