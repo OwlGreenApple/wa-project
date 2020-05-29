@@ -130,11 +130,6 @@
   <!-- End Modal -->
 
 <script type="text/javascript">
-  $(document).ready(function(){
-    checkPhone();
-		$(".canvasjs-chart-credit").hide();
-  });
-
   window.onload = function () 
   {
     /** TOTAL CONTACTS ADDING PER DAY **/
@@ -236,5 +231,11 @@
         }
       });
   }
+	
+  $(document).ready(function(){
+    checkPhone();
+		$(".canvasjs-chart-credit").hide();
+  });
+
 </script>
 @endsection
