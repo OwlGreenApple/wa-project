@@ -24,7 +24,7 @@ Anda telah memesan Paket {{$nama_paket}} <br>
 	
 	
 	Dan setelah selesai membayar<br>
-	Silahkan lakukan konfirmasi pembayaran di menu Orders, atau bisa dengan mengklik <a href="{{url('orders')}}"> --> KONFIRMASI PEMBAYARAN <--  </a> disini. <br>
+	Silahkan lakukan konfirmasi pembayaran di menu Orders, atau bisa dengan mengklik <a href="{{url('order')}}"> KONFIRMASI PEMBAYARAN </a> disini. <br>
 
 <br> Salam hangat, 
 <br>

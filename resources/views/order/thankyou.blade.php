@@ -35,7 +35,7 @@
             Admin kami akan membantu anda max 1x24 jam
           </p>
 
-          <a href="{{url('orders')}}">
+          <a href="{{url('order')}}">
             <button class="btn btn-success btn-confirm-thankyou">
               KONFIRMASI TRANSFER BANK
             </button>

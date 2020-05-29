@@ -18,8 +18,12 @@ class AuthSettings
      */
     public function handle($request, Closure $next)
     {
-      $iduser = Auth::id();
-      $phone = PhoneNumber::where('user_id',$iduser)->get();
+      $user = Auth::user();
+      $phone = PhoneNumber::where('user_id',$user->id)->get();
+
+      if($user->day_left<=0){
+        return redirect('order');
+      }
 
       if($phone->count() < 1){
         return redirect('settings');
