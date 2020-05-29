@@ -785,7 +785,7 @@ class SendMessage extends Command
 			
 			if ($mode == 1) {
 				//status woowa
-				if(strtolower($send_message) == 'Success')
+				if(strtolower($send_message) == 'success')
 				{
 						$status = 1;
 				}
