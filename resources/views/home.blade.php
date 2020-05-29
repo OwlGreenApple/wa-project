@@ -132,6 +132,7 @@
 <script type="text/javascript">
   $(document).ready(function(){
     checkPhone();
+		$(".canvasjs-chart-credit").hide();
   });
 
   window.onload = function () 
