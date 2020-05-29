@@ -286,6 +286,8 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
           </div>
         </div>
 
+        <div class="autoreply_error"><!-- display error message --></div>
+
 				<form id="form-auto-reply">
 					<input type="hidden" name="idlist">
           <div class="form-check mt-2">
@@ -806,27 +808,29 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
              $('.div-loading').removeClass('background-load');
 
 
-             if(result.error == undefined)
+             if(result.status == 'success')
              {
-                $(".list_label").html('');
-                $(".main").html("<div class='alert alert-success'>"+result.message+"</div>");
-                displayAdditional();
-             }
-             else if(result.additionalerror == true)
-             {
-                $(".main").html("<div class='alert alert-danger'>"+result.message+"</div>");
+                $(".autoreply_error").html("<div class='alert alert-success'>"+result.message+"</div>");
              }
              else
              {
-                $(".label_name").html(result.label_name);
-                $(".label_phone").html(result.label_phone);
-                $(".label_email").html(result.label_email);
+                $(".autoreply_error").html("<div class='alert alert-danger'>"+result.message+"</div>");
              }
-            $("body .alert").delay(5000).fadeOut(2000); 
+            $("body .alert").delay(3000).fadeOut(2000); 
+          },
+          error: function(xhr)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xhr.responseText);
           }
       });		
 		});
 	}
+
+  $(function () {
+      $("#divInput-description-post").emojioneArea();
+  });
 	
 	var tempText="";
   function autoReplyButton()

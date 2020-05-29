@@ -164,6 +164,8 @@ class HomeController extends Controller
 
         $graph_message = ReminderCustomers::where([['user_id',$id],['status','>',0]])->select(DB::raw('COUNT(DATE_FORMAT(updated_at,"%Y-%m-%d")) AS total_messages,DATE_FORMAT(updated_at,"%Y-%m-%d") AS date_send'))->union($graph_broadcast_message)->groupBy('date_send')->orderBy('date_send','asc');
 
+        // dd($graph_message->get());
+
         $total_send_message = $graph_message->get()->count() - 30;
 
         if($total_send_message < 30)
