@@ -533,5 +533,6 @@
     
 </script>
 
+<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 
 @endsection
