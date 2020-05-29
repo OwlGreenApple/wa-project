@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Database\QueryException;
 use Maatwebsite\Excel\Facades\Excel;
 // use App\Exports\ListSubscribersExport;
 // use App\Imports\ListSubscribersImport;
@@ -98,6 +99,8 @@ class ListController extends Controller
     {
 			$user = Auth::user();
 			
+      // dd($request->all());
+
 			$list = UserList::find($request->idlist);
 			if (!is_null($list)) {
 				if ($list->user_id<>$user->id) {
@@ -110,7 +113,8 @@ class ListController extends Controller
 			}
 			
       // pengecekan error nya klo ga ada [START] [UNSUBS] [REPLY_CHAT]
-      if ($request->is_secure) {
+      if ($request->is_secure) 
+      {
         // if (strpos($request->autoreply, '[REPLY_CHAT]') == false) {
 					// return response()->json([
 						// "status"=>"error",
@@ -135,14 +139,52 @@ class ListController extends Controller
 										->where('list_id',$request->idlist)
 										->where('days',0)
 										->where('is_event',0)
-										->first();
+                    ->first();
+										
       //AUTO REPLY
-      if(!is_null($reminder)){
+      if(!is_null($reminder))
+      {
+        //UPDATE
         $reminder->message = $request->autoreply;
         if ($request->is_secure) {
           $reminder->status = 0;
         }
-        $reminder->save();
+
+        try
+        {
+           $reminder->save();
+        }
+        catch(QueryException $e)
+        {
+          //$e->getMessage();
+          return response()->json([
+            "status"=>"error",
+            "message"=>'Sorry, currently our system is too busy',
+          ]);
+        }
+      }
+      else
+      {
+        // INSERT
+        $new_reminder = new Reminder;
+        $new_reminder->user_id = $user->id;
+        $new_reminder->list_id = $request->idlist;
+        $new_reminder->message = $request->autoreply;
+        $new_reminder->days = 0;
+        $new_reminder->is_event = 0;
+
+        try
+        {
+           $new_reminder->save();
+        }
+        catch(QueryException $e)
+        {
+          //$e->getMessage();
+          return response()->json([
+            "status"=>"error",
+            "message"=>'Sorry, currently our system is too busy',
+          ]);
+        }
       }
 			
 			if (!is_null($list)) {
@@ -154,7 +196,7 @@ class ListController extends Controller
 			
 			return response()->json([
 				"status"=>"success",
-				"message"=>"data save",
+				"message"=>"Your auto reply message has saved!",
 			]);
 		}
 		
