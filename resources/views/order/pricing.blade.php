@@ -124,7 +124,7 @@
           </li>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
-            <span>Download kontak list</span>
+            <span>Download Contacts List</span>
           </li>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 

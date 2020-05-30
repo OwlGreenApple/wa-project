@@ -228,7 +228,7 @@
       },
       data: {
         harga : $('#price').val(),
-        kupon : $('#kupon').val(),
+        kodekupon : $('#kupon').val(),
         idpaket : $( "#select-auto-manage" ).val(),
       },
       dataType: 'text',

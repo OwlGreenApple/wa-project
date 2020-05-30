@@ -131,7 +131,8 @@ class OrderController extends Controller
         $arr['status'] = 'error';
         $arr['message'] = 'Kupon tidak terdaftar';
         return $arr;
-      } else {
+      } 
+			else {
         // $now = new DateTime();
         // $date = new DateTime($coupon->valid_until);
         $now = Carbon::now();
