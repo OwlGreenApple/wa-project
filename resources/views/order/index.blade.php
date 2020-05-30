@@ -181,7 +181,7 @@
 
           <div class="form-group">
             <label class="col-md-3 col-12">
-              <b>No Order</b>
+              <b>Order No</b>
             </label>
 
             <span class="col-md-6 col-12" id="mod-no_order">
@@ -205,7 +205,7 @@
             <span class="col-md-6 col-12" id="mod-total"></span>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="div-discount">
             <label class="col-md-3 col-12">
               <b>Discount</b>
             </label>
@@ -224,7 +224,7 @@
 
           <div class="form-group">
             <label class="col-md-3 col-12 float-left">
-              <b>Bukti Bayar</b> 
+              <b>Upload Image</b> 
             </label>
 
             <div class="col-md-6 col-12 float-left">
@@ -234,7 +234,7 @@
           <div class="clearfix mb-3"></div>
           <div class="form-group">
             <label class="col-md-3 col-12">
-              <b>Keterangan</b> 
+              <b>Notes</b> 
             </label>
             <div class="col-md-12 col-12">
               <textarea class="form-control" name="keterangan"></textarea>
@@ -274,6 +274,9 @@
     var total = parseInt($(this).attr('data-total'));
     $('#mod-total').html('Rp. ' + total.toLocaleString());
     var diskon = parseInt($(this).attr('data-discount'));
+		if (diskon == 0 ) {
+			$("#div-discount").hide();
+		}
     $('#mod-discount').html('Rp. ' + diskon.toLocaleString());
     $('#mod-date').html($(this).attr('data-date'));
 

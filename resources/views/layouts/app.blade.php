@@ -210,7 +210,7 @@
                                     
                                     <!--<a href="{{url('pricing')}}" class="nav-link {{ (request()->is('pricing')) ? 'active' : '' }}">Upgrade</a> 
                                     -->
-																		<a href="{{url('order')}}" class="nav-link {{ (request()->is('order')) ? 'active' : '' }}">Order</a>
+																		<a href="{{url('order')}}" class="nav-link {{ (request()->is('order')) ? 'active' : '' }}">Order & Confirm</a>
 																		
                                     <a class="nav-link" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();

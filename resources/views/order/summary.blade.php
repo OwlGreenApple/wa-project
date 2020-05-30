@@ -181,7 +181,7 @@
 
 								<hr class="mt-5" />
 
-								<div class="mt-4 mb-3"><sb>Need a Activtele account? <a href="" id="link-to-register">Register Here</a></sb></div>
+								<div class="mt-4 mb-3"><sb>Need an Activrespon account? <a href="" id="link-to-register">Register Here</a></sb></div>
 							</div>
 						<?php } ?>
           </div>
@@ -250,7 +250,7 @@
 							
               <div class="sumo-product-note light mt-20">
                 By clicking the "Place Order" button, you confirm that you have read, understand,
-                and accept our <a href="http://activrespon.com/terms-of-services/" target="_blank">Terms and Conditions</a>, Return Policy, and <a href="http://activrespon.com/privacy-policy/" target="_blank">Privacy Policy</a>.
+                and accept our <a href="http://activrespon.com/terms-of-services/" target="_blank">Terms and Conditions</a>, and <a href="http://activrespon.com/privacy-policy/" target="_blank">Privacy Policy</a>.
               </div>
             </div>
             <!-- End Mobile Checkout Summary -->
@@ -330,7 +330,7 @@
 												<input type="submit" name="submit" id="submit" class="col-md-12 col-12 btn btn-primary bsub btn-block" value="Order Now"/>
                       <div class="sumo-product-note light mt-20">
                         By clicking the "Place Order" button, you confirm that you have read, understand,
-                        and accept our <a href="http://activrespon.com/terms-of-services/" target="_blank">Terms and Conditions</a>, Return Policy, and <a href="http://activrespon.com/privacy-policy/" target="_blank">Privacy Policy</a>.
+                        and accept our <a href="http://activrespon.com/terms-of-services/" target="_blank">Terms and Conditions</a>, and <a href="http://activrespon.com/privacy-policy/" target="_blank">Privacy Policy</a>.
                       </div>
                     </div>
 									</form>

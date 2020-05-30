@@ -55,7 +55,7 @@
 
                <hr class="mt-5" />
 
-              <div class="mt-4 mb-3"><sb>Need a Activtele account? <a href="{{route('pricing')}}">Register Here</a></sb></div>
+              <div class="mt-4 mb-3"><sb>Need an Activrespon account? <a href="{{route('pricing')}}">Register Here</a></sb></div>
             <!-- end wrapper -->
             </div>
 
