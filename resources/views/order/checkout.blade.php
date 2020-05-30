@@ -202,7 +202,7 @@
               <div class="form-group">
                 <div class="col-12 col-md-12">
                   <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" required/>
-                  <label for="agree-term" class="label-agree-term text">I agree to all statements in <a href="{{url('/helps')}}" class="term-service" target="_blank">Terms of service</a></label>
+                  <label for="agree-term" class="label-agree-term text">I agree to all statements in <a href="http://activrespon.com/terms-of-services/" class="term-service" target="_blank">Terms of service</a></label>
                 </div>
               </div>
               <div class="form-group">
