@@ -32,7 +32,7 @@ window.intlTelInput(input, {
   pageHiddenInput : url[4],
   // excludeCountries: ["us"],
   // formatOnDisplay: false,
-  initialCountry: "us",
+  initialCountry: "id",
   /* geoIpLookup: function(callback) {
     $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
       var countryCode = (resp && resp.country) ? resp.country : "";

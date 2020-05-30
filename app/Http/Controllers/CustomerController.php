@@ -173,6 +173,7 @@ class CustomerController extends Controller
                   $customer->save();
                   $data['update'] = true;
                   $data['message'] = 'Success, your contact has updated';
+                  $data['newnumber'] = $phone_number;
               }
               catch(QueryException $e)
               {

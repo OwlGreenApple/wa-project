@@ -158,34 +158,41 @@ class HomeController extends Controller
         }
 
         //MESSAGE
-        $graph_broadcast_message = BroadCastCustomers::where([['broad_casts.user_id',$id],['broad_cast_customers.status','>',0]])
-          ->join('broad_casts','broad_casts.id','=','broad_cast_customers.broadcast_id')
-          ->select(DB::raw('COUNT(DATE_FORMAT(broad_cast_customers.updated_at,"%Y-%m-%d")) AS total_messages,DATE_FORMAT(broad_cast_customers.updated_at,"%Y-%m-%d") AS date_send'))->groupBy('date_send')->orderBy('date_send','asc');
-
-        $graph_message = ReminderCustomers::where([['user_id',$id],['status','>',0]])->select(DB::raw('COUNT(DATE_FORMAT(updated_at,"%Y-%m-%d")) AS total_messages,DATE_FORMAT(updated_at,"%Y-%m-%d") AS date_send'))->union($graph_broadcast_message)->groupBy('date_send')->orderBy('date_send','asc');
-
-        // dd($graph_message->get());
-
-        $total_send_message = $graph_message->get()->count() - 30;
-
-        if($total_send_message < 30)
-        {
-          $graph_send = $graph_message->get();
-        }
-        else
-        {
-          $graph_send = $graph_message->skip($total_send_message)->take(30)->get();
-        }
+        $graph_message = array();
+        $graph_message = DB::select(DB::raw('SELECT COUNT(*) AS total_messages, updated_at  FROM (
+            SELECT DATE_FORMAT(broad_cast_customers.updated_at,"%Y-%m-%d") AS updated_at FROM broad_cast_customers
+              JOIN broad_casts ON broad_casts.id = broad_cast_customers.broadcast_id
+                WHERE broad_casts.user_id = "'.$id.'" AND broad_cast_customers.status > 0
+  
+              UNION ALL
+  
+              SELECT DATE_FORMAT(updated_at,"%Y-%m-%d") FROM reminder_customers WHERE user_id = "'.$id.'" AND status > 0
+            ) AS baseview
+            GROUP BY updated_at
+            ORDER BY updated_at ASC
+            '));
 
         $graph_send_message = array();
-        if($graph_send->count() > 0)
+        if(count($graph_message) > 0)
         {
-          foreach($graph_send as $row)
+          foreach($graph_message as $row)
           {
-            $graph_send_message[$row->date_send] = $row->total_messages;
+            $graph_send_message[$row->updated_at] = $row->total_messages;
           }
         }
 
+        $total_send_message = count($graph_send_message) - 30; 
+
+        if($total_send_message < 30)
+        {
+          $graph_send = $graph_send_message;
+        }
+        else
+        {
+          $start_position = $total_send_message - 1;
+          $graph_send = array_slice($graph_send_message,$start_position,29);//due the array start from 0
+        }
+        
         $data = array(
           'lists'=>$lists,
           'latest_lists'=>$latest,
@@ -200,7 +207,7 @@ class HomeController extends Controller
           'phone_status'=>$phone_status,
           'server_status'=>$server_status,
           'graph_contacts'=>$graph_list,
-          'graph_messages'=>$graph_send_message
+          'graph_messages'=>$graph_send
         );
 
         return view('home',$data);
