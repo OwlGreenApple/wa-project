@@ -97,7 +97,8 @@ class Order extends Model
       $message .= 'Salam hangat,'."\n";
       $message .= 'Activrespon';
 
-      ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+      // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+			ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
 
       if(env('APP_ENV') <> 'local')
       {

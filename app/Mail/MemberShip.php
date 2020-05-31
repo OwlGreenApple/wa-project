@@ -57,7 +57,8 @@ class MemberShip extends Mailable
             $message .= 'Salam Hangat dan Sukses selalu,'."\n"."\n";
             $message .= '*Activrespon*'."\n";
 
-            ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+            // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+						ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
 
             return $this
             ->from('no-reply@activrespon.com', 'Activrespon')
@@ -97,7 +98,8 @@ class MemberShip extends Mailable
            $message .= 'Salam sukses selalu,'."\n"."\n";
            $message .= '*Activrespon*';
 
-           ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+           // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+					 ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
 
            $data_email = array(
               'percent'=>$percent,
@@ -131,7 +133,8 @@ class MemberShip extends Mailable
            $message .= 'Salam sukses selalu,'."\n"."\n";
            $message .= '*Activrespon*'."\n";
 
-           ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+           // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+					 ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
 
            return $this
             ->from('no-reply@activrespon.com', 'Activrespon')

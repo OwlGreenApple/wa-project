@@ -127,7 +127,7 @@
                             <input type="checkbox" name="agreement" required id="check-terms"/>
                             <span class="checkmark-check"></span>
                         </label>
-                        <label class="checkbox-left" for="check-terms"><sb>I Agree with <a href="http://activrespon.com/terms-of-services/" target="_blank">Terms and Condition</a></sb></label>
+                        <label class="checkbox-left" for="check-terms"><sb>I Agree with <a href="http://activrespon.com/terms-of-services/" target="_blank" style="text-decoration: underline;">Terms and Condition</a></sb></label>
                     </div>
 
                     <div class="text-left">
@@ -250,7 +250,7 @@
 							
               <div class="sumo-product-note light mt-20">
                 By clicking the "Place Order" button, you confirm that you have read, understand,
-                and accept our <a href="http://activrespon.com/terms-of-services/" target="_blank">Terms and Conditions</a>, and <a href="http://activrespon.com/privacy-policy/" target="_blank">Privacy Policy</a>.
+                and accept our <a href="http://activrespon.com/terms-of-services/" target="_blank">Terms and Conditions</a>, and <a href="http://activrespon.com/privacy-policy/" target="_blank" style="text-decoration: underline;">Privacy Policy</a>.
               </div>
             </div>
             <!-- End Mobile Checkout Summary -->
@@ -259,7 +259,7 @@
             <p>
               Our support team is only one click away! Send us any questions you may have.
             </p>
-            <a href="https://help.appsumo.com" target="_blank" class="btn btn-more full-width-mobile waves-effect waves-light">Find Help</a>
+            <a href="whatsapp://send/?phone=+62817318368" target="_blank" class="btn btn-more full-width-mobile waves-effect waves-light">Find Help</a>
           </div>
           <!-- End Card Data Entry -->
         </div>
@@ -344,21 +344,15 @@
                 
                 <li class="d-flex">
                   <img class="sumo-icon" width="auto" height="20px" src="https://appsumo2.b-cdn.net/static/images/svg/calendar.svg">
-                  <span><b>Try any product risk free.</b> We offer an industry-best 60-day money-back guarantee
-                    — no questions asked. So go ‘head and take any of our products for a spin to see if they’re
-                    a good fit for your business.</span>
+                  <span style="font-style: italic;">Award winning developer, use our applications with ease in mind. We spent countless hours working hard to develop the best software & we committed to make it better each day.</span>
                 </li>
                 <li class="d-flex">
                   <img class="sumo-icon" width="auto" height="20px" src="https://appsumo2.b-cdn.net/static/images/svg/lifebuoy.svg">
-                  <span><b>World-class customer support.</b> There’s customer support,
-                    and then there’s AppSumo customer support. We take pride in going
-                    above and beyond to solve issues and keep our community happy.</span>
+                  <span style="font-style: italic;">Preferred customer support. We take pride in going above and beyond to solve issues and keep our customers happy.<br>Email or simply chat with our Customer support.</span>
                 </li>
                 <li class="d-flex">
                   <img class="sumo-icon" width="auto" height="20px" src="https://appsumo2.b-cdn.net/static/images/svg/message-text.svg">
-                  <span><b>Access to founders and CEOs.</b> As an early adopter,
-                    you have the CEO’s ear — ask your burning questions on
-                    any active deal and have them answered by the product founders themselves.</span>
+                  <span style="font-style: italic;">We give best deal and savings on pricing packages everytime, on top of that make sure you checked our Coupon page every now and then, to get more discounts & promotions.</span>
                 </li>
               </ul>
             </div>
@@ -517,6 +511,18 @@
 			$('html, body').animate({scrollTop: '0px'}, 300);
     });
 	}
+	
+	function checkField(){
+		if ($("#email").val()!="" && $("#phone").val()!="" && $("#username").val()!="" && $("#check-terms").val()==1) {
+			$("#btn-register").addClass("register-active");
+		}
+	}
+
+	function onChangeRegister(){
+		$("#email,#phone,#username,#check-terms").change(function(){
+			checkField();
+		});
+	}
 
   $(document).ready(function() {
 		agreement();
@@ -529,6 +535,7 @@
 		registerAjax();
 
 		initButton();
+		onChangeRegister();
   });
     
 </script>

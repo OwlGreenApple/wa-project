@@ -2,23 +2,6 @@
 
 @section('content')
 <link href="{{ asset('assets/css/thankyou.css') }}" rel="stylesheet">
-
-  <div class="container konten">
-    <div class="offset-sm-2 col-sm-8">
-      <div class="card h-80 card-payment" style="margin-bottom: 50px
-      ">
-        <div class="card-body">
-          <span class="icon-thankyou" style="font-size: 60px;color: #106BC8">
-            <i class="fas fa-check-circle"></i>
-          </span>
-          <h1>Thank You<br> For Your Purchasing</h1>
-          <hr class="orn" style="color: #106BC8">
-          <p class="pg-title">@if(!is_null($order)) Berikut adalah no order anda #{{$order->no_order}} . @endif Setelah Anda menyelesaikan langkah-langkah konfirmasi berikut, segera lakukan pembayaran untuk mendapatkan akses langsung ke akun Activrespon Anda!</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="container konten">
     <div class="offset-sm-2 col-sm-8">
       <div class="card h-80 card-payment" style="margin-bottom: 50px">
@@ -49,8 +32,8 @@
         <div class="card h-80">
           <div class="card-body">
             <span style="font-size: 48px; color: Dodgerblue;"><i class="fas fa-envelope-open-text"></i></span>
-            <h5 class="card-title">1. Check Your Email</h5>
-            <p class="card-text">Terima Kasih telah memilih Activrespon. Cek pesan di inbox email yang telah anda daftarkan.</p>
+            <h5 class="card-title">1. Check Your Email & WA</h5>
+            <p class="card-text">Terima Kasih telah memilih Activrespon. Cek pesan di inbox email atau WA yang telah anda daftarkan.</p>
           </div>
         </div>
       </div>
@@ -58,8 +41,8 @@
         <div class="card h-80">
           <div class="card-body">
             <span style="font-size: 48px; color: Dodgerblue;"><i class="fas fa-search"></i></span>
-            <h5 class="card-title">2. Find Our Email</h5>
-            <p class="card-text">Temukan pesan email yang dikirim oleh Activrespon mengenai konfirmasi pembayaran.</p>
+            <h5 class="card-title">2. Find Our Email & WA</h5>
+            <p class="card-text">Temukan pesan email atau WA yang dikirim oleh Activrespon mengenai konfirmasi pembayaran.</p>
           </div>
         </div>
       </div>
@@ -74,4 +57,21 @@
       </div>
     </div>
   </div>
+
+  <div class="container konten">
+    <div class="offset-sm-2 col-sm-8">
+      <div class="card h-80 card-payment" style="margin-bottom: 50px
+      ">
+        <div class="card-body">
+          <span class="icon-thankyou" style="font-size: 60px;color: #106BC8">
+            <i class="fas fa-check-circle"></i>
+          </span>
+          <h1>Thank You<br> For Your Purchasing</h1>
+          <hr class="orn" style="color: #106BC8">
+          <!--<p class="pg-title">@if(!is_null($order)) Berikut adalah no order anda #{{$order->no_order}} . @endif Setelah Anda menyelesaikan langkah-langkah konfirmasi berikut, segera lakukan pembayaran untuk mendapatkan akses langsung ke akun Activrespon Anda!</p>-->
+        </div>
+      </div>
+    </div>
+  </div>
+
 @endsection

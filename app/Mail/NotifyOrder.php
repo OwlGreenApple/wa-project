@@ -59,7 +59,8 @@ class NotifyOrder extends Mailable
 
             //dd($message);
              
-            ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+            // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+						ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
             $data_email = [
               'no'=>$orders["no"],
               'package'=>$orders["package"],
@@ -98,7 +99,8 @@ class NotifyOrder extends Mailable
             $message .= '*Team Activrespon*'."\n";
             $message .= ' ------------------------------------------';
 
-            ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+            // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+						ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
             $data_email = [
               'no'=>$orders["no"],
               'package'=>$orders["package"],

@@ -35,7 +35,7 @@
           @include('list.list-table')
         @else
           <div class="bg-dashboard cardlist row">
-            Sorry, the page you're currently page not available.
+            You don't have any list yet
           </div>
         @endif
       </div>

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Customer;
+use App\UserList;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +20,8 @@ use App\Helpers\ApiHelper;
 use App\Mail\RegisteredEmail;
 use App\Order;
 use Auth;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ApiController;
 
 class RegisterController extends Controller
 {
@@ -114,7 +118,26 @@ class RegisterController extends Controller
            
         if(env('APP_ENV') <> 'local')
         {
-          ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+					$list = UserList::find(78);
+					$customer = new Customer ;
+					$customer->user_id = $list->user_id;
+					$customer->list_id = $list->id;
+					$customer->name = $user->name;
+					$customer->email = $user->email;
+					$customer->telegram_number = $data['code_country'].$data['phone'];
+					$customer->is_pay= 0;
+					$customer->status = 1;
+					$customer->save();
+
+					if ($list->is_secure) {
+						$apiController = new ApiController;
+						$apiController->sendListSecure($list->id,$customer->id,$customer->name,$customer->user_id,$list->name,$data['code_country'].$data['phone']);
+					}
+					$customerController = new CustomerController;
+					$saveSubscriber = $customerController->addSubscriber($list->id,$customer->id,$customer->created_at,$customer->user_id);
+					
+          // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+					ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
           Mail::to($data['email'])->send(new RegisteredEmail($generated_password));
         }
 
