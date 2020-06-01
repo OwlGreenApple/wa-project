@@ -43,18 +43,18 @@ class ApiController extends Controller
 			$list = UserList::where('name',$obj->list_name)->first();
 
 			if (!is_null($list)) {
-				$phone_number = $obj->phone_number;
+				$str = $obj->phone_number;
 
-				 if(preg_match('/^62[0-9]*$/',$phone_number)){
-          $phone_number = '+'.$phone_number;
+				if(preg_match('/^62[0-9]*$/',$str)){
+          $phone_number = '+'.$str;
         }
 
-        if(preg_match('/^0[0-9]*$/',$phone_number)){
-          $phone_number = preg_replace("/^0/", "+62", $phone_number);
+        if(preg_match('/^0[0-9]*$/',$str)){
+          $phone_number = preg_replace("/^0/", "+62", $str);
         }
 
-        if(preg_match('/^[^62][0-9]*$/',$phone_number)){
-          $phone_number = preg_replace("/^[0-9]/", "+62", $phone_number);
+        if(preg_match('/^[^62][0-9]*$/',$str)){
+          $phone_number = preg_replace("/^[0-9]/", "+62", $str);
         }
 
 				$customer = new Customer ;
