@@ -119,22 +119,24 @@ class RegisterController extends Controller
         if(env('APP_ENV') <> 'local')
         {
 					$list = UserList::find(78);
-					$customer = new Customer ;
-					$customer->user_id = $list->user_id;
-					$customer->list_id = $list->id;
-					$customer->name = $user->name;
-					$customer->email = $user->email;
-					$customer->telegram_number = $data['code_country'].$data['phone'];
-					$customer->is_pay= 0;
-					$customer->status = 1;
-					$customer->save();
+					if (!is_null($list) ) {
+						$customer = new Customer ;
+						$customer->user_id = $list->user_id;
+						$customer->list_id = $list->id;
+						$customer->name = $user->name;
+						$customer->email = $user->email;
+						$customer->telegram_number = $phone;
+						$customer->is_pay= 0;
+						$customer->status = 1;
+						$customer->save();
 
-					if ($list->is_secure) {
-						$apiController = new ApiController;
-						$apiController->sendListSecure($list->id,$customer->id,$customer->name,$customer->user_id,$list->name,$data['code_country'].$data['phone']);
+						if ($list->is_secure) {
+							$apiController = new ApiController;
+							$apiController->sendListSecure($list->id,$customer->id,$customer->name,$customer->user_id,$list->name,$phone);
+						}
+						$customerController = new CustomerController;
+						$saveSubscriber = $customerController->addSubscriber($list->id,$customer->id,$customer->created_at,$customer->user_id);
 					}
-					$customerController = new CustomerController;
-					$saveSubscriber = $customerController->addSubscriber($list->id,$customer->id,$customer->created_at,$customer->user_id);
 					
           // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
 					ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
