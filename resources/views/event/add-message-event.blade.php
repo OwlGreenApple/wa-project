@@ -430,18 +430,18 @@
 						dataType : 'json',
 						beforeSend: function()
 						{
-							$('#loader').show();
-							$('.div-loading').addClass('background-load');
+							// $('#loader').show();
+							// $('.div-loading').addClass('background-load');
 						},
 						success : function(result){
-							$('#loader').hide();
-							$('.div-loading').removeClass('background-load');
+							// $('#loader').hide();
+							// $('.div-loading').removeClass('background-load');
 							alert("Test Message Sent");
 						},
 						error : function(xhr,attribute,throwable)
 						{
-							$('#loader').hide();
-							$('.div-loading').removeClass('background-load');
+							// $('#loader').hide();
+							// $('.div-loading').removeClass('background-load');
 							console.log(xhr.responseText);
 						}
 				});

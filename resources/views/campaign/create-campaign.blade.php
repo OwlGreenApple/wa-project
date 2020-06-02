@@ -474,12 +474,12 @@ use min 5 spintax variations is recommended	<br>
 						dataType : 'json',
 						beforeSend: function()
 						{
-							$('#loader').show();
-							$('.div-loading').addClass('background-load');
+							// $('#loader').show();
+							// $('.div-loading').addClass('background-load');
 						},
 						success : function(result){
-							$('#loader').hide();
-							$('.div-loading').removeClass('background-load');
+							// $('#loader').hide();
+							// $('.div-loading').removeClass('background-load');
 							if (result.status=="success"){
 								alert("Test Message Sent");
 							}
@@ -497,8 +497,8 @@ use min 5 spintax variations is recommended	<br>
 						},
 						error : function(xhr,attribute,throwable)
 						{
-							$('#loader').hide();
-							$('.div-loading').removeClass('background-load');
+							// $('#loader').hide();
+							// $('.div-loading').removeClass('background-load');
 							console.log(xhr.responseText);
 						}
 				});
