@@ -154,10 +154,11 @@
   var modePrice;
   $(document).ready(function(){
 		$("#link-checkout").attr("href","<?php echo url('checkout/3'); ?>");
-    slider_init();
+		modePrice = 2;
     box_pricing_click();
     set_price();
 		check_package();
+    slider_init();
   });
 	function check_package(){
 		if (modePrice==1) {
