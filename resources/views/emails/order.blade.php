@@ -18,7 +18,7 @@ Anda telah memesan Paket {{$nama_paket}} <br>
 	<strong>TRANSFER Melalui :</strong><br>
 	<br>
 	<strong>Bank BCA</strong><br>
-    8290-812-845<br>
+    8290-336-261<br>
     Sugiarto Lasjim<br>
   <br>
 	

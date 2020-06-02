@@ -19,7 +19,7 @@ class ApiController extends Controller
     public function test()
     {
         $phone_number = null;
-        $str = '62812345628';
+        $str = '628123238793';
 
         if(preg_match('/^62[0-9]*$/',$str)){
           $phone_number = '+'.$str;
