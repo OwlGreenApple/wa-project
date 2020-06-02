@@ -36,7 +36,7 @@ class EventController extends Controller
           $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',0]])
                   ->join('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
-                  ->select('campaigns.*','lists.label')
+                  ->select('campaigns.*','lists.label','lists.id AS list_id')
                   ->paginate(5);
       }
       else
@@ -44,7 +44,7 @@ class EventController extends Controller
            $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['campaigns.type','=',0]])
                   ->join('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
-                  ->select('campaigns.*','lists.label')
+                  ->select('campaigns.*','lists.label','lists.id AS list_id')
                   ->paginate(5);
       }
 
@@ -76,6 +76,7 @@ class EventController extends Controller
                 $data[] = array(
                   'type'=>0,
                   'id'=>$row->id,
+                  'list_id'=>$row->list_id,
                   'campaign_name'=>$row->name,
                   'event_time'=>$reminder->event_time,
                   'sending'=>Date('M d, Y',strtotime($event_time)),
@@ -93,6 +94,7 @@ class EventController extends Controller
                 $data[] = array(
                   'type'=>0,
                   'id'=>$row->id,
+                  'list_id'=>$row->list_id,
                   'campaign_name' => $row->name,
                   'event_time'=>'-',
                   'sending' => '-',
@@ -117,26 +119,32 @@ class EventController extends Controller
     } 
 
     public function index(Request $request){
+      $userid = Auth::id();
       $data = array();
       $logic = $this->campaignLogic(null);
+      $lists = displayListWithContact($userid);
 
       if($request->ajax()) {
-          return view('event.event',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
+          return view('event.event',['lists'=>$lists,'data'=>$logic['data'],'paginate'=>$logic['campaign']]);
       }
 
-      return view('event.index',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
+      return view('event.index',['lists'=>$lists,'data'=>$logic['data'],'paginate'=>$logic['campaign']]);
     }
 
     public function loadAjaxEventPage()
     {
+        $userid = Auth::id();
         $logic = $this->campaignLogic(null);
-        return view('event.event',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
+        $lists = displayListWithContact($userid);
+        return view('event.event',['lists'=>$lists,'data'=>$logic['data'],'paginate'=>$logic['campaign']]);
     }
 
     public function searchEvent(Request $request)
     {
+        $userid = Auth::id();
         $logic = $this->campaignLogic($request->search);
-        return view('event.event',['data'=>$logic['data'],'paginate'=>$logic['campaign']]);
+        $lists = displayListWithContact($userid);
+        return view('event.event',['lists'=>$lists,'data'=>$logic['data'],'paginate'=>$logic['campaign']]);
     }
 
     public function createEvent(){
@@ -409,7 +417,9 @@ class EventController extends Controller
         $campaign_id = $request->id;
         $campaign_name = $request->campaign_name;
         $event_date =  $request->event_time;
+        $list_id = $request->list_id;
         $reminderid = array();
+        $return_message = 'Your event duplicated successfully';
 
         $old_campaign = Campaign::find($campaign_id);
 
@@ -418,7 +428,7 @@ class EventController extends Controller
             $campaign = new Campaign;
             $campaign->name = $campaign_name;
             $campaign->type = 0;
-            $campaign->list_id = $old_campaign->list_id;
+            $campaign->list_id = $list_id;
             $campaign->user_id = $user_id;
             $campaign->status = 0;
             $campaign->save();
@@ -435,12 +445,12 @@ class EventController extends Controller
         {
             foreach($row_event as $row)
             {
-              $list_id = $row->list_id;
+              // $list_id = $row->list_id;
               $event_day = $row->days;
               $event_sending = $row->hour_time;
               $event_message = $row->message;
               $event_image = $row->image;
-              $oldreminderid[] = $row->id;
+              // $oldreminderid[] = $row->id;
 
               $event = new Reminder;
               $event->user_id = $user_id;
@@ -453,22 +463,62 @@ class EventController extends Controller
               $event->image = $event_image;
               $event->message = $event_message;
               $event->save();
-              $newreminderid[] = $event->id;
-              $combine = array_combine($oldreminderid,$newreminderid);
+              $newreminderid[] = $event->id; //templates
+              // $combine = array_combine($oldreminderid,$newreminderid);
             }
         }
         else 
         {
-            return response()->json(['message'=>'Your campaign duplicated successfully']);
+            return response()->json(['message'=>$return_message]);
         }
+
+        // COUNT CUSTOMER AND THEN PUT INTO REMINDER CUSTOMER
+        $customers = Customer::where('list_id',$list_id)->get();
+        $total_new_reminder_id = count($newreminderid);
+        $count_for = 0;
+
+        if($customers->count() > 0 && $total_new_reminder_id > 0)
+        {
+            foreach($newreminderid as $col=>$reminder_id)
+            {
+              foreach($customers as $row)
+              {
+                $eventcustomer = new ReminderCustomers;
+                $eventcustomer->user_id = $user_id;
+                $eventcustomer->list_id = $list_id;
+                $eventcustomer->reminder_id = $reminder_id;
+                $eventcustomer->customer_id = $row->id;
+                $eventcustomer->save();
+              }
+              $count_for++;
+            }
+        }
+        else
+        {
+            return response()->json(['message'=>$return_message]);
+        }
+
+        if($count_for == $total_new_reminder_id)
+        {
+            return response()->json(['message'=>$return_message]);
+        }
+        else
+        {
+            return response()->json(['message'=>'Sorry, currently our server is too busy, please try again later']);
+        }
+
+       /* OLD LOGIC
 
         if(count($oldreminderid) > 0)
         { 
+          // PREVIOUS REMINDER CUSTOMER
           $remindercustomer = ReminderCustomers::whereIn('reminder_id',$oldreminderid)->where('user_id',$user_id)->get();
         }
         else {
            return response()->json(['message'=>'Sorry, cannot duplicate your campaign, please call administrator']);
-        }
+        }*/
+
+        /* 
 
         if($remindercustomer->count() > 0)
         {
@@ -507,7 +557,7 @@ class EventController extends Controller
         else 
         {
             return response()->json(['message'=>'Your campaign duplicated successfully']);
-        }
+        }*/
     }
 
      public function publishEvent(Request $request)

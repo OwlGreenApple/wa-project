@@ -69,6 +69,21 @@
                       </div>
                       <span class="error event_time"></span>
                     </div>
+
+                    <div class="form-group">
+                      <label>Select List :</label>
+                      <div class="relativity">
+                         <select onmousedown="if(this.options.length > 8){this.size=8;}" onchange="this.size=0;" onblur="this.size=0;" name="list_id" class="custom-select-campaign form-control">
+                            @if(count($lists) > 0)
+                              @foreach($lists as $row)
+                                <option value="{{$row['id']}}">{{ $row['customer_count'] }} {{$row['label']}}</option>
+                              @endforeach
+                            @endif
+                         </select>
+                         <span class="icon-carret-down-circle"></span>
+                         <span class="error list_id"></span>
+                      </div>
+                    </div>
                  
                     <div class="text-right">
                       <button type="submit" class="btn btn-custom mr-1">Save</button>
@@ -451,11 +466,20 @@
 
   //end ajax pagination
 
+  function callToolTips()
+  {
+     $('[data-toggle="tooltip"]').tooltip({
+        'placement':'top'
+      });   
+  }
+
   function duplicateEventForm()
   {
     $("body").on("click",".event_duplicate",function(){
         var id = $(this).attr('id');
+        var list_id = $(this).attr('data-list-id');
         $("#duplicate").attr('data',id);
+        $("select[name='list_id'] > option[value='"+list_id+"']").prop('selected',true);
         $("#modal_duplicate").modal();
     });
   }
@@ -490,14 +514,17 @@
               $(".error").show();
               $(".campaign_name").html(result.campaign_name);
               $(".event_time").html(result.event_time);
+              $(".list_id").html(result.list_id);
             }
             else
             {
               $(".error").hide();
               // alert(result.message);
               $("#modal_duplicate").modal('hide');
+              $("input[name='campaign_name'],input[name='event_time']").val('');
               $("#duplicate:input").val('');
               displayEvent();
+              callToolTips();
             }
           },
           error : function(xhr,attr,throwable){
