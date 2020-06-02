@@ -182,9 +182,13 @@ use Illuminate\Support\Facades\Storage;
       {
         return '<span class="act-tel-apt-create">Phone Not Available</span>';
       }
-      else
+      elseif($status == 4)
       {
         return '<span class="act-tel-apt-create">Cancelled</span>';
+      }
+      else
+      {
+         return '<span class="act-tel-apt-create">Queued</span>';
       }
     }
 

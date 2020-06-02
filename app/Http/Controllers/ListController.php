@@ -816,6 +816,7 @@ class ListController extends Controller
         } 
 
 				$auto_reply_message = "";
+        $data_autoreply = array();
 				$reminder = Reminder::where("list_id",$listid)
 										->where("campaign_id",0)
 										->where("days",0)
@@ -823,6 +824,10 @@ class ListController extends Controller
 										->first();
 				if (!is_null($reminder)) {
 					$auto_reply_message = $reminder->message;
+          $id_auto_reply = $reminder->id;
+
+          $data_autoreply = ReminderCustomers::where('reminder_customers.reminder_id','=',$id_auto_reply)->join('customers','reminder_customers.customer_id','=','customers.id')
+            ->select('reminder_customers.updated_at','reminder_customers.status','customers.name','customers.telegram_number')->get();
 				}
 
         $data = array(
@@ -843,6 +848,7 @@ class ListController extends Controller
             'auto_reply_message'=>$auto_reply_message,
             'start_custom_message'=>$list->start_custom_message,
             'unsubs_custom_message'=>$list->unsubs_custom_message,
+            'auto_reply'=>$data_autoreply,
         );
 
         $url = env('APP_URL').$list->name; 

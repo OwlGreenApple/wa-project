@@ -70,7 +70,7 @@
             <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del" data-toggle="tooltip" data-toggle="tooltip" data-placement="top" title="Button Publish" title="Button Delete"><span class="icon-delete"></span></button>
             <div>
               <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">
-                Add / Edit
+                Add & Edit Message
               </a>
             </div>
         </div>

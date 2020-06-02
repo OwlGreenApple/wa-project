@@ -31,8 +31,6 @@
           <div class="form-control col-lg-6 message">
             <sb>Saved, click to copy link from</sb> <a class="icon-copy"></a>
           </div>
-
-          <div class="alerts"><!-- --></div>
         </div>
 
         <form class="form-contact" id="edit_list">
@@ -141,6 +139,8 @@
             <div class="text-right">
               <button type="submit" class="btn btn-custom">Save Form</button>
             </div>
+
+             <div class="alerts"><!-- --></div>
           </div>
           <!-- end middle wrapper -->
         </form>
@@ -316,10 +316,39 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
             <input type="text" name="unsubs_custom_message" id="unsubs_custom_message" class="form-control custom-form text-left" value="<?php echo $data['unsubs_custom_message'];?>">
           </div>
 
-          <div class="text-right">
+          <div class="text-right mb-3">
             <button class="btn btn-custom" id="btn-save-autoreply">Save</button>
           </div>
 				</form>
+
+        <!-- datatable -->
+        <h5 class="alert alert-primary">Status delivery auto reply's messages</h5>
+
+        <table id="autoreply_table" class="table display w-100">
+          <thead class="bg-dashboard">
+            <tr>
+              <th class="text-center">No</th>
+                <th class="text-center">Date Send</th>
+                <th class="text-center">Name Contact</th>
+                <th class="text-center">WA Contact</th>
+                <th class="text-center">Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @php $no = 1; @endphp
+            @foreach($data['auto_reply'] as $row)
+            <tr>
+              <td>{{ $no }}</td>
+              <td>{{ $row->updated_at }}</td>
+              <td>{{ $row->name }}</td>
+              <td>{{ $row->telegram_number }}</td>
+              <td>{!! message_status($row->status) !!}</td>
+            </tr>
+            @php $no++ @endphp
+            @endforeach
+          </tbody>
+        </table>
 
         <!-- end last wrapper -->
       </div><!-- end actel-tab -->  
@@ -738,7 +767,15 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
     pastePhoneNumber();
     display_edit_customer_form();
     buttonGenerateGoogleScript();
+    data_auto_reply();
   });
+
+  function data_auto_reply()
+  {
+    $("#autoreply_table").DataTable({
+      "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ]
+    });
+  }
 
   function getChecked()
   {
@@ -1526,8 +1563,10 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                    if(result.error == undefined)
                    {
                       $(".list_label").html('');
-                      $(".alerts").html('<div class="alert alert-custom">'+result.message+'</div>');
+                      $(".alerts").html('<div class="alert alert-success mt-2">'+result.message+'</div>');
+                      $(".error").hide();
                       displayAdditional();
+                      $(".alerts").delay(2000).fadeOut(3000);
                    }
                    else if(result.additionalerror == true)
                    {
@@ -1535,6 +1574,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                    }
                    else
                    {
+                      $(".error").show();
                       $(".label_name").html(result.label_name);
                       $(".label_phone").html(result.label_phone);
                       $(".label_email").html(result.label_email);

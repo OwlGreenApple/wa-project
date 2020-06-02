@@ -8,7 +8,7 @@
         $broad_cast = $broadcast->where('campaign_id',$row->id)->first();
         $sending = Date('H:i',strtotime($broad_cast->hour_time));
         $day_send = Date('M d, Y',strtotime($broad_cast->day_send));
-        $broadcast_message = $broad_cast->messages;        
+        $broadcast_message = $broad_cast->message;        
 
         $list_id = $row->list_id;
         $user_list = $userlist->find($list_id);
