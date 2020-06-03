@@ -20,10 +20,12 @@
             @if($row['event_time'] == '-')
               Date Event :  -
             @else
-              Date Event : <span class="campaign_event_id-{{$row['id']}} mr-1">{{ Date('M d, Y',strtotime($row['event_time'])) }}</span>
-              <span>
-                <a data-toggle="tooltip" data-toggle="tooltip" data-placement="right" title="Edit Event Date" data-name="{{ $row['event_time'] }}" id="{{ $row['id'] }}" class="edit_date icon-calendar"></a>
-              </span> 
+                Date Event : <span class="campaign_event_id-{{$row['id']}} mr-1">{{ Date('M d, Y',strtotime($row['event_time'])) }}</span>
+                @if($row['total_message'] > 0)
+                  <span>
+                    <a data-toggle="tooltip" data-toggle="tooltip" data-placement="right" title="Edit Event Date" data-name="{{ $row['event_time'] }}" id="{{ $row['id'] }}" class="edit_date icon-calendar"></a>
+                  </span> 
+                @endif
             @endif 
           </div>
         </div>
