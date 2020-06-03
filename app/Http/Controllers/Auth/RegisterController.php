@@ -144,8 +144,8 @@ class RegisterController extends Controller
           $message .= 'https://activrespon.com/dashboard'."\n\n";
           $message .= 'Hi '.$data['username']."\n\n";
           $message .= 'Welcome to Activrespon'."\n";
-          $message .= '*Your password is: *'.$generated_password."\n\n";
-          $message .= '*Link login: *'.$generated_password."\n";
+          $message .= '*Your password is:* '.$generated_password."\n\n";
+          $message .= '*Link login:* '.$generated_password."\n";
           $message .= 'https://activrespon.com/dashboard/login'."\n\n";
           $message .= 'If you need any help'."\n";
           $message .= '*You can contact CS at*'."\n";
