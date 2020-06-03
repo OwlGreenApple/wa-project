@@ -187,6 +187,10 @@
         format : 'YYYY-MM-DD HH:mm',
         minDate : new Date()
       });
+
+      $('[data-toggle="tooltip"]').tooltip({
+        'placement':'top'
+      });       
   });
 
   $(document).ready(function(){
@@ -466,13 +470,6 @@
 
   //end ajax pagination
 
-  function callToolTips()
-  {
-     $('[data-toggle="tooltip"]').tooltip({
-        'placement':'top'
-      });   
-  }
-
   function duplicateEventForm()
   {
     $("body").on("click",".event_duplicate",function(){
@@ -505,9 +502,11 @@
             $('#loader').show();
             $('.div-loading').addClass('background-load');
           },
-          success: function(result) {
+          success: function(result) 
+          {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
+            $('[data-toggle="tooltip"]').tooltip('hide');
 
             if(result.success == 0)
             { 
@@ -524,7 +523,6 @@
               $("input[name='campaign_name'],input[name='event_time']").val('');
               $("#duplicate:input").val('');
               displayEvent();
-              callToolTips();
             }
           },
           error : function(xhr,attr,throwable){
@@ -560,6 +558,7 @@
           {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
+            $('[data-toggle="tooltip"]').tooltip('hide');
             if(result.status == 'success')
             {
                 $(".notification_err").html('<div class="alert alert-success">'+result.message+'</div>')
@@ -613,6 +612,7 @@
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
             displayEvent();
+            $('[data-toggle="tooltip"]').tooltip('hide');
           },
           error : function(xhr, attr, throwable)
           {

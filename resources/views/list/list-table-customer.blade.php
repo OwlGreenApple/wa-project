@@ -40,6 +40,7 @@
 <script type="text/javascript">
   $(document).ready(function(){
       $("#data_customer").DataTable({
+        // "columnDefs" : [{targets:4,className: "alert alert-success"}],
         "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
         "bStateSave": true,
         "fnStateSave": function (oSettings, oData) {

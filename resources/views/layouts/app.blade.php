@@ -49,7 +49,7 @@
     <!-- Data Table -->
     <link href="{{ asset('/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
     <script defer type="text/javascript" src="{{ asset('/assets/DataTables/datatables.min.js') }}"></script>
-
+   
     <!-- CKEditor -->
     <link href="{{ asset('/assets/ckeditor/contents.css') }}" rel="stylesheet" />
     <script type="text/javascript" src="{{ asset('/assets/ckeditor/ckeditor.js') }}"></script>
@@ -246,13 +246,15 @@
     <script type="text/javascript">
         $(window).on('load', function() { 
           $("#div-loading").hide();
-        });   
-			$(document).ready(function() {
-				$('.tooltipstered').tooltipster({
+        }); 
+
+			 $(document).ready(function() {
+			 	$('.tooltipstered').tooltipster({
 					contentAsHTML: true,
 					trigger: 'ontouchstart' in window || navigator.maxTouchPoints ? 'click' : 'hover',
 				});
 			});
+
     </script>
 
 </body>
