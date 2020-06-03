@@ -149,7 +149,7 @@ class RegisterController extends Controller
           $message .= 'https://activrespon.com/dashboard/login'."\n\n";
           $message .= 'If you need any help'."\n";
           $message .= '*You can contact CS at*'."\n";
-          $message .= '*Telegram: *@activomni_cs'."\n\n";
+          $message .= '*Telegram:* @activomni_cs'."\n\n";
           $message .= 'Thank You'."\n";
           $message .= '_*Activrespon is part of Activomni.com_';
 
