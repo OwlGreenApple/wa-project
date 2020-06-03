@@ -81,7 +81,7 @@ class SettingController extends Controller
 					}
 				}
 				else {
-					session(['mode'=>1]);
+					session(['mode'=>0]);
 				}
 			}
 			

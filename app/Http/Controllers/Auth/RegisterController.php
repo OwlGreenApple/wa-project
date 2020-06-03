@@ -23,6 +23,8 @@ use Auth;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ApiController;
 
+use App\Jobs\SendNotif;
+
 class RegisterController extends Controller
 {
     /*
@@ -112,10 +114,6 @@ class RegisterController extends Controller
           'timezone'=>$timezone,
         ]);
 
-        $message = null;
-        $message .= 'Welcome to Activrespon,'."\n";
-        $message .= 'Your Password is : *'.$generated_password.'*';
-           
         if(env('APP_ENV') <> 'local')
         {
 					$list = UserList::find(78);
@@ -138,13 +136,16 @@ class RegisterController extends Controller
 						$saveSubscriber = $customerController->addSubscriber($list->id,$customer->id,$customer->created_at,$customer->user_id);
 					}
 					
-          // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+          $message = null;
+          $message .= 'Welcome to Activrespon,'."\n";
+          $message .= 'Your Password is : *'.$generated_password.'*';
+           
           $message ='';
           $message .= 'https://activrespon.com/dashboard'."\n\n";
           $message .= 'Hi '.$data['username']."\n\n";
           $message .= 'Welcome to Activrespon'."\n";
-          $message .= '*Your password is: *'.$generated_password."\n\n";
-          $message .= '*Link login: *'.$generated_password."\n";
+          $message .= '*Your password is:* '.$generated_password."\n\n";
+          $message .= '*Link login:* '.$generated_password."\n";
           $message .= 'https://activrespon.com/dashboard/login'."\n\n";
           $message .= 'If you need any help'."\n";
           $message .= '*You can contact CS at*'."\n";
@@ -152,7 +153,9 @@ class RegisterController extends Controller
           $message .= 'Thank You'."\n";
           $message .= '_*Activrespon is part of Activomni.com_';
 
-					ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
+          // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+					// ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
+          SendNotif::dispatch($phone,$message,env('REMINDER_PHONE_KEY'));
           Mail::to($data['email'])->send(new RegisteredEmail($generated_password,$data['username']));
         }
 

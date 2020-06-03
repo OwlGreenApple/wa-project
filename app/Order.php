@@ -9,6 +9,8 @@ use App\Helpers\ApiHelper;
 use Carbon\Carbon;
 use Mail, DB, Session;
 
+use App\Jobs\SendNotif;
+
 class Order extends Model
 {
 	/*
@@ -69,55 +71,55 @@ class Order extends Model
       ];
 
       // WA MESSAGE
-      $phone = $data['phone'];
-      $message = null;
-      $message .= '*Hi '.$user->name."\n";
-      $message .= 'Terima kasih sudah membeli Activrespon.'."\n";
-      $message .= '_Berikut ini adalah invoice Anda:_'."\n"."\n";
-      $message .= '*Tgl Pembelian :* '.$dt->format('d-M-Y').''."\n";
-      $message .= '*No Invoice :* '.$order_number.''."\n";
-      $message .= '*Jumlah :*  Rp. '.str_replace(",",".",number_format($grand_total))."\n";
-    /*  $message .= '*Nama :* '.$user->name.''."\n";
-      $message .= '*Status Order :* Pending'."\n";
-      $message .= 'Anda telah memesan Paket '.$data['namapaket'].''."\n"."\n";
-
-      $message .= '*Rp. '.number_format($data['price'] + $unique_code).'*'."\n";
-      if($data['priceupgrade'] > 0)
-      {
-        $message .= '*Upgrade Price :*'.number_format($data['priceupgrade'])."\n";
-      }
-      $message .= '*Diskon :* Rp.'. number_format($data['diskon'])."\n";
-      $message .= '*Total :* Rp.'. number_format($grand_total)."\n"."\n";
-      */
-      $message .= '*Harap transfer persis sesuai invoice*'."\n";
-      $message .= '_(dengan kode uniknya)_'."\n";
-      $message .= 'agar mempercepat proses konfirmasi'."\n\n";
-
-      $message .= '*Silahkan Transfer ke :*'."\n"."\n";
-      $message .= 'BCA (Sugiarto Lasjim)'."\n";
-      $message .= '8290-812-845'."\n\n";
-      // $message .= 'Sugiarto Lasjim'."\n"."\n";
-      $message .= '*Sesudah transfer:*'."\n";
-      $message .= '- *Login* ke https://activrespon.com'."\n";
-      $message .= '- *Klik* Profile'."\n";
-      $message .= '- Pilih *Order & Confirm*'."\n";
-      $message .= '- *Upload bukti konfirmasi* disana'."\n\n";
-
-      $message .= 'Terima Kasih,'."\n\n";
-      $message .= 'Team Activrespon'."\n";
-      $message .= '_*Activrespon is part of Activomni.com_';
-
-      // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
-			ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
-
       if(env('APP_ENV') <> 'local')
       {
+        $phone = $data['phone'];
+        $message = null;
+        $message .= '*Hi '.$user->name."\n";
+        $message .= 'Terima kasih sudah membeli Activrespon.'."\n";
+        $message .= '_Berikut ini adalah invoice Anda:_'."\n"."\n";
+        $message .= '*Tgl Pembelian :* '.$dt->format('d-M-Y').''."\n";
+        $message .= '*No Invoice :* '.$order_number.''."\n";
+        $message .= '*Jumlah :*  Rp. '.str_replace(",",".",number_format($grand_total))."\n";
+        /*  $message .= '*Nama :* '.$user->name.''."\n";
+        $message .= '*Status Order :* Pending'."\n";
+        $message .= 'Anda telah memesan Paket '.$data['namapaket'].''."\n"."\n";
+
+        $message .= '*Rp. '.number_format($data['price'] + $unique_code).'*'."\n";
+        if($data['priceupgrade'] > 0)
+          $message .= '*Upgrade Price :*'.number_format($data['priceupgrade'])."\n";
+        }
+        $message .= '*Diskon :* Rp.'. number_format($data['diskon'])."\n";
+        $message .= '*Total :* Rp.'. number_format($grand_total)."\n"."\n";
+        */
+        $message .= '*Harap transfer persis sesuai invoice*'."\n";
+        $message .= '_(dengan kode uniknya)_'."\n";
+        $message .= 'agar mempercepat proses konfirmasi'."\n\n";
+
+        $message .= '*Silahkan Transfer ke :*'."\n"."\n";
+        $message .= 'BCA (Sugiarto Lasjim)'."\n";
+        $message .= '8290-812-845'."\n\n";
+        // $message .= 'Sugiarto Lasjim'."\n"."\n";
+        $message .= '*Sesudah transfer:*'."\n";
+        $message .= '- *Login* ke https://activrespon.com'."\n";
+        $message .= '- *Klik* Profile'."\n";
+        $message .= '- Pilih *Order & Confirm*'."\n";
+        $message .= '- *Upload bukti konfirmasi* disana'."\n\n";
+
+        $message .= 'Terima Kasih,'."\n\n";
+        $message .= 'Team Activrespon'."\n";
+        $message .= '_*Activrespon is part of Activomni.com_';
+
+        // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+        // ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
+        SendNotif::dispatch($phone,$message,env('REMINDER_PHONE_KEY'));
+
           
-          Mail::send('emails.order', $emaildata, function ($message) use ($user,$order_number) {
-            $message->from('no-reply@activrespon.com', 'Activrespon');
-            $message->to($user->email);
-            $message->subject('[Activrespon] Order Nomor '.$order_number);
-          });
+        Mail::send('emails.order', $emaildata, function ($message) use ($user,$order_number) {
+          $message->from('no-reply@activrespon.com', 'Activrespon');
+          $message->to($user->email);
+          $message->subject('[Activrespon] Order Nomor '.$order_number);
+        });
       }
       //delete session order
       session::forget('order');
