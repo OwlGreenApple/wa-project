@@ -1568,9 +1568,9 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                       displayAdditional();
                       $(".alerts").delay(2000).fadeOut(3000);
                    }
-                   else if(result.additionalerror == true)
+                   else if(result.additionalerror == false)
                    {
-                      $(".alerts").html('<div class="alert alert-danger">'+result.message+'</div>');
+                      $(".alerts").html('<div class="alert alert-success mt-2">'+result.message+'</div>');
                    }
                    else
                    {
@@ -1580,6 +1580,11 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                       $(".label_email").html(result.label_email);
                       $(".button_rename").html(result.button_rename);
                       $(".message_conf").html(result.conf_message);
+
+                      if(result.additionalerror == true)
+                      {
+                        $(".alerts").html('<div class="alert alert-danger">'+result.message+'</div>');
+                      }
                    }
                 },
                 error: function(xhr,attr,throwable)
