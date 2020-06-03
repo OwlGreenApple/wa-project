@@ -88,7 +88,7 @@
 			-->
       <div class="col-md-4 col-lg-4 col-xs-12 col-sm-12 detail-description">
         <h3 id="description-contact-header">Best Seller 3 Months<br>15.000 Messages/month</h3>
-        <button type="button" class="btn btn-lg btn-success col-12" id="choose-price">IDR 2.970.000</button>
+        <button type="button" class="btn btn-lg btn-success col-12" id="choose-price">IDR 370.500</button>
         <ul>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
@@ -156,9 +156,9 @@
 		$("#link-checkout").attr("href","<?php echo url('checkout/3'); ?>");
 		modePrice = 2;
     box_pricing_click();
-    set_price();
-    slider_init();
+    // set_price();
 		check_package();
+    slider_init();
   });
 	function check_package(){
 		if (modePrice==1) {
