@@ -153,7 +153,7 @@ class RegisterController extends Controller
           $message .= '_*Activrespon is part of Activomni.com_';
 
 					ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
-          Mail::to($data['email'])->send(new RegisteredEmail($generated_password),$data['username']);
+          Mail::to($data['email'])->send(new RegisteredEmail($generated_password,$data['username']));
         }
 
         return $user;

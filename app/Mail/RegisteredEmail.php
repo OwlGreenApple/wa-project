@@ -38,8 +38,8 @@ class RegisteredEmail extends Mailable
         ->subject($this->subject)
         ->view('emails.RegisteredEmail')
         ->with([
-			'password' => $this->password,
-			'name' => $this->name,
-		]);
+          'password' => $this->password,
+          'name' => $this->name,
+        ]);
     }
 }
