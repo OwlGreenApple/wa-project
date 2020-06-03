@@ -75,7 +75,7 @@ class Order extends Model
       {
         $phone = $data['phone'];
         $message = null;
-        $message .= '*Hi '.$user->name."\n";
+        $message .= '*Hi '.$user->name.'*'."\n\n";
         $message .= 'Terima kasih sudah membeli Activrespon.'."\n";
         $message .= '_Berikut ini adalah invoice Anda:_'."\n"."\n";
         $message .= '*Tgl Pembelian :* '.$dt->format('d-M-Y').''."\n";
@@ -96,9 +96,9 @@ class Order extends Model
         $message .= '_(dengan kode uniknya)_'."\n";
         $message .= 'agar mempercepat proses konfirmasi'."\n\n";
 
-        $message .= '*Silahkan Transfer ke :*'."\n"."\n";
+        $message .= '*Silahkan Transfer ke :*'."\n";
         $message .= 'BCA (Sugiarto Lasjim)'."\n";
-        $message .= '8290-812-845'."\n\n";
+        $message .= '8290-336-261'."\n\n";
         // $message .= 'Sugiarto Lasjim'."\n"."\n";
         $message .= '*Sesudah transfer:*'."\n";
         $message .= '- *Login* ke https://activrespon.com'."\n";
