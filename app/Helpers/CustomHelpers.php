@@ -155,7 +155,7 @@ use Illuminate\Support\Facades\Storage;
       {
         foreach($lists as $row)
         {
-          $customer = Customer::where('list_id',$row->id)->get();
+          $customer = Customer::where([['list_id',$row->id],['status','=',1]])->get();
           $data[] = array(
             'id'=>$row->id,
             'label'=>$row->label,
