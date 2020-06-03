@@ -92,22 +92,11 @@ class CampaignController extends Controller
 			
 			$rules = array(
 					'phone'=>['required','max:255'],
-					'message'=>['required','max:4095'],
-					'imageWA'=>['max:1024'],
+					'message'=>['required','max:65000']
 			);
-			$validator = Validator::make($request->all(),$rules);
-			$err = $validator->errors();
 
-			if($validator->fails()){
-					$error = array(
-						'status'=>'error',
-						'phone'=>$err->first('phone'),
-						'msg'=>$err->first('message'),
-						'image'=>"image maximum size 1MB",
-					);
-					return response()->json($error);
-			}
 			if($request->hasFile('imageWA')) {
+        $rules['imageWA'] = ['max:1024'];
 				$image_size = getimagesize($request->file('imageWA'));
 				$imagewidth = $image_size[0];
 				$imageheight = $image_size[1];
@@ -121,8 +110,21 @@ class CampaignController extends Controller
 						return response()->json($error);
 				}
 			}
-			$user = Auth::user();
 
+      $validator = Validator::make($request->all(),$rules);
+      $err = $validator->errors();
+
+      if($validator->fails()){
+          $error = array(
+            'status'=>'error',
+            'phone'=>$err->first('phone'),
+            'msg'=>$err->first('message'),
+            'image'=>$err->first('imageWA'),
+          );
+          return response()->json($error);
+      }
+
+			$user = Auth::user();
 			$phoneNumber = PhoneNumber::where("user_id",$user->id)->first();
 			$key = $phoneNumber->filename;
 
