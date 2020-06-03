@@ -39,7 +39,7 @@ class CheckBroadcastDuplicate
               'broadcast_id'=>['required',new CheckExistIdOnDB('broad_casts',$cond)],
               'campaign_name'=>['required','max:50'],
               'date_send'=>['required',new CheckBroadcastDate],
-              'hour'=>['required',new EligibleTime($date_send)],
+              'hour'=>['required',new EligibleTime($date_send,0)],
               'edit_message'=>['required','max:65000'],
               'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],
             );
