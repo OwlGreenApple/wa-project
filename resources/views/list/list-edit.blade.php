@@ -41,7 +41,7 @@
               </div>
 
               <div class="input-group form-group showeditor">
-                <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
+                <textarea name="editor1" id="editor1" rows="10" cols="80">{!! $data['content'] !!}</textarea>
               </div>
 
               <div class="input-group form-group">
