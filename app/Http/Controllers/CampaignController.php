@@ -91,9 +91,17 @@ class CampaignController extends Controller
 			// dd($_FILES["imageWA"]);
 			
 			$rules = array(
-					'phone'=>['required','max:255'],
-					'message'=>['required','max:65000']
+					'phone'=>['required','max:255']
 			);
+
+      if($request->message == null)
+      {
+          $rules['message'] = ['required','max:65000'];
+      }
+      else
+      {
+          $rules['edit_message'] = ['required','max:65000'];
+      }
 
 			if($request->hasFile('imageWA')) {
         $rules['imageWA'] = ['max:1024'];
@@ -115,10 +123,20 @@ class CampaignController extends Controller
       $err = $validator->errors();
 
       if($validator->fails()){
+
+          if($err->first('message') == null)
+          {
+            $err_msg = $err->first('edit_message');
+          }
+          else
+          {
+            $err_msg = $err->first('message');
+          }
+
           $error = array(
             'status'=>'error',
             'phone'=>$err->first('phone'),
-            'msg'=>$err->first('message'),
+            'msg'=>$err_msg,
             'image'=>$err->first('imageWA'),
           );
           return response()->json($error);
