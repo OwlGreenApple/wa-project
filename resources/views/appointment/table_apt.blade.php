@@ -54,7 +54,8 @@
   </div>   
   @endforeach
  @else
-  <h5 class="text-center">Currently you don't have any appointments, please click 'Create Appointment'.</h5>
+  <h5 class="text-center">Currently you don't have any appointments, please click 'SETUP APPOINTMENT TEMPLATE'.
+  </h5>
  @endif
 
  <script type="text/javascript">
