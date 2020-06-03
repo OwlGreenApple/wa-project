@@ -139,6 +139,19 @@ class RegisterController extends Controller
 					}
 					
           // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
+          $message ='';
+          $message .= 'https://activrespon.com/dashboard'."\n\n";
+          $message .= 'Hi '.$data['username']."\n\n";
+          $message .= 'Welcome to Activrespon'."\n";
+          $message .= '*Your password is: *'.$generated_password."\n\n";
+          $message .= '*Link login: *'.$generated_password."\n";
+          $message .= 'https://activrespon.com/dashboard/login'."\n\n";
+          $message .= 'If you need any help'."\n";
+          $message .= '*You can contact CS at*'."\n";
+          $message .= '*Telegram: *@activomni_cs'."\n\n";
+          $message .= 'Thank You'."\n";
+          $message .= '_*Activrespon is part of Activomni.com_';
+
 					ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
           Mail::to($data['email'])->send(new RegisteredEmail($generated_password),$data['username']);
         }

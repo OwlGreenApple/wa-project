@@ -71,10 +71,13 @@ class Order extends Model
       // WA MESSAGE
       $phone = $data['phone'];
       $message = null;
-      $message .= 'Terima kasih, anda telah melakukan pemesanan Activrespon service.'."\n";
-      $message .= 'Info Order anda adalah sebagai berikut'."\n"."\n";
-      $message .= '*No Order :* '.$order_number.''."\n";
-      $message .= '*Nama :* '.$user->name.''."\n";
+      $message .= '*Hi'.$user->name."\n";
+      $message .= 'Terima kasih sudah membeli Activrespon.'."\n";
+      $message .= '_Berikut ini adalah invoice Anda:_'."\n"."\n";
+      $message .= '*Tgl Pembelian :* '.$dt->format('d-M-Y').''."\n";
+      $message .= '*No Invoice :* '.$order_number.''."\n";
+      $message .= '*Jumlah :* '.number_format($grand_total).''."\n";
+    /*  $message .= '*Nama :* '.$user->name.''."\n";
       $message .= '*Status Order :* Pending'."\n";
       $message .= 'Anda telah memesan Paket '.$data['namapaket'].''."\n"."\n";
 
@@ -85,17 +88,24 @@ class Order extends Model
       }
       $message .= '*Diskon :* Rp.'. number_format($data['diskon'])."\n";
       $message .= '*Total :* Rp.'. number_format($grand_total)."\n"."\n";
+      */
+      $message .= '*Harap transfer persis sesuai invoice*'."\n";
+      $message .= '_(dengan kode uniknya)_'."\n";
+      $message .= 'agar mempercepat proses konfirmasi'."\n\n";
 
-      $message .= 'Harap SEGERA melakukan pembayaran,'."\n";
-      $message .= '*TRANSFER Melalui :*'."\n"."\n";
-      $message .= '*Bank BCA*'."\n";
-      $message .= '8290-812-845'."\n";
-      $message .= 'Sugiarto Lasjim'."\n"."\n";
-      $message .= 'Dan setelah selesai membayar'."\n";
-      $message .= 'Silahkan lakukan konfirmasi pembayaran di menu Orders, atau bisa dengan mengklik  ► '.url('orders').' <-- disini'."\n"."\n";
+      $message .= '*Silahkan Transfer ke :*'."\n"."\n";
+      $message .= 'BCA (Sugiarto Lasjim)'."\n";
+      $message .= '8290-812-845'."\n\n";
+      // $message .= 'Sugiarto Lasjim'."\n"."\n";
+      $message .= '*Sesudah transfer:*'."\n";
+      $message .= '- *Login* ke https://activrespon.com'."\n";
+      $message .= '- *Klik* Profile'."\n";
+      $message .= '- Pilih *Order & Confirm*'."\n";
+      $message .= '- *Upload bukti konfirmasi* disana'."\n";
 
-      $message .= 'Salam hangat,'."\n";
-      $message .= 'Activrespon';
+      $message .= 'Terima Kasih,'."\n\n";
+      $message .= 'Team Activrespon'."\n";
+      $message .= '_*Activrespon is part of Activomni.com_';
 
       // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
 			ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));

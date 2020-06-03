@@ -18,7 +18,12 @@ class ApiController extends Controller
 {
     public function test()
     {
-        $phone_number = null;
+
+      $dt = Carbon::now();
+      $date = $dt->format('d-M-Y');
+
+      dd($date);
+       /* $phone_number = null;
         $str = '628123238793';
 
         if(preg_match('/^62[0-9]*$/',$str)){
@@ -33,7 +38,7 @@ class ApiController extends Controller
           $phone_number = preg_replace("/^[0-9]/", "+62", $str);
         }
 
-        dd($phone_number);
+        dd($phone_number);*/
     }
 
     public function entry_google_form(Request $request)
