@@ -88,7 +88,7 @@
 			-->
       <div class="col-md-4 col-lg-4 col-xs-12 col-sm-12 detail-description">
         <h3 id="description-contact-header">Best Seller 3 Months<br>15.000 Messages/month</h3>
-        <button type="button" class="btn btn-lg btn-success col-12" id="choose-price">IDR 2.970.000</button>
+        <button type="button" class="btn btn-lg btn-success col-12" id="choose-price">IDR 370.500</button>
         <ul>
           <li>
             <i class="fa fa-check" aria-hidden="true"></i> 
@@ -135,11 +135,11 @@
             <span>Google form integration</span>
           </li>
           <li>
-            <i class="not-15000 fa fa-check" aria-hidden="true"></i> 
+            <i class="not-15000 fa fa-times" aria-hidden="true"></i> 
             <span>Event Reminder</span>
           </li>
           <li>
-            <i class="not-15000 fa fa-check" aria-hidden="true"></i> 
+            <i class="not-15000 fa fa-times" aria-hidden="true"></i> 
             <span>Appointment Reminder</span>
           </li>
         </ul>
@@ -151,12 +151,12 @@
 </div>
 
 <script type="text/javascript">
-  var modePrice;
+  var modePrice,messagePer30day;
   $(document).ready(function(){
 		$("#link-checkout").attr("href","<?php echo url('checkout/3'); ?>");
 		modePrice = 2;
     box_pricing_click();
-    set_price();
+    // set_price();
 		check_package();
     slider_init();
   });
