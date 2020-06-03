@@ -89,12 +89,12 @@ class CampaignController extends Controller
     {
 			// dd(Image::make(file_get_contents('https://omnilinkz.s3.us-west-2.amazonaws.com/banner/Rizky-6/2004181003-967.jpg')));
 			// dd($_FILES["imageWA"]);
-			
+
 			$rules = array(
 					'phone'=>['required','max:255']
 			);
 
-      if($request->message == null)
+      if($request->edit_message == null)
       {
           $rules['message'] = ['required','max:65000'];
       }
