@@ -85,7 +85,7 @@ class SettingController extends Controller
 				}
 			}
 			
-			session(['mode'=>1]); // masa test dibuat always simi 
+			session(['mode'=>0]); // masa test dibuat always simi 
 
       $phone_number = PhoneNumber::where('user_id',$user->id)->first();
       $server = Config::where('config_name','status_server')->first();
