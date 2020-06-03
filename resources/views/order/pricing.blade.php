@@ -135,11 +135,11 @@
             <span>Google form integration</span>
           </li>
           <li>
-            <i class="not-15000 fa fa-check" aria-hidden="true"></i> 
+            <i class="not-15000 fa fa-times" aria-hidden="true"></i> 
             <span>Event Reminder</span>
           </li>
           <li>
-            <i class="not-15000 fa fa-check" aria-hidden="true"></i> 
+            <i class="not-15000 fa fa-times" aria-hidden="true"></i> 
             <span>Appointment Reminder</span>
           </li>
         </ul>
