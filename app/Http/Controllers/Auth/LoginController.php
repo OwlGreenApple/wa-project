@@ -98,7 +98,7 @@ class LoginController extends Controller
     {
         session_start();
         $this->performLogout($request);
-        return redirect()->route('/');
+        return redirect('/');
     }
 
 /* end class LoginController */    
