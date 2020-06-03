@@ -156,6 +156,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 /*** USER ***/
 Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	/* HOME */
+	Route::get('/', 'HomeController@index')->middleware('cors')->name('home');
 	Route::get('/home', 'HomeController@index')->middleware('cors')->name('home');
 	Route::get('checkphone', 'HomeController@checkPhone');
 
