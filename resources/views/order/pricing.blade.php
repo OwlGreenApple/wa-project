@@ -151,7 +151,7 @@
 </div>
 
 <script type="text/javascript">
-  var modePrice;
+  var modePrice,messagePer30day;
   $(document).ready(function(){
 		$("#link-checkout").attr("href","<?php echo url('checkout/3'); ?>");
 		modePrice = 2;
