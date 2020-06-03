@@ -67,7 +67,7 @@
             @else 
               <button type="button" id="{{ $row['id'] }}"  class="btn btn-primary published" data-toggle="tooltip" title="Button Publish">Publish</button>
             @endif
-            <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del" data-toggle="tooltip" data-toggle="tooltip" data-placement="top" title="Button Publish" title="Button Delete"><span class="icon-delete"></span></button>
+            <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
             <div>
               <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">
                 Add & Edit Message
@@ -84,3 +84,11 @@
 
   @endif
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+     $('[data-toggle="tooltip"]').tooltip({
+        'placement':'top'
+      });       
+  });
+</script>

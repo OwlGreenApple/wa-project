@@ -15,9 +15,7 @@ Auth::routes();
 
 Route::get('logs-0312', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('visitor');
+Route::get('/','OrderController@pricing')->name('pricing');
 
 //Route::get('ck','ListController@generateRandomListName');
 Route::get('preg', 'ApiController@test');

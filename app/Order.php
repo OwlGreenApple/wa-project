@@ -72,22 +72,20 @@ class Order extends Model
 
       // WA MESSAGE
       if(env('APP_ENV') <> 'local')
-      {
         $phone = $data['phone'];
         $message = null;
-        $message .= '*Hi'.$user->name."\n";
+        $message .= '*Hi '.$user->name."\n";
         $message .= 'Terima kasih sudah membeli Activrespon.'."\n";
         $message .= '_Berikut ini adalah invoice Anda:_'."\n"."\n";
         $message .= '*Tgl Pembelian :* '.$dt->format('d-M-Y').''."\n";
         $message .= '*No Invoice :* '.$order_number.''."\n";
-        $message .= '*Jumlah :* '.number_format($grand_total).''."\n";
-      /*  $message .= '*Nama :* '.$user->name.''."\n";
+        $message .= '*Jumlah :*  Rp. '.str_replace(",",".",number_format($grand_total))."\n";
+        /*  $message .= '*Nama :* '.$user->name.''."\n";
         $message .= '*Status Order :* Pending'."\n";
         $message .= 'Anda telah memesan Paket '.$data['namapaket'].''."\n"."\n";
 
         $message .= '*Rp. '.number_format($data['price'] + $unique_code).'*'."\n";
         if($data['priceupgrade'] > 0)
-        {
           $message .= '*Upgrade Price :*'.number_format($data['priceupgrade'])."\n";
         }
         $message .= '*Diskon :* Rp.'. number_format($data['diskon'])."\n";
@@ -105,7 +103,7 @@ class Order extends Model
         $message .= '- *Login* ke https://activrespon.com'."\n";
         $message .= '- *Klik* Profile'."\n";
         $message .= '- Pilih *Order & Confirm*'."\n";
-        $message .= '- *Upload bukti konfirmasi* disana'."\n";
+        $message .= '- *Upload bukti konfirmasi* disana'."\n\n";
 
         $message .= 'Terima Kasih,'."\n\n";
         $message .= 'Team Activrespon'."\n";
