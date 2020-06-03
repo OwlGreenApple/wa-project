@@ -413,8 +413,17 @@ class CustomerController extends Controller
           $is_appointment = 0;
         }
         
+        if($confirmation->message_conf == null)
+        {
+            $message_conf = 'Your contact has been added';
+        }
+        else
+        {
+            $message_conf = $confirmation->message_conf;
+        }
+
         $data['success'] = true;
-        $data['message'] = $confirmation->message_conf;
+        $data['message'] = $message_conf;
         $data['is_appointment'] = $is_appointment;
         return response()->json($data);
     }
