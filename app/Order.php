@@ -72,6 +72,7 @@ class Order extends Model
 
       // WA MESSAGE
       if(env('APP_ENV') <> 'local')
+      {
         $phone = $data['phone'];
         $message = null;
         $message .= '*Hi '.$user->name."\n";
