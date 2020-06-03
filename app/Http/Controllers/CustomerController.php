@@ -413,7 +413,7 @@ class CustomerController extends Controller
           $is_appointment = 0;
         }
         
-        if($confirmation->message_conf == null)
+        if($confirmation->message_conf == null && $userid <> null)
         {
             $message_conf = 'Your contact has been added';
         }
