@@ -1,5 +1,7 @@
+<strong>Hi, {{$user->name}}</strong> <br>
+<br>
 Terima kasih, anda telah melakukan pemesanan Activrespon service.<br>
-Info Order anda adalah sebagai berikut <br>
+Berikut ini adalah invoice Anda: <br>
 <br>
 <strong>No Order :</strong> {{$no_order}} <br>
 <strong>Nama :</strong> {{$user->name}} <br>
@@ -26,6 +28,7 @@ Anda telah memesan Paket {{$nama_paket}} <br>
 	Dan setelah selesai membayar<br>
 	Silahkan lakukan konfirmasi pembayaran di menu Orders, atau bisa dengan mengklik <a href="{{url('order')}}"> KONFIRMASI PEMBAYARAN </a> disini. <br>
 
-<br> Salam hangat, 
+<br> Terima kasih, 
 <br>
-Activrespon
+Team Activrespon<br>
+<span style="font-style: italic;">*Activrespon is part of Activomni.com</span>

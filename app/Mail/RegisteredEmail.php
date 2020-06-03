@@ -20,9 +20,9 @@ class RegisteredEmail extends Mailable
     public $password;
     public $name;
 
-    public function __construct($password)
+    public function __construct($password,$name)
     {
-        //$this->name = $name;
+        $this->name = $name;
         $this->password = $password;
     }
 
@@ -37,6 +37,9 @@ class RegisteredEmail extends Mailable
         ->from('no-reply@activrespon.com', 'Activrespon')
         ->subject($this->subject)
         ->view('emails.RegisteredEmail')
-        ->with($this->password);
+        ->with([
+			'password' => $this->password,
+			'name' => $this->name,
+		]);
     }
 }
