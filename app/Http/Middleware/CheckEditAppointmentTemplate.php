@@ -19,7 +19,6 @@ class CheckEditAppointmentTemplate
      */
     public function handle($request, Closure $next)
     {
-        // dd($request->all());
         $get_day = true;
         $old_day = $request->old_day;
         $old_time = $request->oldtime;
@@ -31,9 +30,9 @@ class CheckEditAppointmentTemplate
             'message'=>['required','max:65000']
         );
 
-        if(isset($_POST['day'])){
-
-          if($is_update == null)
+        if(isset($_POST['day']))
+        {
+          if($is_update == 'undefined')
           {
               $rules['day'] = ['numeric','min:-30','max:-1', new CheckAppointmentDay($request->campaign_id)];
           }
@@ -46,7 +45,7 @@ class CheckEditAppointmentTemplate
         else 
         {
           $day = 0;
-          if($is_update == null)
+          if($is_update == 'undefined')
           {
               $get_day = $this->getRegDay($request->campaign_id,$day);
           }
@@ -76,6 +75,7 @@ class CheckEditAppointmentTemplate
                 $error['day'] = 'The day registered already, please choose another day!';
             }
             
+            dd($error);
             return response()->json($error);
         }
 
