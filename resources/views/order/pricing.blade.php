@@ -157,8 +157,8 @@
 		modePrice = 2;
     box_pricing_click();
     set_price();
-		check_package();
     slider_init();
+		check_package();
   });
 	function check_package(){
 		if (modePrice==1) {
