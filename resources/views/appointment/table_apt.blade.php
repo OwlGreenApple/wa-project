@@ -1,4 +1,10 @@
  @if($appointments->count() > 0)
+
+     <!-- PAGINATION -->
+    <div class="paging">
+      {{ $paginate }}
+    </div>
+
     @foreach($appointments as $row)
 
       @php 
