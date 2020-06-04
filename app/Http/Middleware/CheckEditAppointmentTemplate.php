@@ -75,7 +75,6 @@ class CheckEditAppointmentTemplate
                 $error['day'] = 'The day registered already, please choose another day!';
             }
             
-            dd($error);
             return response()->json($error);
         }
 
