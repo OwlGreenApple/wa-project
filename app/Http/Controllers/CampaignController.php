@@ -97,10 +97,12 @@ class CampaignController extends Controller
       if($request->edit_message == null)
       {
           $rules['message'] = ['required','max:65000'];
+          $message = $request->message;
       }
       else
       {
           $rules['edit_message'] = ['required','max:65000'];
+          $message = $request->edit_message;
       }
 
 			if($request->hasFile('imageWA')) {
@@ -175,10 +177,10 @@ class CampaignController extends Controller
 							$_FILES["imageWA"]["tmp_name"],
 							$_FILES["imageWA"]["type"],
 							$_FILES["imageWA"]["name"]
-						),$request->message,$server->url);
+						),$message,$server->url);
 					}
 					else {
-						ApiHelper::send_image_url($request->phone,$url,$request->message,$key);
+						ApiHelper::send_image_url($request->phone,$url,$message,$key);
 
 						$arr = array(
 							'url'=>$url,
@@ -191,7 +193,7 @@ class CampaignController extends Controller
 					// ApiHelper::send_message($request->phone,$request->message,$key);
 					$message_send = new Message;
 					$message_send->phone_number=$request->phone;
-					$message_send->message=$request->message;
+					$message_send->message= $message;
 					if ($phoneNumber->mode == 0) {
 						$message_send->key=$server->url;
 						$message_send->status=6;
