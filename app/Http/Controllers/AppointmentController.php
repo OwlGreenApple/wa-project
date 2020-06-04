@@ -319,7 +319,7 @@ class AppointmentController extends Controller
         $save = false;
         $count = 0;
         $reminderid = $customerid = $newcustomer = array();
-        $path = null;
+        $path = '';
 
         if(isset($_POST['day']))
         {
