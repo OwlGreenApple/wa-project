@@ -1,6 +1,10 @@
 <!-- big if -->
 @if($campaign->count() > 0)
-
+   <!-- PAGINATION -->
+  <div class="paging">
+    {{ $paginate }}
+  </div>
+  
   @foreach($campaign as $row)
     <!-- BROADCAST -->
     @if($row->type == 2) 

@@ -319,6 +319,11 @@
       pagination();
   });
 
+  function clearToolTip()
+  {
+    $('[data-toggle="tooltip"]').tooltip('hide');
+  }
+
   //ajax pagination
   function pagination()
   {
@@ -348,6 +353,7 @@
       }).done(function (data) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
+          clearToolTip();
           getActiveButtonByUrl(url);
           $('#display_campaign').html(data);
       }).fail(function (xhr,attr,throwable) {
@@ -430,6 +436,7 @@
         success: function(result) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
+          clearToolTip();
 
           if(result.success == 0)
           { 
@@ -538,6 +545,7 @@
       success: function(result) {
         $('#loader').hide();
         $('.div-loading').removeClass('background-load');
+        clearToolTip();
 
         if(result.success == 0)
         { 
@@ -594,6 +602,7 @@
           {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
+            clearToolTip();
             broadcastFormArrange(result);
           },
           error: function(xhr,attr,throwable)
@@ -689,6 +698,7 @@
         success: function(result) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
+          clearToolTip();
 
           if(result.success == 0)
           {
@@ -816,6 +826,10 @@
           success : function(result)
           {
             // alert(result.message);
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            clearToolTip();
+
             if(option_position == 'all')
             {
               loadPagination(global_url,null,null);
@@ -863,6 +877,10 @@
           },
           success : function(result)
           {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            clearToolTip();
+
             if(option_position == 'all')
             {
               loadPagination(global_url,null,null);

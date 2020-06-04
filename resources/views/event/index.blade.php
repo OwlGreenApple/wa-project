@@ -209,6 +209,11 @@
     delEvent();
   });
 
+  function clearToolTip()
+  {
+    $('[data-toggle="tooltip"]').tooltip('hide');
+  }
+
   function editCampaignName()
   {
       $("body").on("click",".edit",function(){
@@ -254,6 +259,7 @@
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
           $(".search-result").hide();
+          clearToolTip();
 
           if(result.success == 1)
           {
@@ -309,6 +315,7 @@
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
           $(".search-result").hide();
+          clearToolTip();
 
           if(result.success == 1)
           {
@@ -435,6 +442,7 @@
       }).done(function (data) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
+          clearToolTip();
           getActiveButtonByUrl(url);
           $('#display_list').html(data);
       }).fail(function (xhr,attr,throwable) {
@@ -506,7 +514,7 @@
           {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
-            $('[data-toggle="tooltip"]').tooltip('hide');
+            clearToolTip();
 
             if(result.success == 0)
             { 
@@ -558,7 +566,7 @@
           {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
-            $('[data-toggle="tooltip"]').tooltip('hide');
+            clearToolTip();
             if(result.status == 'success')
             {
                 $(".notification_err").html('<div class="alert alert-success">'+result.message+'</div>')
@@ -612,7 +620,7 @@
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
             displayEvent();
-            $('[data-toggle="tooltip"]').tooltip('hide');
+            clearToolTip();
           },
           error : function(xhr, attr, throwable)
           {

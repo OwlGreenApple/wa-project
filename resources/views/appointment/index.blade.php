@@ -38,7 +38,7 @@
 <div class="container">
   <div class="act-tel-tab">
       <div id="display_appointment" class="col-lg-12">
-        <!-- display appointment -->
+        @include('appointment.table_apt')
       </div>
   </div>
 </div>
@@ -102,41 +102,87 @@
 
 <script type="text/javascript">
 
+  var global_url = "{{ url('appointment') }}";
+
   $(document).ready(function(){
-      displayAppointment();
+      pagination();
       editCampaignName();
       saveCampaignEditName();
-      displayResult();
       delAppointment();
       searchAppointment();
       MDTimepicker(); 
       neutralizeClock();
       copyLink();
+
   });
 
-  function displayAppointment()
+  function clearToolTip()
   {
-     $.ajax({
-        type : 'GET',
-        url : '{{ url("table-apt") }}',
-        data : {search : null},
-        dataType : 'html',
-        beforeSend: function()
-        {
-          $('#loader').show();
-          $('.div-loading').addClass('background-load');
-        },
-        success : function(result){
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-          $("#display_appointment").html(result);
-        },
-        error : function(xhr,attributes,throwable){
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-        }
-     });
+     $('[data-toggle="tooltip"]').tooltip('hide');
   }
+
+  //ajax pagination
+  function pagination()
+  {
+      $(".page-item").removeClass('active').removeAttr('aria-current');
+      var mulr = window.location.href;
+      getActiveButtonByUrl(mulr)
+    
+      $('body').on('click', '.pagination .page-link', function (e) {
+          e.preventDefault();
+          var url = $(this).attr('href');
+          window.history.pushState("", "", url);
+          var search = $(".search-box").val();
+          loadPagination(url,search);
+      });
+  }
+
+  function loadPagination(url,search) {
+      $.ajax({
+        beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+        url: url,
+        data : {'search':search},
+      }).done(function (data) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          clearToolTip();
+          getActiveButtonByUrl(url);
+          $('#display_appointment').html(data);
+      }).fail(function (xhr,attr,throwable) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          $('#display_appointment').html("<div class='alert alert-warning'>Sorry, Failed to load data! please contact administrator</div>");
+          console.log(xhr.responseText);
+      });
+  }
+
+  function getActiveButtonByUrl(url)
+  {
+    var page = url.split('?');
+    if(page[1] !== undefined)
+    {
+      var pagevalue = page[1].split('=');
+      $(".page-link").each(function(){
+         var text = $(this).text();
+         if(text == pagevalue[1])
+          {
+            $(this).attr('href',url);
+            $(this).addClass('on');
+          } else {
+            $(this).removeClass('on');
+          }
+      });
+    }
+    else {
+        var mod_url = url+'?page=1';
+        getActiveButtonByUrl(mod_url);
+    }
+  }
+  //end ajax pagination
 
    function copyLink(){
       $( "body" ).on("click",".btn-copy",function(e) 
@@ -176,8 +222,10 @@
           },
           success : function(result)
           {
-            alert(result.message);
-            displayAppointment();
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            // alert(result.message);
+            loadPagination(global_url,null);
           },
           error : function(xhr, attr, throwable)
           {
@@ -198,35 +246,8 @@
   {
       $(".search-icon").click(function(){
         var search = $(".search-box").val();
-        displayResult(search);
+        loadPagination(global_url,search);
       });
-  }
-
-  function displayResult(query)
-  {
-      $.ajax({
-          type : 'GET',
-          url : '{{ url("table-apt") }}',
-          data : {'search' : query},
-          dataType : 'html',
-          beforeSend: function()
-          {
-            $('#loader').show();
-            $('.div-loading').addClass('background-load');
-          },
-          success : function(result)
-          {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            $("#display_appointment").html(result);
-          },
-          error : function(xhr, attr, throwable)
-          {
-            $('#loader').hide();
-            $('.div-loading').removeClass('background-load');
-            console.log(xhr.responseText);
-          }
-        });
   }
 
   function editCampaignName(){

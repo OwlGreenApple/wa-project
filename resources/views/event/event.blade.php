@@ -1,5 +1,11 @@
 <div class="act-tel-tab">
   @if(count($data) > 0)
+
+  <!-- PAGINATION -->
+  <div class="paging">
+    {{ $paginate }}
+  </div>
+
     @foreach($data as $row)
       <div class="bg-dashboard campaign row">
         <div class="col-lg-4 pad-fix col-card">

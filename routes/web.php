@@ -245,7 +245,6 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   // Route::get('list-table-apt-inactiv','AppointmentController@listTableAppointmentInActive');
   Route::post('list-edit-apt','AppointmentController@listAppointmentEdit')->middleware('checkeditformappt');
   Route::get('list-delete-apt','AppointmentController@listAppointmentDelete');
-  Route::get('table-apt','AppointmentController@tableAppointment');
   Route::get('form-apt/{id}','AppointmentController@formAppointment');
   Route::get('edit-apt/{id}','AppointmentController@editAppointment');
   Route::get('edit-appt-template','AppointmentController@editAppointmentTemplate');

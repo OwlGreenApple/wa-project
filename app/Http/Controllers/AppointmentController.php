@@ -21,63 +21,44 @@ use Excel,Storage;
 
 class AppointmentController extends Controller
 {
-    function index()
+    public function index(Request $request)
     {
       $userid = Auth::id();
-      $lists = UserList::where('user_id',$userid)->get();
+      $data = array();
+      $search = $request->search;
+      $paging = 5;
 
-      $data['lists'] = $lists;
-      return view('appointment.index',$data);
-    }
-
-    public function tableAppointment(Request $request)
-    {
-        $userid = Auth::id();
-        $data = array();
-        $search = $request->search;
-
-        if($search == null)
+      if($search == null)
         {
             $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3]])
                     ->join('lists','lists.id','=','campaigns.list_id')
                     ->select('campaigns.*','lists.name AS url','lists.label')
-                    ->get();
+                    ->orderBy('id','desc')
+                    ->paginate($paging);
         }
         else
         {
             $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3],['campaigns.name','LIKE','%'.$search.'%']])
                     ->join('lists','lists.id','=','campaigns.list_id')
                     ->select('campaigns.*','lists.name AS url','lists.label')
-                    ->get();
+                    ->orderBy('id','desc')
+                    ->paginate($paging);
         }
-        
-        if($campaigns->count() > 0)
-        {
-            foreach($campaigns as $row) {
 
-            /*  $contacts = ReminderCustomers::where([['reminders.campaign_id',$row->id],['reminders.is_event',2],['reminders.user_id',$userid]])
-              ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
-              ->join('customers','customers.id','=','reminder_customers.customer_id')
-              ->select('reminder_customers.id')
-              ->distinct()
-              ->get()->count();*/
-
-              $total_template = TemplateAppointments::where('campaign_id',$row->id)->get();
+        // $total_template = TemplateAppointments::where('campaign_id',$row->id)->get();
                 
-              $data[] = array(
-                'campaign_id'=>$row->id,
-                'name'=>$row->name,
-                'url'=>$row->url,
-                'label'=>$row->label,
-                'created_at'=>Date('d-M-Y',strtotime($row->created_at)),
-                'total_template'=>$total_template->count(),
-                'total_message'=>$this->dataAppointment($row->id,'=',0)->count(),
-                'total_sent'=>$this->dataAppointment($row->id,'>',0)->count(),
-              );
-            }
-        }
-
-        return view('appointment.table_apt',['data'=>$data]);
+        $data = array(
+          'logic_appointment' => new AppointmentController,
+          'templates'=> new TemplateAppointments,
+          'paginate'=>$campaigns,
+          'appointments'=>$campaigns
+        );
+        
+      if($request->ajax())
+      {
+        return view('appointment.table_apt',$data);
+      }
+      return view('appointment.index',$data);
     }
 
     public function dataAppointment($campaign_id,$cond,$status)
