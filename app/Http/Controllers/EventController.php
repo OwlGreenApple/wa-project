@@ -34,7 +34,7 @@ class EventController extends Controller
       if($search == null)
       {
           $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',0]])
-                  ->join('lists','lists.id','=','campaigns.list_id')
+                  ->leftJoin('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
                   ->select('campaigns.*','lists.label','lists.id AS list_id')
                   ->paginate(5);
@@ -42,7 +42,7 @@ class EventController extends Controller
       else
       {
            $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['campaigns.type','=',0]])
-                  ->join('lists','lists.id','=','campaigns.list_id')
+                  ->leftJoin('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
                   ->select('campaigns.*','lists.label','lists.id AS list_id')
                   ->paginate(5);

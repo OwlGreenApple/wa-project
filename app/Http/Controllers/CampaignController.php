@@ -44,7 +44,7 @@ class CampaignController extends Controller
       {
           $campaign = Campaign::where('campaigns.user_id',$userid)
                 ->whereIn('campaigns.type',[1,2])
-                ->join('lists','lists.id','=','campaigns.list_id')
+                ->leftJoin('lists','lists.id','=','campaigns.list_id')
                 ->orderBy('campaigns.id','desc')
                 ->select('campaigns.*','lists.label')
                 ->paginate($paging);
@@ -54,7 +54,7 @@ class CampaignController extends Controller
       {
           $campaign = Campaign::where('campaigns.user_id',$userid)
                       ->where('campaigns.type',$type)
-                      ->join('lists','lists.id','=','campaigns.list_id')
+                      ->leftJoin('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
                       ->select('campaigns.*','lists.label')
                       ->paginate($paging);
@@ -63,7 +63,7 @@ class CampaignController extends Controller
       if($search <> null)
       {
           $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',[1,2])
-            ->join('lists','lists.id','=','campaigns.list_id')
+            ->leftJoin('lists','lists.id','=','campaigns.list_id')
             ->orderBy('campaigns.id','desc')
             ->select('campaigns.*','lists.label')
             ->paginate($paging); 
@@ -449,10 +449,9 @@ class CampaignController extends Controller
         $userid = Auth::id();
         $campaigns = BroadCastCustomers::where([['broad_casts.campaign_id',$campaign_id],['broad_casts.user_id',$userid],['broad_cast_customers.status',$cond,$status]])
                   ->join('broad_casts','broad_casts.id','=','broad_cast_customers.broadcast_id')
-                  ->join('customers','customers.id','=','broad_cast_customers.customer_id')
+                  ->leftJoin('customers','customers.id','=','broad_cast_customers.customer_id')
                   ->select('customers.name','customers.telegram_number','broad_casts.day_send','broad_casts.hour_time','broad_cast_customers.id AS bcsid','broad_cast_customers.status','broad_cast_customers.updated_at')
-                  ->get();
-
+                  ->get();  
         return $campaigns;
     }
 

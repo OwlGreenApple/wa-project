@@ -27,19 +27,7 @@
           @if($active == 1)
             <td class="text-center"><a id="{{ $rows->bcsid }}" data-broadcast="1" class="icon-cancel"></a></td>
           @else
-            <td class="text-center">
-              @if($rows->status == 1)
-                Success
-              @elseif($rows->status == 2)
-                <span class="act-tel-apt-create">Phone Offline</span> 
-              @elseif($rows->status == 3)
-                <span class="act-tel-apt-create">Number Not Found</span>
-              @elseif($rows->status == 5)
-                <span class="act-tel-apt-create">On Queue</span>
-              @else
-                <span class="act-tel-apt-create">Cancelled</span>
-              @endif
-            </td>
+            <td class="text-center">{!! message_status($rows->status) !!}</td>
           @endif
         </tr>
        @php $x++ @endphp

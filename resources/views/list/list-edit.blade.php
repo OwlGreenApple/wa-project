@@ -338,13 +338,21 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
           <tbody>
             @php $no = 1; @endphp
             @foreach($data['auto_reply'] as $row)
-            <tr>
-              <td>{{ $no }}</td>
-              <td>{{ $row->updated_at }}</td>
-              <td>{{ $row->name }}</td>
-              <td>{{ $row->telegram_number }}</td>
-              <td>{!! message_status($row->status) !!}</td>
-            </tr>
+              @if($row->name == null) 
+                @php $row->name = '(Data deleted)'; @endphp 
+              @endif
+              
+              @if($row->telegram_number == null)  
+                @php $row->telegram_number = '(Data deleted)'; @endphp
+              @endif
+
+              <tr>
+                <td>{{ $no }}</td>
+                <td>{{ $row->updated_at }}</td>
+                <td>{!! $row->name !!}</td>
+                <td>{!! $row->telegram_number !!}</td>
+                <td>{!! message_status($row->status) !!}</td>
+              </tr>
             @php $no++ @endphp
             @endforeach
           </tbody>

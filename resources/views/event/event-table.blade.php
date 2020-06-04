@@ -23,7 +23,7 @@
             <div class="col-lg-3 pad-fix cardnumber">
               <div class="big-number">{{ $row['sent_message'] }}</div>
               <div class="contact">Send</div>
-            </div> 
+            </div>
             <!--<div class="col-lg-3 pad-fix cardnumber">
               <div class="big-number">100</div>
               <div class="contact">Opened</div>

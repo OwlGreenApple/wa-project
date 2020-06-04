@@ -826,7 +826,8 @@ class ListController extends Controller
 					$auto_reply_message = $reminder->message;
           $id_auto_reply = $reminder->id;
 
-          $data_autoreply = ReminderCustomers::where('reminder_customers.reminder_id','=',$id_auto_reply)->join('customers','reminder_customers.customer_id','=','customers.id')
+          $data_autoreply = ReminderCustomers::where([['reminder_customers.reminder_id','=',$id_auto_reply],['reminder_customers.user_id',$userid]])
+            ->leftJoin('customers','reminder_customers.customer_id','=','customers.id')
             ->select('reminder_customers.updated_at','reminder_customers.status','customers.name','customers.telegram_number')->get();
 				}
 
