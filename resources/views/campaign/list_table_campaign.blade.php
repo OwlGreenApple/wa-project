@@ -43,19 +43,7 @@
           <td class="text-center">{{ Date('M d Y h:i:s A',strtotime($row->updated_at)) }}</td>
           <td class="text-center">{{ $row->name }}</td>
           <td class="text-center">{{ $row->telegram_number }}</td>
-          <td colspan="2" class="text-center">
-            @if($row->status == 1)
-              Success
-            @elseif($row->status == 2)
-              <span class="act-tel-apt-create">Phone Offline</span> 
-            @elseif($row->status == 3)
-              <span class="act-tel-apt-create">Number Not Found</span>
-						@elseif($rows->status == 5)
-							<span class="act-tel-apt-create">On Queue</span>
-            @else
-              <span class="act-tel-apt-create">Cancelled</span>
-            @endif
-          </td>
+          <td colspan="2" class="text-center"> {!! message_status($row->status) !!}</td>
         </tr> 
         @php $x++ @endphp
       @endforeach
