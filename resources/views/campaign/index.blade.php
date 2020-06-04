@@ -99,7 +99,7 @@
             <button id="{{ $broad_cast->id }}" type="button" class="btn btn-danger broadcast-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
           @if($label !== null)
             <div>
-              <a title="Edit Message" data-toggle="tooltip" id="{{ $broad_cast->id }}" data-name="{{ $row->name }}" data-date="{{ $day_send }}" data-message="{{ $broadcast_message }}" data-time="{{ $sending }}" data-publish="{{ $row->status }}" type="button" class="btn btn-custom edit_campaign">@if($row->status == 1)Edit @else Edit/ Publish @endif</a>
+              <a title="Edit Message" data-toggle="tooltip" id="{{ $broad_cast->id }}" data-name="{{ $row->name }}" data-date="{{ $broad_cast->day_send }}" data-message="{{ $broadcast_message }}" data-time="{{ $sending }}" data-publish="{{ $row->status }}" type="button" class="btn btn-custom edit_campaign">@if($row->status == 1)Edit @else Edit/ Publish @endif</a>
             </div>
           @endif
         </div>

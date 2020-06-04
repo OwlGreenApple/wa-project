@@ -722,7 +722,7 @@
         error : function(xhr,attr,throwable){
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          alert(xhr.responseText);
+          console.log(xhr.responseText);
         }
       });
   }

@@ -407,7 +407,7 @@ class BroadCastController extends Controller
 
           $dt = Carbon::now();
           $ext = $request->file('imageWA')->getClientOriginalExtension();
-          $folder = $user->id."/broadcast-image/";
+          $folder = $user_id."/broadcast-image/";
           $filename = $dt->format('ymdHi').'.'.$ext;
           
           if(checkImageSize($request->file('imageWA')) == true || $imagewidth > 1280 || $imageheight > 1280)
