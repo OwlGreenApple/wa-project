@@ -750,12 +750,13 @@ class SendCampaign implements ShouldQueue
     public function getStatus($send_message,$mode)
     {
 			//default status 
-			$status = 1;
+			$status = 2;
 			
 			if ($mode == 0) {
 				//status simi
 				$obj = json_decode($send_message);
-				if (method_exists($obj,"sent")) {
+				// if (method_exists($obj,"sent")) {
+				if (isset($obj->sent)) {
 					if ($obj->sent) {
 						$status = 1;
 					}
@@ -764,7 +765,8 @@ class SendCampaign implements ShouldQueue
 						$status = 3;
 					}
 				}
-				if (method_exists($obj,"detail")) {
+				// if (method_exists($obj,"detail")) {
+				if (isset($obj->detail)) {
 						//dari simi whatsapp instance is not running -> phone_offline
 						$status = 2;
 				}
