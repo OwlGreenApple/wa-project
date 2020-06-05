@@ -72,6 +72,11 @@ class OrderController extends Controller
 
   public function summary(){
     //halaman order user
+    if(session('order') == null)
+    {
+      return redirect('pricing');
+    }
+
     return view('order.summary');
   }
   
@@ -270,6 +275,11 @@ class OrderController extends Controller
 
   public function submit_summary(Request $request){
     $user = Auth::user();
+
+    if(session('order') == null)
+    {
+        return redirect('pricing');
+    }
 
 		$data = [
 			"user"=> $user,

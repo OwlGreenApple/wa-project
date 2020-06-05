@@ -161,11 +161,47 @@ class RegisterController extends Controller
         return $user;
     }
 
+    protected function ajax_validator(array $data)
+    {
+
+        $validator = Validator::make($data, [
+            'username' => ['required','string','max:255'],
+            'email' => ['required','string', 'email', 'max:255', 'unique:users'],
+            'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
+            'phone' => ['required','max:18','min:6','max:18',new InternationalTel,new CheckUserPhone($data['code_country'],null)]
+            //'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $err = $validator->errors();
+        if($validator->fails() == true)
+        {
+            $errors = [
+              'success'=>0,
+              'username'=>$err->first('username'),
+              'email'=>$err->first('email'),
+              'code_country'=>$err->first('code_country'),
+              'phone'=>$err->first('phone'),
+            ];
+            return response()->json($errors);
+        }
+        else
+        {
+            return $this->register_ajax($data);
+        }
+    }
+
     public function register(Request $request)
     {   
-        $signup = $this->create($request->all());
-        $order = null;
         $req = $request->all();
+        
+        if($request->ajax() == true)
+        {
+          return $this->ajax_validator($req,$request);
+        }
+
+        $signup = $this->create($req);
+        $order = null;
+        
 
 				/* OLD system
         if(session('order') <> null)
@@ -229,6 +265,20 @@ class RegisterController extends Controller
 				}
         // }
 
+    }
+
+    //REGISTER VIA AJAX
+
+    protected function register_ajax(array $data)
+    {
+        $signup = $this->create($data);
+        $order = null;
+
+        Auth::loginUsingId($signup->id);
+        return response()->json([
+            'success' => 1,
+            'email' => $signup->email,
+        ]);
     }
 
 /* END CONTROLLER */

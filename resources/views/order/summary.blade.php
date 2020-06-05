@@ -52,28 +52,17 @@
 						<?php } else { ?>
 
 							<div id="div-register">
-                <form class="add-contact" method="POST" id="form-register">
-                    @csrf
-
+                <form class="add-contact" id="form-register">
                     <div class="form-group">
                       <label>Name*</label>
-                      <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" placeholder="Input Your Name" required />
-                      @error('username')
-                          <span class="invalid-feedback" role="alert">
-                              <strong>{{ $message }}</strong>
-                          </span>
-                      @enderror
+                      <input type="text" name="username" class="form-control" placeholder="Input Your Name" required />
+                      <span class="error username" role="alert"></span>                             
                     </div>
 
                     <div class="form-group">
                       <label>Email*</label>
-                       <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Input Your Email">
-
-                        @error('email')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
+                       <input id="email" type="email" class="form-control" name="email" required autocomplete="email" placeholder="Input Your Email">
+                       <span class="error email"></span>
                     </div>
 
                     <div class="form-group">
@@ -84,18 +73,11 @@
                           <i class="fa fa-question-circle "></i>
                         </span>
                       </label>
-                      <input type="text" id="phone" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" required/>
-                      @error('phone')
-                          <span class="invalid-feedback" role="alert">
-                              <strong>{{ $message }}</strong>
-                          </span>
-                      @enderror
-                      <input id="hidden_country_code" type="hidden" class="form-control @error('code_country') is-invalid @enderror" name="code_country" />
-                      @error('code_country')
-                          <span class="invalid-feedback" role="alert">
-                              <strong>{{ $message }}</strong>
-                          </span>
-                      @enderror
+                      <input type="text" id="phone" name="phone" class="form-control" required/>
+                      <span class="error phone"></span>
+
+                      <input id="hidden_country_code" type="hidden" class="form-control" name="code_country" />
+                     <span class="error phone"></span>
                      <input name="data_country" type="hidden" /> 
                     </div>
 
@@ -465,7 +447,7 @@
 
 			$.ajax({
 				type: 'POST',
-				url: "{{url('/register')}}",
+				url: "{{url('register')}}",
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				},
@@ -481,14 +463,26 @@
 
 					var data = jQuery.parseJSON(result);
 
-					if (data.success == '1') {
+					if (data.success == 1) 
+          {
+            $(".error").hide();
 						$(".step-2").show();
 						$("#step-1").html('<p>Your order confirmation will be emailed to:</p><span class="sumo-psuedo-link">'+data.email+'</span>');
 					} 
 					else {
-						alert('login failed');
+						 $(".error").show();
+             $(".username").html(data.username);
+             $(".email").html(data.email);
+             $(".code_country").html(data.code_country);
+             $(".phone").html(data.phone);
 					}
-				}
+				},
+        error: function(xhr,attr,throwable)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
+        }
 			});
 			
 			
