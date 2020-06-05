@@ -304,7 +304,10 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
           </div>
 
           <div class="form-group mt-3">
-            <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text"><?php echo $data['auto_reply_message'];?></textarea>
+            <!-- <div class="resizer_wrapper"> -->
+              <textarea name="autoreply" id="divInput-description-post" class="form-control custom-form text-left" placeholder="Auto Reply Text"><?php echo $data['auto_reply_message'];?></textarea>
+              <!-- <div id="resizer"></div>
+            </div> -->
           </div>
           <div class="form-group mt-3 secure-group" style="display:none;">
 						<label class="text-left" style="display:block;">START Custom Message</label>
@@ -776,7 +779,33 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
     display_edit_customer_form();
     buttonGenerateGoogleScript();
     data_auto_reply();
+    /*onResize();
+    stopResize();*/
   });
+
+  var resizeEmojioneArea = function(e){
+     var cur_height = $(".emojionearea").height();
+     var posY = e.clientY;
+     posY = posY/posY;
+     cur_height = cur_height + posY;
+     $(this).height(cur_height);
+  }
+
+  /* Resize Emojione prototype */
+
+  function onResize()
+  {
+    $("#resizer").mousedown(function(){        
+      $("body").on('mousemove','.emojionearea',resizeEmojioneArea);
+    })
+  }
+
+  function stopResize()
+  {
+    $("#resizer").mouseup(function(){
+      $("body").off('mousemove','.emojionearea',resizeEmojioneArea);
+    });
+  }
 
   function data_auto_reply()
   {
@@ -873,7 +902,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
 		});
 	}
 
-  $(function () {
+  $(function () {   
       $("#divInput-description-post").emojioneArea();
   });
 	
