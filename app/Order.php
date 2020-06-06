@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Order;
+use App\PhoneNumber;
 use App\Helpers\ApiHelper;
 
 use Carbon\Carbon;
@@ -57,7 +58,14 @@ class Order extends Model
     $order->buktibayar = "";
     $order->keterangan = "";
     $order->status_woowa = 0;
-    $order->mode = 0;
+    $mode = 0;
+    $phone_number = PhoneNumber::where('user_id',$user->id)
+                    ->where('mode',1) // klo woowa 
+                    ->first();
+    if (!is_null($phone_number)){
+      $mode = 1;
+    }
+    $order->mode = $mode;
     $order->month = $data['month'];
     $order->save();
 

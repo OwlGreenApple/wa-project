@@ -99,9 +99,6 @@
             <th data-priority="1" action="no_order all">
               No Order
             </th>
-            <th action="created_at none">
-              Created
-            </th>
             <!--
             <th action="grand_total all">
               Total
@@ -112,6 +109,9 @@
             </th>
             <th action="tagihan">
               Tagihan
+            </th>
+            <th action="created_at none">
+              Created
             </th>
           </thead>
           <tbody id="content"></tbody>

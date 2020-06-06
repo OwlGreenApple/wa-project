@@ -96,7 +96,7 @@
             <th action="grand_total all">
               Total
             </th>
-            <th action="created_at none">
+            <th action="created_at">
               Created
             </th>
             <th class="all">

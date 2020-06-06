@@ -6,9 +6,6 @@ use App\InvoiceOrder;
     <td data-label="No Order">
       {{$order->no_order}}
     </td>
-    <td data-label="Date">
-      {{$order->created_at}}
-    </td>
     <!--
     <td data-label="grand_total" align="right">
       Rp. <?php echo number_format($order->grand_total); ?>
@@ -24,6 +21,9 @@ use App\InvoiceOrder;
     -->
     <td data-label="tagihan" align="right">
       Rp. 125.000
+    </td>
+    <td data-label="Date">
+      {{$order->created_at}}
     </td>
   </tr>
 @endforeach
