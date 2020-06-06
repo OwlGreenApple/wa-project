@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         Commands\ResetMessageCounter::class,
         Commands\QueueMessage::class,
         Commands\notifOrder::class,
+        Commands\CheckOrderWoowa::class,
     ];
 
     /**
@@ -29,7 +30,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('check:orderwoowa')->dailyAt('01:00');
+        $schedule->command('check:orderwoowa')->dailyAt('01:00');
         $schedule->command('check:membership')->dailyAt('01:00');
         $schedule->command('notif:order')->dailyAt('08:00');
         $schedule->command('reset:message')->dailyAt('01:00');
