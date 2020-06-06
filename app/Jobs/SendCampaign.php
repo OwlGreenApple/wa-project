@@ -106,6 +106,10 @@ class SendCampaign implements ShouldQueue
                 // if(!is_null($customers))
                 // {
                     $message = $this->replaceMessage($customer_message,$row->name,$row->email,$customer_phone);
+                    $list = UserList::find($row->list_id);
+                    if (!is_null($list)){
+                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                    }
 										$message = $spintax->process($message);  //spin text
                     $chat_id = $row->chat_id;  
                     $counter = $phoneNumber->counter;
@@ -249,7 +253,7 @@ class SendCampaign implements ShouldQueue
             ->rightJoin('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
 						->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
-            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone','users.email as useremail')
+            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone','users.email as useremail','reminder_customers.customer_id')
             ->get();
 
         $number = $counter = $max_counter = 0;
@@ -310,6 +314,10 @@ class SendCampaign implements ShouldQueue
                 if($adding->lte($now) && $counter > 0)
                 {        
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
+                    $list = UserList::find($col->list_id);
+                    if (!is_null($list)){
+                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$col->customer_id, $message);
+                    }
 										$message = $spintax->process($message);  //spin text
 										/*if ($col->useremail=="activomnicom@gmail.com") {
 											$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
@@ -384,7 +392,7 @@ class SendCampaign implements ShouldQueue
           $event = null;
           $today = Carbon::now();
 
-          $reminder = Reminder::select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
+          $reminder = Reminder::select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership','reminder_customers.customer_id')
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
@@ -477,6 +485,10 @@ class SendCampaign implements ShouldQueue
                   }
                   
                   $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
+                  $list = UserList::find($row->list_id);
+                  if (!is_null($list)){
+                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                  }
 									$message = $spintax->process($message);  //spin text
 									
 									/*if ($row->useremail=="activomnicom@gmail.com") {
@@ -562,7 +574,7 @@ class SendCampaign implements ShouldQueue
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
 					->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership','reminder_customers.customer_id')
           ->get();
 
           if($reminder->count() > 0)
@@ -639,6 +651,10 @@ class SendCampaign implements ShouldQueue
                   $status = 'Sent';
 
                   $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt);
+                  $list = UserList::find($row->list_id);
+                  if (!is_null($list)){
+                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                  }
 									$message = $spintax->process($message);  //spin text
                   $id_reminder = $row->id_reminder;
      
