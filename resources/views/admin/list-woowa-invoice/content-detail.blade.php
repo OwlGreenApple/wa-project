@@ -10,7 +10,9 @@
     </td>
     -->
     <td data-label="month" align="center">
-      <?php echo $order->month; ?>
+      <?php 
+        echo strval(InvoiceOrder::where('order_id',$order->id)->count())." of ".$order->month; 
+      ?>
     </td>
     <!--
     <td data-label="tagihan" align="right">
