@@ -1,3 +1,6 @@
+<?php 
+use App\InvoiceOrder;
+?>
 @foreach($orders as $order)
   <tr>
     <td data-label="No Order">
