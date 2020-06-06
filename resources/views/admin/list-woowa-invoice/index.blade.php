@@ -207,7 +207,7 @@
         <table class="table">
           <thead align="center">
             <th>No Order</th>
-            <th>Total</th>
+            <!--<th>Total</th>-->
             <th>Month</th>
             <th>Tagihan</th>
             <th>Created order</th>

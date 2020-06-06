@@ -6,14 +6,21 @@
     <td data-label="Date">
       {{$order->created_at}}
     </td>
+    <!--
     <td data-label="grand_total" align="right">
       Rp. <?php echo number_format($order->grand_total); ?>
     </td>
+    -->
     <td data-label="month" align="center">
       <?php echo $order->month; ?>
     </td>
+    <!--
     <td data-label="tagihan" align="right">
       Rp. <?php echo number_format($order->grand_total / $order->month); ?>
+    </td>
+    -->
+    <td data-label="tagihan" align="right">
+      Rp. 125.000
     </td>
   </tr>
 @endforeach

@@ -36,7 +36,8 @@ class WooWAController extends Controller
                 ->get();
 		$totaltagihan=0;
 		foreach ($orders as $order) {
-			$totaltagihan += ($order->grand_total / $order->month);
+			// $totaltagihan += ($order->grand_total / $order->month);
+			$totaltagihan += 125000;
 		}
     $arr['view'] = (string) view('admin.list-woowa.content')
                       ->with([

@@ -102,9 +102,11 @@
             <th action="created_at none">
               Created
             </th>
+            <!--
             <th action="grand_total all">
               Total
             </th>
+            -->
             <th action="month">
               Month
             </th>
