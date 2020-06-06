@@ -84,6 +84,7 @@ class SendMessage extends Command
           ->join('campaigns',"campaigns.id","=","broad_casts.campaign_id")
           ->where("broad_cast_customers.status",0)
           ->where("customers.status",1)
+          ->where("phone_numbers.id",$this->phone_id)
           ->where("campaigns.status",1)
           ->orderBy('broad_casts.user_id')
           ->get();
@@ -101,7 +102,7 @@ class SendMessage extends Command
                   continue;
                 }
 
-                // REMARK IF YOU NEED TO TEST ON LOCAL
+                // REMARK IF NEED TO TEST ON LOCAL
 								if ($phoneNumber->mode == 0) {
 									$server = Server::where('phone_id',$phoneNumber->id)->first();
 									if(is_null($server)){
@@ -115,6 +116,10 @@ class SendMessage extends Command
                 // if(!is_null($customers))
                 // {
                     $message = $this->replaceMessage($customer_message,$row->name,$row->email,$customer_phone);
+                    $list = UserList::find($row->list_id);
+                    if (!is_null($list)){
+                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                    }
 										$message = $spintax->process($message);  //spin text
                     $chat_id = $row->chat_id;  
                     $counter = $phoneNumber->counter;
@@ -126,11 +131,11 @@ class SendMessage extends Command
                     $time_sending = $date->toDateString().' '.$hour;
                     $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
                     // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
-
                     $midnightTime = $this->avoidMidnightTime($row->timezone);
                     $check_valid_customer_join = $this->preventBroadcastNewCustomer($row->bccsid,$time_sending);
                     
-                    if($deliver_time < 0 || $midnightTime == false || $check_valid_customer_join == false){
+                    if($deliver_time < 0 || $midnightTime == false || $check_valid_customer_join == false)
+                    {
                       //klo blm hour_time di skip dulu
                       continue;
                     }
@@ -159,6 +164,7 @@ class SendMessage extends Command
                         $status = 'Sent';
                         $number ++;
 
+                        // MAKES BROADCAST STATUS TO 2 WHICH MEAN BROADCAST HAS RUN ALREADY.
                         $broad_cast_id = $broadcastCustomer->broadcast_id;
                         $broad_cast = BroadCast::find($broad_cast_id);
 
@@ -181,8 +187,7 @@ class SendMessage extends Command
 
                           //====================================
 
-													if ($row->image=="")
-                          {
+													if ($row->image==""){
 														// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 														if ($phoneNumber->mode == 0) {
 															$send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
@@ -224,7 +229,6 @@ class SendMessage extends Command
                         
 												$broadcastCustomer->status = $status;
 												$broadcastCustomer->save();
-                        
                     }
                     else {
                         $campaign = 'broadcast';
@@ -251,22 +255,24 @@ class SendMessage extends Command
             ['reminders.is_event','=',0],
             ['reminders.status','=',1],
             ['customers.status','=',1],
+            ['phone_numbers.id','=',$this->phone_id],
             // ['customers.created_at','<=',$current_time->toDateTimeString()],
             ])
             // ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
             ->join('users','reminders.user_id','=','users.id')
             ->rightJoin('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone','users.email as useremail')
+						->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
+            ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone','users.email as useremail','reminder_customers.customer_id')
             ->get();
 
         $number = $counter = $max_counter = 0;
 
         if($reminder->count() > 0)
         {
-            foreach($reminder as $col) 
+            foreach($reminder as $row) 
             {
-                $phoneNumber = PhoneNumber::where('user_id','=',$col->userid)->first();
+                $phoneNumber = PhoneNumber::where('user_id','=',$row->userid)->first();
                 if(!is_null($phoneNumber)){
                   $counter = $phoneNumber->counter;
                   $max_counter = $phoneNumber->max_counter;
@@ -284,18 +290,18 @@ class SendMessage extends Command
 								}
 
                 $key = $phoneNumber->filename;
-                $customer_phone = $col->telegram_number;
-                $customer_message = $col->message;
-                $customer_name = $col->name;
-                $customer_mail = $col->email;
+                $customer_phone = $row->telegram_number;
+                $customer_message = $row->message;
+                $customer_name = $row->name;
+                $customer_mail = $row->email;
 
-                $hour_time = $col->hour_time;
-                $day_reminder = $col->days; // how many days
-                $customer_signup = Carbon::parse($col->cstreg)->addDays($day_reminder);
+                $hour_time = $row->hour_time;
+                $day_reminder = $row->days; // how many days
+                $customer_signup = Carbon::parse($row->cstreg)->addDays($day_reminder);
                 $adding_with_hour = $customer_signup->toDateString().' '.$hour_time;
 
-                $reminder_customer_status = $col->rc_st;
-                $reminder_customers_id = $col->rcs_id;
+                $reminder_customer_status = $row->rc_st;
+                $reminder_customers_id = $row->rcs_id;
 								
 								//status queued 
 								$remindercustomer_update = ReminderCustomers::find($reminder_customers_id);
@@ -305,10 +311,10 @@ class SendMessage extends Command
 								$remindercustomer_update->status = 5;
 								$remindercustomer_update->save();
 								
-                $now = Carbon::now()->timezone($col->timezone);
+                $now = Carbon::now()->timezone($row->timezone);
                 $adding = Carbon::parse($adding_with_hour);         
                 $number++;
-                $midnightTime = $this->avoidMidnightTime($col->timezone);
+                $midnightTime = $this->avoidMidnightTime($row->timezone);
 
                 if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) || $midnightTime == false) {
                   continue;
@@ -318,12 +324,16 @@ class SendMessage extends Command
                 if($adding->lte($now) && $counter > 0)
                 {        
                     $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
+                    $list = UserList::find($row->list_id);
+                    if (!is_null($list)){
+                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                    }
 										$message = $spintax->process($message);  //spin text
-										/*if ($col->useremail=="activomnicom@gmail.com") {
+										/*if ($row->useremail=="activomnicom@gmail.com") {
 											$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										}
 										else {*/
-											if ($col->image==""){
+											if ($row->image==""){
 												// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 												if ($phoneNumber->mode == 0) {
 													$send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
@@ -334,22 +344,22 @@ class SendMessage extends Command
 											}
 											else {
 												if ($phoneNumber->mode == 0) {
-													Storage::disk('local')->put('temp-send-image-simi/'.$col->image, file_get_contents(Storage::disk('s3')->url($col->image)));
+													Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
 													$send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-																					storage_path('app/temp-send-image-simi/'.$col->image),
-																					mime_content_type(storage_path('app/temp-send-image-simi/'.$col->image)),
-																					basename($col->image)
+																					storage_path('app/temp-send-image-simi/'.$row->image),
+																					mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+																					basename($row->image)
 																				),$message,$server->url);
 												}
 												if ($phoneNumber->mode == 1) {
-													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($col->image),$message,$key);
+													$send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
 												}
 											}
 										//}
 
 										// sleep(3);
                     $campaign = 'Auto Responder';
-                    $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
+                    $id_campaign = 'reminder_customers_id = '.$row->rcs_id;
                     $status = 'Sent';
                     $this->generateLog($number,$campaign,$id_campaign,$status);
 
@@ -374,7 +384,7 @@ class SendMessage extends Command
                 else 
                 {
                     $campaign = 'Auto Responder';
-                    $id_campaign = 'reminder_customers_id = '.$col->rcs_id;
+                    $id_campaign = 'reminder_customers_id = '.$row->rcs_id;
                     $status = 'Not Sent';
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
@@ -392,14 +402,15 @@ class SendMessage extends Command
           $event = null;
           $today = Carbon::now();
 
-          $reminder = Reminder::select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
+          $reminder = Reminder::select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership','reminder_customers.customer_id')
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
+					->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
           ->join('campaigns',"campaigns.id","=","reminders.campaign_id")
-          ->where([['reminder_customers.status',0],['reminders.is_event',1],['customers.status',1],['reminders.status','>',0],['campaigns.status','>',0]])
-           ->get();        
-               
+          ->where([['reminder_customers.status',0],['reminders.is_event',1],['customers.status',1],['reminders.status','>',0],['campaigns.status','>',0],['phone_numbers.id','=',$this->phone_id]])
+          ->get();
+         
           if($reminder->count() > 0)
           {
               $number = $counter = 0;
@@ -424,8 +435,6 @@ class SendMessage extends Command
                 {
                   continue;
                 }
-
-                
 								if ($phoneNumber->mode == 0) {
 									$server = Server::where('phone_id',$phoneNumber->id)->first();
 									if(is_null($server)){
@@ -486,10 +495,12 @@ class SendMessage extends Command
                   }
                   
                   $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
+                  $list = UserList::find($row->list_id);
+                  if (!is_null($list)){
+                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                  }
 									$message = $spintax->process($message);  //spin text
-
-                  // =======================================================
-
+									
 									/*if ($row->useremail=="activomnicom@gmail.com") {
 										$send_message = ApiHelper::send_message_android(env('BROADCAST_PHONE_KEY'),$message,$customer_phone,"reminder");
 										if ($send_message) {
@@ -497,9 +508,6 @@ class SendMessage extends Command
 										}
 									}
 									else {*/
-
-                    // ======================================================
-
 										if ($row->image==""){
 											// $send_message = ApiHelper::send_wanotif($customer_phone,$message,$key);
 											if ($phoneNumber->mode == 0) {
@@ -570,11 +578,13 @@ class SendMessage extends Command
                   ['reminders.tmp_appt_id',">",0], 
                   ['customers.status',1], 
                   ['reminders.status','=',1],
+									['phone_numbers.id','=',$this->phone_id],
           ])
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
-          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership')
+					->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
+          ->select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership','reminder_customers.customer_id')
           ->get();
 
           if($reminder->count() > 0)
@@ -651,6 +661,10 @@ class SendMessage extends Command
                   $status = 'Sent';
 
                   $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt);
+                  $list = UserList::find($row->list_id);
+                  if (!is_null($list)){
+                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                  }
 									$message = $spintax->process($message);  //spin text
                   $id_reminder = $row->id_reminder;
      
@@ -709,7 +723,6 @@ class SendMessage extends Command
               }//END FOR LOOP EVENT
           }
     }
-    
 
     public function generateLog($number,$campaign,$id_campaign,$error = null)
     {
