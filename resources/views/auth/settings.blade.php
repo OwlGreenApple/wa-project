@@ -753,7 +753,7 @@
           if( (scd == 33) || (scd == 60) || (scd == 90) || (scd == 120) || (scd == 180) || (scd == 233) || (scd == 287) || (scd == 329) || (scd == 359) ) {
 					<?php } ?>
 					<?php if (session('mode')==1) { ?>
-          if( (scd == 180) || (scd == 233) || (scd == 287) || (scd == 329) || (scd == 359) ) {
+          if( (scd == 180) || (scd == 233) || (scd == 287) || (scd == 329) || (scd == 359) || (scd == 389) || (scd == 419) || (scd == 449) || (scd == 489) || (scd == 519) || (scd == 559) || (scd == 589) || (scd == 619) || (scd == 659) || (scd == 689) ) {
 					<?php } ?>
             // console.log("new system");
             if (flagtm == false ) {
@@ -762,7 +762,7 @@
             }
           }
 
-          if(min == 6)
+          if(min == 10)
           {
               $("#secs").html('0'+0);
               clearInterval(tm);
