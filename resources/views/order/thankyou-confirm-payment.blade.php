@@ -14,7 +14,7 @@
           <h1>Thank You<br> For Your Payment</h1>
           <hr class="orn" style="color: #106BC8">
           <div class="form-group">
-          <p class="pg-title">Please wait for our system to confirmed <br>your payment ( max 1x24 hours) <br>
+          <p class="pg-title">Silahkan menunggu max 1x24 jam <br> Admin akan mengkonfirmasi pembayaran anda. <br>
           <br>
           </p>
           </div>

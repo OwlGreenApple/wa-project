@@ -15,7 +15,13 @@
       </div>
     </td>
     <td class="menu-nomobile" data-label="Package">
-      {{$order->package}}
+      <?php 
+        $strMonth = " Month";
+        if ($order->month>1) {
+          $strMonth = " Months";
+        }
+      ?>
+      {{$order->package_title." ".$order->month.$strMonth}}
     </td> 
     <td class="menu-nomobile" data-label="Harga">
       Rp. <?php echo number_format($order->total) ?>

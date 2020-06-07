@@ -194,7 +194,7 @@
       <div class="modal-content">
         <div class="modal-body">
             <div><button type="button" class="close" data-dismiss="modal">&times;</button></div>
-            <div class="msg col-lg-12 mb-2"><!-- --></div>
+            <div class="msg col-lg-10 mb-2"><!-- --></div>
             <div class="form-group">
                  <div class="mb-2 act-tel-campaign">
                   <form id="edit_broadcast">

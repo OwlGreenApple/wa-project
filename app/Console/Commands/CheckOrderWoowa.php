@@ -42,12 +42,12 @@ class CheckOrderWoowa extends Command
      */
     public function handle()
     {
-      $orders = Order::
-                where('mode',1)
-                ->where('status_woowa',1)
-                ->where('month','>',1)
-                ->get();
-      foreach ($orders as $order){
-      }
+      // $orders = Order::
+                // where('mode',1)
+                // ->where('status_woowa',1)
+                // ->where('month','>',1)
+                // ->get();
+      // foreach ($orders as $order){
+      // }
     }
 }
