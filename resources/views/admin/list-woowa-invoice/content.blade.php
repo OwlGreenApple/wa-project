@@ -29,14 +29,17 @@
       @endif
     </td>
     <td data-label="Status">
-      @if($invoice->status==0)
-        <button type="button" class="btn btn-primary btn-confirm" data-toggle="modal" data-target="#confirm-invoice" data-id="{{$invoice->id}}" data-no-invoice="{{$invoice->no_invoice}}" data-total="{{$invoice->total}}" data-date="{{$invoice->created_at}}" data-keterangan="{{$invoice->keterangan}}">
-          Confirm
-        </button>
-      @else 
-        <span style="color: green">
-          <b>Confirmed</b>
-        </span>
+    
+      @if($user->is_admin==1)
+        @if($invoice->status==0)
+          <button type="button" class="btn btn-primary btn-confirm" data-toggle="modal" data-target="#confirm-invoice" data-id="{{$invoice->id}}" data-no-invoice="{{$invoice->no_invoice}}" data-total="{{$invoice->total}}" data-date="{{$invoice->created_at}}" data-keterangan="{{$invoice->keterangan}}">
+            Confirm
+          </button>
+        @else 
+          <span style="color: green">
+            <b>Confirmed</b>
+          </span>
+        @endif
       @endif
         <button type="button" class="btn btn-primary btn-show" data-toggle="modal" data-target="#view-details" data-id="{{$invoice->id}}">
           Lihat Order

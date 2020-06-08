@@ -8,11 +8,15 @@ Berikut ini adalah invoice Anda: <br>
 <strong>Status Order :</strong> Pending <br>
 Anda telah memesan Paket {{$nama_paket}} <br>
 <br>
+<?php if ($order->total_upgrade>0 || $order->discount>0 || $order->total<$order->grand_total) { ?>
 <strong>Rp. {{number_format($order->total)}} </strong><br>
+<?php } ?>
 <?php if ($order->total_upgrade>0) { ?>
 	<strong>Upgrade Price :</strong>Rp. {{number_format($order->total_upgrade)}} </strong><br>
 <?php } ?>
+<?php if ($order->discount>0) { ?>
 <strong>Diskon :</strong>Rp. {{number_format($order->discount)}} </strong><br>
+<?php } ?>
 <strong>Total :</strong>Rp. {{number_format($order->grand_total)}} </strong><br>
 
 <br>

@@ -73,7 +73,8 @@ class WooWAController extends Controller
                 ->get();
 		$totaltagihan=0;
 		foreach ($orders as $order) {
-			$totaltagihan += ($order->grand_total / $order->month);
+			// $totaltagihan += ($order->grand_total / $order->month);
+      $totaltagihan += 125000;
 
 			$invoiceorder = new InvoiceOrder;
 			$invoiceorder->invoice_id = $invoice->id;
@@ -96,11 +97,15 @@ class WooWAController extends Controller
   
   public function load_invoice(Request $request){
     //halaman list order admin
+    $user = Auth::user();
     $invoices = Invoice::
                 orderBy('created_at','desc')
                 ->get();
     $arr['view'] = (string) view('admin.list-woowa-invoice.content')
-                      ->with('invoices',$invoices);
+                      ->with([
+                        'invoices'=>$invoices
+                        'user'=>$$user
+                      ]);
     return $arr;
   }
   

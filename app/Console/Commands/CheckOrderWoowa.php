@@ -6,8 +6,11 @@ use Illuminate\Console\Command;
 use App\HelpersApiHelper;
 use App\PhoneNumber;
 use App\Order;
+use App\InvoiceOrder;
 use App\Server;
 use App\Helpers\ApiHelper;
+
+use Carbon\Carbon;
 
 class CheckOrderWoowa extends Command
 {
@@ -42,12 +45,24 @@ class CheckOrderWoowa extends Command
      */
     public function handle()
     {
-      // $orders = Order::
-                // where('mode',1)
-                // ->where('status_woowa',1)
-                // ->where('month','>',1)
-                // ->get();
-      // foreach ($orders as $order){
-      // }
+      $orders = Order::
+                where('mode',1)
+                ->where('status_woowa',1)
+                ->where('month','>',1)
+                ->get();
+      foreach ($orders as $order){
+        echo $order->id." ";
+        $dt = Carbon::now();
+        $selisih_bulan = $dt->diffInMonths(Carbon::createFromFormat('Y-m-d H:i:s', $order->created_at)) +1;
+        echo $selisih_bulan;
+
+        $jumlahInvoiceOrder = InvoiceOrder::where("order_id",$order->id)->count();
+        if (($selisih_bulan>$jumlahInvoiceOrder)&&($order->month>$jumlahInvoiceOrder)){
+          $order->status_woowa = 0;
+          $order->save();
+          echo "in";
+        }
+        echo "\n";
+      }
     }
 }
