@@ -35,7 +35,7 @@ class CampaignController extends Controller
     {
       $userid = Auth::id();
       $data = array();
-      $paging = 5;
+      $paging = 25;
       $type = $request->type;
       $search = $request->search;
 

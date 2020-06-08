@@ -55,7 +55,7 @@
         <div class="col-lg-5 pad-fix mt-4">
           <div class="row">
               @if($label !== null)
-                <div class="col-lg-3 pad-fix cardnumber">
+                <div class="col-lg-6 pad-fix cardnumber">
                   <div class="big-number">
                     <a class="contacts" href="{{url('list-campaign')}}/{{ $row->id }}/broadcast/1">{{ $total_message }}</a>
                   </div>
@@ -68,7 +68,7 @@
                   <div class="contact">Delivered</div>
                 </div> 
               @else
-                <div class="col-lg-3 pad-fix cardnumber">
+                <div class="col-lg-6 pad-fix cardnumber">
                   <div class="big-number">
                     <div class="contacts">0</div>
                   </div>
@@ -161,7 +161,7 @@
                     <div class="contact">Opened</div>
                   </div> -->
                   @if($label !== null)
-                    <div class="col-lg-4 pad-fix cardnumber">
+                    <div class="col-lg-5 pad-fix cardnumber">
                       <div class="big-number">
                           <a class="contacts" href="{{url('add-message-auto-responder')}}/{{ $row->id}}">{{ $total_template }}</a>
                       </div>
@@ -181,7 +181,7 @@
                       <div class="contact">Delivered</div>
                     </div> 
                   @else
-                     <div class="col-lg-4 pad-fix cardnumber">
+                     <div class="col-lg-5 pad-fix cardnumber">
                       <div class="big-number">
                           <div class="contacts">0</div>
                       </div>
@@ -206,10 +206,10 @@
             </div>
 
             <div class="col-lg-3 pad-fix col-button">
-               <button id="{{ $row->id }}" type="button" class="btn btn-danger responder-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
+               <button id="{{ $row->id }}" type="button" class="btn btn-danger responder-del btn-sm" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
               @if($label !== null)
                 <div>
-                  <a href="{{ url('add-message-auto-responder') }}/{{ $row->id }}" class="btn btn-custom">Add / Edit</a>
+                  <a href="{{ url('add-message-auto-responder') }}/{{ $row->id }}" class="btn btn-custom btn-sm">Add / Edit</a>
                 </div>
               @endif
               <!--
@@ -221,7 +221,7 @@
         <!-- END AUTO SCHEDULE -->
         @else
           <div class="bg-dashboard campaign row">
-            <div class="col-lg-4 pad-fix col-card">
+            <div class="col-lg-5 pad-fix col-card">
               <h5>{{ $row->name }}</h5>                                                
               <div class="notes">
                 <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div>
@@ -238,7 +238,7 @@
 
             <div class="col-lg-5 pad-fix mt-4">
               <div class="row">
-                  <div class="col-lg-4 pad-fix cardnumber">
+                  <div class="col-lg-5 pad-fix cardnumber">
                     <div class="big-number">
                         <a class="contacts" href="{{url('add-message-auto-responder')}}/{{ $row->id}}">0</a>
                     </div>
@@ -262,10 +262,10 @@
             </div>
 
             <div class="col-lg-3 pad-fix col-button">
-              <button id="{{ $row->id }}" type="button" class="btn btn-danger responder-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
+              <button id="{{ $row->id }}" type="button" class="btn btn-danger responder-del btn-sm" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
               @if($label !== null)
               <div>
-                <a href="{{ url('add-message-auto-responder') }}/{{ $row->id }}" class="btn btn-custom">Add / Edit</a>
+                <a href="{{ url('add-message-auto-responder') }}/{{ $row->id }}" class="btn btn-custom btn-sm">Add / Edit</a>
               </div>
               @endif
             </div>

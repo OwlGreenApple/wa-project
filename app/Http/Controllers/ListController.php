@@ -45,7 +45,7 @@ class ListController extends Controller
     public function index(Request $request)
     {
       $userid = Auth::id();
-      $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->orderBy('id','desc')->paginate(5);
+      $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->orderBy('id','desc')->paginate(25);
 
       if($request->ajax()) {
           return view('list.list-table',['lists'=>$lists,'paginate'=>$lists,'listcontroller'=> new ListController]);

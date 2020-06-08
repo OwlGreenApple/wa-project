@@ -30,6 +30,7 @@ class EventController extends Controller
     {
       $userid = Auth::id();
       $data = array();
+      $paging = 25;
 
       if($search == null)
       {
@@ -37,7 +38,7 @@ class EventController extends Controller
                   ->leftJoin('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
                   ->select('campaigns.*','lists.label','lists.id AS list_id')
-                  ->paginate(5);
+                  ->paginate($paging);
       }
       else
       {
@@ -45,7 +46,7 @@ class EventController extends Controller
                   ->leftJoin('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
                   ->select('campaigns.*','lists.label','lists.id AS list_id')
-                  ->paginate(5);
+                  ->paginate($paging);
       }
 
       if($campaign->count() > 0)

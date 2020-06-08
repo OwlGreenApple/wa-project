@@ -26,7 +26,7 @@ class AppointmentController extends Controller
       $userid = Auth::id();
       $data = array();
       $search = $request->search;
-      $paging = 5;
+      $paging = 25;
 
       if($search == null)
         {
@@ -96,7 +96,7 @@ class AppointmentController extends Controller
 
         $checkid = Campaign::where([['id',$campaign_id],['user_id',$userid]])->first();
         $label = UserList::find($checkid->list_id)->label;
-      
+
         if(is_null($checkid))
         {
             return redirect('create-apt');

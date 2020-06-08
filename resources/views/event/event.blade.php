@@ -71,13 +71,13 @@
           <a href="{{url('report-reminder')}}" id="{{ $row['id'] }}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></a>
           -->
             @if($row['published'] == 1)
-              <button type="button" id="{{ $row['id'] }}" data-list-id="{{ $row['list_id'] }}"  class="btn btn-success event_duplicate" data-toggle="tooltip" title="Button Duplicate"><span class="icon-copy-text"></span></button>
+              <button type="button" id="{{ $row['id'] }}" data-list-id="{{ $row['list_id'] }}"  class="btn btn-success event_duplicate btn-sm" data-toggle="tooltip" title="Button Duplicate"><span class="icon-copy-text"></span></button>
             @else 
-              <button type="button" id="{{ $row['id'] }}"  class="btn btn-primary published" data-toggle="tooltip" title="Button Publish">Publish</button>
+              <button type="button" id="{{ $row['id'] }}"  class="btn btn-primary published btn-sm" data-toggle="tooltip" title="Button Publish">Publish</button>
             @endif
-            <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
+            <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del btn-sm" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
             <div>
-              <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom">
+              <a href="{{url('add-message-event').'/'.$row['id']}}" class="btn btn-custom btn-sm">
                 Add & Edit Message
               </a>
             </div>
