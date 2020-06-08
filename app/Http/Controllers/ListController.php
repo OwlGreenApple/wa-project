@@ -1048,7 +1048,7 @@ class ListController extends Controller
 
         try
         {
-          Customer::where([['id',$id_customer],['user_id',$userid]])->delete();
+          Customer::where([['id',$id_customer],['user_id',$userid]])->update(['status'=>0]);
         }
         catch(Exception $e)
         {
@@ -1059,7 +1059,7 @@ class ListController extends Controller
 
         try
         {
-          ReminderCustomers::where([['list_id',$list_id],['customer_id',$id_customer]])->delete();
+          ReminderCustomers::where([['list_id',$list_id],['customer_id',$id_customer],['status','=',0]])->update(['status'=>4]);
           $data['success'] = 1;
           $data['message'] = 'Your customer deleted successfully';
         }
