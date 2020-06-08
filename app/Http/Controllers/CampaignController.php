@@ -35,8 +35,7 @@ class CampaignController extends Controller
     {
       $userid = Auth::id();
       $data = array();
-      $lists = UserList::where('user_id',$userid)->get();
-      $paging = 5;
+      $paging = 25;
       $type = $request->type;
       $search = $request->search;
 
@@ -69,7 +68,7 @@ class CampaignController extends Controller
             ->paginate($paging); 
       }
 
-      $data['lists'] = $lists;
+      $data['lists'] = displayListWithContact($userid);
       $data['paginate'] = $campaign;
       $data['campaign'] = $campaign;
       $data['broadcast'] = new BroadCast;
@@ -414,6 +413,7 @@ class CampaignController extends Controller
       $data['currentlistid'] = $campaign->list_id;
       $data['published'] = $campaign->status;
       $data['date_event'] = $reminder->event_time;
+      $data['list_id'] = $campaign->list_id;
       return view('event.add-message-event',$data);
     }
 
@@ -487,7 +487,7 @@ class CampaignController extends Controller
 
         $checkid = Campaign::where([['campaigns.id',$campaign_id],['campaigns.user_id',$userid]])
                     ->join('lists','lists.id','=','campaigns.list_id')
-                    ->select('campaigns.name','lists.label')
+                    ->select('campaigns.name','lists.label','lists.id')
                     ->first();
 
         if(is_null($checkid))
@@ -507,7 +507,7 @@ class CampaignController extends Controller
           }
         }
 
-        return view('campaign.list_campaign',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'campaigns'=>$campaigns,'is_event'=>$is_event,'list_name'=>$checkid->label]);
+        return view('campaign.list_campaign',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'campaigns'=>$campaigns,'is_event'=>$is_event,'list_name'=>$checkid->label,'list_id'=>$checkid->id]);
     }
 
     public function getCampaignAjaxTable(Request $request)

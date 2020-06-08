@@ -26,13 +26,13 @@ class AppointmentController extends Controller
       $userid = Auth::id();
       $data = array();
       $search = $request->search;
-      $paging = 5;
+      $paging = 25;
 
       if($search == null)
         {
             $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3]])
                     ->join('lists','lists.id','=','campaigns.list_id')
-                    ->select('campaigns.*','lists.name AS url','lists.label')
+                    ->select('campaigns.*','lists.name AS url','lists.label','lists.id AS list_id')
                     ->orderBy('id','desc')
                     ->paginate($paging);
         }
@@ -40,7 +40,7 @@ class AppointmentController extends Controller
         {
             $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3],['campaigns.name','LIKE','%'.$search.'%']])
                     ->join('lists','lists.id','=','campaigns.list_id')
-                    ->select('campaigns.*','lists.name AS url','lists.label')
+                    ->select('campaigns.*','lists.name AS url','lists.label','lists.id AS list_id')
                     ->orderBy('id','desc')
                     ->paginate($paging);
         }
@@ -95,13 +95,14 @@ class AppointmentController extends Controller
         }
 
         $checkid = Campaign::where([['id',$campaign_id],['user_id',$userid]])->first();
+        $label = UserList::find($checkid->list_id)->label;
 
         if(is_null($checkid))
         {
             return redirect('create-apt');
         }
 
-        return view('appointment.list_apt',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active]);
+        return view('appointment.list_apt',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'list_id'=>$checkid->list_id,'label'=>$label]);
     }
 
     public function listTableAppointments(Request $request)

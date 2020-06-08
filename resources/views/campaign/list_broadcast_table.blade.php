@@ -19,7 +19,7 @@
     <tbody>
       @foreach($campaigns as $rows)
         <tr>
-          <td class="text-center">{{ $x }}</td>
+          <td debug="{{ $rows->bcsid }}" class="text-center">{{ $x }}</td>
           <!--<td class="text-center">{{ $rows->day_send }}</td>-->
           <td class="text-center">{{ $rows->updated_at }}</td>
           <td class="text-center">{{ $rows->name }}</td>

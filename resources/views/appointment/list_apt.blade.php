@@ -7,6 +7,7 @@
   <div class="act-tel-dashboard-left">
     <h2>List Users</h2>
     <h4>Appointment Name : {{ $campaign_name }}</h4>
+    <h5>List : <a target="_blank" href="{{ url('list-edit') }}/{{ $list_id }}">{{ $label }}</a></h5>
   </div>
   <div class="clearfix"></div>
 </div>

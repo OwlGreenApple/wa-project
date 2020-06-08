@@ -159,7 +159,7 @@ use Illuminate\Support\Facades\Storage;
           $data[] = array(
             'id'=>$row->id,
             'label'=>$row->label,
-            'customer_count'=>$customer->count(),
+            'customer_count'=>'('.$customer->count().')',
           );
         }
       }

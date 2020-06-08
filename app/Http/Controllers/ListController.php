@@ -45,7 +45,7 @@ class ListController extends Controller
     public function index(Request $request)
     {
       $userid = Auth::id();
-      $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->orderBy('id','desc')->paginate(5);
+      $lists = UserList::where([['lists.status','=',1],['lists.user_id','=',$userid]])->orderBy('id','desc')->paginate(25);
 
       if($request->ajax()) {
           return view('list.list-table',['lists'=>$lists,'paginate'=>$lists,'listcontroller'=> new ListController]);
@@ -1048,7 +1048,7 @@ class ListController extends Controller
 
         try
         {
-          Customer::where([['id',$id_customer],['user_id',$userid]])->delete();
+          Customer::where([['id',$id_customer],['user_id',$userid]])->update(['status'=>0]);
         }
         catch(Exception $e)
         {
@@ -1059,7 +1059,7 @@ class ListController extends Controller
 
         try
         {
-          ReminderCustomers::where([['list_id',$list_id],['customer_id',$id_customer]])->delete();
+          ReminderCustomers::where([['list_id',$list_id],['customer_id',$id_customer],['status','=',0]])->update(['status'=>4]);
           $data['success'] = 1;
           $data['message'] = 'Your customer deleted successfully';
         }
