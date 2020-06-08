@@ -32,7 +32,7 @@
       @php $x =1 @endphp
       @foreach($campaigns as $row)
         <tr>
-          <td class="text-center">{{ $x }}</td>
+          <td data="{{ $row->rcid }}" class="text-center">{{ $x }}</td>
           @if($is_event == 1)
             <td class="text-center">{{ $row->event_time }}</td>
             <td class="text-center">H{{ $row->days }}</td>
