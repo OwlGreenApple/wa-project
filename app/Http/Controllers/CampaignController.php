@@ -35,7 +35,6 @@ class CampaignController extends Controller
     {
       $userid = Auth::id();
       $data = array();
-      $lists = UserList::where('user_id',$userid)->get();
       $paging = 5;
       $type = $request->type;
       $search = $request->search;
@@ -69,7 +68,7 @@ class CampaignController extends Controller
             ->paginate($paging); 
       }
 
-      $data['lists'] = $lists;
+      $data['lists'] = displayListWithContact($userid);
       $data['paginate'] = $campaign;
       $data['campaign'] = $campaign;
       $data['broadcast'] = new BroadCast;
