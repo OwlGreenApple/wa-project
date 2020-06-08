@@ -19,7 +19,7 @@
             </span>  
         </h5>                           
         <div class="notes">
-          <div>List : {{$row->label}}</div>
+          <div>List : <a target="_blank" href="{{ url('list-edit') }}/{{ $row->list_id }}">{{$row->label}}</a></div>
         </div>
         <div class="created">
           Create On : {{Date('d-M-Y',strtotime($row->created_at))}}

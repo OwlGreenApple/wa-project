@@ -42,7 +42,7 @@
               Schedule post : <b>{{ $day_send }} {{ $sending }}</b>
             </div>
             @if($label !== null)
-              <div>List : {{ $label }}</div>
+              <div>List : <a target="_blank" href="{{ url('list-edit') }}/{{ $list_id }}">{{ $label }}</a></div>
             @else
               <div><b>Deleted List</b></div>
             @endif
@@ -144,7 +144,7 @@
               <div class="notes">
                 <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div>
                 @if($label !== null)
-                  <div>List : {{ $label }}</div>
+                  <div>List : <a target="_blank" href="{{ url('list-edit') }}/{{ $list_id }}">{{ $label }}</a></div>
                 @else
                   <div><b>Deleted List</b></div>
                 @endif

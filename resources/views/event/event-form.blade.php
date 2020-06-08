@@ -163,7 +163,58 @@ use min 5 spintax variations is recommended	<br>
         neutralizeClock();
         saveCampaign();
         pictureClass();
+        sendTestMessage();
     });
+
+    function sendTestMessage()
+    {
+    $("body").on("click",".btn-test",function(){
+        var form = $('#save_campaign')[0];
+        var formData = new FormData(form);
+        formData.append('phone', $(".iti__selected-flag").attr('data-code')+$("#phone").val()); // added
+        $.ajax({
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            type : 'POST',
+            url : '{{url("send-test-message")}}',
+            data : formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType : 'json',
+            beforeSend: function()
+            {
+              // $('#loader').show();
+              // $('.div-loading').addClass('background-load');
+            },
+            success : function(result){
+              // $('#loader').hide();
+              // $('.div-loading').removeClass('background-load');
+              if (result.status=="success"){
+                alert("Test Message Sent");
+              }
+              if (result.status=="error"){
+                if (result.phone!=""){
+                  alert("phone required");
+                }
+                if (result.msg!=""){
+                  alert("message required");
+                }
+                if (result.image!=""){
+                  alert("message required");
+                }
+              }
+            },
+            error : function(xhr,attribute,throwable)
+            {
+              // $('#loader').hide();
+              // $('.div-loading').removeClass('background-load');
+              console.log(xhr.responseText);
+            }
+        });
+        //ajax
+      });
+
+  }
 
     function saveCampaign()
     {

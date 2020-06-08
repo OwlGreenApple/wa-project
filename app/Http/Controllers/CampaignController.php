@@ -486,7 +486,7 @@ class CampaignController extends Controller
 
         $checkid = Campaign::where([['campaigns.id',$campaign_id],['campaigns.user_id',$userid]])
                     ->join('lists','lists.id','=','campaigns.list_id')
-                    ->select('campaigns.name','lists.label')
+                    ->select('campaigns.name','lists.label','lists.id')
                     ->first();
 
         if(is_null($checkid))
@@ -506,7 +506,7 @@ class CampaignController extends Controller
           }
         }
 
-        return view('campaign.list_campaign',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'campaigns'=>$campaigns,'is_event'=>$is_event,'list_name'=>$checkid->label]);
+        return view('campaign.list_campaign',['campaign_id'=>$campaign_id,'campaign_name'=>$checkid->name,'active'=>$active,'campaigns'=>$campaigns,'is_event'=>$is_event,'list_name'=>$checkid->label,'list_id'=>$checkid->id]);
     }
 
     public function getCampaignAjaxTable(Request $request)

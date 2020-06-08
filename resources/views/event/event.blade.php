@@ -18,7 +18,7 @@
 
           <div class="notes">
             <div>Status : <color>@if($row['published'] == 0) draft @else published @endif</color></div>
-            <div>List : {{ $row['label'] }}</div>
+            <div>List : <a target="_blank" href="{{ url('list-edit') }}/{{ $row['list_id'] }}">{{ $row['label'] }}</a></div>
           </div>
 
           <div class="created">
