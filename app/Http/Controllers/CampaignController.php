@@ -413,6 +413,7 @@ class CampaignController extends Controller
       $data['currentlistid'] = $campaign->list_id;
       $data['published'] = $campaign->status;
       $data['date_event'] = $reminder->event_time;
+      $data['list_id'] = $campaign->list_id;
       return view('event.add-message-event',$data);
     }
 

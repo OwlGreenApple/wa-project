@@ -63,7 +63,7 @@
         <div class="form-group row lists">
           <label class="col-sm-3 col-form-label">Current List :</label>
           <div class="col-sm-9 relativity">
-            {{ $currentlist }}
+            <a target="_blank" href="{{ url('list-edit') }}/{{ $list_id }}">{{ $currentlist }}</a>
           </div>
         </div>
 
