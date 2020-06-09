@@ -41,4 +41,7 @@ $i=1;
       {{$order->created_at}}
     </td>
   </tr>
+  <?php
+  $i+=1;
+  ?>
 @endforeach

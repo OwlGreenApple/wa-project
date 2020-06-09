@@ -39,5 +39,8 @@ $i=1;
       {{$order->created_at}}
     </td>
   </tr>
+  <?php
+  $i+=1;
+  ?>
 @endforeach
 <input type="hidden" name="total_tagihan" id="total_tagihan" value="{{$totaltagihan}}">
