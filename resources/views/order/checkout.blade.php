@@ -249,7 +249,7 @@
         }
         
         if (data.status == 'success') {
-          $('.total').html('IDR ' + formatNumber(parseInt(data.total)+parseInt(totalPriceUpgrade)));
+          $('.total').html('IDR '+' <strike>'+data.price+'</strike> '+formatNumber(parseInt(data.total)+parseInt(totalPriceUpgrade)));
           $('#pesan').removeClass('alert-danger');
           $('#pesan').addClass('alert-success');
         } 

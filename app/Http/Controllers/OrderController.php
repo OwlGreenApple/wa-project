@@ -115,6 +115,7 @@ class OrderController extends Controller
     $arr['total'] = $request->harga;
     $arr['diskon'] = 0;
     $arr['coupon'] = null;
+    $arr['price'] = '';
 
     if($request->kodekupon!=''){
       $user_id = 0;
@@ -147,11 +148,13 @@ class OrderController extends Controller
           $arr['status'] = 'error';
           $arr['message'] = 'Kupon sudah tidak berlaku';
           return $arr;
-        } else {
+        } 
+        else 
+        {
           if($coupon->valid_to=='new' and Auth::check()){
-
+              //
           } else if($coupon->valid_to=='extend' and !Auth::check()){
-
+              //
           } 
           else if(($coupon->valid_to=='') || ($coupon->valid_to=='expired-membership') || ($coupon->valid_to=='all') ){
             $total = 0;
@@ -171,6 +174,7 @@ class OrderController extends Controller
             $arr['total'] = $total;
             $arr['diskon'] = $diskon;
             $arr['coupon'] = $coupon;
+            $arr['price'] = number_format($request->harga, 0,'','.');
             return $arr;
           }
         }

@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Coupon extends Model
 {
-    protected $table = 'coupons';
     protected $connection = 'mysql2';
+    protected $table = 'coupons';
 }
