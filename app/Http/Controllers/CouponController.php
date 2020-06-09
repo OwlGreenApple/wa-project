@@ -14,7 +14,7 @@ class CouponController extends Controller
 {
     protected function validator(array $data){
       return Validator::make($data, [
-        'kodekupon' => ['required','string','unique:coupons'],
+        'kodekupon' => ['required','string','unique:'.env('DB_DATABASE').'.coupons'],
         'diskon_value' => ['required','integer','min:0'],
         'diskon_percent' => ['required','integer','min:0','max:100'],
         'valid_until' => ['required','date','after:today'],
