@@ -525,16 +525,20 @@ class ListController extends Controller
         return response()->json($data);
     }
 
-    public function searchList(Request $request){
+    public function searchList(Request $request)
+    {
         $listname = $request->listname;
         $userid = Auth::id();
 
-        if(empty($listname)){
+        if($listname == null)
+        {
           $lists = Userlist::where('user_id',$userid)->get();
         }
-
-        $lists = Userlist::where('label','like','%'.$listname.'%')->get();
-
+        else
+        {
+          $lists = Userlist::where('label','like','%'.$listname.'%')->get();
+        }
+        
         return view('list.list-table',['lists'=>$lists,'paginate'=>null,'listcontroller'=> new ListController]);
     }
 
