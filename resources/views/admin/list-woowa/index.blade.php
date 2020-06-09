@@ -96,7 +96,13 @@
       <form>
         <table class="table" id="myTable">
           <thead align="center">
-            <th data-priority="1" action="no_order all">
+            <th>
+              No
+            </th>
+            <th>
+              No WA
+            </th>
+            <th action="no_order">
               No Order
             </th>
             <!--
@@ -110,7 +116,7 @@
             <th action="tagihan">
               Tagihan
             </th>
-            <th action="created_at none">
+            <th action="created_at">
               Created
             </th>
           </thead>

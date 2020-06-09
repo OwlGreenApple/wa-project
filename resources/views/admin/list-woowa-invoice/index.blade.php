@@ -206,6 +206,12 @@
 
         <table class="table">
           <thead align="center">
+            <th>
+              No
+            </th>
+            <th>
+              No WA
+            </th>
             <th>No Order</th>
             <!--<th>Total</th>-->
             <th>Month</th>
