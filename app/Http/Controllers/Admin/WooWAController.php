@@ -103,8 +103,8 @@ class WooWAController extends Controller
                 ->get();
     $arr['view'] = (string) view('admin.list-woowa-invoice.content')
                       ->with([
-                        'invoices'=>$invoices
-                        'user'=>$$user
+                        'invoices'=>$invoices,
+                        'user'=>$user,
                       ]);
     return $arr;
   }
