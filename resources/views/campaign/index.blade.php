@@ -32,12 +32,16 @@
 
       <div class="bg-dashboard campaign row">
         <div class="col-lg-4 pad-fix col-card">
-          <h5>{{ $row->name }}</h5>
+          <h5>
+            <color><span class="gr">Broadcast
+               @if($row->status == 0) -- draft @endif</span></color> 
+               {{ $row->name }}
+          </h5>
           <div class="notes">
-            <div>
+            <!-- <div>
               Type Campaign : <color><span class="gr">Broadcast
                @if($row->status == 0) -- draft @endif</span></color>
-            </div>
+            </div> -->
             <div>
               Schedule post : <b>{{ $day_send }} {{ $sending }}</b>
             </div>

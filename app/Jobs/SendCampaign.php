@@ -828,19 +828,24 @@ class SendCampaign implements ShouldQueue
     public function preventBroadcastNewCustomer($broadcast_customer_id,$date_send)
     {
       $broadcast_customer = BroadCastCustomers::find($broadcast_customer_id);
-      $customer_register_broadcast = Carbon::parse($broadcast_customer->created_at);
-      $delivered_day = Carbon::parse($date_send);
+      if(!is_null($broadcast_customer))
+      {
+          $customer_register_broadcast = Carbon::parse($broadcast_customer->created_at);
+          $delivered_day = Carbon::parse($date_send);
 
-      if($customer_register_broadcast->lte($delivered_day))
-      {
-          return true; //message would be send
+          if($customer_register_broadcast->lte($delivered_day))
+          {
+              return true; //message would be send
+          }
+          else
+          {
+             $broadcast_customer->status = 4;
+             $broadcast_customer->save();
+             return false; // message would be ignore
+          } 
       }
-      else
-      {
-         $broadcast_customer->status = 4;
-         $broadcast_customer->save();
-         return false; // message would be ignore
-      } 
+      
+      return true;     
     }
 
 /* end class */
