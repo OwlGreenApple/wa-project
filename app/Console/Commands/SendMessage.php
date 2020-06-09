@@ -49,13 +49,15 @@ class SendMessage extends Command
 
     public function handle()
     {
-			$phoneNumbers = PhoneNumber::
-											where("counter",">",0)
-											->where("status",2)
-											->get();
-			foreach($phoneNumbers as $phoneNumber) {
-				SendCampaign::dispatch($phoneNumber->id);
-			}
+      // if (env("APP_ENV")=="automation") {
+        $phoneNumbers = PhoneNumber::
+                        where("counter",">",0)
+                        ->where("status",2)
+                        ->get();
+        foreach($phoneNumbers as $phoneNumber) {
+          SendCampaign::dispatch($phoneNumber->id);
+        }
+      // }
 
 			/*
       //Broadcast 

@@ -848,5 +848,123 @@ class SendCampaign implements ShouldQueue
       return true;     
     }
 
+    public function send_simi($customer_phone,$message,$server_url){
+      $curl = curl_init();
+
+      $data = array(
+          'customer_phone'=>$customer_phone,
+          'message'=>$message,
+          'server_url'=>$server_url,
+      );
+
+		  $url = "https://activrespon.com/dashboard/send-simi";
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+      return $response;
+    }
+    
+    public function send_message($customer_phone,$message,$key){
+      $curl = curl_init();
+
+      $data = array(
+          'customer_phone'=>$customer_phone,
+          'message'=>$message,
+          'key'=>$key,
+      );
+
+		  $url = "https://activrespon.com/dashboard/send-message";
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+      return $response;
+    }
+    
+    public function send_image_url_simi($customer_phone,$curl,$message,$server_url){
+      $curl = curl_init();
+
+      $data = array(
+          'customer_phone'=>$customer_phone,
+          'curl'=>$curl,
+          'message'=>$message,
+          'server_url'=>$server_url,
+      );
+
+		  $url = "https://activrespon.com/dashboard/send-image-url-simi";
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+      return $response;
+    }
+    
+    public function send_image_url($customer_phone,$urls3,$message,$key){
+      $curl = curl_init();
+
+      $data = array(
+          'customer_phone'=>$customer_phone,
+          'urls3'=>$urls3,
+          'message'=>$message,
+          'key'=>$key,
+      );
+
+		  $url = "https://activrespon.com/dashboard/send-image-url";
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+      return $response;
+    }
+    
 /* end class */
 }

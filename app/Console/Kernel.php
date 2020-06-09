@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         Commands\QueueMessage::class,
         Commands\notifOrder::class,
         Commands\CheckOrderWoowa::class,
+        Commands\ResetServersimi::class,
     ];
 
     /**
@@ -41,6 +42,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('check:connection')->everyFifteenMinutes();
         $schedule->command('check:connection')->hourly();
         // $schedule->command('check:wa')->hourly();
+        $schedule->command('reset:serversimi')->everyFifteenMinutes();
     }
 
     /**
