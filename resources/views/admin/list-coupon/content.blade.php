@@ -8,6 +8,13 @@
     </td>
     <td data-label="Diskon (Persen)">
       {{$coupon->diskon_percent}}%
+    </td>  
+    <td data-label="Jenis Kupon">
+      @if($coupon->coupon_type == 1)
+        Kupon Normal
+      @else
+        Kupon Upgrade
+      @endif
     </td> 
     <td data-label="Valid Until">
       {{$coupon->valid_until}}

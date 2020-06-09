@@ -181,6 +181,9 @@
               Diskon (Persen)
             </th>
             <th>
+              Jenis Kupon
+            </th>
+            <th>
               Valid Until
             </th>
             <th>
