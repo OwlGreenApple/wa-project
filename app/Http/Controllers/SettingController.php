@@ -68,17 +68,31 @@ class SettingController extends Controller
 												where("mode",1)
 												->count();
 				if (floor($countModeSimi / 3) <= $countModeWoowa) {
-					$server = Server::where("status",0)->first();
-					if (is_null($server)){
-						// klo didatabase kita ga ready maka diarahin ke punya woowa
-						session(['mode'=>1]);
-					}
-					else {
+					$server = Server::
+                    where("status",0)
+                    ->where("phone_id",$user->id)
+                    ->first();
+					if (!is_null($server)){
 						session([
 							'mode'=>0,
 							'server_id'=>$server->id,
 						]);
-					}
+          }
+          else {
+            $server = Server::where("status",0)->where("phone_id",0)->first();
+            if (is_null($server)){
+              // klo didatabase kita ga ready maka diarahin ke punya woowa
+              session(['mode'=>1]);
+            }
+            else {
+              $server->phone_id = $user->id;// dimasukkin user id dulu sementara 
+              $server->save();
+              session([
+                'mode'=>0,
+                'server_id'=>$server->id,
+              ]);
+            }
+          }
 				}
 				else {
 					session(['mode'=>0]);

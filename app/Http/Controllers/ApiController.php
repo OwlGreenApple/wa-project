@@ -13,6 +13,7 @@ use App\Mail\SendWAEmail;
 use App\Console\Commands\SendWA as wamessage;
 use Mail;
 use App\Http\Controllers\CustomerController;
+use App\Helpers\ApiHelper;
 
 class ApiController extends Controller
 {
@@ -81,7 +82,32 @@ class ApiController extends Controller
 			}
     }
 
-		public function testapi()
+    public function send_simi(Request $request)
+    {
+      return ApiHelper::send_simi($customer_phone,$message,$server->url);
+    }
+    
+    public function send_message(Request $request)
+    {
+      return ApiHelper::send_message($customer_phone,$message,$key);
+    }
+    
+    public function send_image_url_simi(Request $request)
+    {
+      Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+      $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+                      storage_path('app/temp-send-image-simi/'.$row->image),
+                      mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                      basename($row->image)
+                    ),$message,$server->url);
+    }
+    
+    public function send_image_url(Request $request)
+    {
+      return ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+    }
+    
+    public function testapi()
     {
     	$curl = curl_init();
 

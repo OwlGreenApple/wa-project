@@ -32,6 +32,12 @@ Route::get('testpay','ApiController@testpay');
 Route::get('testdirectsendwa','ApiController@testDirectSendWA')->name('testdirectsendwa');
 Route::get('testdirectsendmail','ApiController@testDirectSendMail')->name('testdirectsendmail');
 
+/* API accessed from automation*/
+Route::post('send-simi','ApiController@send_simi');
+Route::post('send-message','ApiController@send_message');
+Route::post('send-image-url-simi','ApiController@send_image_url_simi');
+Route::post('send-image-url','ApiController@send_image_url');
+
 Route::post('is_pay','ApiController@customerPay');
 Route::post('private-list','ApiController@register_list');
 
