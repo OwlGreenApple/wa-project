@@ -12,7 +12,7 @@
       @endphp
 
       <div class="bg-dashboard campaign row">
-      <div class="col-lg-4 pad-fix col-card">
+      <div class="col-lg-5 pad-fix col-card">
         <h5><span class="campaignid-{{$row->id}}">{{ $row->name }}</span>
             <span>
               <a data-name="{{ $row->name }}" id="{{ $row->id }}" class="edit icon-edit"></a>
@@ -26,7 +26,7 @@
         </div>
       </div>
 
-      <div class="col-lg-5 pad-fix mt-2">
+      <div class="col-lg-4 pad-fix">
         <div class="row"> 
             <div class="col-lg-4 pad-fix cardnumber">
                 <div class="big-number">
