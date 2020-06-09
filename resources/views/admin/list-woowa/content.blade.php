@@ -1,8 +1,21 @@
 <?php 
 use App\InvoiceOrder;
+use App\PhoneNumber;
+$i=1;
 ?>
 @foreach($orders as $order)
   <tr>
+    <td>
+      {{$i}}
+    </td>
+    <td>
+      <?php
+        $phoneNumber = PhoneNumber::where("user_id",$order->user_id)->first();
+        if (!is_null($phoneNumber)){
+          echo $phoneNumber->phone_number;
+        }
+      ?>
+    </td>
     <td data-label="No Order">
       {{$order->no_order}}
     </td>
@@ -26,5 +39,8 @@ use App\InvoiceOrder;
       {{$order->created_at}}
     </td>
   </tr>
+  <?php
+  $i+=1;
+  ?>
 @endforeach
 <input type="hidden" name="total_tagihan" id="total_tagihan" value="{{$totaltagihan}}">
