@@ -19,32 +19,14 @@
       {{$coupon->keterangan}}
     </td>
     <td data-label="Paket">
-      <?php 
-          switch ($coupon->package_id) {
-              case 0:
-                echo 'All';
-              break;
-              case 1:
-                echo 'Pro Monthly';
-              break;
-              case 2:
-                echo 'Pro Yearly';
-              break;
-              case 3:
-                echo 'Elite Monthly';
-              break;
-              case 4:
-                echo 'Elite Yearly';
-              break;
-          }
-       ?>
+      {!! getPackage($coupon->package_id) !!}
     </td>
     <td data-label="Action">
       <button type="button" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#edit-coupon" data-id="{{$coupon->id}}" data-kodekupon="{{$coupon->kodekupon}}" data-nominal="{{$coupon->diskon_value}}" data-persen="{{$coupon->diskon_percent}}" data-validuntil="{{$coupon->valid_until}}" data-validto="{{$coupon->valid_to}}" data-keterangan="{{$coupon->keterangan}}" data-paket="{{$coupon->package_id}}">
-        <i class="fas fa-pen"></i>
+        <!-- <i class="fas fa-pen"></i> -->Edit
       </button>  
       <button type="button" class="btn btn-sm btn-danger btn-delete" data-toggle="modal" data-target="#confirm-delete" data-id="{{$coupon->id}}">
-        <i class="far fa-trash-alt"></i>
+        <!-- <i class="far fa-trash-alt"></i> --> Delete
       </button>  
     </td>
   </tr>
