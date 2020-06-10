@@ -34,7 +34,7 @@ Route::get('testdirectsendmail','ApiController@testDirectSendMail')->name('testd
 
 /* API accessed from automation*/
 Route::post('send-simi','ApiController@send_simi');
-Route::post('send-message','ApiController@send_message');
+Route::post('send-message-automation','ApiController@send_message');
 Route::post('send-image-url-simi','ApiController@send_image_url_simi');
 Route::post('send-image-url','ApiController@send_image_url');
 

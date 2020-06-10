@@ -886,7 +886,7 @@ class SendCampaign implements ShouldQueue
           'key'=>$key,
       );
 
-		  $url = "https://activrespon.com/dashboard/send-message";
+		  $url = "https://activrespon.com/dashboard/send-message-automation";
 
       curl_setopt_array($curl, array(
         CURLOPT_URL => $url,

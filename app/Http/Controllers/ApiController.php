@@ -96,12 +96,12 @@ class ApiController extends Controller
     public function send_image_url_simi(Request $request)
     {
       Storage::disk('local')->put('temp-send-image-simi/'.$request->image, file_get_contents(Storage::disk('s3')->url($request->image)));
-      $send_message = ApiHelper::send_image_url_simi($request->customer_phone,request->curl,$request->message,$request->server_url);
+      $send_message = ApiHelper::send_image_url_simi($request->customer_phone,$request->curl,$request->message,$request->server_url);
     }
     
     public function send_image_url(Request $request)
     {
-      return ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+      return ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($request->image),$message,$key);
     }
     
     public function testapi()
