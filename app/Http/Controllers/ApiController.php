@@ -14,6 +14,7 @@ use App\Console\Commands\SendWA as wamessage;
 use Mail;
 use App\Http\Controllers\CustomerController;
 use App\Helpers\ApiHelper;
+use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
 {
