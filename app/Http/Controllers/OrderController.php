@@ -156,7 +156,8 @@ class OrderController extends Controller
           } else if($coupon->valid_to=='extend' and !Auth::check()){
               //
           } 
-          else if(($coupon->valid_to=='') || ($coupon->valid_to=='expired-membership') || ($coupon->valid_to=='all') ){
+          else if(($coupon->valid_to=='') || ($coupon->valid_to=='expired-membership') || ($coupon->valid_to=='all') )
+          {
             $total = 0;
             $diskon = 0;
 
@@ -178,6 +179,7 @@ class OrderController extends Controller
             return $arr;
           }
         }
+
       }
     }
 

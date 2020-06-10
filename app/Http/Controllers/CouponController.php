@@ -15,6 +15,7 @@ class CouponController extends Controller
     protected function validator(array $data){
       return Validator::make($data, [
         'kodekupon' => ['required','string','unique:mysql2.coupons'],
+        'jenis_kupon' => ['required','integer'],
         'diskon_value' => ['required','integer','min:0'],
         'diskon_percent' => ['required','integer','min:0','max:100'],
         'valid_until' => ['required','date','after:today'],
@@ -23,7 +24,8 @@ class CouponController extends Controller
 
     public function index(){
       //halaman list kupon admin
-      return view('admin.list-coupon.index');
+      $pricelist = getPackage(null);
+      return view('admin.list-coupon.index',['price'=>$pricelist]);
     }
 
     public function load_coupon(Request $request){
@@ -44,6 +46,7 @@ class CouponController extends Controller
         $coupon->kodekupon = $request->kodekupon;
         $coupon->diskon_value = $request->diskon_value;
         $coupon->diskon_percent = $request->diskon_percent;
+        $coupon->coupon_type = $request->jenis_kupon;
         $coupon->valid_until = $request->valid_until;
         $coupon->valid_to = $request->valid_to;
         $coupon->keterangan = $request->keterangan;

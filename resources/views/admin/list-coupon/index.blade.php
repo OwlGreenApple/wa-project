@@ -181,6 +181,9 @@
               Diskon (Persen)
             </th>
             <th>
+              Jenis Kupon
+            </th>
+            <th>
               Valid Until
             </th>
             <th>
@@ -260,25 +263,38 @@
             <div class="col-md-8 col-12">
               <input type="text" name="kodekupon" id="kodekupon" class="form-control">
             </div>
-          </div>
+          </div> 
 
           <div class="form-group row">
             <label class="col-md-4 col-12">
-              <b>Diskon (Nominal)</b>
+              <b>Jenis Kupon</b>
             </label>
 
             <div class="col-md-8 col-12">
-              <input type="text" name="diskon_value" id="diskon_value" class="form-control" value="0">
+                  <label class="radio-inline mr-2"><input name="jenis_kupon" value="1" type="radio"checked />Kupon Normal</label>
+                  <label class="radio-inline"><input type="radio" name="jenis_kupon" value="2" /> Kupon Upgrade</label>
             </div>
           </div>
 
-          <div class="form-group row">
-            <label class="col-md-4 col-12">
-              <b>Diskon (Persen)</b>
-            </label>
+          <div class="normal_discount">
+            <div class="form-group row">
+              <label class="col-md-4 col-12">
+                <b>Diskon (Nominal)</b>
+              </label>
 
-            <div class="col-md-8 col-12">
-              <input type="text" name="diskon_percent" id="diskon_percent" class="form-control" value="0">
+              <div class="col-md-8 col-12">
+                <input type="text" name="diskon_value" id="diskon_value" class="form-control" value="0">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-4 col-12">
+                <b>Diskon (Persen)</b>
+              </label>
+
+              <div class="col-md-8 col-12">
+                <input type="text" name="diskon_percent" id="diskon_percent" class="form-control" value="0">
+              </div>
             </div>
           </div>
 
@@ -300,8 +316,8 @@
             <div class="col-md-8 col-12">
               <select class="form-control" name="valid_to" id="valid_to">
                 <option value="all">All</option>
-                <option value="new">New</option>
-                <option value="extend">Extend</option>
+               <!--  <option value="new">New</option>
+                <option value="extend">Extend</option> -->
                 <!--
                 <option value="package-elite-2">Package Elite 2</option>
                 <option value="package-elite-3">Package Elite 3</option>
@@ -320,10 +336,9 @@
             <div class="col-md-8 col-12">
               <select class="form-control" name="package_id" id="package_id">
                 <option value="0">All</option>
-                <option value="1">Pro</option>
-                <option value="2">Popular</option>
-                <option value="3">Elite</option>
-                <option value="4">Super</option>
+                @foreach($price as $id=>$row)
+                  <option value="{{ $id }}">{{ $row['package'] }} -- {{ number_format($row['price']) }}</option>
+                @endforeach
               </select>
             </div>
           </div>  
@@ -360,7 +375,28 @@
       format : 'YYYY/MM/DD',
       minDate: new Date()
     }); 
+
+    discountType();
   });
+
+  function discountType()
+  {
+    $("input[name='jenis_kupon']").click(function(){
+      var val = $(this).val();
+
+      if(val == 2)
+      {
+          $(".normal_discount").hide();
+          $("input[name='diskon_value'], input[name='diskon_percent']").val(0);
+      }
+      else
+      {
+          $(".normal_discount").show();
+          $("input[name='diskon_value'], input[name='diskon_percent']").val(0);
+      }
+
+    });
+  }
 
   $( "body" ).on( "click", ".btn-edit", function() {
     $('#title-coupon').html('Edit Kupon');

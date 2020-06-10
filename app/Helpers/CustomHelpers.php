@@ -192,4 +192,59 @@ use Illuminate\Support\Facades\Storage;
       }
     }
 
+    function getPackage($id_package)
+    {
+      $package = array(
+        1 => ['package'=>'basic1','price'=>195000],
+        2 => ['package'=>'bestseller1','price'=>370500],
+        3 => ['package'=>'supervalue1','price'=>526500],
+        '-----------',
+        4 => ['package'=>'basic2','price'=>275000],
+        5 => ['package'=>'bestseller2','price'=>522500],
+        6 => ['package'=>'supervalue2','price'=>742500],
+        '-----------',
+        7 => ['package'=>'basic3','price'=>345000],
+        8 => ['package'=>'bestseller3','price'=>655500],
+        9 => ['package'=>'supervalue3','price'=>931500],
+        '-----------',
+        10 => ['package'=>'basic4','price'=>415000],
+        11 => ['package'=>'bestseller4','price'=>788500],
+        12 => ['package'=>'supervalue4','price'=>1120500],
+        '-----------',
+        13 => ['package'=>'basic5','price'=>555000],
+        14 => ['package'=>'bestseller5','price'=>1054500],
+        15 => ['package'=>'supervalue5','price'=>1498500],
+        '-----------',
+        16 => ['package'=>'basic6','price'=>695000],
+        17 => ['package'=>'bestseller6','price'=>1320500],
+        18 => ['package'=>'supervalue6','price'=>1876500],
+        '-----------',
+        19 => ['package'=>'basic7','price'=>975000],
+        20 => ['package'=>'bestseller7','price'=>1852500],
+        21 => ['package'=>'supervalue7','price'=>2632500],
+        '-----------',
+        22 => ['package'=>'basic8','price'=>1255000],
+        23 => ['package'=>'bestseller8','price'=>2384500],
+        24 => ['package'=>'supervalue8','price'=>3388500],
+        '-----------',
+        25 => ['package'=>'basic9','price'=>155000],
+        26 => ['package'=>'bestseller9','price'=>2954500],
+        27 => ['package'=>'supervalue9','price'=>4288500],
+      );
+
+      if($id_package == '0')
+      {
+          return 'All';
+      }
+      elseif($id_package <> null || $id_package <> '')
+      {
+          return $package[$id_package]['package'];
+      }
+      else
+      {
+          return $package;
+      }
+      
+    }
+
 ?>
