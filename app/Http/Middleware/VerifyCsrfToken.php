@@ -25,5 +25,9 @@ class VerifyCsrfToken extends Middleware
         'connect-phone',
         'verify-phone',
         'entry-google-form',
+        'send-simi',
+        'send-message-automation',
+        'send-image-url-simi',
+        'send-image-url',
     ];
 }
