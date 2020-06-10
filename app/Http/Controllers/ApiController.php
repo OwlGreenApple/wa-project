@@ -85,7 +85,8 @@ class ApiController extends Controller
 
     public function send_simi(Request $request)
     {
-      return ApiHelper::send_simi($request->customer_phone,$request->message,$request->server_url);
+      $obj = json_decode($request->getContent());
+      return ApiHelper::send_simi($obj->customer_phone,$obj->message,$obj->server_url);
     }
     
     public function send_message(Request $request)
@@ -96,13 +97,15 @@ class ApiController extends Controller
     
     public function send_image_url_simi(Request $request)
     {
-      Storage::disk('local')->put('temp-send-image-simi/'.$request->image, file_get_contents(Storage::disk('s3')->url($request->image)));
-      $send_message = ApiHelper::send_image_url_simi($request->customer_phone,$request->curl,$request->message,$request->server_url);
+      $obj = json_decode($request->getContent());
+      Storage::disk('local')->put('temp-send-image-simi/'.$obj->image, file_get_contents(Storage::disk('s3')->url($obj->image)));
+      $send_message = ApiHelper::send_image_url_simi($obj->customer_phone,$obj->curl,$obj->message,$obj->server_url);
     }
     
     public function send_image_url(Request $request)
     {
-      return ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($request->image),$message,$key);
+      $obj = json_decode($request->getContent());
+      return ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($obj->image),$obj->message,$obj->key_woowa);
     }
     
     public function testapi()

@@ -883,7 +883,7 @@ class SendCampaign implements ShouldQueue
       $data = array(
           'customer_phone'=>$customer_phone,
           'message'=>$message,
-          'key'=>$key,
+          'key_woowa'=>$key,
       );
 
 		  $url = "https://activrespon.com/dashboard/send-message-automation";
@@ -944,7 +944,7 @@ class SendCampaign implements ShouldQueue
           'customer_phone'=>$customer_phone,
           'urls3'=>$urls3,
           'message'=>$message,
-          'key'=>$key,
+          'key_woowa'=>$key,
       );
 
 		  $url = "https://activrespon.com/dashboard/send-image-url";
