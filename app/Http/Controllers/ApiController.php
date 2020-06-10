@@ -73,10 +73,10 @@ class ApiController extends Controller
 				$customer->status = 1;
 				$customer->save();
 
-				if ($list->is_secure) {
-					$ret = $this->sendListSecure($list->id,$customer->id,$obj->name,$customer->user_id,$list->name,$phone_number);
-				}
         $customerController = new CustomerController;
+				if ($list->is_secure) {
+					$ret = $customerController->sendListSecure($list->id,$customer->id,$obj->name,$customer->user_id,$list->name,$phone_number);
+				}
         $saveSubscriber = $customerController->addSubscriber($list->id,$customer->id,$customer->created_at,$customer->user_id);
 				
 			}
