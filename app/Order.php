@@ -39,8 +39,16 @@ class Order extends Model
 		$user = $data['user'];
 
     $dt = Carbon::now();
-    $grand_total = $data['price'] + $data['priceupgrade'] - $data['diskon'] + $unique_code;
 
+    if($data['upgrade'] <> null)
+    {
+      $grand_total = $data['upgrade'] + $unique_code;
+    }
+    else
+    {
+      $grand_total = $data['price'] + $data['priceupgrade'] - $data['diskon'] + $unique_code;
+    }
+    
     $order = new Order;
     $str = 'ACT'.$dt->format('ymdHi');
     $order_number = Order::autoGenerateID($order, 'no_order', $str, 3, '0');

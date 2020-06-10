@@ -29,7 +29,7 @@
       {!! getPackage($coupon->package_id) !!}
     </td>
     <td data-label="Action">
-      <button type="button" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#edit-coupon" data-id="{{$coupon->id}}" data-kodekupon="{{$coupon->kodekupon}}" data-nominal="{{$coupon->diskon_value}}" data-persen="{{$coupon->diskon_percent}}" data-validuntil="{{$coupon->valid_until}}" data-validto="{{$coupon->valid_to}}" data-keterangan="{{$coupon->keterangan}}" data-paket="{{$coupon->package_id}}">
+      <button type="button" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#edit-coupon" data-id="{{$coupon->id}}" data-kodekupon="{{$coupon->kodekupon}}" data-nominal="{{$coupon->diskon_value}}" data-persen="{{$coupon->diskon_percent}}" data-validuntil="{{$coupon->valid_until}}" data-validto="{{$coupon->valid_to}}" data-keterangan="{{$coupon->keterangan}}" data-paket="{{$coupon->package_id}}" data-type="{{ $coupon->coupon_type }}">
         <!-- <i class="fas fa-pen"></i> -->Edit
       </button>  
       <button type="button" class="btn btn-sm btn-danger btn-delete" data-toggle="modal" data-target="#confirm-delete" data-id="{{$coupon->id}}">

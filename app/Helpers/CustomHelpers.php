@@ -192,7 +192,7 @@ use Illuminate\Support\Facades\Storage;
       }
     }
 
-    function getPackage($id_package)
+    function getPackage($id_package,$check = null)
     {
       $package = array(
         1 => ['package'=>'basic1','price'=>195000],
@@ -236,7 +236,11 @@ use Illuminate\Support\Facades\Storage;
       {
           return 'All';
       }
-      elseif($id_package <> null || $id_package <> '')
+      elseif($id_package <> null && $check == 1)
+      {
+          return $package[$id_package];
+      }
+      elseif($id_package <> null || is_numeric($id_package))
       {
           return $package[$id_package]['package'];
       }

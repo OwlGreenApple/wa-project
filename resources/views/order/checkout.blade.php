@@ -228,7 +228,7 @@
       },
       data: {
         harga : $('#price').val(),
-        kodekupon : $('#kupon').val(),
+        kupon : $('#kupon').val(),
         idpaket : $( "#select-auto-manage" ).val(),
       },
       dataType: 'text',
@@ -253,7 +253,7 @@
           $('#pesan').removeClass('alert-danger');
           $('#pesan').addClass('alert-success');
         } 
-        else if (data.status == 'success-paket') {
+        /*else if (data.status == 'success-paket') {
           $('.total').html('IDR ' + formatNumber(parseInt(data.total)+parseInt(totalPriceUpgrade)));
           $('#pesan').removeClass('alert-danger');
           $('#pesan').addClass('alert-success');
@@ -278,10 +278,11 @@
           
           $('#select-auto-manage').val(data.paketid);
           $( "#select-auto-manage" ).change();
-        }
+        }*/
         else {
           $('#pesan').removeClass('alert-success');
           $('#pesan').addClass('alert-danger');
+          $('.total').html('IDR '+formatNumber(parseInt(data.total)+parseInt(totalPriceUpgrade)));
         }
       }
     });

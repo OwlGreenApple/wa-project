@@ -106,23 +106,37 @@ class OrderController extends Controller
             ));
   }
 
-  public function check_coupon(Request $request){
-    $user = Auth::user();
+  public function check_coupon(Request $request)
+  {
+    // dd($request->all());
+    $user = Auth::user(); 
     //cek kodekupon
+
+    if($request->harga == null)
+    {
+       $pricing = $request->price;
+    }
+    else
+    {
+       $pricing = $request->harga;
+    }
+
     $arr['status'] = 'success';
     $arr['message'] = '';
-    $arr['totaltitle'] = number_format($request->harga, 0, '', '.');
-    $arr['total'] = $request->harga;
+    $arr['totaltitle'] = number_format($pricing, 0, '', '.');
+    $arr['total'] = $pricing;
     $arr['diskon'] = 0;
     $arr['coupon'] = null;
     $arr['price'] = '';
+    $total = 0;
+    $diskon = 0;
 
-    if($request->kodekupon!=''){
+    if($request->kupon!=''){
       $user_id = 0;
       if (!is_null($user)) {
         $user_id = $user->id;
       }
-      $coupon = Coupon::where('kodekupon',$request->kodekupon)
+      $coupon = Coupon::where('kodekupon',$request->kupon)
               ->where(function($query) use ($request) {
                 $query->where('package_id',$request->idpaket)
                       ->orwhere('package_id',0);
@@ -156,17 +170,14 @@ class OrderController extends Controller
           } else if($coupon->valid_to=='extend' and !Auth::check()){
               //
           } 
-          else if(($coupon->valid_to=='') || ($coupon->valid_to=='expired-membership') || ($coupon->valid_to=='all') )
+          else if(($coupon->valid_to=='') || ($coupon->valid_to=='expired-membership') || ($coupon->valid_to=='all') && $coupon->coupon_type == 1 )
           {
-            $total = 0;
-            $diskon = 0;
-
-            if($coupon->diskon_value==0 and $coupon->diskon_percent!=0){
-              $diskon = $request->harga * $coupon->diskon_percent/100;
-              $total = $request->harga - $diskon;
+            if($coupon->diskon_value == 0 && $coupon->diskon_percent <> 0){
+              $diskon = $pricing * ($coupon->diskon_percent/100);
+              $total = $pricing - $diskon;
             } else {
               $diskon = $coupon->diskon_value;
-              $total = $request->harga - $coupon->diskon_value;
+              $total = $pricing - $coupon->diskon_value;
             }
 
             $arr['status'] = 'success';
@@ -175,15 +186,46 @@ class OrderController extends Controller
             $arr['total'] = $total;
             $arr['diskon'] = $diskon;
             $arr['coupon'] = $coupon;
-            $arr['price'] = number_format($request->harga, 0,'','.');
+            $arr['price'] = $pricing;
             return $arr;
           }
+          elseif($coupon->coupon_type == 2)
+          {
+            return $this->getUpgradeCoupon($request->idpaket,$coupon);
+          }
+          /**/
         }
 
       }
     }
 
     return $arr;
+  }
+
+  public function getUpgradeCoupon($package_id,$coupon)
+  {
+      $previous_price = getPackage($package_id,1)['price'];
+
+      if($package_id <= 3 )
+      {
+         $arr['status'] = 'error';
+         $arr['message'] = 'Kupon hanya berlaku untuk pembelian paket diatas paket1 (basic1, bestseller1, supervalue1)';
+         $arr['total'] = $previous_price;
+         return $arr;
+      }
+
+      $id_upgarde = (int)$package_id - 3;
+      $upgrade_promo = getPackage($id_upgarde,1);
+
+      $arr['status'] = 'success';
+      $arr['message'] = 'Kupon berhasil dipakai & berlaku sekarang';
+      $arr['totaltitle'] = number_format($upgrade_promo['price'], 0, '', '.');
+      $arr['coupon'] = $coupon;
+      $arr['total'] = $upgrade_promo['price'];
+      $arr['price'] = number_format($previous_price, 0,'','.');
+      $arr['diskon'] = 0;
+      $arr['upgrade'] = 1;
+      return $arr;
   }
 
 	public function check_upgrade(Request $request){
@@ -243,7 +285,7 @@ class OrderController extends Controller
 		
     $diskon = 0;
     // $total = $request->price;
-    $kuponid = null;
+    $kuponid = $upgrade_package = null;
     if($request->kupon!==''){
       $arr = $this->check_coupon($request);
 
@@ -251,10 +293,17 @@ class OrderController extends Controller
         return redirect($pathUrl)->with("error", $arr['message']);
       } else {
         $diskon = $arr['diskon'];
+        $total = $arr['total'];
         
         if($arr['coupon']!=null){
           $kuponid = $arr['coupon']->id;
         }
+
+        if(isset($arr['upgrade']))
+        {
+          $upgrade_package = $arr['total'];
+        }
+      /**/
       }
     }
 		
@@ -265,10 +314,11 @@ class OrderController extends Controller
       "coupon_code"=>$request->kupon,
       "idpaket" => $request->idpaket,
       "month" => $month,
-			
       "kuponid" => $kuponid,
       "priceupgrade" => $request->priceupgrade,
       "diskon" => $diskon,
+      "total"=>$total,
+      "upgrade"=>$upgrade_package
     );
 
     if(session('order') == null)
@@ -297,6 +347,8 @@ class OrderController extends Controller
 			"namapakettitle"=> session('order')['namapakettitle'],
       "phone"=>$user->phone_number,
 			"month"=> session('order')['month'],
+      "total"=>session('order')['total'],
+      "upgrade"=>session('order')['upgrade']
 		];
 		
 		$order = Order::create_order($data);
@@ -381,23 +433,32 @@ class OrderController extends Controller
 
     $diskon = 0;
     // $total = $request->price;
-    $kuponid = null;
-    if($request->kupon!==''){
-      $arr = $this->check_coupon($request);
+    $kuponid = $upgrade_package =  null;
 
-      if($arr['status']=='error'){
-        return redirect($pathUrl)->with("error", $arr['message']);
+    if($request->kupon!==''){
+      $kpn = $this->check_coupon($request);
+  
+      if($kpn['status']=='error'){
+        return redirect($pathUrl)->with("error", $kpn['message']);
       } else {
-        $diskon = $arr['diskon'];
-        
-        if($arr['coupon']!=null){
-          $kuponid = $arr['coupon']->id;
+
+        $diskon = $kpn['diskon'];
+
+        if($kpn['coupon']!=null)
+        {
+          $kuponid = $kpn['coupon']->id;
         }
+
+        if(isset($kpn['upgrade']))
+        {
+          $upgrade_package = $kpn['total'];
+        }
+
+        /**/
       }
     }
-		
+	
     $user = Auth::user();
-
 		$data = [
 			"user"=> $user,
 			"namapaket"=> $request->namapaket,
@@ -408,6 +469,7 @@ class OrderController extends Controller
 			"namapakettitle"=> $request->namapakettitle,
       "phone"=>$user->phone_number,
 			"month"=> $month,
+      "upgrade"=>$upgrade_package
 		];
 		
 		$order = Order::create_order($data);

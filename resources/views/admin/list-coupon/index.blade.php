@@ -392,7 +392,6 @@
       else
       {
           $(".normal_discount").show();
-          $("input[name='diskon_value'], input[name='diskon_percent']").val(0);
       }
 
     });
@@ -409,6 +408,20 @@
     $('#package_id').val($(this).attr('data-paket'));
     
     $('#id_edit').val($(this).attr('data-id'));
+
+    if($(this).attr('data-type') == 1)
+    {
+      $("input[name='jenis_kupon'][value='1']").prop('checked',true);
+      $("input[name='jenis_kupon'][value='2']").prop('checked',false);
+      $(".normal_discount").show();
+    }
+    else
+    {
+      $("input[name='jenis_kupon'][value='1']").prop('checked',false);
+      $("input[name='jenis_kupon'][value='2']").prop('checked',true);
+      $(".normal_discount").hide();
+      $("input[name='diskon_value'], input[name='diskon_percent']").val(0);
+    }
 
     $('#add-coupon').modal('show');
   });

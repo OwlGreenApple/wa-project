@@ -223,9 +223,6 @@
 </div>
 
 
-
-
-
             </div>
             <!-- Checkout Button Container -->
             <div class="checkout-button-container mt-30 step-2" id="checkout-buttons-2" <?php if (!$is_login) { ?> style="display:none;"<?php } ?>>
@@ -297,7 +294,11 @@
     <div class="as-checkout-entry" id="checkout-total">
       <strong class="as-checkout-total">Total</strong>
       <strong class="as-checkout-total-price" id="totalprice_sidebar totalprice_mobile">
-			Rp. <?php echo number_format(session('order')['price'], 0, '', '.'); ?>
+      Rp. 
+      @if(session('order')['diskon'] > 0 || session('order')['upgrade'] <> null)
+        <strike>{!! number_format(session('order')['price'], 0, '', '.') !!}</strike>
+      @endif
+			<?php echo number_format(session('order')['total'], 0, '', '.'); ?>
 			</strong>
     </div>
 </div>
