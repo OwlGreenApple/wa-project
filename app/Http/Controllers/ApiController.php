@@ -90,7 +90,7 @@ class ApiController extends Controller
     
     public function send_message(Request $request)
     {
-      $obj = json_decode($request->getContent());
+      // $obj = json_decode($request->getContent());
       return ApiHelper::send_message($obj->customer_phone,$obj->message,$obj->key_woowa);
     }
     
