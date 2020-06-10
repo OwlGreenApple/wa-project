@@ -407,7 +407,7 @@
     $("body").on("click", "#button-login", function() {
 			$.ajax({
 				type: 'POST',
-				url: "{{url('/login')}}",
+				url: "{{ url('loginajax') }}",
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				},
@@ -422,15 +422,13 @@
 					$('.div-loading').removeClass('background-load');
 
 					var data = jQuery.parseJSON(result);
-
-
 					
 					if (data.success == '1') {
 						$(".step-2").show();
 						$("#step-1").html('<p>Your order confirmation will be emailed to:</p><span class="sumo-psuedo-link">'+data.email+'</span>');
 					} 
 					else {
-						alert('login failed');
+						alert(data.message);
 					}
 				}
 			});

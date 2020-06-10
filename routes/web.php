@@ -61,6 +61,7 @@ Route::get('report-reminder', 'HomeController@reportReminder');
 Route::get('history-order', 'HomeController@historyOrder');
 
 /* User Customer */
+Route::post('loginajax', 'Auth\LoginController@loginAjax');// user login via ajax
 Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
 
 /* Admin Woowa*/

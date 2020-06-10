@@ -268,7 +268,6 @@ class RegisterController extends Controller
     }
 
     //REGISTER VIA AJAX
-
     protected function register_ajax(array $data)
     {
         $signup = $this->create($data);

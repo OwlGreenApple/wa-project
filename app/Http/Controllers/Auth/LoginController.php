@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\User;
 use Cookie;
 
 class LoginController extends Controller
@@ -56,20 +57,39 @@ class LoginController extends Controller
             $this->delCookie($request->email,$request->password);
         }
 
-				if ($request->ajax()) {
+			/*	if ($request->ajax()) {
+            Auth::loginUsingId($user->id);
 						return response()->json([
 								'success' => 1,
 								'email' => $request->email,
 						]);
 				}
-				else {
+				else {*/
 						if ( $user->is_admin  == 1) {// do your magic here
 								return redirect('list-user');
 						}
 						if ( $user->is_admin  == 2) {// Halaman woowa
 								return redirect('list-woowa');
 						}
-				}
+				// }
+    }
+
+    public function loginAjax(Request $request)
+    {
+        $email = $request->email;
+        $password = $request->password;
+
+        if(Auth::guard('web')->attempt(['email' => $email, 'password' => $password])) {
+            return response()->json([
+                'success' => 1,
+                'email' => $request->email
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not Credential Account'
+            ]);
+        }
     }
 
     private function setCookie($email,$password)
@@ -96,7 +116,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        session_start();
+        // session_start();
         $this->performLogout($request);
         return redirect('/');
     }
