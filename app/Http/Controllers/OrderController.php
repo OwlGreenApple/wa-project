@@ -86,6 +86,12 @@ class OrderController extends Controller
 
   public function checkout($id){
     //halaman checkout
+
+    if(session('order') <> null)
+    {
+      session::forget('order');
+    }
+
 		$priceupgrade = 0;
 		$dayleft = 0;
 		if (Auth::check()) {
