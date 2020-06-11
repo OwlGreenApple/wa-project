@@ -65,12 +65,16 @@ class CheckConnection extends Command
 						}
 						if ($row->mode == 1 ) {
 							//woowa
-							$check_connected = json_decode(ApiHelper::status_nomor($row->phone_number),1);
-							if (!is_null($check_connected)) {
-								if ($check_connected['status']=="success") {
-									$status = true;
-								}
+							$check_connected = ApiHelper::qr_status($row->phone_number);
+							if ($check_connected==$row->phone_number) {
+                $status = true;
 							}
+							// $check_connected = json_decode(ApiHelper::status_nomor($row->phone_number),1);
+							// if (!is_null($check_connected)) {
+								// if ($check_connected['status']=="success") {
+									// $status = true;
+								// }
+							// }
 						}
 						
 						$phone = PhoneNumber::find($idphone_number);
