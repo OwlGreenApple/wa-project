@@ -105,7 +105,9 @@ class SendCampaign implements ShouldQueue
 
                 // if(!is_null($customers))
                 // {
-                    $message = $this->replaceMessage($customer_message,$row->name,$row->email,$customer_phone);
+                    $fistname = $this->modFullname($row->name);
+                    $message = $this->replaceMessage($customer_message,$row->name,$row->email,$customer_phone,$fistname);
+
                     $list = UserList::find($row->list_id);
                     if (!is_null($list)){
                       $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
@@ -313,8 +315,10 @@ class SendCampaign implements ShouldQueue
 
                 // if($adding->lte(Carbon::now()) && $counter > 0)
                 if($adding->lte($now) && $counter > 0)
-                {        
-                    $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone);
+                {      
+                    $fistname = $this->modFullname($customer_name);  
+                    $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone,$fistname);
+
                     $list = UserList::find($row->list_id);
                     if (!is_null($list)){
                       $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
@@ -486,7 +490,9 @@ class SendCampaign implements ShouldQueue
                       $reminder_event->save();
                   }
                   
-                  $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone);
+                  $fistname = $this->modFullname($row->name);  
+                  $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone,$fistname);
+
                   $list = UserList::find($row->list_id);
                   if (!is_null($list)){
                     $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
@@ -652,7 +658,9 @@ class SendCampaign implements ShouldQueue
 
                   $status = 'Sent';
 
-                  $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt);
+                  $fistname = $this->modFullname($row->name);
+                  $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt,$fistname);
+
                   $list = UserList::find($row->list_id);
                   if (!is_null($list)){
                     $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
@@ -734,28 +742,34 @@ class SendCampaign implements ShouldQueue
        
     }
 
-    public function replaceMessage($customer_message,$name,$email,$phone)
+    public function modFullname($firstname)
+    {
+      $name_length = explode(' ', $firstname); 
+      return $name_length[0];
+    }
+
+    public function replaceMessage($customer_message,$name,$email,$phone,$firstname)
     {
      
       $replace_target = array(
-        '[NAME]','[EMAIL]','[PHONE]'
+        '[NAME]','[FIRSTNAME]','[EMAIL]','[PHONE]'
       );
 
       $replace = array(
-        $name,$email,$phone
+        $name,$firstname,$email,$phone
       );
       $message = str_replace($replace_target,$replace,$customer_message);
       return $message;
     }
 
-    public function replaceMessageAppointment($customer_message,$name,$email,$phone,$date_appt,$time_appt)
+    public function replaceMessageAppointment($customer_message,$name,$email,$phone,$date_appt,$time_appt,$firstname)
     {
         $replace_target = array(
-          '[NAME]','[EMAIL]','[PHONE]','[DATE-APT]','[TIME-APT]'
+          '[NAME]','[FIRSTNAME]','[EMAIL]','[PHONE]','[DATE-APT]','[TIME-APT]'
         );
 
         $replace = array(
-          $name,$email,$phone,$date_appt,$time_appt
+          $name,$firstname,$email,$phone,$date_appt,$time_appt
         );
 
         $message = str_replace($replace_target,$replace,$customer_message);
