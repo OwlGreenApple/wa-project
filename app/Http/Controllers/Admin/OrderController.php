@@ -108,7 +108,7 @@ class OrderController extends Controller
     $user->save();
 
     //put into membership
-   /* $membership = new Membership;
+    $membership = new Membership;
     $membership->user_id = $order->user_id;
     $membership->membership = $order->package;
     $membership->start = Carbon::now();
@@ -123,7 +123,7 @@ class OrderController extends Controller
       $arr['status'] = 'error';
       $arr['message'] = $e->getMessage();
       return $arr;
-    }*/
+    }
 
     $emaildata = [
       'order' => $order,
