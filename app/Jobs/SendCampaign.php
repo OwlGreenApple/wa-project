@@ -175,31 +175,31 @@ class SendCampaign implements ShouldQueue
 
                         if ($row->image==""){
                           if ($phoneNumber->mode == 0) {
-                            $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
-                            // $send_message = $this->send_simi($customer_phone,$message,$server->url);
+                            // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
+                            $send_message = $this->send_simi($customer_phone,$message,$server->url);
                           }
                           if ($phoneNumber->mode == 1) {
-                            $send_message = ApiHelper::send_message($customer_phone,$message,$key);
-                            // $send_message = $this->send_message($customer_phone,$message,$key);
+                            // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+                            $send_message = $this->send_message($customer_phone,$message,$key);
                           }
                         }
                         else {
                           if ($phoneNumber->mode == 0) {
-                            Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
-                            $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-                                            storage_path('app/temp-send-image-simi/'.$row->image),
-                                            mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                            basename($row->image)
-                                          ),$message,$server->url);
-                            // $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
+                            // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+                            // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
                                             // storage_path('app/temp-send-image-simi/'.$row->image),
                                             // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
                                             // basename($row->image)
-                                          // ),$message,$server->url,$row->image);
+                                          // ),$message,$server->url);
+                            $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
+                                            storage_path('app/temp-send-image-simi/'.$row->image),
+                                            mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                            basename($row->image)
+                                          ),$message,$server->url,$row->image);
                           }
                           if ($phoneNumber->mode == 1) {
-                            $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                            // $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                            // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                            $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
                           }
                         }
 
@@ -322,31 +322,31 @@ class SendCampaign implements ShouldQueue
 										$message = $spintax->process($message);  //spin text
                     if ($row->image==""){
                       if ($phoneNumber->mode == 0) {
-                        $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
-                        // $send_message = $this->send_simi($customer_phone,$message,$server->url);
+                        // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
+                        $send_message = $this->send_simi($customer_phone,$message,$server->url);
                       }
                       if ($phoneNumber->mode == 1) {
-                        $send_message = ApiHelper::send_message($customer_phone,$message,$key);
-                        // $send_message = $this->send_message($customer_phone,$message,$key);
+                        // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+                        $send_message = $this->send_message($customer_phone,$message,$key);
                       }
                     }
                     else {
                       if ($phoneNumber->mode == 0) {
-                        Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
-                        $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-                                        storage_path('app/temp-send-image-simi/'.$row->image),
-                                        mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                        basename($row->image)
-                                      ),$message,$server->url);
-                            // $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
-                                            // storage_path('app/temp-send-image-simi/'.$row->image),
-                                            // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                            // basename($row->image)
-                                          // ),$message,$server->url,$row->image);
+                        // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+                        // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+                                        // storage_path('app/temp-send-image-simi/'.$row->image),
+                                        // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                        // basename($row->image)
+                                      // ),$message,$server->url);
+                            $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
+                                            storage_path('app/temp-send-image-simi/'.$row->image),
+                                            mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                            basename($row->image)
+                                          ),$message,$server->url,$row->image);
                       }
                       if ($phoneNumber->mode == 1) {
-                        $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                        // $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                        // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                        $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
                       }
                     }
 
@@ -496,31 +496,31 @@ class SendCampaign implements ShouldQueue
 
                   if ($row->image==""){
                     if ($phoneNumber->mode == 0) {
-                      $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
-                      // $send_message = $this->send_simi($customer_phone,$message,$server->url);
+                      // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
+                      $send_message = $this->send_simi($customer_phone,$message,$server->url);
                     }
                     if ($phoneNumber->mode == 1) {
-                      $send_message = ApiHelper::send_message($customer_phone,$message,$key);
-                      // $send_message = $this->send_message($customer_phone,$message,$key);
+                      // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+                      $send_message = $this->send_message($customer_phone,$message,$key);
                     }
                   }
                   else {
                       if ($phoneNumber->mode == 0) {
-                        Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
-                        $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-                                        storage_path('app/temp-send-image-simi/'.$row->image),
-                                        mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                        basename($row->image)
-                                      ),$message,$server->url);
-                            // $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
-                                            // storage_path('app/temp-send-image-simi/'.$row->image),
-                                            // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                            // basename($row->image)
-                                          // ),$message,$server->url,$row->image);
+                        // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+                        // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+                                        // storage_path('app/temp-send-image-simi/'.$row->image),
+                                        // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                        // basename($row->image)
+                                      // ),$message,$server->url);
+                            $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
+                                            storage_path('app/temp-send-image-simi/'.$row->image),
+                                            mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                            basename($row->image)
+                                          ),$message,$server->url,$row->image);
                       }
                       if ($phoneNumber->mode == 1) {
-                        $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                        // $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                        // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                        $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
                       }
                   }
                     
@@ -662,31 +662,31 @@ class SendCampaign implements ShouldQueue
      
                   if ($row->image==""){
                     if ($phoneNumber->mode == 0) {
-                      $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
-                      // $send_message = $this->send_simi($customer_phone,$message,$server->url);
+                      // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
+                      $send_message = $this->send_simi($customer_phone,$message,$server->url);
                     }
                     if ($phoneNumber->mode == 1) {
-                      $send_message = ApiHelper::send_message($customer_phone,$message,$key);
-                      // $send_message = $this->send_message($customer_phone,$message,$key);
+                      // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+                      $send_message = $this->send_message($customer_phone,$message,$key);
                     }
                   }
                   else {
                       if ($phoneNumber->mode == 0) {
-                        Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
-                        $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-                                        storage_path('app/temp-send-image-simi/'.$row->image),
-                                        mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                        basename($row->image)
-                                      ),$message,$server->url);
-                            // $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
-                                            // storage_path('app/temp-send-image-simi/'.$row->image),
-                                            // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                            // basename($row->image)
-                                          // ),$message,$server->url,$row->image);
+                        // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+                        // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+                                        // storage_path('app/temp-send-image-simi/'.$row->image),
+                                        // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                        // basename($row->image)
+                                      // ),$message,$server->url);
+                            $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
+                                            storage_path('app/temp-send-image-simi/'.$row->image),
+                                            mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                            basename($row->image)
+                                          ),$message,$server->url,$row->image);
                       }
                       if ($phoneNumber->mode == 1) {
-                        $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                        // $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                        // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                        $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
                       }
                   }
 
