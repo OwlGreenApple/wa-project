@@ -52,7 +52,8 @@ class WooWAController extends Controller
 		$dt = Carbon::now();
 
 		$invoice = new Invoice;
-    $str = 'IWW'.$dt->format('ymdHi');
+    // $str = 'IWW'.$dt->format('ymdHi');
+    $str = 'IWW'.$dt->format('ymd').'-'.$dt->format('Hi');
     $invoice_number = Order::autoGenerateID($invoice, 'no_invoice', $str, 3, '0');
     $invoice->no_invoice = $invoice_number;
     $invoice->status = 0;

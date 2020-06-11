@@ -50,7 +50,8 @@ class Order extends Model
     }
     
     $order = new Order;
-    $str = 'ACT'.$dt->format('ymdHi');
+    // $str = 'ACT'.$dt->format('ymdHi');
+    $str = 'ACT'.$dt->format('ymd').'-'.$dt->format('Hi');
     $order_number = Order::autoGenerateID($order, 'no_order', $str, 3, '0');
     $order->no_order = $order_number;
     $order->user_id = $user->id;
@@ -157,6 +158,6 @@ class Order extends Model
 		else{
 			$ctr = intval($tb->lastnum) + 1;
 		}
-		return $search.str_pad($ctr, $pad_length, $pad_string, STR_PAD_LEFT);
+		return $search.'-'.str_pad($ctr, $pad_length, $pad_string, STR_PAD_LEFT);
   }
 }

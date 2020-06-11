@@ -702,7 +702,7 @@ class SettingController extends Controller
 
     public function send_message()
     {
-        return ApiHelper::send_message("+628123238793","test rizky","eb6c9068bfbbe6156ebdffa5f7238b9fe28f3432692771e1");
+        return ApiHelper::send_message("+628123238793","coba 112233 rizky","547540c369125a90be6ad2987f4ee305c7a1ddaf9036fca1");
     }
 		
     public function send_image_url()
