@@ -99,16 +99,16 @@ class OrderController extends Controller
         $phoneNumber->max_counter_day=5000;
         $phoneNumber->max_counter=330000;
       }
-      // $phoneNumber->save();
+      $phoneNumber->save();
     }
 
     $user->day_left = $additional_day;
     $user->membership = $order->package;
     $user->status = 1;
-    // $user->save();
+    $user->save();
 
     //put into membership
-    $membership = new Membership;
+   /* $membership = new Membership;
     $membership->user_id = $order->user_id;
     $membership->membership = $order->package;
     $membership->start = Carbon::now();
@@ -123,7 +123,7 @@ class OrderController extends Controller
       $arr['status'] = 'error';
       $arr['message'] = $e->getMessage();
       return $arr;
-    }
+    }*/
 
     $emaildata = [
       'order' => $order,
