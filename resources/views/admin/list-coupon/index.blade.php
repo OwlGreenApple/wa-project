@@ -377,7 +377,13 @@
     }); 
 
     discountType();
+    dismissPaket();
   });
+
+  function dismissPaket()
+  {
+    $("select[name='package_id'] > option[value='1'], select[name='package_id'] > option[value='2'], select[name='package_id'] > option[value='3']").remove();
+  }
 
   function discountType()
   {
