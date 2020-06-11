@@ -46,7 +46,7 @@ class TestCurl extends Command
       $data = array(
           'customer_phone'=>"+628123238793",
           'message'=>"coba 112233 rizky",
-          'key_woowa'=>"dc331873c0e5d2586a9b8719abb10d0a67e5db81383aed42",
+          'key_woowa'=>"123a17b0120d516ede400554a5d928d714491147f365fa7f",
       );
 
 		  $url = "https://activrespon.com/dashboard/send-message-automation";
