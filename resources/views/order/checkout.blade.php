@@ -28,20 +28,7 @@
               <input type="hidden" id="namapakettitle" name="namapakettitle">
 							<input type="hidden" id="priceupgrade" name="priceupgrade">
               <h2 class="Daftar-Disini">Choose your package</h2>
-							<script>
-								dayleft = 0;priceupgrade=0;totalPriceUpgrade=0;
-							</script>
-							<?php if (Auth::check()) {?>
-								<div class="form-group">
-									<div class="col-md-12 col-12">
-										<label class="label-title-test" for="">
-											Remaining Time Upgrade:
-										</label>
-
-										<label id="label-priceupgrade"></label>
-									</div>
-								</div>
-							<?php }?>
+							
               <div class="form-group">
                 <div class="col-12 col-md-12">
                   <label class="text" for="formGroupExampleInput">Your package:</label>
@@ -183,22 +170,47 @@
                   </button>  
                 </div>
               </div>
-              <div class="form-group">
+
+              <div class="form-group mb-1">
                 <div class="col-md-12 col-12">
                   <div id="pesan" class="alert"></div>
                 </div>
               </div>
-              
+
               <div class="form-group">
+                <script>
+                  dayleft = 0;priceupgrade=0;totalPriceUpgrade=0;
+                </script>
+                <?php if (Auth::check()) {?>
+                  <div class="form-group mb-0">
+                    <div class="col-md-12 col-12">
+                      <label class="label-title-test" for="">
+                        Remaining days (<span class="dayleft"></span>) upgrade :
+                      </label>
+                      <label id="label-priceupgrade"></label>
+                    </div>
+                    <div class="col-md-12 col-12">
+                      <label class="label-title-test" for="">
+                        Your package upgrade :
+                      </label>
+                      <label id="package-upgrade"></label>
+                    </div>
+                  </div> 
+                <?php }?>
+
                 <div class="col-md-12 col-12">
                   <label class="label-title-test" for="formGroupExampleInput">
                     Total: 
                   </label>
                   <div class="col-md-12 pl-0">
                     <span class="total" style="font-size:18px"></span>
-                  </div>  
+                  </div>
+                  <label class="mt-2">
+                    *Your upgrade will be activated as soon as payment confirmed
+                  </label> 
                 </div>
               </div>
+
               <div class="form-group">
                 <div class="col-12 col-md-12">
                   <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" required/>
@@ -306,15 +318,30 @@
 			var price = $(this).find("option:selected").attr("data-price");
 			var namapaket = $(this).find("option:selected").attr("data-paket");
 			var namapakettitle = $(this).find("option:selected").attr("data-paket-title");
+      var wd;
 
 			<?php if (Auth::check()) {?>
 				totalPriceUpgrade = dayleft * ((price-priceupgrade)/30);
-				if (parseInt(totalPriceUpgrade)< 0 ) {
+        totalPriceUpgrade = parseInt(totalPriceUpgrade);
+        totalPriceUpgrade = Math.round(totalPriceUpgrade);
+
+				if (totalPriceUpgrade < 0 ) 
+        {
 					$("#label-priceupgrade").html("Tidak dapat downgrade");
 					totalPriceUpgrade = 0;
 				}
 				else {
-					$("#label-priceupgrade").html("IDR "+formatNumber(totalPriceUpgrade));
+          if(dayleft > 1)
+          {
+            wd = 'days';
+          }
+          else
+          {
+            wd = 'day';
+          }
+          $(".dayleft").html(dayleft+' '+wd);
+					$("#package-upgrade").html("IDR "+formatNumber(price));
+          $("#label-priceupgrade").html("IDR "+formatNumber(totalPriceUpgrade));
 				}
 				$("#priceupgrade").val(totalPriceUpgrade);
 			<?php }?>
