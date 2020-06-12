@@ -283,7 +283,15 @@ class CustomerController extends Controller
 				// $message = str_replace( "[REPLY_CHAT]" , "whatsapp://send/?phone=".$phoneNumber->phone_number."&text=" . "Hi Nama saya ".$request->subscribername.", saya bergabung digroup ini", $message);
 
 				$message = str_replace( "[START]" , env("APP_URL")."link/activate/".$list_name."/".$customer_id, $message);
-				$message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list_name."/".$customer_id, $message);
+        $list = UserList::find($list_id);
+        if (!is_null($list)){
+          if ($list->link_unsubs =="") {
+            $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+          }
+          else {
+            $message = str_replace( "[UNSUBS]" , $list->link_unsubs, $message);
+          }
+        }
 			}
 			// ApiHelper::send_message($phone_number,$message,$key);
 			$message_send = new Message;
