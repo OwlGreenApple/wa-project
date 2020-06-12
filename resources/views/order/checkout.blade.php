@@ -16,11 +16,10 @@
           @endif
 
           <?php if (Auth::check()) {?>
-          <!--<form method="POST" action="{{url('submit-checkout')}}">-->
+         
 						<form method="POST" action="{{url('submit-checkout-login')}}">
             <?php } else {?>
 							<form method="POST" action="{{url('submit-checkout')}}">
-            <!--<form method="POST" action="{{url('submit-checkout-register')}}">-->
               <?php }?>
               {{ csrf_field() }}
               <input type="hidden" id="price" name="price">
@@ -195,6 +194,13 @@
                       </label>
                       <label id="package-upgrade"></label>
                     </div>
+                    <div class="col-md-12 col-12 upgrade">
+                      <label class="label-title-test" for="">
+                        Upgrade :
+                      </label>
+                       <label class="radio-inline mr-2"><input name="status_upgrade" value="1" type="radio"checked /> Now</label>
+                      <label class="radio-inline"><input type="radio" name="status_upgrade" value="2" /> Later</label>
+                    </div>
                   </div> 
                 <?php }?>
 
@@ -329,8 +335,11 @@
         {
 					$("#label-priceupgrade").html("Tidak dapat downgrade");
 					totalPriceUpgrade = 0;
+          $("input[name='status_upgrade']").prop('disabled',true);
+          $(".upgrade").hide();
 				}
-				else {
+				else 
+        {
           if(dayleft > 1)
           {
             wd = 'days';
@@ -339,6 +348,8 @@
           {
             wd = 'day';
           }
+          $(".upgrade").show();
+          $("input[name='status_upgrade']").prop('disabled',false);
           $(".dayleft").html(dayleft+' '+wd);
 					$("#package-upgrade").html("IDR "+formatNumber(price));
           $("#label-priceupgrade").html("IDR "+formatNumber(totalPriceUpgrade));

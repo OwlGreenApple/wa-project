@@ -29,7 +29,14 @@ class Order extends Model
 	* 1 => invoice generated
 	*
 	* if package not basic -> order is more than 1 month
-	*/
+  * 
+  * status_package 
+  * 0 = new order
+  * 1 = upgrade (NOW)
+  * 2 = upgrade (LATER) or downgrade
+	*
+  *
+  */
   protected $table = 'orders';
   protected $connection = 'mysql2';
 
@@ -60,6 +67,7 @@ class Order extends Model
     $order->coupon_id = $data['kuponid'];
     $order->total = $data['price'] + $unique_code;
     $order->total_upgrade = $data['priceupgrade'];
+    $order->status_upgrade = $data['status_upgrade'];
     $order->discount = $data['diskon'];
     $order->grand_total = $grand_total;
     // $order->grand_total = $data['price'] + $data['priceupgrade'] - $data['diskon'] + $unique_code;

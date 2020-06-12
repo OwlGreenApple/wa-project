@@ -238,6 +238,21 @@ class OrderController extends Controller
 		$arr['status'] = 'success';
 		$arr['message'] = 'Check upgrade success';
 
+    /* $data = [
+        'current_package'=>$user->membership,
+        'order_package'=>$request->namapaket,
+      ];
+      $check_membership = checkMembershipDowngrade($data);
+
+      if($check_membership == true)
+      {
+          
+      }
+      else
+      {
+          $status_package = 0;
+      }*/
+
 		$priceupgrade = 0;
 		$dayleft = 0;
 		if (Auth::check()) {
@@ -251,11 +266,11 @@ class OrderController extends Controller
 			}
 			$dayleft = $user->day_left;
 		}
-		if ($request->price - $priceupgrade<0) {
+		/*if ($request->price - $priceupgrade<0) {
 			$arr['status'] = 'error';
 			$arr['message'] = 'Cannot Downgrade';
 			return $arr;
-		}
+		}*/
 		
 		return $arr;
 	}
@@ -412,6 +427,7 @@ class OrderController extends Controller
   //checkout klo uda login
   public function submit_checkout_login(Request $request){
     //buat order user lama
+
     $stat = $this->cekharga($request->namapaket,$request->price);
 
     $pathUrl = str_replace(url('/'), '', url()->previous());
@@ -465,6 +481,16 @@ class OrderController extends Controller
     }
 	
     $user = Auth::user();
+    //DETERMINE UPGRADE OR DOWNGRADE
+    if($request->status_upgrade == null || $request->status_upgrade == '2')
+    {
+       $status_upgrade = $this->checkDowngrade($user->id);
+    }
+    else
+    {
+       $status_upgrade = 1;
+    }
+
 		$data = [
 			"user"=> $user,
 			"namapaket"=> $request->namapaket,
@@ -475,7 +501,8 @@ class OrderController extends Controller
 			"namapakettitle"=> $request->namapakettitle,
       "phone"=>$user->phone_number,
 			"month"=> $month,
-      "upgrade"=>$upgrade_package
+      "upgrade"=>$upgrade_package,
+      "status_upgrade"=>$status_upgrade
 		];
 		
 		$order = Order::create_order($data);
@@ -488,6 +515,22 @@ class OrderController extends Controller
     return view('order.thankyou')->with(array(
               'order'=>null,    
             ));
+  }
+
+  public function checkDowngrade($user_id)
+  {
+    $user = User::find($user_id);
+
+    if(is_null($user) || $user->membership == null)
+    {
+       $status_package = 0;
+    }
+    else
+    {
+       $status_package = 2;
+    }
+
+    return $status_package;
   }
   
 
