@@ -271,6 +271,7 @@ class ListController extends Controller
       $list->start_custom_message = $request->start_custom_message;
       $list->unsubs_custom_message = $request->unsubs_custom_message;
       $list->save();
+      $list::create_link_unsubs($list->id);
       $listid = $list->id;
       $listname = $list->name;
 

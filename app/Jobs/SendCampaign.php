@@ -110,7 +110,12 @@ class SendCampaign implements ShouldQueue
 
                     $list = UserList::find($row->list_id);
                     if (!is_null($list)){
-                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                      if ($list->link_unsubs =="") {
+                        $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                      }
+                      else {
+                        $message = str_replace( "[UNSUBS]" , $list->link_unsubs, $message);
+                      }
                     }
 										$message = $spintax->process($message);  //spin text
                     $chat_id = $row->chat_id;  
@@ -321,7 +326,12 @@ class SendCampaign implements ShouldQueue
 
                     $list = UserList::find($row->list_id);
                     if (!is_null($list)){
-                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                      if ($list->link_unsubs =="") {
+                        $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                      }
+                      else {
+                        $message = str_replace( "[UNSUBS]" , $list->link_unsubs, $message);
+                      }
                     }
 										$message = $spintax->process($message);  //spin text
                     if ($row->image==""){
@@ -495,7 +505,12 @@ class SendCampaign implements ShouldQueue
 
                   $list = UserList::find($row->list_id);
                   if (!is_null($list)){
-                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                    if ($list->link_unsubs =="") {
+                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                    }
+                    else {
+                      $message = str_replace( "[UNSUBS]" , $list->link_unsubs, $message);
+                    }
                   }
 									$message = $spintax->process($message);  //spin text
 									
@@ -663,7 +678,12 @@ class SendCampaign implements ShouldQueue
 
                   $list = UserList::find($row->list_id);
                   if (!is_null($list)){
-                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                    if ($list->link_unsubs =="") {
+                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                    }
+                    else {
+                      $message = str_replace( "[UNSUBS]" , $list->link_unsubs, $message);
+                    }
                   }
 									$message = $spintax->process($message);  //spin text
                   $id_reminder = $row->id_reminder;
