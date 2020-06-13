@@ -6,7 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 use App\User;
 use App\PhoneNumber;
-use App\Mail\MemberShip;
+use App\Membership;
+use App\Mail\MemberShip as EmailMember;
 use App\Helpers\ApiHelper;
 
 class CheckMembership extends Command
@@ -43,36 +44,48 @@ class CheckMembership extends Command
     public function handle()
     {
         $users = User::where('day_left','>',-2)->get();
+        $membership = $remain_day_left = 0;
 
         if($users->count() > 0)
         {
-            foreach($users as $row)
-            {
+            foreach($users as $row):
+
               $day_left = $row->day_left;
               $client = User::find($row->id);
+
               if($client->day_left > -2)
               {
                  $client->day_left--;
                  $client->save();
-                 $day_left = $client->day_left;
+                 $remain_day_left = $client->day_left;
               }
 
-              if($day_left == 0)
+              if($remain_day_left == 0)
+              {
+                 $membership = Membership::where([['user_id',$row->id],['status','>',0]])->get();
+                 $membership = $membership->count();
+              }
+
+              if($membership == 0 && $remain_day_left == 0)
               {
                  $client->membership = null;
                  $client->status = 0;
                  $client->save();
 
-                 $phone = PhoneNumber::where('user_id',$row->id);
-                 $delete_api = ApiHelper::unreg($phone->first()->phone_number);
-                 $phone->delete();
+                 $phone = PhoneNumber::where('user_id',$row->id)->first();
+                 if(!is_null($phone))
+                 {
+                    $delete_api = ApiHelper::unreg($phone->phone_number);
+                    $phone->delete();
+                 }
+                
               }
 
-              if($day_left == 5 || $day_left == 1 || $day_left == -1)
+              if(($day_left == 5 || $day_left == 1 || $day_left == -1) && $membership == 0)
               {
-                 Mail::to($row->email)->send(new MemberShip($day_left,$row->phone_number,$row->id));
+                 Mail::to($row->email)->send(new EmailMember($day_left,$row->phone_number,$row->id));
               }
-            }
+            endforeach;
         }
     }
 }

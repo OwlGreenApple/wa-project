@@ -251,4 +251,141 @@ use Illuminate\Support\Facades\Storage;
       
     }
 
+  //TO DETERMINE UPGRADE OR DOWNGRADE EITHER
+  function checkMembershipDowngrade(array $data)
+  {
+      // if downgrade return true
+      $current_package_name = substr($data['current_package'],0,-1);
+      $order_package_name = substr($data['order_package'],0,-1);
+
+      $filter_current_package_number = substr($data['current_package'],-1);
+      $filter_order_package_number = substr($data['order_package'],-1);
+      
+      if($filter_current_package_number == $filter_order_package_number)
+      {
+            
+         if($current_package_name == 'supervalue' && $order_package_name == 'bestseller')
+         {
+           return true;
+         }
+         elseif($current_package_name == 'supervalue' && $order_package_name == 'basic')
+         {
+           return true;
+         }
+         elseif($current_package_name == 'bestseller' && $order_package_name == 'basic')
+         {
+           return true;
+         }
+         elseif($current_package_name == 'basic' && $order_package_name == 'basic')
+         {
+           return true;
+         }
+         elseif($current_package_name == 'bestseller' && $order_package_name == 'bestseller')
+         {
+           return true;
+         }
+         elseif($current_package_name == 'supervalue' && $order_package_name == 'supervalue')
+         {
+           return true;
+         }
+         else
+         {
+           return false;
+         }
+         
+      }
+      elseif($filter_current_package_number > $filter_order_package_number)
+      {
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+  }
+
+  function getAdditionalDay($package)
+  {
+      $get_package = substr($package,0,-1);
+      $additional_day = 0;
+
+      if($get_package == 'basic')
+      {
+        $additional_day += 30;
+      }
+      
+      if($get_package == 'bestseller')
+      {
+        $additional_day += 90;
+      }
+      
+      if($get_package == 'supervalue')
+      {
+        $additional_day += 180;
+      }
+
+      return $additional_day;
+  }
+
+  function getCounter($package)
+  {
+    $type_package = substr($package,-1,1);
+    if ($type_package=="1") {
+      $data = [
+        'max_counter_day'=>1000,
+        'max_counter'=>15000
+      ];
+    }
+    if ($type_package=="2") {
+      $data = [
+        'max_counter_day'=>1500,
+        'max_counter'=>25000
+      ];
+    }
+    if ($type_package=="3") {
+      $data = [
+        'max_counter_day'=>2000,
+        'max_counter'=>40000
+      ];
+    }
+    if ($type_package=="4") {
+      $data = [
+        'max_counter_day'=>2500,
+        'max_counter'=>60000
+      ];
+    }
+    if ($type_package=="5") {
+      $data = [
+        'max_counter_day'=>3000,
+        'max_counter'=>90000
+      ];
+    }
+    if ($type_package=="6") {
+      $data = [
+        'max_counter_day'=>3500,
+        'max_counter'=>130000
+      ];
+    }
+    if ($type_package=="7") {
+      $data = [
+        'max_counter_day'=>4000,
+        'max_counter'=>190000
+      ];
+    }
+    if ($type_package=="8") {
+      $data = [
+        'max_counter_day'=>4500,
+        'max_counter'=>250000
+      ];
+    }
+    if($type_package=="9") {
+      $data = [
+        'max_counter_day'=>5000,
+        'max_counter'=>330000
+      ];
+    }
+
+    return $data;
+  }
+
 ?>
