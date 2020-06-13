@@ -81,7 +81,6 @@ class SendCampaign implements ShouldQueue
 
         if($broadcast->count() > 0)
         {
-            $number = 0;
             foreach($broadcast as $row)
             {
                 // $customers = Customer::where('id',$row->customer_id)->first();
@@ -159,7 +158,6 @@ class SendCampaign implements ShouldQueue
 												$broadcastCustomer->save();
 
                         $status = 'Sent';
-                        $number ++;
 
                         // MAKES BROADCAST STATUS TO 2 WHICH MEAN BROADCAST HAS RUN ALREADY.
                         $broad_cast_id = $broadcastCustomer->broadcast_id;
@@ -210,7 +208,7 @@ class SendCampaign implements ShouldQueue
                           }
                         }
 
-                        $this->generateLog($number,$campaign,$id_campaign,$send_message);
+                        $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$send_message);
                         $status = $this->getStatus($send_message,$phoneNumber->mode);
 
                         $phoneNumber->counter --;
@@ -232,8 +230,7 @@ class SendCampaign implements ShouldQueue
                         $campaign = 'broadcast';
                         $id_campaign = $row->bccsid;
                         $status = 'Error';
-                        $number ++;
-                        $this->generateLog($number,$campaign,$id_campaign,$status);
+                        $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     }
                 // }
                 sleep(mt_rand(5, 35));
@@ -264,7 +261,7 @@ class SendCampaign implements ShouldQueue
             ->select('reminder_customers.id AS rcs_id','reminder_customers.status AS rc_st','reminders.*','customers.created_at AS cstreg','customers.telegram_number','customers.name','customers.email','reminders.id AS rid','reminders.user_id AS userid','users.timezone','users.email as useremail','reminder_customers.customer_id')
             ->get();
 
-        $number = $counter = $max_counter = 0;
+        $counter = $max_counter = 0;
 
         if($reminder->count() > 0)
         {
@@ -310,8 +307,7 @@ class SendCampaign implements ShouldQueue
 								$remindercustomer_update->save();
 								
                 $now = Carbon::now()->timezone($row->timezone);
-                $adding = Carbon::parse($adding_with_hour);         
-                $number++;
+                $adding = Carbon::parse($adding_with_hour);
                 $midnightTime = $this->avoidMidnightTime($row->timezone);
 
                 if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) || $midnightTime == false) {
@@ -367,7 +363,7 @@ class SendCampaign implements ShouldQueue
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$row->rcs_id;
                     $status = 'Sent';
-                    $this->generateLog($number,$campaign,$id_campaign,$status);
+                    $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
 
                     $status =  $this->getStatus($send_message,$phoneNumber->mode);
                     $remindercustomer_update = ReminderCustomers::find($reminder_customers_id);
@@ -392,7 +388,7 @@ class SendCampaign implements ShouldQueue
                     $campaign = 'Auto Responder';
                     $id_campaign = 'reminder_customers_id = '.$row->rcs_id;
                     $status = 'Not Sent';
-                    $this->generateLog($number,$campaign,$id_campaign,$status);
+                    $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
                 sleep(mt_rand(5, 35));
@@ -419,7 +415,7 @@ class SendCampaign implements ShouldQueue
          
           if($reminder->count() > 0)
           {
-              $number = $counter = 0;
+              $counter = 0;
               foreach($reminder as $row)
               {
                 $id_reminder = $row->id;
@@ -472,7 +468,6 @@ class SendCampaign implements ShouldQueue
 
                 // get id reminder for reminder customer
                 if($deliver_time >= 0 && $counter > 0){
-                  $number++;
                   $campaign = 'Event';
                   $id_campaign = $row->rcs_id;
 
@@ -546,7 +541,7 @@ class SendCampaign implements ShouldQueue
                   }
                     
                   $status =  $this->getStatus($send_message,$phoneNumber->mode);
-                  $this->generateLog($number,$campaign,$id_campaign,$status);
+                  $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
                   $remindercustomer_update->status = $status;
                   $remindercustomer_update->save();
@@ -568,7 +563,7 @@ class SendCampaign implements ShouldQueue
                     $campaign = 'Event';
                     $id_campaign = $row->rcs_id;
                     $status = 'Sent';
-                    $this->generateLog($number,$campaign,$id_campaign,$status);
+                    $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
                 sleep(mt_rand(5, 35));
@@ -602,7 +597,7 @@ class SendCampaign implements ShouldQueue
 
           if($reminder->count() > 0)
           {
-              $number = $counter = 0;
+              $counter = 0;
               foreach($reminder as $row)
               {
                 $id_reminder = $row->id;
@@ -659,7 +654,6 @@ class SendCampaign implements ShouldQueue
 
                 // get id reminder for reminder customer
                 if($deliver_time >= 0 && $counter > 0){
-                  $number++;
                   $campaign = 'Appointment';
                   $id_campaign = $row->rcs_id;
 
@@ -719,7 +713,7 @@ class SendCampaign implements ShouldQueue
                   }
 
                   $status =  $this->getStatus($send_message,$phoneNumber->mode);
-                  $this->generateLog($number,$campaign,$id_campaign,$status);
+                  $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                   $remindercustomer_update = ReminderCustomers::find($id_campaign);
                   $remindercustomer_update->status = $status;
                   $remindercustomer_update->save();
@@ -734,7 +728,7 @@ class SendCampaign implements ShouldQueue
                     $campaign = 'Appointment';
                     $id_campaign = $row->rcs_id;
                     $status = 'Sent';
-                    $this->generateLog($number,$campaign,$id_campaign,$status);
+                    $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
                 sleep(mt_rand(5, 35));
@@ -745,21 +739,21 @@ class SendCampaign implements ShouldQueue
     public function generateLog($number,$campaign,$id_campaign,$error = null)
     {
         $timegenerate = Carbon::now();
-        $logexists = Storage::disk('local')->exists('log/log.txt');
+        $filename='log/log-'.$dt->format('ymd').'txt';
+        $logexists = Storage::disk('local')->exists($filename);
         $format = "No : ".$number.", Date and time : ".$timegenerate.", Type : ".$campaign.", id : ".$id_campaign.", Status : ".$error."\n";
 
         if($logexists == true)
         {
-            $log = Storage::get('log/log.txt');
-            $string = $log."\n".$format;
+            $log = Storage::get($filename);
+            $string = $log.$format;
             Storage::put('log/log.txt',$string);
         }
         else
         {
             $string = $format;
-            Storage::put('log/log.txt',$string);
+            Storage::put($filename,$string);
         }
-       
     }
 
     public function modFullname($firstname)
