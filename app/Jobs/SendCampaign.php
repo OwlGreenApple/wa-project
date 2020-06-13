@@ -236,7 +236,7 @@ class SendCampaign implements ShouldQueue
                         $this->generateLog($number,$campaign,$id_campaign,$status);
                     }
                 // }
-                sleep(mt_rand(5, 15));
+                sleep(mt_rand(5, 35));
             }//END LOOPING
 
         } // END BROADCAST 
@@ -395,7 +395,7 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(5, 15));
+                sleep(mt_rand(5, 35));
             }//END LOOPING
         }
     }
@@ -571,7 +571,7 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(5, 15));
+                sleep(mt_rand(5, 35));
               }//END FOR LOOP EVENT
           }
     }
@@ -737,7 +737,7 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(5, 15));
+                sleep(mt_rand(5, 35));
               }//END FOR LOOP EVENT
           }
     }
