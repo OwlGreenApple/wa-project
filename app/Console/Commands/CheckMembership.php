@@ -51,19 +51,22 @@ class CheckMembership extends Command
             foreach($users as $row):
 
               $day_left = $row->day_left;
-              $client = User::find($row->id);
+              $user_id = $row->id;
+
+              $membership = Membership::where([['user_id',$user_id],['status','>',0]])->get();
+              $membership = $membership->count();
+              $client = User::find($user_id);
+
+              if($day_left == 0 && $membership > 0)
+              {
+                 continue;
+              }
 
               if($client->day_left > -2)
               {
                  $client->day_left--;
                  $client->save();
                  $remain_day_left = $client->day_left;
-              }
-
-              if($remain_day_left == 0)
-              {
-                 $membership = Membership::where([['user_id',$row->id],['status','>',0]])->get();
-                 $membership = $membership->count();
               }
 
               if($membership == 0 && $remain_day_left == 0)
@@ -78,7 +81,6 @@ class CheckMembership extends Command
                     $delete_api = ApiHelper::unreg($phone->phone_number);
                     $phone->delete();
                  }
-                
               }
 
               if(($day_left == 5 || $day_left == 1 || $day_left == -1) && $membership == 0)
