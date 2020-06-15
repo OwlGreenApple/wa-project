@@ -116,8 +116,6 @@ class LoginController extends Controller
         }
     }
 
-    public function 
-
     public function getTotalCount($user,$namapaket)
     {
       $order = Order::where('user_id',$user->id)
