@@ -56,11 +56,11 @@ class OrderController extends Controller
 			// $type_package = explode("basic", $order->package)[0];
     }
 		if(substr($order->package,0,10) === "bestseller"){
-			$additional_day += 90;
+			$additional_day += 60;
 			// $type_package = explode("bestseller", $order->package)[0];
     }
 		if(substr($order->package,0,10) === "supervalue"){
-			$additional_day += 180;
+			$additional_day += 90;
       // $type_package = explode("supervalue", $order->package)[0];
     }
 

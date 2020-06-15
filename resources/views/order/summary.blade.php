@@ -290,16 +290,42 @@
   </table>
   <!-- End Table -->
   <div>
-    
+
+    <div class="col-md-12 col-12 upgrade">
+      <label>Upgrade : </label>
+      <div>
+        <div class="form-check form-check-inline">
+          <label class="custom-radio">
+            <input class="form-check-input" type="radio" name="status_upgrade" value="1" checked>
+            <span class="checkmark"></span>
+          </label>
+          <label class="form-check-label" for="radio-male">Now</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <label class="custom-radio">
+            <input class="form-check-input" type="radio" name="status_upgrade" value="2">
+            <span class="checkmark"></span>
+          </label>
+          <label class="form-check-label" for="radio-female">Later</label>
+        </div>
+
+      </div>
+      <!-- -->
+    </div>
+
     <div class="as-checkout-entry" id="checkout-total">
-      <strong class="as-checkout-total">Total</strong>
-      <strong class="as-checkout-total-price" id="totalprice_sidebar totalprice_mobile">
-      Rp. 
-      @if(session('order')['diskon'] > 0 || session('order')['upgrade'] <> null)
-        <strike>{!! number_format(session('order')['price'], 0, '', '.') !!}</strike>
-      @endif
-			<?php echo number_format(session('order')['total'], 0, '', '.'); ?>
-			</strong>
+    
+      <div class="col-md-12 col-12">
+        <strong class="as-checkout-total">Total</strong>
+        <strong class="as-checkout-total-price total_price" id="totalprice_sidebar totalprice_mobile">
+        Rp. 
+        @if(session('order')['diskon'] > 0 || session('order')['upgrade'] <> null)
+          <strike>{!! number_format(session('order')['price'], 0, '', '.') !!}</strike>
+        @endif
+  			<?php echo number_format(session('order')['total'], 0, '', '.'); ?>
+  			</strong>
+      </div>
     </div>
 </div>
   
@@ -310,6 +336,7 @@
 									<form method="POST" action="{{url('submit-summary')}}">
 										{{ csrf_field() }}
                     <div class="checkout-button-container mt-30 step-2" id="checkout-buttons-1" <?php if (!$is_login) { ?> style="display:none;"<?php } ?>>
+
 												<input type="submit" name="submit" id="submit" class="col-md-12 col-12 btn btn-primary bsub btn-block" value="Order Now"/>
                       <div class="sumo-product-note light mt-20">
                         By clicking the "Place Order" button, you confirm that you have read, understand,
@@ -348,10 +375,17 @@
 
 <script type="text/javascript">
 
+  function getUpgrade()
+  {
+    $("input[name='status_upgrade']").change(function(){
+      var val = $(this).val();
+
+    });
+  }
+
 	function formatNumber(num) {
 		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 	}
-
 
 	/*
 	REGISTER
@@ -404,6 +438,7 @@
   }
 
 	function loginAjax(){
+    $(".upgrade").hide();
     $("body").on("click", "#button-login", function() {
 			$.ajax({
 				type: 'POST',
@@ -426,11 +461,30 @@
 					if (data.success == '1') {
 						$(".step-2").show();
 						$("#step-1").html('<p>Your order confirmation will be emailed to:</p><span class="sumo-psuedo-link">'+data.email+'</span>');
+/*
+            if(data.status_upgrade == false) //false which mean upgrade
+            {
+              $(".upgrade").show();
+              $(".total_price").html('IDR '+data.upgrade_price);
+              // $("input[name='status_upgrade']").prop('disabled',false);
+            }
+            else
+            {
+              $(".upgrade").hide();
+              // $("input[name='status_upgrade']").prop('disabled',true);
+            }*/
+
 					} 
 					else {
 						alert(data.message);
 					}
-				}
+				},
+        error : function(xhr)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
+        }
 			});
     });
 	}

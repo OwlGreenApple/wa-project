@@ -251,6 +251,17 @@ use Illuminate\Support\Facades\Storage;
       
     }
 
+  function getPackagePrice($package)
+  {
+    foreach(getPackage(null) as $row=>$col)
+    {
+        if($col['package'] == $package)
+        {
+            return $col['price'];
+        }
+    }
+  }
+
   //TO DETERMINE UPGRADE OR DOWNGRADE EITHER
   function checkMembershipDowngrade(array $data)
   {
@@ -316,12 +327,12 @@ use Illuminate\Support\Facades\Storage;
       
       if($get_package == 'bestseller')
       {
-        $additional_day += 90;
+        $additional_day += 60;
       }
       
       if($get_package == 'supervalue')
       {
-        $additional_day += 180;
+        $additional_day += 90;
       }
 
       return $additional_day;

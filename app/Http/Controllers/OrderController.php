@@ -14,7 +14,7 @@ use App\Notification;
 
 use App\Helpers\Helper;
 use Carbon\Carbon;
-use Auth,Mail,Validator,Storage,DateTime,Crypt,Session;
+use Auth,Mail,Validator,Storage,DateTime,Crypt,Session,stdClass;
 
 class OrderController extends Controller
 {   
@@ -116,6 +116,7 @@ class OrderController extends Controller
   {
     // dd($request->all());
     $user = Auth::user(); 
+    $status_upgrade = $request->status_upgrade;
     //cek kodekupon
 
     if($request->harga == null)
@@ -130,12 +131,32 @@ class OrderController extends Controller
     $arr['status'] = 'success';
     $arr['message'] = '';
     $arr['totaltitle'] = number_format($pricing, 0, '', '.');
-    $arr['total'] = $pricing;
-    $arr['diskon'] = 0;
+    $arr['total'] = (int)$pricing;
+    $arr['diskon'] =  0;
+    $arr['dayleft'] =  0;
     $arr['coupon'] = null;
     $arr['price'] = '';
+    $arr['packageupgrade'] = 0;
+    $arr['upgrade_price'] = 0;
+    $arr['membership'] = null;
     $total = 0;
     $diskon = 0;
+    $check_membership = null;
+
+    if(Auth::check())
+    {
+      $check_membership = $this->check_upgrade($request);
+      $arr['total'] = $check_membership['priceupgrade'];
+      $arr['membership'] = $check_membership['membership'];
+      $arr['upgrade_price'] = $check_membership['upgrade_price'];
+      $arr['dayleft'] = $check_membership['dayleft'];
+      $arr['packageupgrade'] = $check_membership['packageupgrade'];
+    }
+
+    if($status_upgrade == 2 || $status_upgrade == null)
+    {
+      $arr['total'] = $pricing;
+    }
 
     if($request->kupon!=''){
       $user_id = 0;
@@ -161,6 +182,12 @@ class OrderController extends Controller
 			else {
         // $now = new DateTime();
         // $date = new DateTime($coupon->valid_until);
+
+        if($arr['total'] <> 0)
+        {
+          $pricing = $arr['total'];
+        }
+
         $now = Carbon::now();
         $date = Carbon::createFromFormat('Y-m-d H:i:s', $coupon->valid_until);
         
@@ -180,7 +207,7 @@ class OrderController extends Controller
           {
             if($coupon->diskon_value == 0 && $coupon->diskon_percent <> 0){
               $diskon = $pricing * ($coupon->diskon_percent/100);
-              $total = $pricing - $diskon;
+              $total = $pricing - round($diskon);
             } else {
               $diskon = $coupon->diskon_value;
               $total = $pricing - $coupon->diskon_value;
@@ -234,51 +261,118 @@ class OrderController extends Controller
       return $arr;
   }
 
-	public function check_upgrade(Request $request){
+	public function check_upgrade(Request $request)
+  {
 		$arr['status'] = 'success';
-		$arr['message'] = 'Check upgrade success';
+		// $arr['message'] = 'Check upgrade success';
+    $arr['membership'] = null;
+    $arr['upgrade_price'] = 0;
+    $arr['dayleft'] = 0;
+    $arr['packageupgrade'] = 0;
 
-    /* $data = [
-        'current_package'=>$user->membership,
-        'order_package'=>$request->namapaket,
-      ];
-      $check_membership = checkMembershipDowngrade($data);
-
-      if($check_membership == true)
-      {
-          
-      }
-      else
-      {
-          $status_package = 0;
-      }*/
+     //check package
+    $getPackage = getPackage($request->idpaket,1);
+    $package_name = $getPackage['package'];
+    $package_price = $getPackage['price'];
 
 		$priceupgrade = 0;
 		$dayleft = 0;
-		if (Auth::check()) {
+
+		if (Auth::check()) 
+    {
 			$user = Auth::user();
 			$order = Order::where('user_id',$user->id)
 								->where("status",2)
                 ->orderBy('created_at','desc')
 								->first();
-			if (!is_null($order)) {
+
+			if (!is_null($order)) 
+      {
 				$priceupgrade = $order->total;
+        $package_order = $order->package;
+        $oldpackage_price = getPackagePrice($package_order);
 			}
+      else
+      {
+        $package_order = $user->membership;
+      }
+
 			$dayleft = $user->day_left;
-		}
+
+      // new order
+      if($package_order == null)
+      {
+         $arr['priceupgrade'] = 0;
+         return $arr;
+      }
+
+      //if downgrade or upgrade later
+      if($request->status_upgrade == 2 || $request->status_upgrade == null || $dayleft == 0)
+      {
+        $arr['priceupgrade'] = $package_price;
+        return $arr;
+      }
+
+      $data = [
+        'current_package'=>$package_order,
+        'order_package'=>$package_name,
+      ];
+
+      $check_membership = checkMembershipDowngrade($data);
+      //return true if downgrade, false if upgrade
+      if($check_membership == true)
+      {
+        //downgrade
+        $arr['status'] = 'success';
+        $arr['membership'] = 'downgrade';
+        $arr['priceupgrade'] = $package_price;
+      }
+      else
+      {
+        //upgrade
+        $arr['status'] = 'success';
+        $arr['membership'] = 'upgrade';
+
+        $get_new_order_day = getAdditionalDay($package_name);
+        $get_old_order_day = getAdditionalDay($package_order);
+
+        $remain_day_price = $this->getUpgradeNow($package_price,$get_new_order_day,$oldpackage_price,$get_old_order_day,$dayleft);
+
+        $arr['upgrade_price'] = $package_price;
+        $arr['dayleft'] = $dayleft;
+        $arr['packageupgrade'] = round($remain_day_price);
+        $arr['priceupgrade'] = round($package_price + $remain_day_price);
+      }
+    }
+
+    return $arr;
+
 		/*if ($request->price - $priceupgrade<0) {
 			$arr['status'] = 'error';
 			$arr['message'] = 'Cannot Downgrade';
 			return $arr;
 		}*/
-		
-		return $arr;
 	}
+
+  public function getUpgradeNow($newpackage,$package_day,$oldpackage,$old_package_day,$day_left)
+  {
+    // prevent 0 result if user day left is 0
+    if($day_left < 1)
+    {
+      $day_left = 1;
+    }
+
+    $upgrade_new = $newpackage/$package_day * $day_left;
+    $upgrade_old = $oldpackage/$old_package_day * $day_left;
+    $upgrade_now = $upgrade_new - $upgrade_old;
+    return $upgrade_now;
+  }
 	
 	//store to session first
   public function submit_checkout(Request $request) {
 		// ditaruh ke session dulu
     $stat = $this->cekharga($request->namapaket,$request->price);
+    $status_upgrade = 0;
 
     $pathUrl = str_replace(url('/'), '', url()->previous());
     if($stat==false){
@@ -307,14 +401,16 @@ class OrderController extends Controller
     $diskon = 0;
     // $total = $request->price;
     $kuponid = $upgrade_package = null;
-    if($request->kupon!==''){
+
+    if($request->kupon <> null){
       $arr = $this->check_coupon($request);
 
-      if($arr['status']=='error'){
+      if($arr['status']=='error')
+      {
         return redirect($pathUrl)->with("error", $arr['message']);
       } else {
         $diskon = $arr['diskon'];
-        $total = $arr['total'];
+        // $total = $arr['total'];
         
         if($arr['coupon']!=null){
           $kuponid = $arr['coupon']->id;
@@ -338,8 +434,10 @@ class OrderController extends Controller
       "kuponid" => $kuponid,
       "priceupgrade" => $request->priceupgrade,
       "diskon" => $diskon,
-      "total"=>$total,
-      "upgrade"=>$upgrade_package
+      "total"=>$arr['total'],
+      "upgrade"=>$upgrade_package,
+      "status_upgrade"=>$status_upgrade,
+      "priceupgrade"=>0
     );
 
     if(session('order') == null)
@@ -358,6 +456,8 @@ class OrderController extends Controller
         return redirect('pricing');
     }
 
+    // $this->check_coupon($request);
+
 		$data = [
 			"user"=> $user,
 			"namapaket"=> session('order')['namapaket'],
@@ -369,9 +469,11 @@ class OrderController extends Controller
       "phone"=>$user->phone_number,
 			"month"=> session('order')['month'],
       "total"=>session('order')['total'],
-      "upgrade"=>session('order')['upgrade']
+      "upgrade"=>session('order')['upgrade'],
+      "status_upgrade"=>session('order')['status_upgrade'],
+      "priceupgrade"=>session('order')['priceupgrade']
 		];
-		
+
 		$order = Order::create_order($data);
     return view('order.thankyou')->with(array(
               'order'=>$order,    
@@ -427,7 +529,6 @@ class OrderController extends Controller
   //checkout klo uda login
   public function submit_checkout_login(Request $request){
     //buat order user lama
-
     $stat = $this->cekharga($request->namapaket,$request->price);
 
     $pathUrl = str_replace(url('/'), '', url()->previous());
@@ -436,11 +537,10 @@ class OrderController extends Controller
       return redirect($pathUrl)->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
     }
 
-    $arr = $this->check_upgrade($request);
-    if($arr['status']=='error'){
+    /*if($arr['status']=='error'){
       // return redirect("checkout/1")->with("error", $arr['message']);
       return redirect($pathUrl)->with("error", $arr['message']);
-    }
+    }*/
 
 		$month = 1;
 		if(substr($request->namapaket,0,5) === "basic"){
@@ -454,17 +554,21 @@ class OrderController extends Controller
     }
 
     $diskon = 0;
+    $pricing_upgrade = 0;
     // $total = $request->price;
+    $price = $request->price;
     $kuponid = $upgrade_package =  null;
 
-    if($request->kupon!==''){
+    if($request->kupon <> null)
+    {
       $kpn = $this->check_coupon($request);
-  
+
       if($kpn['status']=='error'){
         return redirect($pathUrl)->with("error", $kpn['message']);
       } else {
 
         $diskon = $kpn['diskon'];
+        $pricing_upgrade = $kpn['price'] -  (int)$price;
 
         if($kpn['coupon']!=null)
         {
@@ -474,29 +578,35 @@ class OrderController extends Controller
         if(isset($kpn['upgrade']))
         {
           $upgrade_package = $kpn['total'];
+          $pricing_upgrade = 0;
         }
-
         /**/
       }
     }
+    else
+    {
+      $arr = $this->check_upgrade($request);
+      $upgrade_package = $arr['priceupgrade'];
+      $pricing_upgrade = $arr['packageupgrade'];
+    }
 	
     $user = Auth::user();
-    //DETERMINE UPGRADE OR DOWNGRADE
-    if($request->status_upgrade == null || $request->status_upgrade == '2')
+    if($request->status_upgrade == null)
     {
-       $status_upgrade = $this->checkDowngrade($user->id);
+       // $status_upgrade = $this->checkDowngrade($user->id);
+       $status_upgrade = 0;
     }
     else
     {
-       $status_upgrade = 1;
+       $status_upgrade = $request->status_upgrade;
     }
-
+   
 		$data = [
 			"user"=> $user,
 			"namapaket"=> $request->namapaket,
 			"kuponid"=> $kuponid,
-			"price"=> $request->price,
-			"priceupgrade"=> $request->priceupgrade,
+			"price"=> (int)$request->price,
+			"priceupgrade"=> $pricing_upgrade,
 			"diskon"=> $diskon,
 			"namapakettitle"=> $request->namapakettitle,
       "phone"=>$user->phone_number,
@@ -516,23 +626,6 @@ class OrderController extends Controller
               'order'=>null,    
             ));
   }
-
-  public function checkDowngrade($user_id)
-  {
-    $user = User::find($user_id);
-
-    if(is_null($user) || $user->membership == null)
-    {
-       $status_package = 0;
-    }
-    else
-    {
-       $status_package = 2;
-    }
-
-    return $status_package;
-  }
-  
 
   public function index_order(){
     //halaman order user
