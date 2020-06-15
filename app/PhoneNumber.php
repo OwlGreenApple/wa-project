@@ -10,6 +10,8 @@ class PhoneNumber extends Model
   * Status 
   * 1 -> Disconnected
 	* 2 -> Connected
+	* 3 -> woowa not your client
+
 	
 	mode 
 	0 -> Simi
