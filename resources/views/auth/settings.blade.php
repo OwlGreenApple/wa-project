@@ -50,7 +50,7 @@
       <div class="modal-body text-center">
         <input type="hidden" name="id_phone_number" id="id_phone_number">
 
-        <label><h4>Before connecting to our server <br>
+        <label><h4><b style="color:#e3342f;">Attention</b> <br>Before connecting to our server <br>
         You must have <b>"Profile Image"</b> at your Whatsapp settings
         </h4></label>
         <br><br>
@@ -59,7 +59,7 @@
         <br>
         
         <div class="col-12 mb-4" style="margin-top: 30px">
-          <button class="btn btn-danger btn-block" data-dismiss="modal" id="button-start-connect">
+          <button class="btn btn-secondary btn-block" data-dismiss="modal" id="button-start-connect">
             Start
           </button>
         </div>

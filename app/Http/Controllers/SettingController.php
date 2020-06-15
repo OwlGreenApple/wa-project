@@ -44,6 +44,7 @@ class SettingController extends Controller
       $is_registered = 0;
       $phoneNumber = PhoneNumber::
                       where("user_id",$user->id)
+                      ->where("status",2)
                       ->first();
       if (!is_null($phoneNumber)) {
         $is_registered = 1;
@@ -198,7 +199,7 @@ class SettingController extends Controller
     public function load_phone_number()
     {
       $user = Auth::user();
-      $phoneNumbers = PhoneNumber::
+      /*$phoneNumbers = PhoneNumber::
                       where("user_id",$user->id)
                       ->where("status",2)
                       ->get();
@@ -217,9 +218,12 @@ class SettingController extends Controller
                 // PhoneNumber::where([["user_id",$user->id],['phone_number',$phone_number]])->update(['status'=>0]);
             // }
         }
-      }
+      }*/
 
-      $phone_updated = PhoneNumber::where("user_id",$user->id)->get();
+      $phone_updated = PhoneNumber::
+                        where("user_id",$user->id)
+                        ->where("status",2)
+                        ->get();
       $arr['view'] =(string) view('auth.setting-phone-numbers')
                       ->with([
                         "phoneNumbers"=>$phone_updated,
