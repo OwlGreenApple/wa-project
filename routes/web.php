@@ -137,7 +137,8 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('signout', 'Auth\LoginController@logout');
 	
 	//woowa + simi 
-  Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkcall');
+  // Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkcall');
+  Route::get('connect-phone', 'SettingController@connect_phone');
   Route::get('verify-phone', 'SettingController@verify_phone')->middleware('checkphone');
 	
   Route::get('delete-phone', 'SettingController@delete_phone');

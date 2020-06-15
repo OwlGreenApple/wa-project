@@ -755,21 +755,21 @@ class SendMessage extends Command
     public function generateLog($number,$campaign,$id_campaign,$error = null)
     {
         $timegenerate = Carbon::now();
-        $logexists = Storage::disk('local')->exists('log/log.txt');
+        $filename='log/log-'.$timegenerate->format('ymd').'.txt';
+        $logexists = Storage::disk('local')->exists($filename);
         $format = "No : ".$number.", Date and time : ".$timegenerate.", Type : ".$campaign.", id : ".$id_campaign.", Status : ".$error."\n";
 
         if($logexists == true)
         {
-            $log = Storage::get('log/log.txt');
-            $string = $log."\n".$format;
-            Storage::put('log/log.txt',$string);
+            $log = Storage::get($filename);
+            $string = $log.$format;
+            Storage::put($filename,$string);
         }
         else
         {
             $string = $format;
-            Storage::put('log/log.txt',$string);
+            Storage::put($filename,$string);
         }
-       
     }
 
     public function replaceMessage($customer_message,$name,$email,$phone,$firstname)

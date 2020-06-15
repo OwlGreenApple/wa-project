@@ -739,7 +739,7 @@ class SendCampaign implements ShouldQueue
     public function generateLog($number,$campaign,$id_campaign,$error = null)
     {
         $timegenerate = Carbon::now();
-        $filename='log/log-'.$dt->format('ymd').'txt';
+        $filename='log/log-'.$timegenerate->format('ymd').'.txt';
         $logexists = Storage::disk('local')->exists($filename);
         $format = "No : ".$number.", Date and time : ".$timegenerate.", Type : ".$campaign.", id : ".$id_campaign.", Status : ".$error."\n";
 
@@ -747,7 +747,7 @@ class SendCampaign implements ShouldQueue
         {
             $log = Storage::get($filename);
             $string = $log.$format;
-            Storage::put('log/log.txt',$string);
+            Storage::put($filename,$string);
         }
         else
         {

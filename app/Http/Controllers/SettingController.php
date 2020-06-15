@@ -44,6 +44,7 @@ class SettingController extends Controller
       $is_registered = 0;
       $phoneNumber = PhoneNumber::
                       where("user_id",$user->id)
+                      ->where("status",2)
                       ->first();
       if (!is_null($phoneNumber)) {
         $is_registered = 1;
@@ -198,8 +199,9 @@ class SettingController extends Controller
     public function load_phone_number()
     {
       $user = Auth::user();
-      $phoneNumbers = PhoneNumber::
+      /*$phoneNumbers = PhoneNumber::
                       where("user_id",$user->id)
+                      ->where("status",2)
                       ->get();
 
       //CHECK WHETHER PHONE IS CONNECTED OR NOT
@@ -216,9 +218,12 @@ class SettingController extends Controller
                 // PhoneNumber::where([["user_id",$user->id],['phone_number',$phone_number]])->update(['status'=>0]);
             // }
         }
-      }
+      }*/
 
-      $phone_updated = PhoneNumber::where("user_id",$user->id)->get();
+      $phone_updated = PhoneNumber::
+                        where("user_id",$user->id)
+                        ->where("status",2)
+                        ->get();
       $arr['view'] =(string) view('auth.setting-phone-numbers')
                       ->with([
                         "phoneNumbers"=>$phone_updated,
@@ -300,27 +305,28 @@ class SettingController extends Controller
       $phone_number = $request->code_country.$request->phone_number;
 
       //pastikan phone number hanya 1 phone number
-      $countphoneNumber = PhoneNumber::where("user_id",$user->id)->first();
-      if(!is_null($countphoneNumber) && $resend == null){
-          $arr['status'] = 'error';
-          $arr['message'] = Alert::one_number();
-          return $arr;
-      }
+      // $countphoneNumber = PhoneNumber::where("user_id",$user->id)->first();
+      // if(!is_null($countphoneNumber) && $resend == null){
+          // $arr['status'] = 'error';
+          // $arr['message'] = Alert::one_number();
+          // return $arr;
+      // }
 
       //cek phone number uda ada didatabase ngga 
       $phoneNumber = PhoneNumber::
                       where("phone_number",$phone_number)
                       ->where("user_id",$user->id)
-                      // ->where("status",2)
                       ->first();
 
-      if (!is_null($phoneNumber) && $phoneNumber->status == 2){
+      if (!is_null($phoneNumber) ){
+        if ($phoneNumber->status == 2){
           $arr['status'] = 'error';
           $arr['message'] = Alert::exists_phone();
           return $arr;
+        }
       }
 
-			
+
 			if (session('mode')==0) {
 				$server = Server::find(session("server_id"));
 				if (is_null($server)){
@@ -334,35 +340,42 @@ class SettingController extends Controller
 				ApiHelper::start_simi($server->url);
 			}
 			if (session('mode')==1) {
-				//new system, didelete dulu baru dieksekusi
-				ApiHelper::unreg($phone_number);
-
+				$qr_status = ApiHelper::qr_status($phone_number);
 				//PHONE REGISTER TO API
-				$registered_phone = ApiHelper::reg($phone_number,$user->name);
-			}
-      /* diremark karena dianggap selalu success
-      $status_register = json_decode($registered_phone,true);
-      $message = strval($status_register['message']);
-
-      if(stripos($message,'success') === false)
-      {
+        if ($qr_status==$phone_number) {
           $arr['status'] = 'error';
-          $arr['message'] = 'Phone '.$status_register['message'];
+          $arr['message'] = Alert::exists_phone();
           return $arr;
-      }
-      */
+        }
+        if ($qr_status==$phone_number."_not_your_client") {
+          $registered_phone = ApiHelper::reg($phone_number,$user->name);
+        }
+			}
 
-      /*new system if(is_null($phoneNumber)){
-        // $token = explode(':',$this->getToken($request->phone_number));
+      $phoneNumber = PhoneNumber::
+                      where("user_id",$user->id)
+                      ->first();
+      if(is_null($phoneNumber)){
         $phoneNumber = new PhoneNumber();
         $phoneNumber->user_id = $user->id;
         $phoneNumber->phone_number = $phone_number;
         $phoneNumber->counter = 0;
         $phoneNumber->status = 0;
-        // $phoneNumber->filename = $token[1];
         $phoneNumber->filename = "";
         $phoneNumber->save();
-      }*/
+      }
+      else {
+        if (session('mode')==1) {
+          if ($phoneNumber->phone_number <> $phone_number ){
+            $ganti_nomor = ApiHelper::ganti_nomor($phoneNumber->phone_number,$phone_number);
+            if ($ganti_nomor == "new_number_already_exists") {
+              $arr['status'] = 'error';
+              $arr['message'] = "Number already exist";
+              return $arr;
+            }
+          }
+        }
+      }
 
       $arr['status'] = 'success';
       $arr['message'] = Alert::connect_success();
@@ -413,11 +426,9 @@ class SettingController extends Controller
 				Cek database, klo status masi 0 maka akan request ke woowa 
 				Cek Ready or not (after 3-5 min register phone no)
 				*/
-        $arr = json_decode(ApiHelper::status_nomor($request->phone_number),1);
+        /*$arr = json_decode(ApiHelper::status_nomor($request->phone_number),1);
         if (!is_null($arr)) {
           if($arr['status']=="success"){
-            /*new system $phoneNumber->status=1;
-            $phoneNumber->save();*/
           }
         }
         else {
@@ -426,23 +437,47 @@ class SettingController extends Controller
             'phone_number'=>Alert::error_verify(),
           );
           return response()->json($error);
+        }*/
+        $qr_status = ApiHelper::qr_status($request->phone_number);
+        if ($qr_status==$request->phone_number."_not_your_client") {
+          $error = array(
+            'status'=>'error',
+            'phone_number'=>Alert::error_verify(),
+          );
+          return response()->json($error);
         }
 
-				$qr_code = ApiHelper::get_qr_code($request->phone_number);
+        if ($qr_status=="none"){
+          $phoneNumber = PhoneNumber::
+                          where("user_id",$user->id)
+                          ->first();
+          if(!is_null($phoneNumber)){
+            if ($phoneNumber->filename == "") {
+              $key = ApiHelper::get_key($request->phone_number);
+              $response = json_decode($key,true);
+              $response = explode(':',$response['message']);
 
-				if($qr_code == false)
-				{
-					$data = array(
-						'status'=>'error',
-						'phone_number'=>Alert::qrcode(),
-					);
-				}
-				else
-				{
-					$data = array(
-						'status'=>'success',
-						'data'=>$qr_code,
-					);
+              $phoneNumber->filename = $response[1];
+              $phoneNumber->save();
+            }
+          }
+
+          $qr_code = ApiHelper::get_qr_code($request->phone_number);
+          
+          if($qr_code == false)
+          {
+            $data = array(
+              'status'=>'error',
+              'phone_number'=>Alert::qrcode(),
+            );
+          }
+          else
+          {
+            $data = array(
+              'status'=>'success',
+              'data'=>$qr_code,
+            );
+          }
 				}
 				return response()->json($data);
 			}
@@ -515,7 +550,12 @@ class SettingController extends Controller
 								$key = $this->get_key($no_wa);
 							}
 							try{
-								$phoneNumber = new PhoneNumber();
+                $phoneNumber = PhoneNumber::
+                      where("user_id",$user->id)
+                      ->first();
+                // if (is_null($phoneNumber)) {
+                  // $phoneNumber = new PhoneNumber();
+                // }
 								$phoneNumber->user_id = $user->id;
 								$phoneNumber->phone_number = $no_wa;
 								$phoneNumber->filename = $key;
@@ -584,25 +624,32 @@ class SettingController extends Controller
           $server->save();
         }
 			
-				$phoneNumber->delete();
+				// $phoneNumber->delete();
+        $phoneNumber->status = 1;
+        $phoneNumber->save();
 				
 				$arr['status'] = 'success';
 				$arr['message'] = "The phone number has been deleted";
 				return $arr;
 			}
 			else {
-				$delete_api = ApiHelper::unreg($wa_number);
+				// $delete_api = ApiHelper::unreg($wa_number);
 
-				if($delete_api !== "success")
+				/*if($delete_api !== "success")
 				{
-					$phoneNumber->delete();
+					// $phoneNumber->delete();
+          $phoneNumber->status = 1;
+          $phoneNumber->save();
 					$arr['status'] = 'success';
 					$arr['message'] = "The phone number has been deleted";
 					return $arr;
-				}
+				}*/
 
 				try{
-					$phoneNumber->delete();
+					// $phoneNumber->delete();
+          $phoneNumber->status = 1;
+          $phoneNumber->save();
+
 					$arr['status'] = 'success';
 					$arr['message'] = "The phone number has been deleted";
 				}catch(Exception $e){
@@ -619,34 +666,6 @@ class SettingController extends Controller
         ApiHelper::unreg($wa_number);
     }
 
-    private function getToken($no_wa)
-    {
-        $url='https://116.203.92.59/api/get_ip_key';
-        $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
-        $data = array(
-          "no_wa" => $no_wa,
-          "key"=>$key,
-        );
-
-        $data_string = json_encode($data);
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, 0);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 360);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($data_string))
-        );
-
-        return curl_exec($ch);
-        //echo $res=curl_exec($ch);
-    }
-    
     public function get_all_cust()
     {
         return ApiHelper::get_all_cust();

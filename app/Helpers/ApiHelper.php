@@ -314,6 +314,54 @@ class ApiHelper
     //echo $res."\n";
     return json_encode(['message'=>$res]);
   }
+  
+  /* -- Api Woowa Whitelabel --
+  keterangan : 
+  -token key partner
+  -untuk no_wa gunakan +kodeNegara diikuti nomor.
+
+  Parameter:
+  -no_wa: nomor whatsapp klien
+  -key: key partner
+  -no_baru: nomor baru whatsapp
+
+  Response:
+  -not_valid_ip: IP sistem tidak terdaftar
+  -failed: nomor whatsapp tidak terdaftar
+  -source_target_same
+  -new_number_already_exists
+  -success
+  */
+  public static function ganti_nomor($no_wa,$no_baru)
+  {
+    $url='https://116.203.92.59/api/ganti_nomor';
+
+    $key= self::bar();
+
+    $data = array(
+      "no_wa" => $no_wa,
+      "key"=>$key,
+      "no_baru"=>$no_baru
+    );
+
+    $data_string = json_encode($data);
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_VERBOSE, 0);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 360);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($data_string))
+    );
+
+    $res=curl_exec($ch);
+    return $res;
+  }
 
   public static function take_screenshot($no_wa)
   {
