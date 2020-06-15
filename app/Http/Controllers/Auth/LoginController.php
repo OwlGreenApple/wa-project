@@ -82,6 +82,7 @@ class LoginController extends Controller
         $password = $request->password;
         $namapaket = null;
         $result_upgrade = true;
+        $upgrade_price = 0;
 
         if(session('order') <> null)
         {
