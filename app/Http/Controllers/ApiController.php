@@ -51,7 +51,8 @@ class ApiController extends Controller
 
 			if (!is_null($list)) {
 				$str = $obj->phone_number;
-
+        $phone_number = $obj->phone_number;
+        
 				if(preg_match('/^62[0-9]*$/',$str)){
           $phone_number = '+'.$str;
         }
