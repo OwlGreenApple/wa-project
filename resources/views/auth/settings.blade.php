@@ -919,6 +919,8 @@
           var data = jQuery.parseJSON(result);
           $('.message').show();
           $('.message').html(data.message);
+          $("#phone").prop('disabled',false);
+          $("#code_country").prop('disabled',false);
           $("#button-connect").prop('disabled',false);
           $("#phone").val("");
           loadPhoneNumber();

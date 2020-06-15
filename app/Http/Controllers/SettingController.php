@@ -305,18 +305,17 @@ class SettingController extends Controller
       $phone_number = $request->code_country.$request->phone_number;
 
       //pastikan phone number hanya 1 phone number
-      $countphoneNumber = PhoneNumber::where("user_id",$user->id)->first();
-      if(!is_null($countphoneNumber) && $resend == null){
-          $arr['status'] = 'error';
-          $arr['message'] = Alert::one_number();
-          return $arr;
-      }
+      // $countphoneNumber = PhoneNumber::where("user_id",$user->id)->first();
+      // if(!is_null($countphoneNumber) && $resend == null){
+          // $arr['status'] = 'error';
+          // $arr['message'] = Alert::one_number();
+          // return $arr;
+      // }
 
       //cek phone number uda ada didatabase ngga 
       $phoneNumber = PhoneNumber::
                       where("phone_number",$phone_number)
                       ->where("user_id",$user->id)
-                      // ->where("status",2)
                       ->first();
 
       if (!is_null($phoneNumber) ){
@@ -327,7 +326,7 @@ class SettingController extends Controller
         }
       }
 
-			
+
 			if (session('mode')==0) {
 				$server = Server::find(session("server_id"));
 				if (is_null($server)){
@@ -341,9 +340,6 @@ class SettingController extends Controller
 				ApiHelper::start_simi($server->url);
 			}
 			if (session('mode')==1) {
-				//new system, didelete dulu baru dieksekusi
-				// ApiHelper::unreg($phone_number);
-
 				$qr_status = ApiHelper::qr_status($phone_number);
 				//PHONE REGISTER TO API
         if ($qr_status==$phone_number) {
@@ -355,29 +351,31 @@ class SettingController extends Controller
           $registered_phone = ApiHelper::reg($phone_number,$user->name);
         }
 			}
-      /* diremark karena dianggap selalu success
-      $status_register = json_decode($registered_phone,true);
-      $message = strval($status_register['message']);
 
-      if(stripos($message,'success') === false)
-      {
-          $arr['status'] = 'error';
-          $arr['message'] = 'Phone '.$status_register['message'];
-          return $arr;
-      }
-      */
-
-      /*new system if(is_null($phoneNumber)){
-        // $token = explode(':',$this->getToken($request->phone_number));
+      $phoneNumber = PhoneNumber::
+                      where("user_id",$user->id)
+                      ->first();
+      if(is_null($phoneNumber)){
         $phoneNumber = new PhoneNumber();
         $phoneNumber->user_id = $user->id;
         $phoneNumber->phone_number = $phone_number;
         $phoneNumber->counter = 0;
         $phoneNumber->status = 0;
-        // $phoneNumber->filename = $token[1];
         $phoneNumber->filename = "";
         $phoneNumber->save();
-      }*/
+      }
+      else {
+        if (session('mode')==1) {
+          if ($phoneNumber->phone_number <> $phone_number ){
+            $ganti_nomor = ApiHelper::ganti_nomor($phoneNumber->phone_number,$phone_number);
+            if ($ganti_nomor == "new_number_already_exists") {
+              $arr['status'] = 'error';
+              $arr['message'] = "Number already exist";
+              return $arr;
+            }
+          }
+        }
+      }
 
       $arr['status'] = 'success';
       $arr['message'] = Alert::connect_success();
@@ -450,8 +448,22 @@ class SettingController extends Controller
         }
 
         if ($qr_status=="none"){
-          $qr_code = ApiHelper::get_qr_code($request->phone_number);
+          $phoneNumber = PhoneNumber::
+                          where("user_id",$user->id)
+                          ->first();
+          if(!is_null($phoneNumber)){
+            if ($phoneNumber->filename == "") {
+              $key = ApiHelper::get_key($request->phone_number);
+              $response = json_decode($key,true);
+              $response = explode(':',$response['message']);
 
+              $phoneNumber->filename = $response[1];
+              $phoneNumber->save();
+            }
+          }
+
+          $qr_code = ApiHelper::get_qr_code($request->phone_number);
+          
           if($qr_code == false)
           {
             $data = array(
@@ -539,12 +551,11 @@ class SettingController extends Controller
 							}
 							try{
                 $phoneNumber = PhoneNumber::
-                      where("phone_number",$no_wa)
-                      ->where("user_id",$user->id)
+                      where("user_id",$user->id)
                       ->first();
-                if (is_null($phoneNumber)) {
-                  $phoneNumber = new PhoneNumber();
-                }
+                // if (is_null($phoneNumber)) {
+                  // $phoneNumber = new PhoneNumber();
+                // }
 								$phoneNumber->user_id = $user->id;
 								$phoneNumber->phone_number = $no_wa;
 								$phoneNumber->filename = $key;
@@ -622,9 +633,9 @@ class SettingController extends Controller
 				return $arr;
 			}
 			else {
-				$delete_api = ApiHelper::unreg($wa_number);
+				// $delete_api = ApiHelper::unreg($wa_number);
 
-				if($delete_api !== "success")
+				/*if($delete_api !== "success")
 				{
 					// $phoneNumber->delete();
           $phoneNumber->status = 1;
@@ -632,7 +643,7 @@ class SettingController extends Controller
 					$arr['status'] = 'success';
 					$arr['message'] = "The phone number has been deleted";
 					return $arr;
-				}
+				}*/
 
 				try{
 					// $phoneNumber->delete();
@@ -655,34 +666,6 @@ class SettingController extends Controller
         ApiHelper::unreg($wa_number);
     }
 
-    private function getToken($no_wa)
-    {
-        $url='https://116.203.92.59/api/get_ip_key';
-        $key='fb6d0ba27c5170239c7bc08f043e985eee2c913b997ada89';
-        $data = array(
-          "no_wa" => $no_wa,
-          "key"=>$key,
-        );
-
-        $data_string = json_encode($data);
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, 0);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 360);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($data_string))
-        );
-
-        return curl_exec($ch);
-        //echo $res=curl_exec($ch);
-    }
-    
     public function get_all_cust()
     {
         return ApiHelper::get_all_cust();
