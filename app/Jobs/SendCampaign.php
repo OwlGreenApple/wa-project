@@ -211,7 +211,8 @@ class SendCampaign implements ShouldQueue
                           }
                         }
 
-                        $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$send_message);
+                        // $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$send_message);
+                        $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign);
                         $status = $this->getStatus($send_message,$phoneNumber->mode);
 
                         $phoneNumber->counter --;
@@ -834,6 +835,23 @@ class SendCampaign implements ShouldQueue
 						$status = 3;
 				}
 			}
+      
+      if ($mode == 2) {
+        if($send_message !== null)
+        {
+           /* Determine status on BroadCast-customer */
+            $delivery_status = $send_message->deliveryStatus;
+            if($delivery_status == 'queued'){
+              $status = 2;
+            } elseif($delivery_status == 'sent') {
+              $status = 1;
+            } elseif($delivery_status == 'failed') {
+              $status = 4;
+            } else {
+              $status = 3;
+            }
+        }
+      }
 
       return $status;
     }
