@@ -239,7 +239,10 @@
     <!-- footer -->
     <div class="col-md-12">
       <div class="container footer">
-        Copyright &copy; 2020 <b>Activrespon</b> All Rights Reserved.
+        Copyright &copy; 2020 <b>Activrespon</b> All Rights Reserved.<br/>
+        @if(Auth()->check())
+           <a href="{{ url('signout') }}">Logout</a>                        
+        @endif
       </div>
     </div>
 

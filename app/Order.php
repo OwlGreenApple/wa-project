@@ -44,7 +44,7 @@ class Order extends Model
     //unique code 
     $unique_code = mt_rand(1, 1000);
 		$user = $data['user'];
-
+    $total = $data['price'] + $data['priceupgrade'] + $unique_code;
     $dt = Carbon::now();
 
     if($data['upgrade'] <> null)
@@ -55,7 +55,7 @@ class Order extends Model
     {
       $grand_total = $data['price'] + $data['priceupgrade'] - $data['diskon'] + $unique_code;
     }
-    
+
     $order = new Order;
     // $str = 'ACT'.$dt->format('ymdHi');
     $str = 'ACT'.$dt->format('ymd').'-'.$dt->format('Hi');
@@ -65,7 +65,7 @@ class Order extends Model
     $order->package =$data['namapaket'];
     $order->package_title =$data['namapakettitle'];
     $order->coupon_id = $data['kuponid'];
-    $order->total = $data['price'] + $unique_code;
+    $order->total = $total ;
     $order->total_upgrade = $data['priceupgrade'];
     $order->status_upgrade = $data['status_upgrade'];
     $order->discount = $data['diskon'];

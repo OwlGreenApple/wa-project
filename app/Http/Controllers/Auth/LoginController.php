@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\OrderController;
 use Carbon\Carbon;
 use App\User;
+use App\Order;
 use Cookie;
 
 class LoginController extends Controller
@@ -78,11 +80,34 @@ class LoginController extends Controller
     {
         $email = $request->email;
         $password = $request->password;
+        $namapaket = null;
+        $result_upgrade = true;
+        $upgrade_price = 0;
 
-        if(Auth::guard('web')->attempt(['email' => $email, 'password' => $password])) {
+        if(session('order') <> null)
+        {
+          $namapaket = session('order')['namapaket'];
+        }
+
+        if(Auth::guard('web')->attempt(['email' => $email, 'password' => $password])) 
+        {
+            $user = Auth::user();
+            if($namapaket <> null)
+            {
+              // return true if downgrade
+              $result_upgrade = $this->checkDowngrade($namapaket,$user);
+            }
+
+            if($result_upgrade == false)
+            {
+               $upgrade_price = $this->getTotalCount($user,$namapaket);
+            }
+            
             return response()->json([
                 'success' => 1,
-                'email' => $request->email
+                'email' => $request->email,
+                'status_upgrade'=>$result_upgrade,
+                'upgrade_price'=>number_format($upgrade_price),
             ]);
         } else {
             return response()->json([
@@ -90,6 +115,63 @@ class LoginController extends Controller
                 'message' => 'Not Credential Account'
             ]);
         }
+    }
+
+    public function getTotalCount($user,$namapaket)
+    {
+      $order = Order::where('user_id',$user->id)
+                ->where("status",2)
+                ->orderBy('created_at','desc')
+                ->first();
+
+      if (!is_null($order)) 
+      {
+        $current_package = $order->package;
+      }
+      else
+      {
+        $current_package = $user->membership;
+      }
+
+      $dayleft = $user->day_left;
+
+      $package_price = getPackagePrice($namapaket);
+      $oldpackage_price = getPackagePrice($current_package);
+
+      $get_new_order_day = getAdditionalDay($namapaket);
+      $get_old_order_day = getAdditionalDay($current_package);
+
+      $order_controller = new OrderController;
+      $remain_day_price = $order_controller->getUpgradeNow($package_price,$get_new_order_day,$oldpackage_price,$get_old_order_day,$dayleft);
+
+      $upgrade_price = $package_price + round($remain_day_price);
+
+      return $upgrade_price;
+    }
+
+    public function checkDowngrade($namapaket,$user)
+    {
+      $order = Order::where('user_id',$user->id)
+                ->where("status",2)
+                ->orderBy('created_at','desc')
+                ->first();
+
+      if (!is_null($order)) 
+      {
+        $current_package = $order->package;
+      }
+      else
+      {
+        $current_package = $user->membership;
+      }
+
+      $data = [
+          'current_package'=>$current_package,
+          'order_package'=>$namapaket,
+      ];
+      
+      $get_status = checkMembershipDowngrade($data);
+      return $get_status;
     }
 
     private function setCookie($email,$password)

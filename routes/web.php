@@ -135,6 +135,7 @@ Route::group(['middleware'=>['auth','web']],function(){
   Route::get('settings/{mod?}', 'SettingController@index');
   Route::post('save-settings', 'SettingController@settingsUser')->middleware('usersettings');
   Route::get('load-phone-number', 'SettingController@load_phone_number');
+  Route::get('signout', 'Auth\LoginController@logout');
 	
 	//woowa + simi 
   // Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkcall');
@@ -158,6 +159,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	//Orders 
 	Route::get('/order','OrderController@index_order');
 	Route::get('/order/load-order','OrderController@load_order');
+  Route::get('/order/check_downgrade','OrderController@checkDowngrade');
 	Route::post('order-confirm-payment','OrderController@confirm_payment_order');
 
 });
