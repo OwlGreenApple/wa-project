@@ -112,7 +112,7 @@ class ApiController extends Controller
     public function send_message_wassenger_automation(Request $request)
     {
       $obj = json_decode($request->getContent());
-      return ApiHelper::send_wassenger($obj->customer_phone,$obj->message,$obj->key_woowa);
+      return ApiHelper::send_wassenger($obj->customer_phone,$obj->message,$obj->keywassenger);
     }
 
     public function testapi()

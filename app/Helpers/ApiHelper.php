@@ -656,7 +656,7 @@ class ApiHelper
 
 
   //wassenger
-  public function send_wassenger($phoneNumber,$message,$api_key)
+  public static function send_wassenger($phoneNumber,$message,$api_key)
   {
       // $api_key = '4606fc4e04539011135aa18a339424bfbdca3e873b5854b816282da9b6bb19763c4d7c420cb990a1';
       $curl = curl_init();

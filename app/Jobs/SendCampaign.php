@@ -1005,7 +1005,7 @@ class SendCampaign implements ShouldQueue
       $data = array(
           'customer_phone'=>$customer_phone,
           'message'=>$message,
-          'key_woowa'=>$key,
+          'keywassenger'=>$key,
       );
 
 		  $url = "https://activrespon.com/dashboard/send-message-wassenger-automation";
