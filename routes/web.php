@@ -37,6 +37,7 @@ Route::post('send-simi','ApiController@send_simi');
 Route::post('send-message-automation','ApiController@send_message');
 Route::post('send-image-url-simi','ApiController@send_image_url_simi');
 Route::post('send-image-url','ApiController@send_image_url');
+Route::post('send-message-wassenger-automation','ApiController@send_message_wassenger_automation');
 
 Route::post('is_pay','ApiController@customerPay');
 Route::post('private-list','ApiController@register_list');

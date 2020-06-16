@@ -46,6 +46,9 @@ class CheckConnection extends Command
         {
           foreach($phone_numbers AS $row)
           {
+            if ($row->mode == 2 ) {
+              continue;
+            }
             $idphone_number = $row->id;
 						$status = false;
 						

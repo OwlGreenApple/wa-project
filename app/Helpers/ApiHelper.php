@@ -653,5 +653,48 @@ class ApiHelper
 		return $result;
 
 	}	
+
+
+  //wassenger
+  public static function send_wassenger($phoneNumber,$message,$api_key)
+  {
+      // $api_key = '4606fc4e04539011135aa18a339424bfbdca3e873b5854b816282da9b6bb19763c4d7c420cb990a1';
+      $curl = curl_init();
+
+      $data = array(
+          'phone'=>$phoneNumber,
+          'message'=>$message
+      );
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://api.wassenger.com/v1/messages",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => json_encode($data,true),
+        CURLOPT_HTTPHEADER => array(
+          "content-type: application/json",
+          "token: ".$api_key.""
+        ),
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+
+      if ($err) {
+        echo "cURL Error #:" . $err;
+        throw new Exception($err);
+      } else {
+        //echo $response."\n";
+        return $response;
+      }
+  }
+
+  
 /* END CLASS */
 }
