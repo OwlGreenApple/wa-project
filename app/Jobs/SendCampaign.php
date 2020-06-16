@@ -837,10 +837,11 @@ class SendCampaign implements ShouldQueue
 			}
       
       if ($mode == 2) {
-        if($send_message !== null)
+        $obj = json_decode($send_message);
+        if($obj !== null)
         {
            /* Determine status on BroadCast-customer */
-            $delivery_status = $send_message->deliveryStatus;
+            $delivery_status = $obj->deliveryStatus;
             if($delivery_status == 'queued'){
               $status = 2;
             } elseif($delivery_status == 'sent') {

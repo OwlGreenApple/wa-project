@@ -691,7 +691,7 @@ class ApiHelper
         throw new Exception($err);
       } else {
         //echo $response."\n";
-        return json_decode($response);
+        return $response;
       }
   }
 
