@@ -158,7 +158,7 @@ class OrderController extends Controller
       $arr['total'] = $pricing;
     }
 
-    if($request->kupon!=''){
+    if($request->kupon <> null){
       $user_id = 0;
       if (!is_null($user)) {
         $user_id = $user->id;
@@ -448,6 +448,78 @@ class OrderController extends Controller
     return redirect('summary');
   }
 
+  // for submit summary
+  public function getTotalCount($user,$namapaket)
+    {
+      $order = Order::where('user_id',$user->id)
+                ->where("status",2)
+                ->orderBy('created_at','desc')
+                ->first();
+
+      if (!is_null($order)) 
+      {
+        $current_package = $order->package;
+      }
+      else
+      {
+        $current_package = $user->membership;
+      }
+
+      $dayleft = $user->day_left;
+      $diskon = session('order')['diskon'];
+
+      $package_price = getPackagePrice($namapaket);
+      $oldpackage_price = getPackagePrice($current_package);
+
+      $get_new_order_day = getAdditionalDay($namapaket);
+      $get_old_order_day = getAdditionalDay($current_package);
+
+      $remain_day_price = $this->getUpgradeNow($package_price,$get_new_order_day,$oldpackage_price,$get_old_order_day,$dayleft);
+      $remain_day_price = round($remain_day_price);
+
+      $total_price = $package_price + $remain_day_price - $diskon;
+
+      $order = session()->pull('order', []); 
+      $order['price'] = $package_price;
+      $order['priceupgrade'] = $remain_day_price;
+      session::put('order',$order);
+     
+      return $total_price;
+  }
+
+  public function getStatusUpgrade(Request $request)
+  {
+      $user = Auth::user();
+      $namapaket = session('order')['namapaket'];
+      $diskon = session('order')['diskon'];
+
+      if($request->status_upgrade == 2 || $request->status_upgrade == null)
+      {
+          $upgrade_price = getPackagePrice($namapaket);
+          $total_price = $upgrade_price - $diskon;
+
+          $order = session()->pull('order', []); 
+          $order['price'] = $upgrade_price;
+          $order['priceupgrade'] = 0;
+          session::put('order',$order);
+      }
+      else
+      {
+          $total_price = $this->getTotalCount($user,$namapaket); 
+      }
+
+      if($diskon > 0)
+      {
+          $price = session('order')['price'];
+      }
+      else
+      {
+          $price = '';
+      }
+      
+      return response()->json(['total'=>$total_price,'price'=>$price]);
+  }
+
   public function submit_summary(Request $request){
     $user = Auth::user();
 
@@ -456,7 +528,14 @@ class OrderController extends Controller
         return redirect('pricing');
     }
 
-    // $this->check_coupon($request);
+    if($request->status_upgrade <> null)
+    {
+        $status_upgrade = $request->status_upgrade;
+    }
+    else
+    {
+        $status_upgrade = session('order')['status_upgrade'];
+    }
 
 		$data = [
 			"user"=> $user,
@@ -470,9 +549,10 @@ class OrderController extends Controller
 			"month"=> session('order')['month'],
       "total"=>session('order')['total'],
       "upgrade"=>session('order')['upgrade'],
-      "status_upgrade"=>session('order')['status_upgrade'],
-      "priceupgrade"=>session('order')['priceupgrade']
+      "status_upgrade"=>$status_upgrade,
 		];
+
+
 
 		$order = Order::create_order($data);
     return view('order.thankyou')->with(array(

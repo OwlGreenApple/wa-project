@@ -158,7 +158,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	//Orders 
 	Route::get('/order','OrderController@index_order');
 	Route::get('/order/load-order','OrderController@load_order');
-  Route::get('/order/check_downgrade','OrderController@checkDowngrade');
+  Route::get('get-status-upgrade','OrderController@getStatusUpgrade');
 	Route::post('order-confirm-payment','OrderController@confirm_payment_order');
 
 });

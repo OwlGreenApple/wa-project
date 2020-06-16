@@ -11,7 +11,7 @@ use App\Http\Controllers\OrderController;
 use Carbon\Carbon;
 use App\User;
 use App\Order;
-use Cookie;
+use Cookie,Session;
 
 class LoginController extends Controller
 {
@@ -81,7 +81,6 @@ class LoginController extends Controller
         $email = $request->email;
         $password = $request->password;
         $namapaket = null;
-        $result_upgrade = true;
         $upgrade_price = 0;
 
         if(session('order') <> null)
@@ -92,22 +91,51 @@ class LoginController extends Controller
         if(Auth::guard('web')->attempt(['email' => $email, 'password' => $password])) 
         {
             $user = Auth::user();
-            if($namapaket <> null)
+            $package_upgrade = session('order')['upgrade']; //for coupon package upgrade
+            $order_session = session()->pull('order', []); 
+
+            if($namapaket <> null && $package_upgrade == 0)
             {
               // return true if downgrade
               $result_upgrade = $this->checkDowngrade($namapaket,$user);
             }
-
-            if($result_upgrade == false)
+            else
             {
-               $upgrade_price = $this->getTotalCount($user,$namapaket);
+              $result_upgrade = 0;
             }
-            
+
+            if($result_upgrade == 1)
+            {
+               $order = new OrderController;
+               $upgrade_price = $order->getTotalCount($user,$namapaket);
+               $order_session['status_upgrade'] = 1;  
+            }
+            else if($result_upgrade == 2)
+            {
+               $order_session['status_upgrade'] = 2;  
+               $upgrade_price = getPackagePrice($namapaket);
+            }
+            else
+            {
+               $order_session['status_upgrade'] = 0; 
+            }      
+            session::put('order',$order_session);
+
+            if(session('order')['diskon'] > 0)
+            {
+              $price = session('order')['price'];
+            }
+            else
+            {
+              $price = '';
+            }
+
             return response()->json([
                 'success' => 1,
                 'email' => $request->email,
-                'status_upgrade'=>$result_upgrade,
-                'upgrade_price'=>number_format($upgrade_price),
+                'status_upgrade'=>session('order')['status_upgrade'],
+                'price'=>$price,
+                'total'=>number_format($upgrade_price),
             ]);
         } else {
             return response()->json([
@@ -115,38 +143,6 @@ class LoginController extends Controller
                 'message' => 'Not Credential Account'
             ]);
         }
-    }
-
-    public function getTotalCount($user,$namapaket)
-    {
-      $order = Order::where('user_id',$user->id)
-                ->where("status",2)
-                ->orderBy('created_at','desc')
-                ->first();
-
-      if (!is_null($order)) 
-      {
-        $current_package = $order->package;
-      }
-      else
-      {
-        $current_package = $user->membership;
-      }
-
-      $dayleft = $user->day_left;
-
-      $package_price = getPackagePrice($namapaket);
-      $oldpackage_price = getPackagePrice($current_package);
-
-      $get_new_order_day = getAdditionalDay($namapaket);
-      $get_old_order_day = getAdditionalDay($current_package);
-
-      $order_controller = new OrderController;
-      $remain_day_price = $order_controller->getUpgradeNow($package_price,$get_new_order_day,$oldpackage_price,$get_old_order_day,$dayleft);
-
-      $upgrade_price = $package_price + round($remain_day_price);
-
-      return $upgrade_price;
     }
 
     public function checkDowngrade($namapaket,$user)
@@ -171,7 +167,17 @@ class LoginController extends Controller
       ];
       
       $get_status = checkMembershipDowngrade($data);
-      return $get_status;
+
+      if($get_status == true)
+      {
+        $status_upgrade = 2;
+      }
+      else
+      {
+        $status_upgrade = 1;
+      }
+
+      return $status_upgrade;
     }
 
     private function setCookie($email,$password)
