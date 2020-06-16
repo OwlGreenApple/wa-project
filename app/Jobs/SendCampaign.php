@@ -211,8 +211,8 @@ class SendCampaign implements ShouldQueue
                           }
                         }
 
-                        // $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$send_message);
-                        $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign);
+                        $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$send_message);
+                        // $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign);
                         $status = $this->getStatus($send_message,$phoneNumber->mode);
 
                         $phoneNumber->counter --;
