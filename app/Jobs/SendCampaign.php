@@ -843,7 +843,7 @@ class SendCampaign implements ShouldQueue
            /* Determine status on BroadCast-customer */
             $delivery_status = $obj->deliveryStatus;
             if($delivery_status == 'queued'){
-              $status = 2;
+              $status = 1;
             } elseif($delivery_status == 'sent') {
               $status = 1;
             } elseif($delivery_status == 'failed') {
