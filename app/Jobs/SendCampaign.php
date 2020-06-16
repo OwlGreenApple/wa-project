@@ -187,6 +187,9 @@ class SendCampaign implements ShouldQueue
                             // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
                             $send_message = $this->send_message($customer_phone,$message,$key);
                           }
+                          if ($phoneNumber->mode == 2) {
+                            $send_message = $this->send_message_wassenger($customer_phone,$message,$key);
+                          }
                         }
                         else {
                           if ($phoneNumber->mode == 0) {
@@ -233,7 +236,7 @@ class SendCampaign implements ShouldQueue
                         $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     }
                 // }
-                sleep(mt_rand(5, 35));
+                sleep(mt_rand(5, 25));
             }//END LOOPING
 
         } // END BROADCAST 
@@ -391,7 +394,7 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(5, 35));
+                sleep(mt_rand(5, 25));
             }//END LOOPING
         }
     }
@@ -566,7 +569,7 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(5, 35));
+                sleep(mt_rand(5, 25));
               }//END FOR LOOP EVENT
           }
     }
@@ -731,7 +734,7 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(5, 35));
+                sleep(mt_rand(5, 25));
               }//END FOR LOOP EVENT
           }
     }
@@ -995,5 +998,35 @@ class SendCampaign implements ShouldQueue
       return $response;
     }
     
+    
+    public function send_message_wassenger($customer_phone,$message,$key){
+      $curl = curl_init();
+
+      $data = array(
+          'customer_phone'=>$customer_phone,
+          'message'=>$message,
+          'key_woowa'=>$key,
+      );
+
+		  $url = "https://activrespon.com/dashboard/send-message-wassenger-automation";
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 300,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
+      ));
+
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+
+      curl_close($curl);
+      return $response;
+    }
+        
 /* end class */
 }
