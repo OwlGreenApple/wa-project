@@ -41,7 +41,7 @@ class CheckConnection extends Command
      */
     public function handle()
     {
-        $phone_numbers = PhoneNumber::all();
+        $phone_numbers = PhoneNumber::where("status","<>",0)->get();
         if($phone_numbers->count() > 0)
         {
           foreach($phone_numbers AS $row)
