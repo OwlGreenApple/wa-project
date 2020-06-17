@@ -28,7 +28,7 @@ class SendCampaign implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-		protected $phone_id,$broadcast_id;
+		protected $phone_id;
 		
     /**
      * Create a new job instance.
@@ -119,6 +119,7 @@ class SendCampaign implements ShouldQueue
 										$message = $spintax->process($message);  //spin text
                     $chat_id = $row->chat_id;  
                     $counter = $phoneNumber->counter;
+                    $counter2 = $phoneNumber->counter2;
                     $max_counter = $phoneNumber->max_counter;
                     $max_counter_day = $phoneNumber->max_counter_day;
                     $key = $phoneNumber->filename;
@@ -136,7 +137,7 @@ class SendCampaign implements ShouldQueue
                       continue;
                     }
 
-                    if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
+                    if(($counter <= 0) || ($counter2 <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
                         continue;
                     }
 
@@ -237,7 +238,7 @@ class SendCampaign implements ShouldQueue
                         $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     }
                 // }
-                sleep(mt_rand(5, 25));
+                sleep(mt_rand(1, 30));
             }//END LOOPING
 
         } // END BROADCAST 
@@ -274,6 +275,7 @@ class SendCampaign implements ShouldQueue
                 $phoneNumber = PhoneNumber::where('user_id','=',$row->userid)->first();
                 if(!is_null($phoneNumber)){
                   $counter = $phoneNumber->counter;
+                  $counter2 = $phoneNumber->counter2;
                   $max_counter = $phoneNumber->max_counter;
                   $max_counter_day = $phoneNumber->max_counter_day;
                 }
@@ -314,7 +316,7 @@ class SendCampaign implements ShouldQueue
                 $adding = Carbon::parse($adding_with_hour);
                 $midnightTime = $this->avoidMidnightTime($row->timezone);
 
-                if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) || $midnightTime == false) {
+                if(($counter <= 0) || ($counter2 <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) || $midnightTime == false) {
                   continue;
                 }
 
@@ -395,7 +397,7 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(5, 25));
+                sleep(mt_rand(1, 30));
             }//END LOOPING
         }
     }
@@ -434,6 +436,7 @@ class SendCampaign implements ShouldQueue
                   $customer_phone = $row->telegram_number;
                   $key = $phoneNumber->filename;
                   $counter = $phoneNumber->counter;
+                  $counter2 = $phoneNumber->counter2;
                   $max_counter = $phoneNumber->max_counter;
                   $max_counter_day = $phoneNumber->max_counter_day;
                 }
@@ -454,7 +457,7 @@ class SendCampaign implements ShouldQueue
                     continue;
                 }
 
-								if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
+								if(($counter <= 0) || ($counter2 <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
 									continue;
 								}
                 // if the day before / substract 
@@ -570,7 +573,7 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(5, 25));
+                sleep(mt_rand(1, 30));
               }//END FOR LOOP EVENT
           }
     }
@@ -621,6 +624,7 @@ class SendCampaign implements ShouldQueue
 
                 if(!is_null($phoneNumber)){
                   $counter = $phoneNumber->counter;
+                  $counter2 = $phoneNumber->counter2;
                   $max_counter = $phoneNumber->max_counter;
                   $max_counter_day = $phoneNumber->max_counter_day;
                 }
@@ -639,7 +643,7 @@ class SendCampaign implements ShouldQueue
                     continue;
                 }
 
-								if(($counter <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
+								if(($counter <= 0) || ($counter2 <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
 									continue;
 								}
 								
@@ -735,7 +739,7 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(5, 25));
+                sleep(mt_rand(1, 30));
               }//END FOR LOOP EVENT
           }
     }

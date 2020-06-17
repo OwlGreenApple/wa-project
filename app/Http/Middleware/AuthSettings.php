@@ -19,7 +19,10 @@ class AuthSettings
     public function handle($request, Closure $next)
     {
       $user = Auth::user();
-      $phone = PhoneNumber::where('user_id',$user->id)->get();
+      $phone = PhoneNumber::
+                where('user_id',$user->id)
+                ->where('status',"<>",0)
+                ->get();
 
       if($user->day_left<=0){
         return redirect('order');
