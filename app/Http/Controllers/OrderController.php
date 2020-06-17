@@ -300,9 +300,9 @@ class OrderController extends Controller
 			$dayleft = $user->day_left;
 
       // new order
-      if($package_order == null)
+      if($package_order == null || $dayleft < 1)
       {
-         $arr['priceupgrade'] = 0;
+         $arr['priceupgrade'] = $request->harga;
          return $arr;
       }
 
@@ -356,12 +356,7 @@ class OrderController extends Controller
 
   public function getUpgradeNow($newpackage,$package_day,$oldpackage,$old_package_day,$day_left)
   {
-    // prevent 0 result if user day left is 0
-    if($day_left < 1)
-    {
-      $day_left = 1;
-    }
-
+  
     $upgrade_new = $newpackage/$package_day * $day_left;
     $upgrade_old = $oldpackage/$old_package_day * $day_left;
     $upgrade_now = $upgrade_new - $upgrade_old;
@@ -473,6 +468,11 @@ class OrderController extends Controller
 
       $get_new_order_day = getAdditionalDay($namapaket);
       $get_old_order_day = getAdditionalDay($current_package);
+
+      if($dayleft < 1 || $current_package == null)
+      {
+          return $package_price;
+      } 
 
       $remain_day_price = $this->getUpgradeNow($package_price,$get_new_order_day,$oldpackage_price,$get_old_order_day,$dayleft);
       $remain_day_price = round($remain_day_price);

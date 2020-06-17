@@ -386,23 +386,28 @@
       $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         type: 'GET',
-        url: "<?php echo url('/delete-event');?>",
-        data: {
-          id : $("#id_reminder").val(),
-        },
-        dataType: 'text',
+        url: "{{ url('event-del') }}",
+        data: {id : $("#id_reminder").val()},
+        dataType: 'json',
         beforeSend: function()
         {
           $('#loader').show();
           $('.div-loading').addClass('background-load');
         },
-        success: function(result) {
+        success: function(data) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
 
-          var data = jQuery.parseJSON(result);
-          $("#notification_events").html('<div class="alert alert-success">'+data.message+'</div>');
-          loadEvent();
+          if(data.status == 'success')
+          {
+            $("#notification_events").html('<div class="alert alert-success">'+data.message+'</div>');
+            loadEvent();
+          }
+          else
+          {
+            $("#notification_events").html('<div class="alert alert-danger">'+data.message+'</div>');
+          }
+         
         },
         error : function(xhr,attribute,throwable)
         {

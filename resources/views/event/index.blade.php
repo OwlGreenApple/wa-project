@@ -605,11 +605,8 @@
       {
         $.ajax({
           type : 'GET',
-          url : '{{ url("campaign-del") }}',
-          data : {
-            id : id,
-            mode : "event"
-          },
+          url : '{{ url("delete-event") }}',
+          data : {id : id},
           beforeSend: function()
           {
             $('#loader').show();
@@ -619,8 +616,17 @@
           {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
-            displayEvent();
-            clearToolTip();
+
+            if(result.error == 0)
+            {
+              $(".notification_err").html('<div class="alert alert-success">'+result.msg+'</div>')
+              displayEvent();
+              clearToolTip();
+            }
+            else
+            {
+              $(".notification_err").html('<div class="alert alert-danger">'+result.msg+'</div>')
+            }
           },
           error : function(xhr, attr, throwable)
           {

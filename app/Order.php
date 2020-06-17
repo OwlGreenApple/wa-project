@@ -44,7 +44,7 @@ class Order extends Model
     //unique code 
     $unique_code = mt_rand(1, 1000);
 		$user = $data['user'];
-    $total = $data['price'] + $data['priceupgrade'] + $unique_code;
+    $total = $data['price'] + $unique_code;
     $dt = Carbon::now();
 
     if($data['upgrade'] <> null)
