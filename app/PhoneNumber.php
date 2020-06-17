@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class PhoneNumber extends Model
 {
   /* 
+  *counter -> buat counter maximum dalam 1 menit
+  *counter2 -> buat counter akan stop setelah 2-3 menit setelah counter abis
+  
+  
   * Status 
   * 1 -> Disconnected
 	* 2 -> Connected
