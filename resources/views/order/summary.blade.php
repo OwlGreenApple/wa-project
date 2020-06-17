@@ -291,12 +291,14 @@
   <!-- End Table -->
   <div>
 
-    <div class="col-md-12 col-12 upgrade">
+  <form method="POST" action="{{url('submit-summary')}}">
+  
+    <div class="col-md-12 col-12 upgrade" <?php if (!$is_login) { ?> style="display:none;"<?php } ?>>
       <label>Upgrade : </label>
       <div>
         <div class="form-check form-check-inline">
           <label class="custom-radio">
-            <input class="form-check-input" type="radio" name="status_upgrade" value="1" checked>
+            <input class="form-check-input" type="radio" name="status_upgrade" value="1" checked disabled>
             <span class="checkmark"></span>
           </label>
           <label class="form-check-label" for="radio-male">Now</label>
@@ -317,7 +319,7 @@
     <div class="as-checkout-entry" id="checkout-total">
     
       <div class="col-md-12 col-12">
-        <strong class="as-checkout-total">Total</strong>
+        <strong class="as-checkout-total">Total : </strong>
         <strong class="as-checkout-total-price total_price" id="totalprice_sidebar totalprice_mobile">
         Rp. 
         @if(session('order')['diskon'] > 0 || session('order')['upgrade'] <> null)
@@ -333,7 +335,7 @@
   
 
 </div>
-									<form method="POST" action="{{url('submit-summary')}}">
+									
 										{{ csrf_field() }}
                     <div class="checkout-button-container mt-30 step-2" id="checkout-buttons-1" <?php if (!$is_login) { ?> style="display:none;"<?php } ?>>
 
@@ -380,6 +382,42 @@
     $("input[name='status_upgrade']").change(function(){
       var val = $(this).val();
 
+      $.ajax({
+        type: 'GET',
+        url: "{{ url('get-status-upgrade') }}",
+        data: {
+          'status_upgrade':val,
+        },
+        dataType: 'json',
+        beforeSend: function() 
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(data) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          $(".total_price").html('Rp '+'<strike>'+formatNumber(data.price)+'</strike> '+formatNumber(data.total));
+          
+          /*if(data.status_upgrade == false) //false which mean upgrade
+          {
+            $(".upgrade").show();
+            $(".total_price").html('Rp '+data.upgrade_price);
+            // $("input[name='status_upgrade']").prop('disabled',false);
+          }
+          else
+          {
+            $(".upgrade").hide();
+            // $("input[name='status_upgrade']").prop('disabled',true);
+          }*/
+        },
+        error : function(xhr)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
+        }
+      });
     });
   }
 
@@ -461,19 +499,18 @@
 					if (data.success == '1') {
 						$(".step-2").show();
 						$("#step-1").html('<p>Your order confirmation will be emailed to:</p><span class="sumo-psuedo-link">'+data.email+'</span>');
-/*
-            if(data.status_upgrade == false) //false which mean upgrade
+
+            if(data.status_upgrade == 1) //false which mean upgrade
             {
+              $("input[name='status_upgrade']").prop('disabled',false);
               $(".upgrade").show();
-              $(".total_price").html('IDR '+data.upgrade_price);
+              $(".total_price").html('Rp '+'<strike>'+formatNumber(data.price)+'</strike> '+data.total);
               // $("input[name='status_upgrade']").prop('disabled',false);
             }
             else
             {
-              $(".upgrade").hide();
-              // $("input[name='status_upgrade']").prop('disabled',true);
-            }*/
-
+               $(".upgrade").hide(); 
+            }
 					} 
 					else {
 						alert(data.message);
@@ -580,6 +617,7 @@
 		
 		loginAjax();
 		registerAjax();
+    getUpgrade();
 
 		initButton();
 		onChangeRegister();
@@ -587,6 +625,7 @@
     
 </script>
 
-<script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
-
+@if(!$is_login)
+  <script src="{{ asset('/assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
+@endif
 @endsection
