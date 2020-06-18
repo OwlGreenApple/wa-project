@@ -50,7 +50,7 @@ class ApiController extends Controller
 			$list = UserList::where('name',$obj->list_name)->first();
       $customer_phone = Customer::where([['list_id',$list->id],['telegram_number',$obj->phone_number]])->first();
 
-			if (!is_null($list)) {
+			if (!is_null($list) && is_null($customer_phone)) {
 				$str = $obj->phone_number;
         $phone_number = $obj->phone_number;
         
