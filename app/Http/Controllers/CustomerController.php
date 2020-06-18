@@ -224,6 +224,7 @@ class CustomerController extends Controller
               $customer_join = $customer->created_at;
             }
 
+            $customer::create_link_unsubs($customer->id,$list->id);
             /*
             Kalo is_secure maka akan dikirim langsung message wa nya 
             */
@@ -282,14 +283,15 @@ class CustomerController extends Controller
 				$message = str_replace( "[NAME]" , $subscribername, $message);
 				// $message = str_replace( "[REPLY_CHAT]" , "whatsapp://send/?phone=".$phoneNumber->phone_number."&text=" . "Hi Nama saya ".$request->subscribername.", saya bergabung digroup ini", $message);
 
+        $customer = Customer::find($customer_id);
 				$message = str_replace( "[START]" , env("APP_URL")."link/activate/".$list_name."/".$customer_id, $message);
         $list = UserList::find($list_id);
         if (!is_null($list)){
-          if ($list->link_unsubs =="") {
-            $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+          if ($customer->link_unsubs =="") {
+            $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$customer_id, $message);
           }
           else {
-            $message = str_replace( "[UNSUBS]" , $list->link_unsubs, $message);
+            $message = str_replace( "[UNSUBS]" , $customer->link_unsubs, $message);
           }
         }
 			}
