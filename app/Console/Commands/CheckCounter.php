@@ -40,7 +40,7 @@ class CheckCounter extends Command
      */
     public function handle()
     {
-        $phoneNumbers = PhoneNumber::select('counter','user_id')->get();
+        $phoneNumbers = PhoneNumber::all();
 
         if($phoneNumbers->count() > 0){
             foreach($phoneNumbers as $row){
