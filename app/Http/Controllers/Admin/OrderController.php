@@ -66,7 +66,7 @@ class OrderController extends Controller
     }*/
 
     //downgrade or upgrade later
-    if($status_upgrade == 2)
+    if($status_upgrade == 2 || ($current_membership <> null && $user_day_left > 0 && $status_upgrade == 0))
     {
       $data = [
         'user_id'=>$order->user_id,
@@ -168,7 +168,7 @@ class OrderController extends Controller
 
   private function orderLater(array $data)
   {
-    $check_membership = Membership::where('user_id',$data['user_id'])->orderBy('id')->first();
+    $check_membership = Membership::where('user_id',$data['user_id'])->orderBy('id','desc')->first();
 
     $membership = new Membership;
     $membership->user_id = $data['user_id'];

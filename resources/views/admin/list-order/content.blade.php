@@ -3,7 +3,7 @@
     <td data-label="No Order">
       {{$order->no_order}}
     </td>
-    <td data-label="Email">
+    <td data-user="{{$order->user_id}}" data-label="Email">
       {{$order->email}}
     </td>
     <td data-label="Package">

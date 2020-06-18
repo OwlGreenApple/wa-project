@@ -397,19 +397,7 @@
         success: function(data) {
           $('#loader').hide();
           $('.div-loading').removeClass('background-load');
-          $(".total_price").html('Rp '+'<strike>'+formatNumber(data.price)+'</strike> '+formatNumber(data.total));
-          
-          /*if(data.status_upgrade == false) //false which mean upgrade
-          {
-            $(".upgrade").show();
-            $(".total_price").html('Rp '+data.upgrade_price);
-            // $("input[name='status_upgrade']").prop('disabled',false);
-          }
-          else
-          {
-            $(".upgrade").hide();
-            // $("input[name='status_upgrade']").prop('disabled',true);
-          }*/
+          $(".total_price").html('Rp '+'<strike>'+formatNumber(data.price)+'</strike> '+formatNumber(data.total))
         },
         error : function(xhr)
         {
@@ -422,7 +410,14 @@
   }
 
 	function formatNumber(num) {
-		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+    if(isNan(num) == false)
+    {
+      return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+    }
+		else
+    {
+      return '';
+    }
 	}
 
 	/*

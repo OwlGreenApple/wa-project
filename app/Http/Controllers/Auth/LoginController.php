@@ -157,7 +157,9 @@ class LoginController extends Controller
         $current_package = $user->membership;
       }
 
-      if($current_package == null)
+      $day_left = $user->day_left;
+
+      if($current_package == null || ($current_package <> null && $day_left <= 0))
       {
          return 0;
       }
