@@ -69,7 +69,7 @@ class CheckMembership extends Command
                  $remain_day_left = $client->day_left;
               }
 
-              if($membership == 0 && $remain_day_left == 0)
+              if($membership == 0 && $remain_day_left <= 0)
               {
                  $client->membership = null;
                  $client->status = 0;
@@ -78,8 +78,11 @@ class CheckMembership extends Command
                  $phone = PhoneNumber::where('user_id',$row->id)->first();
                  if(!is_null($phone))
                  {
-                    $delete_api = ApiHelper::unreg($phone->phone_number);
-                    $phone->delete();
+                    $phone->counter = 0;
+                    $phone->max_counter = 0;
+                    $phone->max_counter_day = 0;
+                    $phone->status = 0;
+                    $phone->save();
                  }
               }
 
