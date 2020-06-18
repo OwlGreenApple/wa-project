@@ -271,7 +271,6 @@ class ListController extends Controller
       $list->start_custom_message = $request->start_custom_message;
       $list->unsubs_custom_message = $request->unsubs_custom_message;
       $list->save();
-      $list::create_link_unsubs($list->id);
       $listid = $list->id;
       $listname = $list->name;
 
@@ -1214,6 +1213,7 @@ class ListController extends Controller
                 try
                 {     
                   $customer->save();
+                  $customer::create_link_unsubs($customer->id,$id_list);
                   $count++;
                 }
                 catch(Exception $e)

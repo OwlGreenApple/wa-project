@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\UserList;
+
 class UserList extends Model
 {
 	protected $table = 'lists';
@@ -13,49 +13,7 @@ class UserList extends Model
 		1 = active product
     */
 
-  public static function create_link_unsubs($id){
-    $list = UserList::find($id);
-    if (!is_null($list)){
-      if ($list->link_unsubs =="")
-      {
-        $data = array(
-          "to" => "https://activrespon.com",
-        );
-
-        $payload = json_encode($data);
-
-        // Prepare new cURL resource
-        $ch = curl_init('https://spon.li/create');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-
-        // Set HTTP Header for POST request 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($payload))
-        );
-
-        // Submit the POST request
-        $result = curl_exec($ch);
-
-        // Close cURL session handle
-        curl_close($ch);
-        $obj = json_decode($result);
-
-        $list->link_unsubs = $obj->url;
-        $list->save();
-      }
-      
-      return $list->link_unsubs;
-    }
-    
-    return false;
-  }
 }
-
-
 
 /*
 Google Script 

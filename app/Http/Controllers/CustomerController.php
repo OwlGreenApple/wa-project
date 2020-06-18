@@ -635,6 +635,7 @@ class CustomerController extends Controller
             $customer->wa_number = $wa_number;
             $customer->additional = $addt;
             $customer->save();
+            $customer::create_link_unsubs($customer->id,$get_id_list->id);
             $customer_subscribe_date = $customer->created_at;
             $customerid = $customer->id;
         }

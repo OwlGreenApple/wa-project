@@ -127,6 +127,7 @@ class RegisterController extends Controller
 						$customer->is_pay= 0;
 						$customer->status = 1;
 						$customer->save();
+            $customer::create_link_unsubs($customer->id,$list->id);
 
 						if ($list->is_secure) {
 							$apiController = new ApiController;
