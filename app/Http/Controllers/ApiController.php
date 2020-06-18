@@ -48,9 +48,8 @@ class ApiController extends Controller
 			$obj = json_decode($request->getContent());
 
 			$list = UserList::where('name',$obj->list_name)->first();
-      $customer_phone = Customer::where([['list_id',$list->id],['telegram_number',$obj->phone_number]])->first();
 
-			if (!is_null($list) && is_null($customer_phone)) {
+			if (!is_null($list)) {
 				$str = $obj->phone_number;
         $phone_number = $obj->phone_number;
         
@@ -66,22 +65,27 @@ class ApiController extends Controller
           $phone_number = preg_replace("/^[0-9]/", "+62", $str);
         }
 
-				$customer = new Customer ;
-				$customer->user_id = $list->user_id;
-				$customer->list_id = $list->id;
-				$customer->name = $obj->name;
-				$customer->email = $obj->email;
-				$customer->telegram_number = $phone_number;
-				$customer->is_pay= 0;
-				$customer->status = 1;
-				$customer->save();
-        $customer::create_link_unsubs($customer->id,$list->id);
+        $customer_phone = Customer::where([['list_id',$list->id],['telegram_number',$phone_number]])->first();
 
-        $customerController = new CustomerController;
-				if ($list->is_secure) {
-					$ret = $customerController->sendListSecure($list->id,$customer->id,$obj->name,$customer->user_id,$list->name,$phone_number);
-				}
-        $saveSubscriber = $customerController->addSubscriber($list->id,$customer->id,$customer->created_at,$customer->user_id);
+        if(is_null($customer_phone))
+        {
+          $customer = new Customer ;
+          $customer->user_id = $list->user_id;
+          $customer->list_id = $list->id;
+          $customer->name = $obj->name;
+          $customer->email = $obj->email;
+          $customer->telegram_number = $phone_number;
+          $customer->is_pay= 0;
+          $customer->status = 1;
+          $customer->save();
+          $customer::create_link_unsubs($customer->id,$list->id);
+
+          $customerController = new CustomerController;
+          if ($list->is_secure) {
+            $ret = $customerController->sendListSecure($list->id,$customer->id,$obj->name,$customer->user_id,$list->name,$phone_number);
+          }
+          $saveSubscriber = $customerController->addSubscriber($list->id,$customer->id,$customer->created_at,$customer->user_id);
+        }
 				
 			}
     }
