@@ -52,11 +52,13 @@ class UsersImport implements ToModel
     		return null;
     	}
 
-        return new Customer([
+        $customer = new Customer([
            'user_id'  => Auth::id(),
            'list_id'  => $this->id_list,
            'name'     => $row[1],
            'wa_number'=> $row[8],
         ]);
+        $customer::create_link_unsubs($customer->id,$this->id_list);
+        return true;
     }
 }

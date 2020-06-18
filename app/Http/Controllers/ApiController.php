@@ -74,6 +74,7 @@ class ApiController extends Controller
 				$customer->is_pay= 0;
 				$customer->status = 1;
 				$customer->save();
+        $customer::create_link_unsubs($customer->id,$list->id);
 
         $customerController = new CustomerController;
 				if ($list->is_secure) {
@@ -176,6 +177,7 @@ class ApiController extends Controller
         $cust->email = $data['email'];
         $cust->wa_number = $data['wa_no'];
         $cust->save();
+        $cust::create_link_unsubs($cust->id,$list->id);
         $customer_subscribe_date = $cust->created_at;
         $customerid = $cust->id;
 
