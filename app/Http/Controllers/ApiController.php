@@ -48,7 +48,7 @@ class ApiController extends Controller
 			$obj = json_decode($request->getContent());
 
 			$list = UserList::where('name',$obj->list_name)->first();
-      $customer = Customer::where([['list_id',$list->id],['telegram_number',$obj->phone_number]])->first();
+      $customer_phone = Customer::where([['list_id',$list->id],['telegram_number',$obj->phone_number]])->first();
 
 			if (!is_null($list) && is_null($customer_phone)) {
 				$str = $obj->phone_number;
