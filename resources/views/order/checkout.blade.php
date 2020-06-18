@@ -181,7 +181,7 @@
                   dayleft = 0;priceupgrade=0;totalPriceUpgrade=0;
                 </script>
                 <?php if (Auth::check()) {?>
-                  <div class="form-group mb-0 upgrade">
+                  <div class="form-group mb-0 upgrade" style="display: none">
                     <div class="col-md-12 col-12 upgrade-later">
                       <label class="label-title-test" for="">
                         Remaining days (<span class="dayleft"></span>) upgrade :
@@ -298,33 +298,33 @@
         }
         
         if (data.status == 'success') {
-          $('.total').html('IDR '+' <strike>'+data.price+'</strike> '+formatNumber(parseInt(data.total)));
+          $('.total').html('IDR '+' <strike>'+formatNumber(data.price)+'</strike> '+formatNumber(data.total));
           $('#pesan').removeClass('alert-danger');
           $('#pesan').addClass('alert-success');
 
-          if(data.membership == 'downgrade')
-          {
-            $("#package-upgrade").hide();
-            $("#label-priceupgrade").hide();
-            $("input[name='status_upgrade']").prop('disabled',true);
-            $(".upgrade").hide();
-          }
-          else if(status_upgrade == 2)
+         if(status_upgrade == 2)
           {
             $(".upgrade").show();
             $("#package-upgrade").hide();
             $("#label-priceupgrade").hide();
             $("input[name='status_upgrade']").prop('disabled',false);
           }
-          else
+          else if(data.membership == 'upgrade')
           {
             $(".upgrade").show();
             $("#package-upgrade").show();
             $("#label-priceupgrade").show();
             $("input[name='status_upgrade']").prop('disabled',false);
             $(".dayleft").html(data.dayleft);
-            $("#package-upgrade").html("IDR "+data.upgrade_price);
-            $("#label-priceupgrade").html("IDR "+data.packageupgrade);
+            $("#package-upgrade").html("IDR "+formatNumber(data.upgrade_price));
+            $("#label-priceupgrade").html("IDR "+formatNumber(data.packageupgrade));
+          }
+          else //downgrade
+          {
+            $("#package-upgrade").hide();
+            $("#label-priceupgrade").hide();
+            $("input[name='status_upgrade']").prop('disabled',true);
+            $(".upgrade").hide();
           }
         } 
         /*else if (data.status == 'success-paket') {
@@ -356,7 +356,7 @@
         else {
           $('#pesan').removeClass('alert-success');
           $('#pesan').addClass('alert-danger');
-          $('.total').html('IDR '+formatNumber(parseInt(data.total)));
+          $('.total').html('IDR '+formatNumber(data.total));
         }
       },
       error: function(xhr,atrribute,throwable)
@@ -369,7 +369,17 @@
   }
   
 	function formatNumber(num) {
-		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+
+    num = parseInt(num);
+
+    if(isNaN(num) == true)
+    {
+       return '';
+    }
+    else
+    {
+       return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+    }
 	}
 
   function setPricing()

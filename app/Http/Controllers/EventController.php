@@ -383,33 +383,70 @@ class EventController extends Controller
        return response()->json($data);
     }
 
-    public function delEvent(Request $request){
-        $id = $request->id;
-        $user_id = Auth::id();
-        $event = Reminder::where([['user_id','=',$user_id],['id',$id]])->first();
-        $campaign_id = $event->campaign_id;
+    // DELETE EVENT ACCORDING ON CAMPAIGN ID (ENTIRE DAY)
+    public function deleteEvent(Request $request)
+    {
+        $userid = Auth::id();
+        $campaign_id = $request->id;
+        $reminder = Reminder::where([['campaign_id','=',$campaign_id],['user_id','=',$userid]]);
+        $campaign = Campaign::where([['id','=',$campaign_id],['user_id','=',$userid ]]);
+
+        if(!is_null($reminder->first()))
+        {
+          $reminder_customer = ReminderCustomers::where([['reminder_id','=',$reminder->first()->id],['user_id','=',$userid]]);
+
+          if($reminder_customer->get()->count() > 0)
+          {
+            $reminder_customer->delete();
+          }
+
+          $reminder->delete();
+        }
+
+        if(!is_null($campaign->first()))
+        {
+          try
+          {
+             $campaign->delete();
+             $result['error'] = 0;
+             $result['msg'] = 'Your event has been deleted successfully.';
+          }
+          catch(QueryException $e)
+          {
+             $result['error'] = 1;
+             $result['msg'] = 'Sorry, currently our server is too busy, unable to delete server.';
+          }
+        }
+
+        return response()->json($result);
+    }
+
+    //DELETE EVENT ACCORDING ON MESSAGE (H) / SINGLE EVENT
+    public function delEvent(Request $request)
+    {
+      $id = $request->id;
+      $user_id = Auth::id();
+      $reminder = Reminder::where([['id','=',$id],['user_id','=',$user_id]]);
+      $reminder_customer = ReminderCustomers::where([['reminder_id','=',$id],['user_id','=',$user_id]]);
+
+      if(!is_null($reminder->first()))
+      {
+        if($reminder_customer->get()->count() > 0)
+        {
+          $reminder_customer->delete();
+        }
+
+        try{
+          $reminder->delete();
+          $err['status'] = 'success';
+          $err['message'] = 'Day event deleted successfully';  
+        }catch(QueryException $e){
+          $err['status'] = FALSE;
+          $err['message'] = 'Sorry, our server is too busy';
+        }
         
-        try {
-          Reminder::where([['user_id','=',$user_id],['id',$id]])->delete();
-          Campaign::where([['id',$campaign_id],['user_id',$user_id]])->delete();
-          $success = true;
-        }
-        catch(QueryException $e)
-        {
-          // dd($e->getMessage())
-          return response()->json(['message'=>'Sorry, unable to delete auto responder, contact administrator']);
-        }
-
-        if($success == true)
-        {
-          $remindercustomer = ReminderCustomers::where('reminder_id','=',$id)->get();
-        }
-
-        if($remindercustomer->count() > 0)
-        {
-             ReminderCustomers::where('reminder_id','=',$id)->delete();
-        }
-        return response()->json(['message'=>'Your event has been deleted successfully']);
+        return response()->json($err);
+      }
     }
 
     public function duplicateEvent(Request $request)
@@ -593,21 +630,6 @@ class EventController extends Controller
       return $arr;
     }
 
-    public function deleteEvent(Request $request)
-    {
-        $id = $request->id;
-        try{
-          Reminder::find($id)->delete();
-          $err['status'] = 'success';
-          $err['message'] = 'Day event deleted successfully';  
-        }catch(QueryException $e){
-          $err['status'] = FALSE;
-          $err['message'] = 'Sorry, our server is too busy';
-        }
-
-        return response()->json($err);
-    }
-
     /***************************************************************************** 
                                     OLD CODES
     /*****************************************************************************/
@@ -616,6 +638,35 @@ class EventController extends Controller
 		//echo carbon::parse('2019-09-10 16:58:00')->subDays(5);
 		echo carbon::parse('2019-09-10 16:58:00')->addDays(15);
 	}
+
+   /*public function delEvent(Request $request){
+        $id = $request->id;
+        $user_id = Auth::id();
+        $event = Reminder::where([['user_id','=',$user_id],['id',$id]])->first();
+        $campaign_id = $event->campaign_id;
+        
+        try {
+          Reminder::where([['user_id','=',$user_id],['id',$id]])->delete();
+          Campaign::where([['id',$campaign_id],['user_id',$user_id]])->delete();
+          $success = true;
+        }
+        catch(QueryException $e)
+        {
+          // dd($e->getMessage())
+          return response()->json(['message'=>'Sorry, unable to delete auto responder, contact administrator']);
+        }
+
+        if($success == true)
+        {
+          $remindercustomer = ReminderCustomers::where('reminder_id','=',$id)->get();
+        }
+
+        if($remindercustomer->count() > 0)
+        {
+             ReminderCustomers::where('reminder_id','=',$id)->delete();
+        }
+        return response()->json(['message'=>'Your event has been deleted successfully']);
+    }*/
 
     public function eventAutoReply(){
         $id = Auth::id();

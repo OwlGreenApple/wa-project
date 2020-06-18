@@ -48,10 +48,11 @@ class OrderController extends Controller
 		$user->membership = $order->package;
     $status_upgrade = $order->status_upgrade;
 
-		$additional_day = 0;
+		$additional_day = getAdditionalDay($order->package);
 		$type_package =0;
- 
-		if(substr($order->package,0,5) === "basic"){
+
+ /*
+		if(substr(,0,5) === "basic"){
 			$additional_day += 30;
 			// $type_package = explode("basic", $order->package)[0];
     }
@@ -62,7 +63,7 @@ class OrderController extends Controller
 		if(substr($order->package,0,10) === "supervalue"){
 			$additional_day += 90;
       // $type_package = explode("supervalue", $order->package)[0];
-    }
+    }*/
 
     //downgrade or upgrade later
     if($status_upgrade == 2)
@@ -80,6 +81,20 @@ class OrderController extends Controller
 
     if(!is_null($phoneNumber))
     {
+      $counter = getCounter($order->package);
+
+      if($phoneNumber->max_counter_day <> null)
+      {
+        $phoneNumber->max_counter_day += $counter['max_counter_day'];
+      }
+      else
+      {
+        $phoneNumber->max_counter_day = $counter['max_counter_day'];
+      }
+
+      $phoneNumber->max_counter+=$counter['max_counter'];
+      $phoneNumber->save();
+      /*
       $type_package = substr($order->package,-1,1);
       if ($type_package=="1") {
         $phoneNumber->max_counter_day=1000;
@@ -116,11 +131,18 @@ class OrderController extends Controller
       if($type_package=="9") {
         $phoneNumber->max_counter_day=5000;
         $phoneNumber->max_counter=330000;
-      }
-      $phoneNumber->save();
+      }*/
     }
 
-    $user->day_left = $additional_day;
+    if($user_day_left < 0)
+    {
+      $user->day_left = $additional_day;
+    }
+    else
+    {
+      $user->day_left += $additional_day;
+    }
+    
     $user->membership = $order->package;
     $user->status = 1;
     $user->save();

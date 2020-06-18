@@ -82,11 +82,7 @@ class LoginController extends Controller
         $password = $request->password;
         $namapaket = null;
         $upgrade_price = 0;
-
-        if(session('order') <> null)
-        {
-          $namapaket = session('order')['namapaket'];
-        }
+        $namapaket = session('order')['namapaket'];
 
         if(Auth::guard('web')->attempt(['email' => $email, 'password' => $password])) 
         {
@@ -159,6 +155,11 @@ class LoginController extends Controller
       else
       {
         $current_package = $user->membership;
+      }
+
+      if($current_package == null)
+      {
+         return 0;
       }
 
       $data = [
