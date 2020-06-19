@@ -345,6 +345,7 @@ class SettingController extends Controller
         if ($qr_status==$phone_number) {
           $phoneNumber = PhoneNumber::
                       where("phone_number",$phone_number)
+                      ->where("status",2)
                       ->first();
           if (!is_null($phoneNumber)){
             $arr['status'] = 'error';
