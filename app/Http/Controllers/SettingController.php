@@ -366,6 +366,7 @@ class SettingController extends Controller
         $phoneNumber->phone_number = $phone_number;
         $phoneNumber->counter = 0;
         $phoneNumber->status = 0;
+        $phoneNumber->mode = session('mode');
         $phoneNumber->filename = "";
         $phoneNumber->save();
       }
