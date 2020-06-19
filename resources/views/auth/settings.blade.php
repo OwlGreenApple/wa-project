@@ -799,13 +799,20 @@
 						console.log(result);
 					}
 					else
-					{
+					if(result.status == 'success'){
 						$('#div-verify').show();
 						$("#qr-code").html(result.data);
 						$(window).scrollTop(700);
 						clearInterval(tm);
 						countDownTimer(phone_number);
 					}
+          else if(result.status == 'login'){
+            $('#div-verify').hide();
+            $("#timer, #qr-code").html('');
+            $('#phone-table').show();
+            loadPhoneNumber();
+            clearInterval(tm);
+          }
 					flagtm = false;
 					// new system loadPhoneNumber();
 				},

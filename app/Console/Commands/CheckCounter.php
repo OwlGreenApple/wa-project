@@ -54,7 +54,7 @@ class CheckCounter extends Command
                 if ($row->counter2 <= 0 ){
                   $dt = Carbon::now();
                   $dt2 = Carbon::parse($phoneNumber->updated_at);
-                  if ($dt->diffInMinutes($dt2)>=mt_rand(2,3)) {
+                  if ($dt2->diffInMinutes($dt)>=mt_rand(2,3)) {
                     $update = true;
                     $phoneNumber->counter = env('COUNTER2');
                   }

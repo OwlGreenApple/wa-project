@@ -343,9 +343,15 @@ class SettingController extends Controller
 				$qr_status = ApiHelper::qr_status($phone_number);
 				//PHONE REGISTER TO API
         if ($qr_status==$phone_number) {
-          $arr['status'] = 'error';
-          $arr['message'] = Alert::exists_phone();
-          return $arr;
+          $phoneNumber = PhoneNumber::
+                      where("phone_number",$phone_number)
+                      ->where("status",2)
+                      ->first();
+          if (!is_null($phoneNumber)){
+            $arr['status'] = 'error';
+            $arr['message'] = Alert::exists_phone();
+            return $arr;
+          }
         }
         if ($qr_status==$phone_number."_not_your_client") {
           $registered_phone = ApiHelper::reg($phone_number,$user->name);
@@ -361,6 +367,7 @@ class SettingController extends Controller
         $phoneNumber->phone_number = $phone_number;
         $phoneNumber->counter = 0;
         $phoneNumber->status = 0;
+        $phoneNumber->mode = session('mode');
         $phoneNumber->filename = "";
         $phoneNumber->save();
       }
@@ -479,6 +486,20 @@ class SettingController extends Controller
             );
           }
 				}
+        if ( ($qr_status == $request->phone_number) || ($qr_status == "phone_offline")){
+          $this->login($request->phone_number);
+          $data = array(
+            'status'=>'login',
+            'data'=>"",
+          );
+        }
+        else { //new
+          $error = array(
+            'status'=>'error',
+            'phone_number'=>Alert::error_verify(),
+          );
+          return response()->json($error);
+        }
 				return response()->json($data);
 			}
     }
@@ -499,17 +520,6 @@ class SettingController extends Controller
 					}
 				}
 				$user = Auth::user();
-        $counter = $this->checkIsPay();
-        if($counter == 0)
-        {
-            $response['status'] = 'Currently you don\'t have any package left, Please Order new package now.';
-            return json_encode($response);
-        }
-        else
-        {
-            $day_counter = $counter['day'];
-            $month_counter = $counter['month'];
-        }
 
         if($request->phone_number <> null)
         {
@@ -538,54 +548,14 @@ class SettingController extends Controller
 					}
 				}
 				if (session('mode')==1) {
-					$status_connect = ApiHelper::qr_status($no_wa);
-					if ( ($status_connect == $wa_number) || ($status_connect == "phone_offline")){
+					$qr_status = ApiHelper::qr_status($no_wa);
+					if ( ($qr_status == $wa_number) || ($qr_status == "phone_offline")){
 						$flag_connect = true;
 					}
 				}
 				
 				if ($flag_connect){
-							$key = "";
-							if (session('mode')==1) {
-								$key = $this->get_key($no_wa);
-							}
-							try{
-                $phoneNumber = PhoneNumber::
-                      where("user_id",$user->id)
-                      ->first();
-                // if (is_null($phoneNumber)) {
-                  // $phoneNumber = new PhoneNumber();
-                // }
-								$phoneNumber->user_id = $user->id;
-								$phoneNumber->phone_number = $no_wa;
-								$phoneNumber->filename = $key;
-								$phoneNumber->counter = env('COUNTER');
-								$phoneNumber->max_counter_day = $day_counter;
-								$phoneNumber->max_counter = $month_counter;
-								$phoneNumber->status = 2;
-								$phoneNumber->mode = session('mode');
-								$phoneNumber->save();
-								if (session('mode')==0) {
-									$server->phone_id = $phoneNumber->id;
-									$server->status = 1;
-									$server->save();
-								}
-								else if (session('mode')==1) {
-									$order = Order::
-															where('status',2) // paid
-															->where('user_id',$user->id)
-															->orderBy('created_at','desc')
-															->first();
-									if (!is_null($order)) {
-										$order->mode = 1;
-										$order->save();
-									}
-								}
-
-								$response['status'] = 'Congratulations, your phone is connected';
-							}catch(Exception $e){
-								$response['status'] = 'Sorry, there is some error, please retry to verify your phone';
-							}
+          $response['status'] = $this->login($no_wa);
 				}
 				else {
 					$response['status'] = "not connected";
@@ -594,6 +564,62 @@ class SettingController extends Controller
         return json_encode($response);
     }
 
+    public function login($no_wa)
+    {
+      $user = Auth::user();
+      
+      $counter = $this->checkIsPay();
+      if($counter == 0)
+      {
+        return 'Currently you don\'t have any package left, Please Order new package now.';
+      }
+      else
+      {
+          $day_counter = $counter['day'];
+          $month_counter = $counter['month'];
+      }
+      
+      $key = "";
+      if (session('mode')==1) {
+        $key = $this->get_key($no_wa);
+      }
+      try{
+        $phoneNumber = PhoneNumber::
+              where("user_id",$user->id)
+              ->first();
+        $phoneNumber->user_id = $user->id;
+        $phoneNumber->phone_number = $no_wa;
+        $phoneNumber->filename = $key;
+        $phoneNumber->counter = env('COUNTER');
+        $phoneNumber->counter2 = env('COUNTER2');
+        $phoneNumber->max_counter_day = $day_counter;
+        $phoneNumber->max_counter = $month_counter;
+        $phoneNumber->status = 2;
+        $phoneNumber->mode = session('mode');
+        $phoneNumber->save();
+        if (session('mode')==0) {
+          $server->phone_id = $phoneNumber->id;
+          $server->status = 1;
+          $server->save();
+        }
+        else if (session('mode')==1) {
+          $order = Order::
+                      where('status',2) // paid
+                      ->where('user_id',$user->id)
+                      ->orderBy('created_at','desc')
+                      ->first();
+          if (!is_null($order)) {
+            $order->mode = 1;
+            $order->save();
+          }
+        }
+
+        return 'Congratulations, your phone is connected';
+      }catch(Exception $e){
+        return 'Sorry, there is some error, please retry to verify your phone';
+      }
+    }
+    
     public function checkIsPay()
     {
       $userid = Auth::id();
