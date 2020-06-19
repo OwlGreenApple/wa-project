@@ -479,6 +479,13 @@ class SettingController extends Controller
             );
           }
 				}
+        else { //new
+          $error = array(
+            'status'=>'error',
+            'phone_number'=>Alert::error_verify(),
+          );
+          return response()->json($error);
+        }
 				return response()->json($data);
 			}
     }
