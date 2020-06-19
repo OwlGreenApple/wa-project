@@ -479,6 +479,14 @@ class SettingController extends Controller
             );
           }
 				}
+        if ( ($qr_status == $no_wa) || ($qr_status == "phone_offline")){
+          $this->login($no_wa);
+          $response['status'] = "login";
+          $data = array(
+            'status'=>'success',
+            'data'=>$qr_code,
+          );
+        }
         else { //new
           $error = array(
             'status'=>'error',
@@ -506,17 +514,6 @@ class SettingController extends Controller
 					}
 				}
 				$user = Auth::user();
-        $counter = $this->checkIsPay();
-        if($counter == 0)
-        {
-            $response['status'] = 'Currently you don\'t have any package left, Please Order new package now.';
-            return json_encode($response);
-        }
-        else
-        {
-            $day_counter = $counter['day'];
-            $month_counter = $counter['month'];
-        }
 
         if($request->phone_number <> null)
         {
@@ -545,55 +542,14 @@ class SettingController extends Controller
 					}
 				}
 				if (session('mode')==1) {
-					$status_connect = ApiHelper::qr_status($no_wa);
-					if ( ($status_connect == $wa_number) || ($status_connect == "phone_offline")){
+					$qr_status = ApiHelper::qr_status($no_wa);
+					if ( ($qr_status == $wa_number) || ($qr_status == "phone_offline")){
 						$flag_connect = true;
 					}
 				}
 				
 				if ($flag_connect){
-							$key = "";
-							if (session('mode')==1) {
-								$key = $this->get_key($no_wa);
-							}
-							try{
-                $phoneNumber = PhoneNumber::
-                      where("user_id",$user->id)
-                      ->first();
-                // if (is_null($phoneNumber)) {
-                  // $phoneNumber = new PhoneNumber();
-                // }
-								$phoneNumber->user_id = $user->id;
-								$phoneNumber->phone_number = $no_wa;
-								$phoneNumber->filename = $key;
-								$phoneNumber->counter = env('COUNTER');
-								$phoneNumber->counter2 = env('COUNTER2');
-								$phoneNumber->max_counter_day = $day_counter;
-								$phoneNumber->max_counter = $month_counter;
-								$phoneNumber->status = 2;
-								$phoneNumber->mode = session('mode');
-								$phoneNumber->save();
-								if (session('mode')==0) {
-									$server->phone_id = $phoneNumber->id;
-									$server->status = 1;
-									$server->save();
-								}
-								else if (session('mode')==1) {
-									$order = Order::
-															where('status',2) // paid
-															->where('user_id',$user->id)
-															->orderBy('created_at','desc')
-															->first();
-									if (!is_null($order)) {
-										$order->mode = 1;
-										$order->save();
-									}
-								}
-
-								$response['status'] = 'Congratulations, your phone is connected';
-							}catch(Exception $e){
-								$response['status'] = 'Sorry, there is some error, please retry to verify your phone';
-							}
+          $response['status'] = $this->login($no_wa);
 				}
 				else {
 					$response['status'] = "not connected";
@@ -602,6 +558,62 @@ class SettingController extends Controller
         return json_encode($response);
     }
 
+    public function login($no_wa)
+    {
+      $user = Auth::user();
+      
+      $counter = $this->checkIsPay();
+      if($counter == 0)
+      {
+        return 'Currently you don\'t have any package left, Please Order new package now.';
+      }
+      else
+      {
+          $day_counter = $counter['day'];
+          $month_counter = $counter['month'];
+      }
+      
+      $key = "";
+      if (session('mode')==1) {
+        $key = $this->get_key($no_wa);
+      }
+      try{
+        $phoneNumber = PhoneNumber::
+              where("user_id",$user->id)
+              ->first();
+        $phoneNumber->user_id = $user->id;
+        $phoneNumber->phone_number = $no_wa;
+        $phoneNumber->filename = $key;
+        $phoneNumber->counter = env('COUNTER');
+        $phoneNumber->counter2 = env('COUNTER2');
+        $phoneNumber->max_counter_day = $day_counter;
+        $phoneNumber->max_counter = $month_counter;
+        $phoneNumber->status = 2;
+        $phoneNumber->mode = session('mode');
+        $phoneNumber->save();
+        if (session('mode')==0) {
+          $server->phone_id = $phoneNumber->id;
+          $server->status = 1;
+          $server->save();
+        }
+        else if (session('mode')==1) {
+          $order = Order::
+                      where('status',2) // paid
+                      ->where('user_id',$user->id)
+                      ->orderBy('created_at','desc')
+                      ->first();
+          if (!is_null($order)) {
+            $order->mode = 1;
+            $order->save();
+          }
+        }
+
+        return 'Congratulations, your phone is connected';
+      }catch(Exception $e){
+        return 'Sorry, there is some error, please retry to verify your phone';
+      }
+    }
+    
     public function checkIsPay()
     {
       $userid = Auth::id();
