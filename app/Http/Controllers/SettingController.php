@@ -484,8 +484,8 @@ class SettingController extends Controller
             );
           }
 				}
-        if ( ($qr_status == $no_wa) || ($qr_status == "phone_offline")){
-          $this->login($no_wa);
+        if ( ($qr_status == $request->phone_number) || ($qr_status == "phone_offline")){
+          $this->login($request->phone_number);
           $data = array(
             'status'=>'login',
             'data'=>$qr_code,
