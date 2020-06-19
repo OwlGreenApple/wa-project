@@ -21,6 +21,7 @@ use App\Message;
 use App\Console\Commands\SendWA as SendMessage;
 use App\Helpers\ApiHelper;
 use App\Rules\CheckWANumbers;
+use App\Http\Controllers\ApiController as API;
 
 class CustomerController extends Controller
 {
@@ -146,7 +147,7 @@ class CustomerController extends Controller
               $status = 0;
             }
 
-            //NORMAL CASE
+            //UPDATED CASE
             if($request->data_update <> null)
             {
               $customer = Customer::find($request->data_update);
@@ -239,16 +240,28 @@ class CustomerController extends Controller
 							}
             }
 
-            // if customer successful sign up 
-            if($customer->save()){
+            // if customer successful sign up / NORMAL CASE
+
+            try
+            {
+              $customer->save();
+
+              if($list->id == 115)
+              {
+                $api = new API;
+                $api->listActivCampaign($request->email,$request->subscribername,$request->last_name,$phone_number);
+              }
+
                $user_id = $list->user_id;
                $list_id = $list->id;
                return $this->addSubscriber($list_id,$customer_id,$customer_join,$user_id);
-            } 
-            else {
-              $data['success'] = false;
-              $data['message'] = 'Sorry, our system is too busy';
             }
+            catch(QueryException $e)
+            {
+               $data['success'] = false;
+               $data['message'] = 'Sorry, our system is too busy';
+            }
+          
             return response()->json($data);
         }
     }
