@@ -490,7 +490,7 @@ class SettingController extends Controller
           $this->login($request->phone_number);
           $data = array(
             'status'=>'login',
-            'data'=>$qr_code,
+            'data'=>"",
           );
         }
         else { //new
