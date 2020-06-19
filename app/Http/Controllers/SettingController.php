@@ -567,6 +567,7 @@ class SettingController extends Controller
 								$phoneNumber->phone_number = $no_wa;
 								$phoneNumber->filename = $key;
 								$phoneNumber->counter = env('COUNTER');
+								$phoneNumber->counter2 = env('COUNTER2');
 								$phoneNumber->max_counter_day = $day_counter;
 								$phoneNumber->max_counter = $month_counter;
 								$phoneNumber->status = 2;
