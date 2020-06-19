@@ -222,7 +222,7 @@ class SettingController extends Controller
 
       $phone_updated = PhoneNumber::
                         where("user_id",$user->id)
-                        ->where("status",2)
+                        ->where("status",">",0)
                         ->get();
       $arr['view'] =(string) view('auth.setting-phone-numbers')
                       ->with([
@@ -651,7 +651,7 @@ class SettingController extends Controller
         }
 			
 				// $phoneNumber->delete();
-        $phoneNumber->status = 1;
+        $phoneNumber->status = 0;
         $phoneNumber->save();
 				
 				$arr['status'] = 'success';
@@ -664,7 +664,7 @@ class SettingController extends Controller
 				/*if($delete_api !== "success")
 				{
 					// $phoneNumber->delete();
-          $phoneNumber->status = 1;
+          $phoneNumber->status = 0;
           $phoneNumber->save();
 					$arr['status'] = 'success';
 					$arr['message'] = "The phone number has been deleted";
@@ -673,7 +673,7 @@ class SettingController extends Controller
 
 				try{
 					// $phoneNumber->delete();
-          $phoneNumber->status = 1;
+          $phoneNumber->status = 0;
           $phoneNumber->save();
 
 					$arr['status'] = 'success';
