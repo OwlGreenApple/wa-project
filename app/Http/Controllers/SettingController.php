@@ -343,9 +343,14 @@ class SettingController extends Controller
 				$qr_status = ApiHelper::qr_status($phone_number);
 				//PHONE REGISTER TO API
         if ($qr_status==$phone_number) {
-          $arr['status'] = 'error';
-          $arr['message'] = Alert::exists_phone();
-          return $arr;
+          $phoneNumber = PhoneNumber::
+                      where("phone_number",$phone_number)
+                      ->first();
+          if (!is_null($phoneNumber)){
+            $arr['status'] = 'error';
+            $arr['message'] = Alert::exists_phone();
+            return $arr;
+          }
         }
         if ($qr_status==$phone_number."_not_your_client") {
           $registered_phone = ApiHelper::reg($phone_number,$user->name);
