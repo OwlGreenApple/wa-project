@@ -427,7 +427,7 @@ class SettingController extends Controller
 				}
 				return response()->json($data);
 			}
-			
+
 			if (session('mode')==1) {
 				/*
 				Cek database, klo status masi 0 maka akan request ke woowa 
@@ -449,6 +449,7 @@ class SettingController extends Controller
         if ($qr_status==$request->phone_number."_not_your_client") {
           $error = array(
             'status'=>'error',
+            // 'phone_number'=>'phone not your client',
             'phone_number'=>Alert::error_verify(),
           );
           return response()->json($error);
@@ -486,16 +487,18 @@ class SettingController extends Controller
             );
           }
 				}
-        if (($qr_status == $request->phone_number) || ($qr_status == "phone_offline")){
-          $this->login($request->phone_number);
+
+        if (($qr_status == $request->phone_number) || ($qr_status == "none") || ($qr_status == "phone_offline")){
+          $isLogin = $this->login($request->phone_number);
           $data = array(
             'status'=>'login',
-            'data'=>"",
+            'data'=>$isLogin,
           );
         }
         else { //new
           $error = array(
             'status'=>'error',
+            // 'phone_number'=>'phone_offline',
             'phone_number'=>Alert::error_verify(),
           );
           return response()->json($error);

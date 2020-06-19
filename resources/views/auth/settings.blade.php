@@ -807,8 +807,10 @@
 						countDownTimer(phone_number);
 					}
           else if(result.status == 'login'){
+            $('.message').show();
             $('#div-verify').hide();
             $("#timer, #qr-code").html('');
+            $(".message").html(result.data);
             $('#phone-table').show();
             loadPhoneNumber();
             clearInterval(tm);
