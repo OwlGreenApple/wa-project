@@ -25,37 +25,37 @@ class OrderController extends Controller
       'bestseller1' => 370500,
       'supervalue1' => 526500,
 			
-      'basic2' => 275000,
-      'bestseller2' => 522500,
-      'supervalue2' => 742500,
+      'basic2' => 295000,
+      'bestseller2' => 560500,
+      'supervalue2' => 796500,
 			
-      'basic3' => 345000,
-      'bestseller3' => 655500,
-      'supervalue3' => 931500,
+      'basic3' => 395000,
+      'bestseller3' => 750500,
+      'supervalue3' => 1066500,
 			
-      'basic4' => 415000,
-      'bestseller4' => 788500,
-      'supervalue4' => 1120500,
+      'basic4' => 495000,
+      'bestseller4' => 940500,
+      'supervalue4' => 1336500,
 			
-      'basic5' => 555000,
-      'bestseller5' => 1054500,
-      'supervalue5' => 1498500,
+      'basic5' => 595000,
+      'bestseller5' => 1130500,
+      'supervalue5' => 1606500,
 			
       'basic6' => 695000,
       'bestseller6' => 1320500,
       'supervalue6' => 1876500,
 			
-      'basic7' => 975000,
-      'bestseller7' => 1852500,
-      'supervalue7' => 2632500,
+      'basic7' => 795000,
+      'bestseller7' => 1510500,
+      'supervalue7' => 2146500,
 			
-      'basic8' => 1255000,
-      'bestseller8' => 2384500,
-      'supervalue8' => 3388500,
+      'basic8' => 895000,
+      'bestseller8' => 1700500,
+      'supervalue8' => 2416500,
 			
-      'basic9' => 155000,
-      'bestseller9' => 2954500,
-      'supervalue9' => 4288500,
+      'basic9' => 995000,
+      'bestseller9' => 1890500,
+      'supervalue9' => 2686500,
 			
     );
 

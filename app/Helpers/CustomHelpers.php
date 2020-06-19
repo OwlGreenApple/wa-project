@@ -199,37 +199,37 @@ use Illuminate\Support\Facades\Storage;
         2 => ['package'=>'bestseller1','price'=>370500],
         3 => ['package'=>'supervalue1','price'=>526500],
         '-----------',
-        4 => ['package'=>'basic2','price'=>275000],
-        5 => ['package'=>'bestseller2','price'=>522500],
-        6 => ['package'=>'supervalue2','price'=>742500],
+        4 => ['package'=>'basic2','price'=>295000],
+        5 => ['package'=>'bestseller2','price'=>560500],
+        6 => ['package'=>'supervalue2','price'=>796500],
         '-----------',
-        7 => ['package'=>'basic3','price'=>345000],
-        8 => ['package'=>'bestseller3','price'=>655500],
-        9 => ['package'=>'supervalue3','price'=>931500],
+        7 => ['package'=>'basic3','price'=>395000],
+        8 => ['package'=>'bestseller3','price'=>750500],
+        9 => ['package'=>'supervalue3','price'=>1066500],
         '-----------',
-        10 => ['package'=>'basic4','price'=>415000],
-        11 => ['package'=>'bestseller4','price'=>788500],
-        12 => ['package'=>'supervalue4','price'=>1120500],
+        10 => ['package'=>'basic4','price'=>495000],
+        11 => ['package'=>'bestseller4','price'=>940500],
+        12 => ['package'=>'supervalue4','price'=>1336500],
         '-----------',
-        13 => ['package'=>'basic5','price'=>555000],
-        14 => ['package'=>'bestseller5','price'=>1054500],
-        15 => ['package'=>'supervalue5','price'=>1498500],
+        13 => ['package'=>'basic5','price'=>595000],
+        14 => ['package'=>'bestseller5','price'=>1130500],
+        15 => ['package'=>'supervalue5','price'=>1606500],
         '-----------',
         16 => ['package'=>'basic6','price'=>695000],
         17 => ['package'=>'bestseller6','price'=>1320500],
         18 => ['package'=>'supervalue6','price'=>1876500],
         '-----------',
-        19 => ['package'=>'basic7','price'=>975000],
-        20 => ['package'=>'bestseller7','price'=>1852500],
-        21 => ['package'=>'supervalue7','price'=>2632500],
+        19 => ['package'=>'basic7','price'=>795000],
+        20 => ['package'=>'bestseller7','price'=>1510500],
+        21 => ['package'=>'supervalue7','price'=>2146500],
         '-----------',
-        22 => ['package'=>'basic8','price'=>1255000],
-        23 => ['package'=>'bestseller8','price'=>2384500],
-        24 => ['package'=>'supervalue8','price'=>3388500],
+        22 => ['package'=>'basic8','price'=>895000],
+        23 => ['package'=>'bestseller8','price'=>1700500],
+        24 => ['package'=>'supervalue8','price'=>2416500],
         '-----------',
-        25 => ['package'=>'basic9','price'=>155000],
-        26 => ['package'=>'bestseller9','price'=>2954500],
-        27 => ['package'=>'supervalue9','price'=>4288500],
+        25 => ['package'=>'basic9','price'=>995000],
+        26 => ['package'=>'bestseller9','price'=>1890500],
+        27 => ['package'=>'supervalue9','price'=>2686500],
       );
 
       if($id_package == '0')
@@ -343,56 +343,56 @@ use Illuminate\Support\Facades\Storage;
     $type_package = substr($package,-1,1);
     if ($type_package=="1") {
       $data = [
-        'max_counter_day'=>1000,
-        'max_counter'=>15000
+        'max_counter_day'=>500,
+        'max_counter'=>10000
       ];
     }
     if ($type_package=="2") {
       $data = [
-        'max_counter_day'=>1500,
-        'max_counter'=>25000
+        'max_counter_day'=>1000,
+        'max_counter'=>17500
       ];
     }
     if ($type_package=="3") {
       $data = [
-        'max_counter_day'=>2000,
-        'max_counter'=>40000
+        'max_counter_day'=>1500,
+        'max_counter'=>27500
       ];
     }
     if ($type_package=="4") {
       $data = [
-        'max_counter_day'=>2500,
-        'max_counter'=>60000
+        'max_counter_day'=>1500,
+        'max_counter'=>40000
       ];
     }
     if ($type_package=="5") {
       $data = [
-        'max_counter_day'=>3000,
-        'max_counter'=>90000
+        'max_counter_day'=>2000,
+        'max_counter'=>55000
       ];
     }
     if ($type_package=="6") {
       $data = [
-        'max_counter_day'=>3500,
-        'max_counter'=>130000
+        'max_counter_day'=>2500,
+        'max_counter'=>72500
       ];
     }
     if ($type_package=="7") {
       $data = [
-        'max_counter_day'=>4000,
-        'max_counter'=>190000
+        'max_counter_day'=>3000,
+        'max_counter'=>92500
       ];
     }
     if ($type_package=="8") {
       $data = [
-        'max_counter_day'=>4500,
-        'max_counter'=>250000
+        'max_counter_day'=>4000,
+        'max_counter'=>117500
       ];
     }
     if($type_package=="9") {
       $data = [
         'max_counter_day'=>5000,
-        'max_counter'=>330000
+        'max_counter'=>147500
       ];
     }
 
