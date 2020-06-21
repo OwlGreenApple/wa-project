@@ -172,7 +172,7 @@
 			}
 			if (messagePer30day == 27500) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/7'); ?>");
-				$("#description-contact-header").html("Basic 1 Month<br>40.000 Messages/month");
+				$("#description-contact-header").html("Basic 1 Month<br>27.500 Messages/month");
 			}
 			if (messagePer30day == 40000) {
 				$("#link-checkout").attr("href","<?php echo url('checkout/10'); ?>");
