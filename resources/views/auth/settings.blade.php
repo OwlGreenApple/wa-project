@@ -127,7 +127,7 @@
                   @if(!$is_registered)
                     <button id="btn-check" type="button" class="btn btn-custom">Check Phone Number</button>
                   @endif
-                  <button type="button" id="button-connect" class="btn btn-custom" <?php if ($is_registered) { echo "disabled"; } ?> data-attr="<?php if (session('mode')==0) { echo session("server_id"); }?>">Connect</button>
+                 <!--  <button type="button" id="button-connect-old" class="btn btn-custom" <php if ($is_registered) { echo "disabled"; } ?> data-attr="<php if (session('mode')==0) { echo session("server_id"); }?>">Connect</button> -->
                 </div>
 
             </form>
@@ -537,7 +537,7 @@
   function checkPhoneOTP(){
     var data = {
       'phone_number':$("input[name='phone_number']").val(),
-      'calling_code':$(".iti__selected-flag").attr('data-code'),
+      'code_country':$(".iti__selected-flag").attr('data-code'),
     };
 
     $.ajax({
@@ -558,11 +558,16 @@
         if(result.status == 1)
         {
           $('.message').show();
-          $('.message').html('Plesae check OTP code on your WA account');
+          $('.message').html('Please check OTP code on your WA account');
           $("#otp").show();
-          $("#btn-check").html('<button type="button" id="submit-otp" class="btn btn-custom btn-sm">Submit OTP</button>');
+          $("#btn-check").replaceWith('<button type="button" id="submit-otp" class="btn btn-custom">Submit OTP</button>');
         }
-
+        else
+        {
+          $(".error").show();
+          $(".code_country").html(result.code_country);
+          $(".phone_number").html(result.phone_number);
+        }
       },
       error: function(xhr,attr,throwable){
         $('#loader').hide();
@@ -575,9 +580,7 @@
   function checkOTP()
   {
     $("#btn-check").click(function(){
-      $("#btn-check").attr('id','submit-otp');
-      $("#btn-check").text('Submit OTP');
-      // checkPhoneOTP();
+      checkPhoneOTP();
     });
   }
 
@@ -604,7 +607,7 @@
           {
             $('.message').hide();
             $("#otp").hide();
-            $("#submit-otp").html(result.button);
+            $("#submit-otp").replaceWith(result.button);
           }
           else
           {
@@ -764,7 +767,7 @@
      });
   }
 	function buttonConnect(){
-			$('#button-connect').click(function(){
+			$('body').on('click','#button-connect',function(){
 				$("#modal-start-connect").modal();
 			});
 	}

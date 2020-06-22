@@ -20,9 +20,13 @@ use App\Rules\AvailablePhoneNumber;
 use App\Helpers\ApiHelper;
 use App\Helpers\Alert;
 use DB;
+use Cookie;
 use Carbon\Carbon;
 use DateTimeZone;
 use App\Jobs\SendNotif;
+use App\Rules\InternationalTel;
+use App\Rules\CheckCallCode;
+use App\Rules\CheckPlusCode;
 
 class SettingController extends Controller
 {
@@ -294,8 +298,27 @@ class SettingController extends Controller
     public function getOTP(Request $request)
     {
        $userid = Auth::id();
-       $phone_number = $request->calling_code.$request->phone_number;
+       $phone_number = $request->code_country.$request->phone_number;
        $current_time = Carbon::now();
+
+       $rules = [
+            'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
+            'phone_number' => ['required','min:6','max:18',new InternationalTel]
+        ];
+
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->fails())
+        {
+            $err = $validator->errors();
+            $error = array(
+              'status'=>'error',
+              'phone_number'=>$err->first('phone_number'),
+              'code_country'=>$err->first('code_country'),
+            );
+
+            return response()->json($error);
+        }
 
        $check_otp = OTP::where([['user_id','=',$userid],['phone_number','=',$phone_number]])->whereRaw('NOW() <= valid')->first();
        $code_raw = '0123456789';
@@ -316,6 +339,8 @@ class SettingController extends Controller
        {
           $code = $check_otp->code;
        }
+
+       Cookie::queue(Cookie::make('opt_code', $code, 60));
 
        $message ='';
        $message .= 'Hi '.Auth::user()->username."\n\n";
@@ -392,7 +417,12 @@ class SettingController extends Controller
         }
       }
 
-
+      $opt_code = Cookie::get('opt_code');
+      if($opt_code <> null)
+      {
+        Cookie::queue(Cookie::forget('opt_code'));
+      }
+      
 			if (session('mode')==0) {
 				$server = Server::find(session("server_id"));
 				if (is_null($server)){
