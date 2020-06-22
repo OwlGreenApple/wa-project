@@ -78,7 +78,7 @@ class SendMessage extends Command
     public function campaignBroadcast()
     {
 				$spintax = new Spintax;
-        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","customers.*","users.timezone","users.email")
+        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id AS userid","customers.*","users.timezone","users.email")
           ->join('users','broad_casts.user_id','=','users.id')
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
@@ -89,7 +89,7 @@ class SendMessage extends Command
           ->where("phone_numbers.id",$this->phone_id)
           ->where("campaigns.status",1)
           ->orderBy('broad_casts.user_id')
-          ->get();
+          ->get(); 
 
         if($broadcast->count() > 0)
         {
@@ -101,6 +101,13 @@ class SendMessage extends Command
                 $customer_phone = $row->telegram_number;
                 $phoneNumber = PhoneNumber::find($row->phoneid);
                 if(is_null($phoneNumber)){
+                  continue;
+                }
+
+                $user = User::find($row->userid);
+                $membership = getMembership($user->membership);
+                if($membership <= 3)
+                {
                   continue;
                 }
 
@@ -237,9 +244,10 @@ class SendMessage extends Command
                         $phoneNumber->save();
                         
 												$broadcastCustomer->status = $status;
-												$broadcastCustomer->save();
+												$broadcastCustomer->save();*/
                     }
-                    else {
+                    else 
+                    {
                         $campaign = 'broadcast';
                         $id_campaign = $row->bccsid;
                         $status = 'Error';

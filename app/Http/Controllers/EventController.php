@@ -391,13 +391,11 @@ class EventController extends Controller
         $reminder = Reminder::where([['campaign_id','=',$campaign_id],['user_id','=',$userid]]);
         $campaign = Campaign::where([['id','=',$campaign_id],['user_id','=',$userid ]]);
 
-        if(!is_null($reminder->first()))
+        if($reminder->get()->count() > 0)
         {
-          $reminder_customer = ReminderCustomers::where([['reminder_id','=',$reminder->first()->id],['user_id','=',$userid]]);
-
-          if($reminder_customer->get()->count() > 0)
+          foreach($reminder->get() as $row)
           {
-            $reminder_customer->delete();
+            ReminderCustomers::where('reminder_id','=',$row->id)->delete();
           }
 
           $reminder->delete();

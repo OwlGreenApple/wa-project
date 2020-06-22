@@ -36,6 +36,7 @@
         </label>
         <div class="col-sm-9">
 
+          @if(getMembership(Auth()->user()->membership) > 3) 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
               <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio3" value="broadcast" checked/>
@@ -43,10 +44,11 @@
             </label>
             <label class="form-check-label" for="inlineRadio3">Broadcast</label>
           </div>
+          @endif
 
           <div class="form-check form-check-inline">
             <label class="custom-radio">
-              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio2" value="auto" />
+              <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio2" value="auto" @if(getMembership(Auth()->user()->membership) <= 3) checked @endif/>
               <span class="checkmark"></span>
             </label>
             <label class="form-check-label" for="inlineRadio2">Auto Schedule</label>
@@ -229,9 +231,10 @@ use min 5 spintax variations is recommended	<br>
         });
     });
 
-  $(document).ready(function(){
-    displayOption();
+  $(document).ready(function()
+  {
     openingPageType();
+    displayOption();
     displayAddDaysBtn();
     MDTimepicker();
     neutralizeClock();
@@ -342,7 +345,7 @@ use min 5 spintax variations is recommended	<br>
 
   function openingPageType()
   {
-    var radio_option = $("input[name='campaign_type'] checked").val();
+    var radio_option = $("input[name='campaign_type']:checked").val();
     displayFormCampaign(radio_option);
   }
 

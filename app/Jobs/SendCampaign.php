@@ -66,7 +66,7 @@ class SendCampaign implements ShouldQueue
     public function campaignBroadcast()
     {
 				$spintax = new Spintax;
-        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id","customers.*","users.timezone","users.email","customers.link_unsubs")
+        $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id AS userid","customers.*","users.timezone","users.email","customers.link_unsubs")
           ->join('users','broad_casts.user_id','=','users.id')
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
@@ -83,6 +83,13 @@ class SendCampaign implements ShouldQueue
         {
             foreach($broadcast as $row)
             {
+                $user = User::find($row->userid);
+                $membership = getMembership($user->membership);
+                if($membership <= 3)
+                {
+                  continue;
+                }
+
                 // $customers = Customer::where('id',$row->customer_id)->first();
                 $customer_message = $row->message;
                 $customer_phone = $row->telegram_number;

@@ -28,17 +28,16 @@
 
       <div class="col-lg-6"></div>
 
+      @if(getMembership(Auth()->user()->membership) > 3) 
       <div class="input-group col-lg-2">
          <select id="campaign_option" class="custom-select-campaign form-control col-lg-10 relativity">
             <option value="all">All</option>
-           <!--  @if(getMembership(Auth()->user()->membership) > 1) 
-            <option value="0">Event</option>
-            @endif -->
             <option value="1">Auto Responder</option>
             <option value="2">Broadcast</option>
          </select>
          <span class="icon-triangular"></span>
       </div>
+      @endif
 
       <div class="clearfix"></div>
 
@@ -814,10 +813,7 @@
         $.ajax({
           type : 'GET',
           url : '{{ url("broadcast-del") }}',
-          data : {
-              id : id,
-              //mode : "broadcast"
-          },
+          data : {id : id},
           beforeSend: function()
           {
             $('#loader').show();

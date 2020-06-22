@@ -39,15 +39,24 @@ class CampaignController extends Controller
       $type = $request->type;
       $search = $request->search;
 
+      if(getMembership(Auth::user()->membership) > 3)
+      {
+        $campaign_type = [1,2];
+      }
+      else
+      {
+        $campaign_type = [1];
+      }
+
       if($type == null || $type == 'all')
       {
           $campaign = Campaign::where('campaigns.user_id',$userid)
-                ->whereIn('campaigns.type',[1,2])
+                ->whereIn('campaigns.type',$campaign_type)
                 ->leftJoin('lists','lists.id','=','campaigns.list_id')
                 ->orderBy('campaigns.id','desc')
                 ->select('campaigns.*','lists.label')
                 ->paginate($paging);
-      }
+      } 
 
       if($type <> null && $type <> 'all')
       {
@@ -61,7 +70,7 @@ class CampaignController extends Controller
 
       if($search <> null)
       {
-          $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',[1,2])
+          $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',$campaign_type)
             ->leftJoin('lists','lists.id','=','campaigns.list_id')
             ->orderBy('campaigns.id','desc')
             ->select('campaigns.*','lists.label')
@@ -728,30 +737,23 @@ class CampaignController extends Controller
     {
         $user_id = Auth::id();
         $campaign = Campaign::find($request->id);
+        $reminders = Reminder::where([['campaign_id',$campaign->id],['user_id',$user_id]])->get();
 
-        try {
-          $campaign->delete();
-          if($request->mode == "broadcast") {
-            $broadCasts = BroadCast::where([['campaign_id',$campaign->id],['user_id',$user_id]])->get();
-            foreach($broadCasts as $broadCast) {
-              $broadcastcustomer = BroadCastCustomers::where('broadcast_id','=',$broadCast->id)->delete();
-            }
-            BroadCast::where([['campaign_id',$campaign->id],['user_id',$user_id]])->delete();
-          }
-
-          if( ($request->mode == "event") || ($request->mode == "auto_responder") ) {
-            $reminders = Reminder::where([['campaign_id',$campaign->id],['user_id',$user_id]])->get();
-            foreach($reminders as $reminder) {
-              $remindercustomer = ReminderCustomers::where('reminder_id','=',$reminder->id)->delete();
-            }
-            Reminder::where([['campaign_id',$campaign->id],['user_id',$user_id]])->delete();
-          }
-
-           return response()->json(['message'=>'Your campaign has been deleted successfully']);
-        }
-        catch(Exception $e)
+        if($reminders->count() > 0)
         {
-           return response()->json(['message'=>'Sorry, unable to delete , contact administrator']);
+          foreach($reminders as $reminder) {
+            $remindercustomer = ReminderCustomers::where('reminder_id','=',$reminder->id)->delete();
+          }
+
+          try {
+            Reminder::where([['campaign_id',$campaign->id],['user_id',$user_id]])->delete();
+            $campaign->delete();
+            return response()->json(['message'=>'Your campaign has been deleted successfully']);
+          }
+          catch(Exception $e)
+          {
+             return response()->json(['message'=>'Sorry, unable to delete , contact administrator']);
+          }
         }
     }
 

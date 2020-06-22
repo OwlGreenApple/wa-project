@@ -338,6 +338,12 @@ class BroadCastController extends Controller
         $id = $request->id;
         $broadcast = BroadCast::where([['id',$id],['user_id',$user_id]])->first();
         $campaign_id = $broadcast->campaign_id;
+        $broadcastcustomer = BroadCastCustomers::where('broadcast_id','=',$id);
+
+        if($broadcastcustomer->get()->count() > 0)
+        {
+          $broadcastcustomer->delete();
+        }
 
         try {
           BroadCast::where([['id',$id],['user_id',$user_id]])->delete();
@@ -348,16 +354,7 @@ class BroadCastController extends Controller
         {
            return response()->json(['message'=>'Sorry, unable to delete broadcast, contact administrator']);
         }
-
-        if($success == true)
-        {
-          $broadcastcustomer = BroadCastCustomers::where('broadcast_id','=',$id)->get();
-        }
-
-        if($broadcastcustomer->count() > 0)
-        {
-             BroadCastCustomers::where('broadcast_id','=',$id)->delete();
-        }
+       
         return response()->json(['message'=>'Your broadcast has been deleted successfully']);
     }
 
