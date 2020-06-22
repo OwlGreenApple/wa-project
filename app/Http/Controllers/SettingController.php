@@ -461,11 +461,9 @@ class SettingController extends Controller
                           ->first();
           if(!is_null($phoneNumber)){
             if ($phoneNumber->filename == "") {
-              $key = ApiHelper::get_key($request->phone_number);
-              $response = json_decode($key,true);
-              $response = explode(':',$response['message']);
+              $key = $this->get_key($request->phone_number);
 
-              $phoneNumber->filename = $response[1];
+              $phoneNumber->filename = $key;
               $phoneNumber->save();
             }
           }
@@ -487,8 +485,7 @@ class SettingController extends Controller
             );
           }
 				}
-
-        if (($qr_status == $request->phone_number) || ($qr_status == "none") || ($qr_status == "phone_offline")){
+        else if (($qr_status == $request->phone_number) || ($qr_status == "phone_offline")){
           $isLogin = $this->login($request->phone_number);
           $data = array(
             'status'=>'login',
@@ -702,13 +699,7 @@ class SettingController extends Controller
 
     public function qr_status($wa_number)
     {
-        $arr = json_decode(ApiHelper::qr_status($wa_number),1);
-        if (!is_null($arr)) {
-          return $arr['status'];
-        } 
-        else {
-          echo "null";
-        }
+        return ApiHelper::qr_status($wa_number);
     }
 
     public function status_nomor($wa_number)
@@ -744,7 +735,10 @@ class SettingController extends Controller
         $key = ApiHelper::get_key($wa_number);
         $response = json_decode($key,true);
         $response = explode(':',$response['message']);
-        $api_key = $response[1];
+        $api_key = "";
+        if (isset($response[1])){
+          $api_key = $response[1];
+        }
         return $api_key;
     }
 

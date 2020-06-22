@@ -46,7 +46,7 @@ class CheckConnection extends Command
         {
           foreach($phone_numbers AS $row)
           {
-            if ($row->mode == 2 ) {
+            if ($row->mode == 2 ) {//wassenger
               continue;
             }
             $idphone_number = $row->id;
