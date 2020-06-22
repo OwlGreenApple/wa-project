@@ -244,7 +244,7 @@ class SendMessage extends Command
                         $phoneNumber->save();
                         
 												$broadcastCustomer->status = $status;
-												$broadcastCustomer->save();*/
+												$broadcastCustomer->save();
                     }
                     else 
                     {

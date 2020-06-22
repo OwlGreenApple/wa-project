@@ -14,6 +14,7 @@ use App\Order;
 use App\Server;
 use App\PhoneNumber;
 use App\Config;
+use App\OTP;
 use App\Rules\TelNumber;
 use App\Rules\AvailablePhoneNumber;
 use App\Helpers\ApiHelper;
@@ -21,6 +22,7 @@ use App\Helpers\Alert;
 use DB;
 use Carbon\Carbon;
 use DateTimeZone;
+use App\Jobs\SendNotif;
 
 class SettingController extends Controller
 {
@@ -286,6 +288,70 @@ class SettingController extends Controller
         }
       }
       $data['phone'] = $phone_number;
+      return response()->json($data);
+    }
+
+    public function getOTP(Request $request)
+    {
+       $userid = Auth::id();
+       $phone_number = $request->calling_code.$request->phone_number;
+       $current_time = Carbon::now();
+
+       $check_otp = OTP::where([['user_id','=',$userid],['phone_number','=',$phone_number]])->whereRaw('NOW() <= valid')->first();
+       $code_raw = '0123456789';
+
+       if(is_null($check_otp))
+       {
+          $code = substr(str_shuffle($code_raw),0,5);
+          $valid = $current_time->addMinutes(5);
+
+          $otp = new OTP;
+          $otp->user_id = $userid;
+          $otp->code = $code;
+          $otp->phone_number = $phone_number;
+          $otp->valid = $valid;
+          $otp->save();
+       }
+       else
+       {
+          $code = $check_otp->code;
+       }
+
+       $message ='';
+       $message .= 'Hi '.Auth::user()->username."\n\n";
+       $message .= '*Your OTP code is:* '.$code."\n\n";
+       $message .= 'Please note : this code would expired in 5 minutes'."\n";
+
+       SendNotif::dispatch($phone_number,$message,env('REMINDER_PHONE_KEY'));
+
+       return response()->json(['status'=>1]);
+    }
+
+    public function submitOTP(Request $request)
+    {
+      $userid = Auth::id();
+      $otp_code = $request->otp;
+      $check_otp = OTP::where([['user_id','=',$userid],['code','=',$otp_code]])->whereRaw('NOW() <= valid')->first();
+       $session_server = null;
+
+      if(session('mode')==0){
+         $session_server = session("server_id");
+      }
+
+      if(is_null($check_otp))
+      {
+        $data = array(
+          'status'=>'expired',
+          'message'=>'Your otp code is not available or expired!',
+        );   
+      }
+      else
+      {
+        $data = array(
+          'status'=>'success',
+          'button'=>'<button type="button" id="button-connect" class="btn btn-custom" data-attr='.$session_server.'>Connect</button>',
+        );   
+      }
       return response()->json($data);
     }
 

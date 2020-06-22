@@ -112,6 +112,11 @@
                       <input type="text" id="phone" name="phone_number" class="form-control" />
                       <span class="error code_country"></span>
                       <span class="error phone_number"></span>
+
+                      <!-- OTP -->
+                      <div id="otp" class="row mt-3 col-lg-4" style="display:none">
+                        <input placeholder="OTP Code" class="form-control form-control-sm" name="otp"/>
+                      </div>
                     </div>
                     <!--<div>Please add avatar / image on your WA account.</div>-->
                     <div class="col-lg-12 pad-fix"><ul id="display_countries"><!-- Display country here... --></ul></div>
@@ -119,8 +124,12 @@
                 </div>
 
                 <div class="text-right">
+                  @if(!$is_registered)
+                    <button id="btn-check" type="button" class="btn btn-custom">Check Phone Number</button>
+                  @endif
                   <button type="button" id="button-connect" class="btn btn-custom" <?php if ($is_registered) { echo "disabled"; } ?> data-attr="<?php if (session('mode')==0) { echo session("server_id"); }?>">Connect</button>
                 </div>
+
             </form>
 
             <div class="col-lg-3 plan account_status">
@@ -524,6 +533,95 @@
         $("#display_countries").hide();
       });
     }
+
+  function checkPhoneOTP(){
+    var data = {
+      'phone_number':$("input[name='phone_number']").val(),
+      'calling_code':$(".iti__selected-flag").attr('data-code'),
+    };
+
+    $.ajax({
+      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+      type: 'POST',
+      url: "{{ url('check-otp') }}",
+      data : data,
+      dataType: 'json',
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success: function(result) {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+
+        if(result.status == 1)
+        {
+          $('.message').show();
+          $('.message').html('Plesae check OTP code on your WA account');
+          $("#otp").show();
+          $("#btn-check").html('<button type="button" id="submit-otp" class="btn btn-custom btn-sm">Submit OTP</button>');
+        }
+
+      },
+      error: function(xhr,attr,throwable){
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        alert('Sorry cannot load phone list, please call administrator'); 
+      }
+    });
+  }
+
+  function checkOTP()
+  {
+    $("#btn-check").click(function(){
+      $("#btn-check").attr('id','submit-otp');
+      $("#btn-check").text('Submit OTP');
+      // checkPhoneOTP();
+    });
+  }
+
+  function submitOTP()
+  {
+    $("body").on("click","#submit-otp",function()
+    {
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        type: 'POST',
+        url: "{{ url('submit-otp') }}",
+        data : {'otp': $("input[name='otp']").val()},
+        dataType: 'json',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success: function(result) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+
+          if(result.status == 'success')
+          {
+            $('.message').hide();
+            $("#otp").hide();
+            $("#submit-otp").html(result.button);
+          }
+          else
+          {
+            $('.message').show();
+            $('.message').html(result.message);
+          }
+
+        },
+        error: function(xhr,attr,throwable){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert('Sorry cannot load phone list, please call administrator'); 
+        }
+      });
+      // end ajax
+    });
+  }
 		
 	$(document).ready(function() {  
     checkPhone(); 
@@ -534,6 +632,8 @@
     settingUser();
     triggerButtonMod();
     intialCountry();
+    checkOTP();
+    submitOTP();
     // selJs();
 
     $(".iti").addClass('w-100');

@@ -139,7 +139,9 @@ Route::group(['middleware'=>['auth','web']],function(){
 	
 	//woowa + simi 
   // Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkcall');
-  Route::get('connect-phone', 'SettingController@connect_phone');
+  Route::post('check-otp', 'SettingController@getOTP');
+  Route::post('submit-otp', 'SettingController@submitOTP');
+  Route::get('connect-phone', 'SettingController@connect_phone')->middleware('checkcall');
   Route::get('verify-phone', 'SettingController@verify_phone')->middleware('checkphone');
 	
   Route::get('delete-phone', 'SettingController@delete_phone');
