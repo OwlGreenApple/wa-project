@@ -87,7 +87,11 @@
           <div class="row">
             <select name="day" class="form-control col-sm-7 ml-3 mr-2">
               @for($x=1; $x<=100 ;$x++)
-                <option value="{{ $x }}">{{ $x }} days after event</option>
+                @if($x == 1)
+                  <option value="{{ $x }}">{{ $x }} day after registered</option>
+                @else
+                  <option value="{{ $x }}">{{ $x }} days after registered</option>
+                @endif      
               @endfor
             </select>
             <input name="hour" type="text" class="timepicker form-control col-sm-3" value="00:00" readonly />
