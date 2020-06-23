@@ -63,7 +63,7 @@ class SendMessage extends Command
       //Broadcast 
       $this->campaignBroadcast();
    
-      //Auto Responder
+     //Auto Responder
       $this->campaignAutoResponder();
      
       //Event
@@ -86,7 +86,7 @@ class SendMessage extends Command
           ->join('campaigns',"campaigns.id","=","broad_casts.campaign_id")
           ->where("broad_cast_customers.status",0)
           ->where("customers.status",1)
-          ->where("phone_numbers.id",$this->phone_id)
+          // ->where("phone_numbers.id",$this->phone_id)
           ->where("campaigns.status",1)
           ->orderBy('broad_casts.user_id')
           ->get(); 
@@ -101,13 +101,6 @@ class SendMessage extends Command
                 $customer_phone = $row->telegram_number;
                 $phoneNumber = PhoneNumber::find($row->phoneid);
                 if(is_null($phoneNumber)){
-                  continue;
-                }
-
-                $user = User::find($row->userid);
-                $membership = getMembership($user->membership);
-                if($membership <= 3)
-                {
                   continue;
                 }
 
@@ -160,19 +153,29 @@ class SendMessage extends Command
                         continue;
                     }
 
+                    //START BROADCAST
                     if($counter > 0)
                     {
                         $campaign = 'broadcast';
                         $id_campaign = $row->bccsid;
 
-                        //status
-												$broadcastCustomer = BroadCastCustomers::find($id_campaign);
-												if (is_null($broadcastCustomer)) {
-													continue;
-												}
-												if ($broadcastCustomer->status==5) {
-													continue;
-												}
+                         //status
+                        $broadcastCustomer = BroadCastCustomers::find($id_campaign);
+                        if (is_null($broadcastCustomer)) {
+                          continue;
+                        }
+                        if ($broadcastCustomer->status==5) {
+                          continue;
+                        }
+
+                        $user = User::find($row->userid);
+                        $membership = getMembership($user->membership);
+                        if($membership <= 3)
+                        {
+                          $broadcastCustomer->status = 4;
+                          $broadcastCustomer->save();
+                          continue;
+                        }
 
 												$broadcastCustomer->status = 5;
 												$broadcastCustomer->save();
@@ -255,7 +258,7 @@ class SendMessage extends Command
                         $this->generateLog($number,$campaign,$id_campaign,$status);
                     }
                 // }
-                sleep(mt_rand(5, 15));
+                // sleep(mt_rand(5, 15));
             }//END LOOPING
 
         } // END BROADCAST 

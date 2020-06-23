@@ -83,13 +83,6 @@ class SendCampaign implements ShouldQueue
         {
             foreach($broadcast as $row)
             {
-                $user = User::find($row->userid);
-                $membership = getMembership($user->membership);
-                if($membership <= 3)
-                {
-                  continue;
-                }
-
                 // $customers = Customer::where('id',$row->customer_id)->first();
                 $customer_message = $row->message;
                 $customer_phone = $row->telegram_number;
@@ -161,6 +154,15 @@ class SendCampaign implements ShouldQueue
 												if ($broadcastCustomer->status==5) {
 													continue;
 												}
+
+                        $user = User::find($row->userid);
+                        $membership = getMembership($user->membership);
+                        if($membership <= 3)
+                        {
+                          $broadcastCustomer->status = 4;
+                          $broadcastCustomer->save();
+                          continue;
+                        }
 
 												$broadcastCustomer->status = 5;
 												$broadcastCustomer->save();
