@@ -82,56 +82,11 @@ class OrderController extends Controller
     if(!is_null($phoneNumber))
     {
       $counter = getCounter($order->package);
+      $max_counter = getCountMonthMessage($order->package);
 
-      if($phoneNumber->max_counter_day <> null)
-      {
-        $phoneNumber->max_counter_day += $counter['max_counter_day'];
-      }
-      else
-      {
-        $phoneNumber->max_counter_day = $counter['max_counter_day'];
-      }
-
-      $phoneNumber->max_counter+=$counter['max_counter'];
+      $phoneNumber->max_counter_day += $counter['max_counter_day'];
+      $phoneNumber->max_counter+=$max_counter['total_message'];
       $phoneNumber->save();
-      /*
-      $type_package = substr($order->package,-1,1);
-      if ($type_package=="1") {
-        $phoneNumber->max_counter_day=1000;
-        $phoneNumber->max_counter=15000;
-      }
-      if ($type_package=="2") {
-        $phoneNumber->max_counter_day=1500;
-        $phoneNumber->max_counter=25000;
-      }
-      if ($type_package=="3") {
-        $phoneNumber->max_counter_day=2000;
-        $phoneNumber->max_counter=40000;
-      }
-      if ($type_package=="4") {
-        $phoneNumber->max_counter_day=2500;
-        $phoneNumber->max_counter=60000;
-      }
-      if ($type_package=="5") {
-        $phoneNumber->max_counter_day=3000;
-        $phoneNumber->max_counter=90000;
-      }
-      if ($type_package=="6") {
-        $phoneNumber->max_counter_day=3500;
-        $phoneNumber->max_counter=130000;
-      }
-      if ($type_package=="7") {
-        $phoneNumber->max_counter_day=4000;
-        $phoneNumber->max_counter=190000;
-      }
-      if ($type_package=="8") {
-        $phoneNumber->max_counter_day=4500;
-        $phoneNumber->max_counter=250000;
-      }
-      if($type_package=="9") {
-        $phoneNumber->max_counter_day=5000;
-        $phoneNumber->max_counter=330000;
-      }*/
     }
 
     if($user_day_left < 0)
