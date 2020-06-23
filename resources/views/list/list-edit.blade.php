@@ -6,7 +6,7 @@
 <div class="container act-tel-list-data">
 
   <div class="left">
-     <h2>List Name : <span class="listname">{{$label}}</span></h2>
+     <h3>List Name : <span class="listname">{{$label}}</span></h3>
      <span><a id="edit_list_name" class="btn btn-activ icon-edit"></a></span>
   </div>
   <div class="clearfix"></div>
@@ -629,12 +629,12 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
         </h5>
       </div>
       <div class="modal-body">
-         <input type="text" name="list_label" class="form-control" placeholder="Input List name" value="{{$label}}"/>
+         <input type="text" name="list_label" class="form-control" placeholder="Input List name" value="{{$label}}" maxlength="100"/>
           <div class="error list_label col-lg-12 text-left"></div>
       </div>
       <div class="modal-footer" id="foot">
-        <button id="list_name" class="btn btn-activ">Change list name</button>
-        <button class="btn btn-danger" data-dismiss="modal">
+        <button id="list_name" class="btn btn-info text-white">Change list name</button>
+        <button class="btn btn-secondary" data-dismiss="modal">
           Close
         </button>
       </div>
@@ -2137,7 +2137,8 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
             $('#loader').show();
             $('.div-loading').addClass('background-load');
           },
-          success : function(result){
+          success : function(result)
+          {
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
             //alert(result.response);
@@ -2145,6 +2146,11 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
             {
               $(".act-tel-list-data h2 .listname").html(list_label);
               $("#display_edit_list_name").modal('hide');
+            }
+            else
+            {
+              $(".error").show();
+              $(".list_label").html(result.response);
             }
           },
           error : function(xhr){

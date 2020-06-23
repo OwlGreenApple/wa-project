@@ -754,13 +754,15 @@ class ListController extends Controller
 
         if(empty($list_label) || $list_label == null)
         {
+            $result['status'] = 'error';
             $result['response'] = 'List name cannot be empty';
             return response()->json($result);
         } 
 
-        if(strlen($list_label) > 50)
+        if(strlen($list_label) > 100)
         {
-            $result['response'] = 'List name cannot greater than 50 characters';
+            $result['status'] = 'error';
+            $result['response'] = 'List name cannot greater than 100 characters';
             return response()->json($result);
         }
 
