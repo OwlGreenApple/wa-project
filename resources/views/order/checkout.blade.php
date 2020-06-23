@@ -46,56 +46,56 @@
                           -----------------------------------------------------------------------------------------------------------------
                         </option>
 												
-                        <option class="" data-price="275000" data-paket="basic2" data-paket-title="Basic - 25.000 Messages" value="4" <?php if ($id==4) echo "selected" ; ?>>
-                          Basic - 25.000 Messages - IDR 275.000,-/30 days
+                        <option class="" data-price="295000" data-paket="basic2" data-paket-title="Basic - 25.000 Messages" value="4" <?php if ($id==4) echo "selected" ; ?>>
+                          Basic - 25.000 Messages - IDR 295.000,-/30 days
                         </option>
-                        <option class="" data-price="522500" data-paket="bestseller2" data-paket-title="Best Seller - 25.000 Messages" value="5" <?php if ($id==5) echo "selected" ; ?>>
-                          Best Seller - 25.000 Messages - IDR 522.500,-/60 days 
+                        <option class="" data-price="560500" data-paket="bestseller2" data-paket-title="Best Seller - 25.000 Messages" value="5" <?php if ($id==5) echo "selected" ; ?>>
+                          Best Seller - 25.000 Messages - IDR 560.500,-/60 days 
                         </option>
-                        <option class="" data-price="742500" data-paket="supervalue2" data-paket-title="Super Value - 25.000 Messages" value="6" <?php if ($id==6) echo "selected" ; ?>>
-                          Super Value - 25.000 Messages - IDR 742.500,-/90 days 
-                        </option>
-												
-                        <option class="">
-                          -----------------------------------------------------------------------------------------------------------------
-                        </option>
-												
-                        <option class="" data-price="345000" data-paket="basic3" data-paket-title="Basic - 40.000 Messages" value="7" <?php if ($id==7) echo "selected" ; ?>>
-                          Basic - 40.000 Messages - IDR 345.000,-/30 days
-                        </option>
-                        <option class="" data-price="655500" data-paket="bestseller3" data-paket-title="Best Seller - 40.000 Messages" value="8" <?php if ($id==8) echo "selected" ; ?>>
-                          Best Seller - 40.000 Messages - IDR 655.500,-/60 days 
-                        </option>
-                        <option class="" data-price="931500" data-paket="supervalue3" data-paket-title="Super Value - 40.000 Messages" value="9" <?php if ($id==9) echo "selected" ; ?>>
-                          Super Value - 40.000 Messages - IDR 931.500,-/90 days 
+                        <option class="" data-price="796500" data-paket="supervalue2" data-paket-title="Super Value - 25.000 Messages" value="6" <?php if ($id==6) echo "selected" ; ?>>
+                          Super Value - 25.000 Messages - IDR 796.500,-/90 days 
                         </option>
 												
                         <option class="">
                           -----------------------------------------------------------------------------------------------------------------
                         </option>
 												
-                        <option class="" data-price="415000" data-paket="basic4" data-paket-title="Basic - 60.000 Messages" value="10" <?php if ($id==10) echo "selected" ; ?>>
-                          Basic - 60.000 Messages - IDR 415.000,-/30 days
+                        <option class="" data-price="395000" data-paket="basic3" data-paket-title="Basic - 40.000 Messages" value="7" <?php if ($id==7) echo "selected" ; ?>>
+                          Basic - 40.000 Messages - IDR 395.000,-/30 days
                         </option>
-                        <option class="" data-price="788500" data-paket="bestseller4" data-paket-title="Best Seller - 60.000 Messages" value="11" <?php if ($id==11) echo "selected" ; ?>>
-                          Best Seller - 60.000 Messages - IDR 788.500,-/60 days 
+                        <option class="" data-price="750500" data-paket="bestseller3" data-paket-title="Best Seller - 40.000 Messages" value="8" <?php if ($id==8) echo "selected" ; ?>>
+                          Best Seller - 40.000 Messages - IDR 750.500,-/60 days 
                         </option>
-                        <option class="" data-price="1120500" data-paket="supervalue4" data-paket-title="Super Value - 60.000 Messages" value="12" <?php if ($id==12) echo "selected" ; ?>>
-                          Super Value - 60.000 Messages - IDR 1.120.500,-/90 days 
+                        <option class="" data-price="1066500" data-paket="supervalue3" data-paket-title="Super Value - 40.000 Messages" value="9" <?php if ($id==9) echo "selected" ; ?>>
+                          Super Value - 40.000 Messages - IDR 1.066.500,-/90 days 
                         </option>
 												
                         <option class="">
                           -----------------------------------------------------------------------------------------------------------------
                         </option>
 												
-                        <option class="" data-price="555000" data-paket="basic5" data-paket-title="Basic - 90.000 Messages" value="13" <?php if ($id==13) echo "selected" ; ?>>
-                          Basic - 90.000 Messages - IDR 555.000,-/30 days
+                        <option class="" data-price="495000" data-paket="basic4" data-paket-title="Basic - 60.000 Messages" value="10" <?php if ($id==10) echo "selected" ; ?>>
+                          Basic - 60.000 Messages - IDR 495.000,-/30 days
                         </option>
-                        <option class="" data-price="1054500" data-paket="bestseller5" data-paket-title="Best Seller - 90.000 Messages" value="14" <?php if ($id==14) echo "selected" ; ?>>
-                          Best Seller - 90.000 Messages - IDR 1.054.500,-/60 days 
+                        <option class="" data-price="940500" data-paket="bestseller4" data-paket-title="Best Seller - 60.000 Messages" value="11" <?php if ($id==11) echo "selected" ; ?>>
+                          Best Seller - 60.000 Messages - IDR 940.500,-/60 days 
                         </option>
-                        <option class="" data-price="1498500" data-paket="supervalue5" data-paket-title="Super Value - 90.000 Messages" value="15" <?php if ($id==15) echo "selected" ; ?>>
-                          Super Value - 90.000 Messages - IDR 1.498.500,-/90 days 
+                        <option class="" data-price="1336500" data-paket="supervalue4" data-paket-title="Super Value - 60.000 Messages" value="12" <?php if ($id==12) echo "selected" ; ?>>
+                          Super Value - 60.000 Messages - IDR 1.336.500,-/90 days 
+                        </option>
+												
+                        <option class="">
+                          -----------------------------------------------------------------------------------------------------------------
+                        </option>
+												
+                        <option class="" data-price="595000" data-paket="basic5" data-paket-title="Basic - 90.000 Messages" value="13" <?php if ($id==13) echo "selected" ; ?>>
+                          Basic - 90.000 Messages - IDR 595.000,-/30 days
+                        </option>
+                        <option class="" data-price="1130500" data-paket="bestseller5" data-paket-title="Best Seller - 90.000 Messages" value="14" <?php if ($id==14) echo "selected" ; ?>>
+                          Best Seller - 90.000 Messages - IDR 1.130.500,-/60 days 
+                        </option>
+                        <option class="" data-price="1606500" data-paket="supervalue5" data-paket-title="Super Value - 90.000 Messages" value="15" <?php if ($id==15) echo "selected" ; ?>>
+                          Super Value - 90.000 Messages - IDR 1.606.500,-/90 days 
                         </option>
 												
                         <option class="">
@@ -116,42 +116,42 @@
                           -----------------------------------------------------------------------------------------------------------------
                         </option>
 												
-                        <option class="" data-price="975000" data-paket="basic7" data-paket-title="Basic - 190.000 Messages" value="19" <?php if ($id==19) echo "selected" ; ?>>
-                          Basic - 190.000 Messages - IDR 975.000,-/30 days
+                        <option class="" data-price="795000" data-paket="basic7" data-paket-title="Basic - 190.000 Messages" value="19" <?php if ($id==19) echo "selected" ; ?>>
+                          Basic - 190.000 Messages - IDR 795.000,-/30 days
                         </option>
-                        <option class="" data-price="1852500" data-paket="bestseller7" data-paket-title="Best Seller - 190.000 Messages" value="20" <?php if ($id==20) echo "selected" ; ?>>
-                          Best Seller - 190.000 Messages - IDR 1.852.500,-/60 days 
+                        <option class="" data-price="1510500" data-paket="bestseller7" data-paket-title="Best Seller - 190.000 Messages" value="20" <?php if ($id==20) echo "selected" ; ?>>
+                          Best Seller - 190.000 Messages - IDR 1.510.500,-/60 days 
                         </option>
-                        <option class="" data-price="2632500" data-paket="supervalue7" data-paket-title="Super Value - 190.000 Messages" value="21" <?php if ($id==21) echo "selected" ; ?>>
-                          Super Value - 190.000 Messages - IDR 2.632.500,-/90 days 
-                        </option>
-												
-                        <option class="">
-                          -----------------------------------------------------------------------------------------------------------------
-                        </option>
-												
-                        <option class="" data-price="1255000" data-paket="basic8" data-paket-title="Basic - 250.000 Messages" value="22" <?php if ($id==22) echo "selected" ; ?>>
-                          Basic - 250.000 Messages - IDR 1.255.000,-/30 days
-                        </option>
-                        <option class="" data-price="2384500" data-paket="bestseller8" data-paket-title="Best Seller - 250.000 Messages" value="23" <?php if ($id==23) echo "selected" ; ?>>
-                          Best Seller - 250.000 Messages - IDR 2.384.500,-/60 days 
-                        </option>
-                        <option class="" data-price="3388500" data-paket="supervalue8" data-paket-title="Super Value - 250.000 Messages" value="24" <?php if ($id==24) echo "selected" ; ?>>
-                          Super Value - 250.000 Messages - IDR 3.388.500,-/90 days 
+                        <option class="" data-price="2146500" data-paket="supervalue7" data-paket-title="Super Value - 190.000 Messages" value="21" <?php if ($id==21) echo "selected" ; ?>>
+                          Super Value - 190.000 Messages - IDR 2.146.500,-/90 days 
                         </option>
 												
                         <option class="">
                           -----------------------------------------------------------------------------------------------------------------
                         </option>
 												
-                        <option class="" data-price="1555000" data-paket="basic9" data-paket-title="Basic - 330.000 Messages" value="25" <?php if ($id==25) echo "selected" ; ?>>
-                          Basic - 330.000 Messages - IDR 1.555.000,-/30 days
+                        <option class="" data-price="895000" data-paket="basic8" data-paket-title="Basic - 250.000 Messages" value="22" <?php if ($id==22) echo "selected" ; ?>>
+                          Basic - 250.000 Messages - IDR 895.000,-/30 days
                         </option>
-                        <option class="" data-price="2954500" data-paket="bestseller9" data-paket-title="Best Seller - 330.000 Messages" value="26" <?php if ($id==26) echo "selected" ; ?>>
-                          Best Seller - 330.000 Messages - IDR 2.954.500,-/60 days 
+                        <option class="" data-price="1700500" data-paket="bestseller8" data-paket-title="Best Seller - 250.000 Messages" value="23" <?php if ($id==23) echo "selected" ; ?>>
+                          Best Seller - 250.000 Messages - IDR 1.700.500,-/60 days 
                         </option>
-                        <option class="" data-price="4288500" data-paket="supervalue9" data-paket-title="Super Value - 330.000 Messages" value="27" <?php if ($id==27) echo "selected" ; ?>>
-                          Super Value - 330.000 Messages - IDR 4.288.500,-/90 days 
+                        <option class="" data-price="2416500" data-paket="supervalue8" data-paket-title="Super Value - 250.000 Messages" value="24" <?php if ($id==24) echo "selected" ; ?>>
+                          Super Value - 250.000 Messages - IDR 2.416.500,-/90 days 
+                        </option>
+												
+                        <option class="">
+                          -----------------------------------------------------------------------------------------------------------------
+                        </option>
+												
+                        <option class="" data-price="995000" data-paket="basic9" data-paket-title="Basic - 330.000 Messages" value="25" <?php if ($id==25) echo "selected" ; ?>>
+                          Basic - 330.000 Messages - IDR 995.000,-/30 days
+                        </option>
+                        <option class="" data-price="1890500" data-paket="bestseller9" data-paket-title="Best Seller - 330.000 Messages" value="26" <?php if ($id==26) echo "selected" ; ?>>
+                          Best Seller - 330.000 Messages - IDR 1.890.500,-/60 days 
+                        </option>
+                        <option class="" data-price="2686500" data-paket="supervalue9" data-paket-title="Super Value - 330.000 Messages" value="27" <?php if ($id==27) echo "selected" ; ?>>
+                          Super Value - 330.000 Messages - IDR 2.686.500,-/90 days 
                         </option>
 												
                   </select>

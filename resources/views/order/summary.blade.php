@@ -410,7 +410,7 @@
   }
 
 	function formatNumber(num) {
-    if(isNan(num) == false)
+    if(isNaN(num) == false)
     {
       return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
     }

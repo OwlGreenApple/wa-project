@@ -143,17 +143,17 @@ class OrderController extends Controller
     $diskon = 0;
     $check_membership = null;
 
-    if(Auth::check())
+    /*if(Auth::check())
     {
       $check_membership = $this->check_upgrade($request);
-      $arr['total'] = $check_membership['priceupgrade'];
       $arr['membership'] = $check_membership['membership'];
+      $arr['total'] = $check_membership['priceupgrade'];
       $arr['upgrade_price'] = $check_membership['upgrade_price'];
       $arr['dayleft'] = $check_membership['dayleft'];
       $arr['packageupgrade'] = $check_membership['packageupgrade'];
     }
-
-    if($status_upgrade == 2 || $status_upgrade == null)
+    */
+    if($status_upgrade == null)
     {
       $arr['total'] = $pricing;
     }
@@ -198,12 +198,13 @@ class OrderController extends Controller
         } 
         else 
         {
-          if($coupon->valid_to=='new' and Auth::check()){
+          /*if($coupon->valid_to=='new' and Auth::check()){
               //
           } else if($coupon->valid_to=='extend' and !Auth::check()){
               //
           } 
-          else if(($coupon->valid_to=='') || ($coupon->valid_to=='expired-membership') || ($coupon->valid_to=='all') && $coupon->coupon_type == 1 )
+          else */
+          if(($coupon->valid_to=='') || ($coupon->valid_to=='expired-membership') || ($coupon->valid_to=='all') && $coupon->coupon_type == 1 )
           {
             if($coupon->diskon_value == 0 && $coupon->diskon_percent <> 0){
               $diskon = $pricing * ($coupon->diskon_percent/100);
@@ -219,7 +220,7 @@ class OrderController extends Controller
             $arr['total'] = $total;
             $arr['diskon'] = $diskon;
             $arr['coupon'] = $coupon;
-            $arr['price'] = $pricing;
+            $arr['price'] = (int)$pricing;
             return $arr;
           }
           elseif($coupon->coupon_type == 2)
@@ -255,7 +256,7 @@ class OrderController extends Controller
       $arr['totaltitle'] = number_format($upgrade_promo['price'], 0, '', '.');
       $arr['coupon'] = $coupon;
       $arr['total'] = $upgrade_promo['price'];
-      $arr['price'] = number_format($previous_price, 0,'','.');
+      $arr['price'] = (int)$previous_price;
       $arr['diskon'] = 0;
       $arr['upgrade'] = 1;
       return $arr;
@@ -265,7 +266,7 @@ class OrderController extends Controller
   {
 		$arr['status'] = 'success';
 		// $arr['message'] = 'Check upgrade success';
-    $arr['membership'] = null;
+    $arr['membership'] = 0;
     $arr['upgrade_price'] = 0;
     $arr['dayleft'] = 0;
     $arr['packageupgrade'] = 0;
@@ -286,11 +287,20 @@ class OrderController extends Controller
                 ->orderBy('created_at','desc')
 								->first();
 
-			if (!is_null($order)) 
+			if($user->membership == null) 
       {
-				$priceupgrade = $order->total;
-        $package_order = $order->package;
-        $oldpackage_price = getPackagePrice($package_order);
+        if(!is_null($order))
+        {
+          // $priceupgrade = $order->total;
+          $package_order = $order->package;
+          $oldpackage_price = getPackagePrice($package_order);
+        }
+        else
+        {
+          //new user
+          $package_order = null;
+        }
+				
 			}
       else
       {
@@ -300,7 +310,7 @@ class OrderController extends Controller
 			$dayleft = $user->day_left;
 
       // new order
-      if($package_order == null || $dayleft < 1)
+     /* if($package_order == null || $dayleft < 1)
       {
          $arr['priceupgrade'] = $request->harga;
          return $arr;
@@ -311,7 +321,7 @@ class OrderController extends Controller
       {
         $arr['priceupgrade'] = $package_price;
         return $arr;
-      }
+      }*/
 
       $data = [
         'current_package'=>$package_order,
@@ -319,21 +329,23 @@ class OrderController extends Controller
       ];
 
       $check_membership = checkMembershipDowngrade($data);
+
       //return true if downgrade, false if upgrade
       if($check_membership == true)
       {
         //downgrade
         $arr['status'] = 'success';
-        $arr['membership'] = 'downgrade';
+        $arr['membership'] = 2;
         $arr['priceupgrade'] = $package_price;
       }
       else
       {
         //upgrade
         $arr['status'] = 'success';
-        $arr['membership'] = 'upgrade';
+        $arr['membership'] = 1;
+        $arr['priceupgrade'] = $package_price;
 
-        $get_new_order_day = getAdditionalDay($package_name);
+       /* $get_new_order_day = getAdditionalDay($package_name);
         $get_old_order_day = getAdditionalDay($package_order);
 
         $remain_day_price = $this->getUpgradeNow($package_price,$get_new_order_day,$oldpackage_price,$get_old_order_day,$dayleft);
@@ -341,22 +353,15 @@ class OrderController extends Controller
         $arr['upgrade_price'] = $package_price;
         $arr['dayleft'] = $dayleft;
         $arr['packageupgrade'] = round($remain_day_price);
-        $arr['priceupgrade'] = round($package_price + $remain_day_price);
+        $arr['priceupgrade'] = round($package_price + $remain_day_price);*/
       }
     }
 
     return $arr;
-
-		/*if ($request->price - $priceupgrade<0) {
-			$arr['status'] = 'error';
-			$arr['message'] = 'Cannot Downgrade';
-			return $arr;
-		}*/
 	}
 
   public function getUpgradeNow($newpackage,$package_day,$oldpackage,$old_package_day,$day_left)
   {
-  
     $upgrade_new = $newpackage/$package_day * $day_left;
     $upgrade_old = $oldpackage/$old_package_day * $day_left;
     $upgrade_now = $upgrade_new - $upgrade_old;
@@ -634,10 +639,9 @@ class OrderController extends Controller
     }
 
     $diskon = 0;
-    $pricing_upgrade = 0;
-    // $total = $request->price;
+    $pricing_upgrade = $upgrade_package = 0;
     $price = $request->price;
-    $kuponid = $upgrade_package =  null;
+    $kuponid = null;
 
     if($request->kupon <> null)
     {
@@ -663,23 +667,18 @@ class OrderController extends Controller
         /**/
       }
     }
-    else
-    {
-      $arr = $this->check_upgrade($request);
-      $upgrade_package = $arr['priceupgrade'];
-      $pricing_upgrade = $arr['packageupgrade'];
-    }
 	
     $user = Auth::user();
-    if($request->status_upgrade == null)
+    $membership = $this->check_upgrade($request);
+    $status_upgrade = $membership['membership'];
+    /*if($request->status_upgrade == null)
     {
-       // $status_upgrade = $this->checkDowngrade($user->id);
        $status_upgrade = 0;
     }
     else
     {
        $status_upgrade = $request->status_upgrade;
-    }
+    }*/
    
 		$data = [
 			"user"=> $user,

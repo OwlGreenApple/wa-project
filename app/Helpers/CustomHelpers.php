@@ -338,6 +338,39 @@ use Illuminate\Support\Facades\Storage;
       return $additional_day;
   }
 
+   function getCountMonthMessage($package)
+  {
+      $get_package = substr($package,0,-1);
+      $get_message = getCounter($package);
+      $data = array();
+
+      if($get_package == 'basic')
+      {
+        $data = array(
+          'month'=>1,
+          'total_message'=>$get_message['max_counter'] * 1
+        );
+      }
+      
+      if($get_package == 'bestseller')
+      {
+        $data = array(
+          'month'=>2,
+          'total_message'=>$get_message['max_counter'] * 2
+        );
+      }
+      
+      if($get_package == 'supervalue')
+      {
+        $data = array(
+          'month'=>3,
+          'total_message'=>$get_message['max_counter'] * 3
+        );
+      }
+
+      return $data;
+  }
+
   function getCounter($package)
   {
     $type_package = substr($package,-1,1);
