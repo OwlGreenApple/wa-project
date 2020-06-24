@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use Date;
 use App\Helpers\ApiHelper;
 
+use App\Jobs\SendNotif;
+
 class notifOrder extends Command
 {
     /**
@@ -58,8 +60,67 @@ class notifOrder extends Command
            $diff = date_diff($date_order,$today);
            $diffDay = (int)$diff->format('%a');
 
-           if($diffDay == 1 || $diffDay == 5)
-           {
+           $user = User::find($row->user_id);
+           if ($diffDay == 1){
+            $message = null;
+            $message .= '*Hi '.$user->name.'*,'."\n\n";
+            $message .= "_Gimana kabarnya?_ \n";
+            $message .= "Kami mau mengingatkan nih kalau kamu *belum melakukan transfer dan konfirmasi pembayaran*. \n \n";
+            $message .= "_Kemarin kamu sudah membeli paket Activrespon, ini rinciannya :_ \n \n";
+            $message .= '*No Order :* '.$row->no_order.''."\n";
+            $message .= '*Nama :* '.$user->name.''."\n";
+            $message .= '*Paket :* '.$row->package_title.''."\n";
+            $message .= '*Total Biaya :*  Rp. '.str_replace(",",".",number_format($row->total))."\n";
+
+            $message .= "Silahkan melakukan pembayaran dengan bank berikut : \n\n";
+            $message .= 'BCA (Sugiarto Lasjim)'."\n";
+            $message .= '8290-336-261'."\n\n";
+            
+            $message .= "_Buruan transfer dan konfirmasi agar pembelianmu tidak dihapus oleh sistem._\n\n";
+
+            $message .= '*Sesudah transfer:*'."\n";
+            $message .= '- *Login* ke https://activrespon.com'."\n";
+            $message .= '- *Klik* Profile'."\n";
+            $message .= '- Pilih *Order & Confirm*'."\n";
+            $message .= '- *Upload bukti konfirmasi* disana'."\n\n";
+
+            $message .= 'Terima Kasih,'."\n\n";
+            $message .= 'Team Activrespon'."\n";
+            $message .= '_*Activrespon is part of Activomni.com_';
+
+            SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+          }
+          else if ($diffDay == 5){
+            $message = null;
+            $message .= '*Hi '.$user->name.'*,'."\n\n";
+            $message .= "*Yakin bisa rela?* Hari ini kamu *bakal kehilangan harga spesial* yang sudah kamu dapatkan 2 hari lalu ketika order Activrespon lhoo. \n \n";
+            $message .= "_Ini rinciannya :_ \n \n";
+            $message .= '*No Order :* '.$row->no_order.''."\n";
+            $message .= '*Nama :* '.$user->name.''."\n";
+            $message .= '*Paket :* '.$row->package_title.''."\n";
+            $message .= '*Total Biaya :*  Rp. '.str_replace(",",".",number_format($row->total))."\n";
+
+            $message .= "Silahkan melakukan pembayaran dengan bank berikut : \n\n";
+            $message .= 'BCA (Sugiarto Lasjim)'."\n";
+            $message .= '8290-336-261'."\n\n";
+            
+            $message .= "Buruan transfer dan konfirmasi sekarang karena kalau tidak, _pembelian mu akan dihapus jam 12 malam nanti oleh sistem_. *Kamu juga akan kehilangan kesempatan memiliki Activrespon dengan harga spesial.* \n\n";
+
+            $message .= '*Sesudah transfer:*'."\n";
+            $message .= '- *Login* ke https://activrespon.com'."\n";
+            $message .= '- *Klik* Profile'."\n";
+            $message .= '- Pilih *Order & Confirm*'."\n";
+            $message .= '- *Upload bukti konfirmasi* disana'."\n\n";
+
+            $message .= 'Terima Kasih,'."\n\n";
+            $message .= 'Team Activrespon'."\n";
+            $message .= '_*Activrespon is part of Activomni.com_';
+
+            SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+          }
+           
+          if($diffDay == 1 || $diffDay == 5)
+          {
               $orders = [
                 'no'=>$row->no_order,
                 'package'=>$row->package_title,
@@ -70,7 +131,7 @@ class notifOrder extends Command
               Mail::to($row->email)->send(new NotifyOrder($diffDay,$row->phone_number,$orders));
            }
            sleep(2);
-         } // END FOREACH
+          } // END FOREACH
         }// END IF
     }
 }
