@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\User;
-use App\UserLog;
+// use App\UserLog;
 
 use App\Http\Controllers\OrderController;
 
@@ -148,8 +148,9 @@ class UserController extends Controller
     }
 
     public function load_log(Request $request){
-      $logs = UserLog::where('user_id',$request->id)
-              ->get();
+      // $logs = UserLog::where('user_id',$request->id)
+              // ->get();
+      $logs = "";
 
       $arr['view'] = (string) view('admin.list-user.content-log')->with('logs',$logs);
 
@@ -208,12 +209,12 @@ class UserController extends Controller
                 $user->membership = 'elite';
                 $user->save();
           
-                $userlog = new UserLog;
-                $userlog->user_id = $user->id;
-                $userlog->type = 'membership';
-                $userlog->value = 'elite';
-                $userlog->keterangan = "Add Bonus user (excel) from admin";
-                $userlog->save();
+                // $userlog = new UserLog;
+                // $userlog->user_id = $user->id;
+                // $userlog->type = 'membership';
+                // $userlog->value = 'elite';
+                // $userlog->keterangan = "Add Bonus user (excel) from admin";
+                // $userlog->save();
           
                 //email data ke user
                 $dt = Carbon::now();
