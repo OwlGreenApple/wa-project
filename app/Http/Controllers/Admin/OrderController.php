@@ -38,45 +38,33 @@ class OrderController extends Controller
     //konfirmasi pembayaran admin
 
     $order = Order::find($request->id);
-    $order->status = 2;
-    $order->save();
-    
 		$phoneNumber = PhoneNumber::where("user_id",$order->user_id)->first();					
 		$user = User::find($order->user_id);
-    $current_membership =  $user->membership;
-    $user_day_left =  $user->day_left;
-		$user->membership = $order->package;
-    $status_upgrade = $order->status_upgrade;
+    $user_day_left = $user->day_left;
 
 		$additional_day = getAdditionalDay($order->package);
 		$type_package =0;
 
- /*
-		if(substr(,0,5) === "basic"){
-			$additional_day += 30;
-			// $type_package = explode("basic", $order->package)[0];
-    }
-		if(substr($order->package,0,10) === "bestseller"){
-			$additional_day += 60;
-			// $type_package = explode("bestseller", $order->package)[0];
-    }
-		if(substr($order->package,0,10) === "supervalue"){
-			$additional_day += 90;
-      // $type_package = explode("supervalue", $order->package)[0];
-    }*/
+    //downgrade or upgrade
+    $data = [
+      'user_id'=>$order->user_id,
+      'order_package'=>$order->package,
+      'package_day'=>$additional_day,
+    ];
+    
+    //to save order into memberships
+    $status_upgrade = $this->orderLater($data);
 
-    //downgrade or upgrade later
-    if($status_upgrade == 2 || ($current_membership <> null && $user_day_left > 0 && $status_upgrade == 0))
+    if($status_upgrade <> 'error')
     {
-      $data = [
-        'user_id'=>$order->user_id,
-        'order_package'=>$order->package,
-        'day_left'=>$user_day_left,
-        'next_day'=>$additional_day,
-        'eorder'=>$order,
-        'euser'=>$user
-      ];
-      return $this->orderLater($data);
+      $order->status = 2;
+      $order->save();
+    }
+    else
+    {
+      $arr['status'] = 'error';
+      $arr['message'] = 'Error, please contact programmer!';
+      return $arr;
     }
 
     if(!is_null($phoneNumber))
@@ -84,21 +72,25 @@ class OrderController extends Controller
       $counter = getCounter($order->package);
       $max_counter = getCountMonthMessage($order->package);
 
-      $phoneNumber->max_counter_day += $counter['max_counter_day'];
+      $phoneNumber->max_counter_day = $counter['max_counter_day'];
       $phoneNumber->max_counter+=$max_counter['total_message'];
       $phoneNumber->save();
     }
 
-    if($user_day_left < 0)
-    {
-      $user->day_left = $additional_day;
-    }
-    else
-    {
-      $user->day_left += $additional_day;
-    }
     
-    $user->membership = $order->package;
+    if($status_upgrade['status'] == 0)
+    {
+      if($user_day_left < 0)
+      {
+        $user->day_left = $additional_day;
+      }
+      else
+      {
+        $user->day_left += $additional_day;
+      }
+      $user->membership = $order->package;
+    }
+
     $user->status = 1;
     $user->save();
 
@@ -131,59 +123,68 @@ class OrderController extends Controller
 
     if(is_null($check_membership))
     {
-      $getDay = $this->updateLater($data['day_left'],$data['next_day']);
+      $getDay = $this->updateLater($data['package_day']);
       $membership->start = $getDay['start'];
       $membership->end = $getDay['end'];
+      $membership->status = 0;
     }
     else
     {
         //if available data
+      $previous_package = $check_membership->membership;
+      $new_package = $data['order_package'];
       $previous_end_day = Carbon::parse($check_membership->end)->setTime(0, 0, 0);
-      $next_end_day = Carbon::parse($previous_end_day)->addDays($data['next_day']);
+      $next_end_day = Carbon::parse($previous_end_day)->addDays($data['package_day']);
+      $status_upgrade = $this->checkDowngrade($previous_package,$new_package);
+
       $membership->start = $previous_end_day;
       $membership->end = $next_end_day;
+      $membership->status_upgrade = $status_upgrade;
     }
 
     try
     {
       $membership->save();
-      $arr['status'] = 'success';
-      $arr['message'] = 'Order berhasil dikonfirmasi';
+      $status_upgrade = $membership->status_upgrade;
+      $arr['status'] = $status_upgrade;
     }
     catch(QueryException $e)
     {
       $arr['status'] = 'error';
-      $arr['message'] = $e->getMessage();
-    }
-
-    $emaildata = [
-      'order' => $data['eorder'],
-      'user' => $data['euser'],
-    ];
-
-    $user = $data['euser'];
-    $order = $data['eorder'];
-
-    if(env('APP_ENV') <> 'local')
-    {
-      Mail::send('emails.confirm-order', $emaildata, function ($message) use ($user,$order) {
-        $message->from('no-reply@activrespon.com', 'Activrespon');
-        $message->to($user->email);
-        $message->subject('[Activrespon] Konfirmasi Order'.$order->no_order);
-      });
     }
 
     return $arr;
   }
 
   //upgrade later & downgrade
-  public function updateLater($day_left,$next_day)
+  public function updateLater($package_day)
   {
-      $day_left = (int)$day_left;
-      $data['start'] = Carbon::now()->setTime(0, 0, 0)->addDays($day_left);
-      $data['end'] = Carbon::parse($data['start'])->addDays($next_day);
+      $package_day = (int)$package_day;
+      $data['start'] = Carbon::now()->setTime(0, 0, 0);
+      $data['end'] = Carbon::parse($data['start'])->addDays($package_day);
       return $data;
   }
+
+  public function checkDowngrade($previous_package,$new_package)
+    {
+      $data = [
+          'current_package'=>$previous_package,
+          'order_package'=>$new_package,
+      ];
+      
+      $get_status = checkMembershipDowngrade($data);
+
+      if($get_status == true)
+      {
+        $status_upgrade = 1;
+      }
+      else
+      {
+        $status_upgrade = 0;
+      }
+
+      return $status_upgrade;
+    }
 
   
 /* end class */
