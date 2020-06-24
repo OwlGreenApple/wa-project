@@ -69,7 +69,7 @@ class CheckMembershipPackage extends Command
         foreach($check_membership as $row):
           $start = Carbon::parse($row->start);
           $membership = $row->membership;
-          $total_day = getAdditionalDay($membership);
+          // $total_day = getAdditionalDay($membership);
 
           if($today->gte($start))
           {
@@ -77,7 +77,6 @@ class CheckMembershipPackage extends Command
                 'id' => $row->id,
                 'user_id' => $row->user_id,
                 'membership'=>$membership,
-                'total_day'=>$total_day
              );
           }
         endforeach;
@@ -88,29 +87,13 @@ class CheckMembershipPackage extends Command
          foreach($data_membership as $key=>$row):
            $user_membership = User::find($row['user_id']);
            $user_membership->membership = $row['membership'];
-           $user_membership->day_left = $row['total_day'];
 
-           $counter = getCounter($membership);
-           $phone = PhoneNumber::where('user_id',$row['user_id'])->first();
-
-           if(!is_null($phone))
-           {
-              $user_membership->save();
-              $phone->max_counter_day = $counter['max_counter_day'];
-              $phone->max_counter = $counter['max_counter'];
-              $phone->save();
-
-              $membership_update = Membership::find($row['id']);
-              $membership_update->status = 0;
-              $membership_update->save();
-           }
-           else
-           {
-              continue;
-           }
+           $user_membership->save();
+           $membership_update = Membership::find($row['id']);
+           $membership_update->status = 0;
+           $membership_update->save();
          endforeach;
       }
-      
     }
 
 /* end class */

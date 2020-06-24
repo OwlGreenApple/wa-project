@@ -671,8 +671,8 @@ class SettingController extends Controller
       }
       else
       {
-          $day_counter = $counter['day'];
-          $month_counter = $counter['month'];
+          $max_counter_day = $counter['max_counter_day'];
+          $max_counter = $counter['max_counter'];
       }
       
       $key = "";
@@ -688,8 +688,8 @@ class SettingController extends Controller
         $phoneNumber->filename = $key;
         $phoneNumber->counter = env('COUNTER');
         $phoneNumber->counter2 = env('COUNTER2');
-        $phoneNumber->max_counter_day = $day_counter;
-        $phoneNumber->max_counter = $month_counter;
+        $phoneNumber->max_counter_day = $max_counter_day;
+        $phoneNumber->max_counter = $max_counter;
         $phoneNumber->status = 2;
         $phoneNumber->mode = session('mode');
         $phoneNumber->save();
@@ -722,8 +722,11 @@ class SettingController extends Controller
       $check_order = User::find($userid);
       if($check_order->membership <> null && $check_order->day_left > 0 && $check_order->status > 0)
       {
-          $type_package = substr($check_order->membership,-1,1);
-          $counter = Alert::package($type_package);
+          $max_counter = getCountMonthMessage($check_order->membership);
+          $max_counter_day = getCounter($check_order->membership);
+
+          $counter['max_counter'] = $max_counter['total_message'];
+          $counter['max_counter_day'] = $max_counter_day['max_counter_day'];
           return $counter;
       }
       else

@@ -33,10 +33,10 @@ class Kernel extends ConsoleKernel
     {
       if (env("APP_ENV")=="production") {
         $schedule->command('check:orderwoowa')->dailyAt('01:00');
+        $schedule->command('check:package')->dailyAt('00:01');
         $schedule->command('check:membership')->dailyAt('01:00');
         $schedule->command('notif:order')->dailyAt('08:00');
         $schedule->command('reset:message')->dailyAt('01:00');
-        $schedule->command('check:package')->dailyAt('00:05');
         $schedule->command('get:key')->everyMinute();
         $schedule->command('queue:message')->everyMinute();
         $schedule->command('check:counter')->everyMinute();

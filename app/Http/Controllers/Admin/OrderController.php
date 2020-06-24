@@ -77,17 +77,17 @@ class OrderController extends Controller
       $phoneNumber->save();
     }
 
-    
+    if($user_day_left < 0)
+    {
+      $user->day_left = $additional_day;
+    }
+    else
+    {
+      $user->day_left += $additional_day;
+    } 
+
     if($status_upgrade['status'] == 0)
     {
-      if($user_day_left < 0)
-      {
-        $user->day_left = $additional_day;
-      }
-      else
-      {
-        $user->day_left += $additional_day;
-      }
       $user->membership = $order->package;
     }
 
@@ -137,6 +137,10 @@ class OrderController extends Controller
       $next_end_day = Carbon::parse($previous_end_day)->addDays($data['package_day']);
       $status_upgrade = $this->checkDowngrade($previous_package,$new_package);
 
+      if($status_upgrade == 0)
+      {
+        $membership->status = 0;
+      }
       $membership->start = $previous_end_day;
       $membership->end = $next_end_day;
       $membership->status_upgrade = $status_upgrade;
