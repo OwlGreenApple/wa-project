@@ -50,7 +50,7 @@ class SettingController extends Controller
       $is_registered = 0;
       $phoneNumber = PhoneNumber::
                       where("user_id",$user->id)
-                      ->where("status",2)
+                      ->where("status",">",0)
                       ->first();
       if (!is_null($phoneNumber)) {
         $is_registered = 1;
