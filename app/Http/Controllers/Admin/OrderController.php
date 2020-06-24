@@ -17,6 +17,8 @@ use Crypt;
 use Carbon\Carbon;
 use Auth,Mail,Validator,Storage,DateTime;
 
+use App\Jobs\SendNotif;
+
 class OrderController extends Controller
 {   
   public function load_list_order(Request $request){
@@ -101,6 +103,19 @@ class OrderController extends Controller
 
     if(env('APP_ENV') <> 'local')
     {
+      $message = null;
+      $message .= "*Selamat ".$user->name.",* \n\n";
+      $message .= "Pembelianmu sudah *berhasil di proses*, _kamu bisa langsung gunakan akun *Activrespon*-mu sekarang juga._ \n \n";
+
+      $message .= "Jika ada yang perlu ditanyakan seputar *Activrespon*, jangan ragu menghubungi support kami di \n";
+      $message .= "*WA 0817-318-368* \n\n";
+
+      $message .= 'Terima Kasih,'."\n\n";
+      $message .= 'Team Activrespon'."\n";
+      $message .= '_*Activrespon is part of Activomni.com_';
+
+      SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+      
       Mail::send('emails.confirm-order', $emaildata, function ($message) use ($user,$order) {
         $message->from('no-reply@activrespon.com', 'Activrespon');
         $message->to($user->email);
