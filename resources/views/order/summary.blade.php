@@ -292,8 +292,8 @@
   <div>
 
   <form method="POST" action="{{url('submit-summary')}}">
-  
-    <div class="col-md-12 col-12 upgrade" <?php if (!$is_login) { ?> style="display:none;"<?php } ?>>
+    <!--
+    <div class="col-md-12 col-12 upgrade" <php if (!$is_login) { ?> style="display:none;"<php } ?>>
       <label>Upgrade : </label>
       <div>
         <div class="form-check form-check-inline">
@@ -313,8 +313,8 @@
         </div>
 
       </div>
-      <!-- -->
-    </div>
+       
+    </div>-->
 
     <div class="as-checkout-entry" id="checkout-total">
     
@@ -498,14 +498,14 @@
             if(data.status_upgrade == 1) //false which mean upgrade
             {
               $("input[name='status_upgrade']").prop('disabled',false);
-              $(".upgrade").show();
+              // $(".upgrade").show();
               $(".total_price").html('Rp '+'<strike>'+formatNumber(data.price)+'</strike> '+data.total);
               // $("input[name='status_upgrade']").prop('disabled',false);
             }
-            else
+           /* else
             {
                $(".upgrade").hide(); 
-            }
+            }*/
 					} 
 					else {
 						alert(data.message);
@@ -612,7 +612,7 @@
 		
 		loginAjax();
 		registerAjax();
-    getUpgrade();
+    // getUpgrade();
 
 		initButton();
 		onChangeRegister();

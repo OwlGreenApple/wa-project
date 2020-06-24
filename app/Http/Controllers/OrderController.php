@@ -265,16 +265,15 @@ class OrderController extends Controller
 	public function check_upgrade(Request $request)
   {
 		$arr['status'] = 'success';
-		// $arr['message'] = 'Check upgrade success';
     $arr['membership'] = 0;
-    $arr['upgrade_price'] = 0;
+    /*$arr['upgrade_price'] = 0;
     $arr['dayleft'] = 0;
-    $arr['packageupgrade'] = 0;
+    $arr['packageupgrade'] = 0;*/
 
      //check package
     $getPackage = getPackage($request->idpaket,1);
     $package_name = $getPackage['package'];
-    $package_price = $getPackage['price'];
+    // $package_price = $getPackage['price'];
 
 		$priceupgrade = 0;
 		$dayleft = 0;
@@ -282,32 +281,21 @@ class OrderController extends Controller
 		if (Auth::check()) 
     {
 			$user = Auth::user();
-			$order = Order::where('user_id',$user->id)
+      //$dayleft = $user->day_left;
+
+			/*$order = Order::where('user_id',$user->id)
 								->where("status",2)
                 ->orderBy('created_at','desc')
-								->first();
+								->first();*/
 
 			if($user->membership == null) 
       {
-        if(!is_null($order))
-        {
-          // $priceupgrade = $order->total;
-          $package_order = $order->package;
-          $oldpackage_price = getPackagePrice($package_order);
-        }
-        else
-        {
-          //new user
-          $package_order = null;
-        }
-				
+          return $arr;
 			}
       else
       {
-        $package_order = $user->membership;
+          $package_order = $user->membership;
       }
-
-			$dayleft = $user->day_left;
 
       // new order
      /* if($package_order == null || $dayleft < 1)
@@ -336,14 +324,14 @@ class OrderController extends Controller
         //downgrade
         $arr['status'] = 'success';
         $arr['membership'] = 2;
-        $arr['priceupgrade'] = $package_price;
+        // $arr['priceupgrade'] = $package_price;
       }
       else
       {
         //upgrade
         $arr['status'] = 'success';
         $arr['membership'] = 1;
-        $arr['priceupgrade'] = $package_price;
+        //$arr['priceupgrade'] = $package_price;
 
        /* $get_new_order_day = getAdditionalDay($package_name);
         $get_old_order_day = getAdditionalDay($package_order);
@@ -448,6 +436,44 @@ class OrderController extends Controller
     return redirect('summary');
   }
 
+   public function submit_summary(Request $request){
+    $user = Auth::user();
+
+    if(session('order') == null)
+    {
+        return redirect('pricing');
+    }
+
+    if($request->status_upgrade <> null)
+    {
+        $status_upgrade = $request->status_upgrade;
+    }
+    else
+    {
+        $status_upgrade = session('order')['status_upgrade'];
+    }
+
+    $data = [
+      "user"=> $user,
+      "namapaket"=> session('order')['namapaket'],
+      "kuponid"=> session('order')['kuponid'],
+      "price"=> session('order')['price'],
+      "priceupgrade"=> session('order')['priceupgrade'],
+      "diskon"=> session('order')['diskon'],
+      "namapakettitle"=> session('order')['namapakettitle'],
+      "phone"=>$user->phone_number,
+      "month"=> session('order')['month'],
+      "total"=>session('order')['total'],
+      "upgrade"=>session('order')['upgrade'],
+      "status_upgrade"=>$status_upgrade,
+    ];
+
+    $order = Order::create_order($data);
+    return view('order.thankyou')->with(array(
+              'order'=>$order,    
+            ));
+  }
+
   // for submit summary
   public function getTotalCount($user,$namapaket)
     {
@@ -523,46 +549,6 @@ class OrderController extends Controller
       }
       
       return response()->json(['total'=>$total_price,'price'=>$price]);
-  }
-
-  public function submit_summary(Request $request){
-    $user = Auth::user();
-
-    if(session('order') == null)
-    {
-        return redirect('pricing');
-    }
-
-    if($request->status_upgrade <> null)
-    {
-        $status_upgrade = $request->status_upgrade;
-    }
-    else
-    {
-        $status_upgrade = session('order')['status_upgrade'];
-    }
-
-		$data = [
-			"user"=> $user,
-			"namapaket"=> session('order')['namapaket'],
-			"kuponid"=> session('order')['kuponid'],
-			"price"=> session('order')['price'],
-			"priceupgrade"=> session('order')['priceupgrade'],
-			"diskon"=> session('order')['diskon'],
-			"namapakettitle"=> session('order')['namapakettitle'],
-      "phone"=>$user->phone_number,
-			"month"=> session('order')['month'],
-      "total"=>session('order')['total'],
-      "upgrade"=>session('order')['upgrade'],
-      "status_upgrade"=>$status_upgrade,
-		];
-
-
-
-		$order = Order::create_order($data);
-    return view('order.thankyou')->with(array(
-              'order'=>$order,    
-            ));
   }
 
 	/*//order dengan register

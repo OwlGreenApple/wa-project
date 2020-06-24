@@ -80,7 +80,6 @@ class LoginController extends Controller
     {
         $email = $request->email;
         $password = $request->password;
-        $namapaket = null;
         $upgrade_price = 0;
         $namapaket = session('order')['namapaket'];
 
@@ -89,6 +88,7 @@ class LoginController extends Controller
             $user = Auth::user();
             $package_upgrade = session('order')['upgrade']; //for coupon package upgrade
             $order_session = session()->pull('order', []); 
+            $upgrade_price = getPackagePrice($namapaket);
 
             if($namapaket <> null && $package_upgrade == 0)
             {
@@ -102,14 +102,14 @@ class LoginController extends Controller
 
             if($result_upgrade == 1)
             {
-               $order = new OrderController;
-               $upgrade_price = $order->getTotalCount($user,$namapaket);
+               /*$order = new OrderController;
+               $upgrade_price = $order->getTotalCount($user,$namapaket);*/
                $order_session['status_upgrade'] = 1;  
             }
             else if($result_upgrade == 2)
             {
                $order_session['status_upgrade'] = 2;  
-               $upgrade_price = getPackagePrice($namapaket);
+               // 
             }
             else
             {
@@ -143,23 +143,24 @@ class LoginController extends Controller
 
     public function checkDowngrade($namapaket,$user)
     {
-      $order = Order::where('user_id',$user->id)
+     /* $order = Order::where('user_id',$user->id)
                 ->where("status",2)
                 ->orderBy('created_at','desc')
-                ->first();
+                ->first();*/
 
-      if (!is_null($order)) 
+     /* if($user->membership <> null) 
       {
-        $current_package = $order->package;
+          $current_package = $order->package;
       }
       else
       {
-        $current_package = $user->membership;
-      }
+          $current_package = $user->membership;
+      }*/
 
+      $current_package = $user->membership;
       $day_left = $user->day_left;
 
-      if($current_package == null || ($current_package <> null && $day_left <= 0))
+      if($current_package == null)
       {
          return 0;
       }

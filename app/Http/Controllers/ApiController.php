@@ -72,7 +72,7 @@ class ApiController extends Controller
       );
 
       // $email = 'gunardi.omnifluencer@gmail.com';
-      $list_id = 4;
+      $list_id = 7;
 
       // here we define the data we are posting in order to perform an update
       $post = array(
