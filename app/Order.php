@@ -95,31 +95,20 @@ class Order extends Model
       {
         $phone = $data['phone'];
         $message = null;
-        $message .= '*Hi '.$user->name.'*'."\n\n";
-        $message .= 'Terima kasih sudah membeli Activrespon.'."\n";
-        $message .= '_Berikut ini adalah invoice Anda:_'."\n"."\n";
-        $message .= '*Tgl Pembelian :* '.$dt->format('d-M-Y').''."\n";
-        $message .= '*No Invoice :* '.$order_number.''."\n";
-        $message .= '*Jumlah :*  Rp. '.str_replace(",",".",number_format($grand_total))."\n";
-        /*  $message .= '*Nama :* '.$user->name.''."\n";
-        $message .= '*Status Order :* Pending'."\n";
-        $message .= 'Anda telah memesan Paket '.$data['namapaket'].''."\n"."\n";
+        $message .= '*Hi '.$user->name.'*,'."\n\n";
+        $message .= "Berikut info pemesanan Activrespon :\n";
+        $message .= '*No Order :* '.$order_number.''."\n";
+        $message .= '*Nama :* '.$user->name.''."\n";
+        $message .= '*Paket :* '.$data['namapaket'].''."\n";
+        // $message .= '*Tgl Pembelian :* '.$dt->format('d-M-Y').''."\n";
+        $message .= '*Total Biaya :*  Rp. '.str_replace(",",".",number_format($grand_total))."\n";
 
-        $message .= '*Rp. '.number_format($data['price'] + $unique_code).'*'."\n";
-        if($data['priceupgrade'] > 0)
-          $message .= '*Upgrade Price :*'.number_format($data['priceupgrade'])."\n";
-        }
-        $message .= '*Diskon :* Rp.'. number_format($data['diskon'])."\n";
-        $message .= '*Total :* Rp.'. number_format($grand_total)."\n"."\n";
-        */
-        $message .= '*Harap transfer persis sesuai invoice*'."\n";
-        $message .= '_(dengan kode uniknya)_'."\n";
-        $message .= 'agar mempercepat proses konfirmasi'."\n\n";
-
-        $message .= '*Silahkan Transfer ke :*'."\n";
+        $message .= "Silahkan melakukan pembayaran dengan bank berikut : \n\n";
         $message .= 'BCA (Sugiarto Lasjim)'."\n";
         $message .= '8290-336-261'."\n\n";
-        // $message .= 'Sugiarto Lasjim'."\n"."\n";
+        
+        $message .= "Harus diperhatikan juga, kalau jumlah yang di transfer harus *sama persis dengan nominal diatas* supaya _*kami lebih mudah memproses pembelianmu*_.\n\n";
+
         $message .= '*Sesudah transfer:*'."\n";
         $message .= '- *Login* ke https://activrespon.com'."\n";
         $message .= '- *Klik* Profile'."\n";

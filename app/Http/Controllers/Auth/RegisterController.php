@@ -142,16 +142,18 @@ class RegisterController extends Controller
           $message .= 'Your Password is : *'.$generated_password.'*';*/
            
           $message ='';
-          $message .= 'Hi '.$data['username']."\n\n";
-          $message .= 'Welcome to Activrespon'."\n";
-          $message .= '*Your password is:* '.$generated_password."\n\n";
-          $message .= '*Link login:* '."\n";
+          $message .= '*Hi '.$data['username']."*, \n\n";
+          $message .= '*Welcome to Activrespon*'."\n";
+          $message .= "Terima kasih sudah memilih Activrespon sebagai _Tool yang bisa membantu kamu lebih dekat dengan klienmu._ Jika kamu sudah dapat WA ini berarti akunmu sudah terdaftar database kami. \n\n";
+          $message .= "Berikut info login kamu : \n";
+          $message .= "*Nama :* ".$data['username']."\n";
+          $message .= "*Email :* ".$data['email']."\n";
+          $message .= '*Password :* '.$generated_password."\n\n";
+          $message .= '*Link login:* ';
           $message .= 'https://activrespon.com/dashboard/login'."\n\n";
-          $message .= 'If you need any help'."\n";
-          $message .= '*You can contact CS at*'."\n";
-          $message .= '*Telegram:* @activomni_cs'."\n\n";
-          $message .= 'Thank You'."\n";
-          $message .= '_*Activrespon is part of Activomni.com_';
+          $message .= "Oh iya, kalau ada yang ingin ditanyakan, jangan sungkan menghubungi kami di *WA 0818-318-368*. \n\n";
+          $message .= "Salam hangat, \n";
+          $message .= 'Tim Activrespon';
 
           // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
 					// ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
