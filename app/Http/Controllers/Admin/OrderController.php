@@ -74,7 +74,11 @@ class OrderController extends Controller
       $counter = getCounter($order->package);
       $max_counter = getCountMonthMessage($order->package);
 
-      $phoneNumber->max_counter_day = $counter['max_counter_day'];
+      if($status_upgrade['status'] == 0)
+      {
+         $phoneNumber->max_counter_day = $counter['max_counter_day'];
+      }
+     
       $phoneNumber->max_counter+=$max_counter['total_message'];
       $phoneNumber->save();
     }
