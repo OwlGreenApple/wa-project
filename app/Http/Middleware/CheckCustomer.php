@@ -16,6 +16,7 @@ use App\Rules\CheckCallCode;
 use App\Rules\CheckPlusCode;
 use App\Rules\CheckWANumbers;
 use App\Rules\CheckExistIdOnDB;
+use App\Rules\CheckListName;
 use Session;
 
 class CheckCustomer
@@ -63,82 +64,58 @@ class CheckCustomer
         }
 
           /* concat wa number so that get the correct number */
-         $data = array(
-            'name'=>$req['subscribername'],
-            'phone_number'=>$req['phone_number'],
-            'code_country'=>$req['code_country']
-         );
-
-         if(isset($req['last_name']))
-         {
-            $data['last_name'] = $req['last_name'];
-         }
-
-         if(isset($req['email']))
-         {
-            $data['email'] = $req['email'];
-         }
-
          $rules = [
-            'name'=> ['required','min:4','max:190'],
-            'last_name'=> ['min:4','max:190'],
+            'subscribername'=> ['required','min:4','max:50'],
             'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
+            'listname' => ['required',new CheckListName],
          ];
 
-         if(isset($req['data_update']))
+         if(array_key_exists('last_name',$req) == true)
+         {
+            $rules['last_name'] = ['min:4','max:50'];
+         }
+
+         if(array_key_exists('email',$req) == true)
+         {
+            $rules['email'] = ['required','email','max:50',new SubscriberEmail($id_list)];
+         }
+
+         if(array_key_exists('data_update',$req) == true)
          {
             $cond = [
               ['id','=',$req['data_update']]
             ];
 
-            $rules = [
-              'email'=> ['email','max:190',new SubscriberEmail($id_list)],
-              'data_update'=> ['required',new CheckExistIdOnDB('customers',$cond)],
-            ];
+            $rules['data_update'] = ['required',new CheckExistIdOnDB('customers',$cond)];
+         }
+
+         if(array_key_exists('listedit',$req) == true)
+         {
+            $rules['phone_number'] = ['required','numeric','digits_between:6,18',new InternationalTel];
+         }
+         elseif(array_key_exists('data_update',$req) == true && $req['phone_number'] == null)
+         {
+            $rules['phone_number'] = [];       
          }
          else
          {
-            $rules = [
-              'email'=> ['required','email','max:190',new SubscriberEmail($id_list)]
-            ];
+            $rules['phone_number'] = ['required','numeric','digits_between:6,18',new InternationalTel, new CheckWANumbers($req['code_country'],$id_list)];
          }
 
-         if(isset($req['listedit']))
-         {
-            $rules = [
-              'phone_number'=> ['required','min:6','max:18',new InternationalTel],
-            ];
-         }
-         elseif(isset($req['data_update']) && $req['phone_number'] == null)
-         {
-            $rules = [
-              'phone_number'=> [],
-            ];
-         }
-         else
-         {
-            $rules = [
-              'phone_number'=> ['required','min:6','max:18',new InternationalTel, new CheckWANumbers($req['code_country'],$id_list)],
-            ];
-         }
-
-        $validator = Validator::make($data,$rules);
-
+        $validator = Validator::make($req,$rules);
         if($validator->fails()){
             $error = $validator->errors();
-            $data = array(
-                'name'=>$error->first('name'),
+            $err = array(
+                'name'=>$error->first('subscribername'),
+                'last_name'=>$error->first('last_name'),
                 'email'=>$error->first('email'),
                 'phone'=>$error->first('phone_number'),
                 'code_country'=>$error->first('code_country'),
+                'data_update'=>$error->first('data_update'),
+                'listname'=>$error->first('listname'),
             );
-            return response()->json($data);
+            return response()->json($err);
         }
-
-         if($this->checkList($req['listname']) == false){
-            $error['list'] = 'Please do not modify list name';
-            return response()->json($error);
-         }
 
          if(isset($req['data']) && $this->checkAdditional($req['data'],$id_list) !== true)
          {
@@ -148,21 +125,6 @@ class CheckCustomer
          }
         
         return $next($request);
-    }
-
-    public function checkList($listname){
-        $check_link = UserList::where([
-            ['name','=',$listname],
-            ['status','=',1],
-        ])->first();
-
-        if(empty($listname)){
-            return false;
-        } elseif(is_null($check_link)) {
-            return false;
-        } else {
-            return true;
-        }
     }
 
     public function checkAdditional($data,$list_id){

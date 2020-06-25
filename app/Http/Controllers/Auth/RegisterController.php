@@ -82,11 +82,12 @@ class RegisterController extends Controller
             return response()->json($error);
         }*/
 
+
         return Validator::make($data, [
             'username' => ['required','string','max:255'],
             'email' => ['required','string', 'email', 'max:255', 'unique:users'],
             'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
-            'phone' => ['required','max:18','min:6','max:18',new InternationalTel,new CheckUserPhone($data['code_country'],null)]
+            'phone' => ['required','numeric','digits_between:6,18',new InternationalTel,new CheckUserPhone($data['code_country'],null)]
             //'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -171,7 +172,7 @@ class RegisterController extends Controller
             'username' => ['required','string','max:255'],
             'email' => ['required','string', 'email', 'max:255', 'unique:users'],
             'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
-            'phone' => ['required','max:18','min:6','max:18',new InternationalTel,new CheckUserPhone($data['code_country'],null)]
+            'phone' => ['required','numeric','digits_between:6,18',new InternationalTel,new CheckUserPhone($data['code_country'],null)]
             //'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 

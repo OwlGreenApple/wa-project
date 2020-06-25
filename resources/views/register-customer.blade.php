@@ -320,12 +320,13 @@
                     $(".error").fadeIn('slow');
                     $(".name").text(result.name);
                     $(".last_name").text(result.last_name);
-                    $(".main").text(result.main);
                     $(".email").text(result.email);
                     $(".phone").text(result.phone);
                     $(".code_country").text(result.code_country);
                     $(".captcha").text(result.captcha);
                     $(".error_list").text(result.list);
+                    $(".error_list").text(result.list);
+                    $(".main").html(result.main);
 
                     if(result.message !== undefined){
                          $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');

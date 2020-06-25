@@ -77,7 +77,6 @@
                       <span class="error phone"></span>
 
                       <input id="hidden_country_code" type="hidden" class="form-control" name="code_country" />
-                     <span class="error phone"></span>
                      <input name="data_country" type="hidden" /> 
                     </div>
 
