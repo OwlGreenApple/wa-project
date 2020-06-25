@@ -25,7 +25,7 @@ class CheckCallingCode
     {
         $rules = [
             'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
-            'phone_number' => ['required','min:6','max:18',new InternationalTel/*,new AvailablePhoneNumber($request->code_country)*/]
+            'phone_number' => ['required','numeric','digits_between:6,18',new InternationalTel/*,new AvailablePhoneNumber($request->code_country)*/]
         ];
 
         $validator = Validator::make($request->all(),$rules);

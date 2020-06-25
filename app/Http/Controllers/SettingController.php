@@ -303,7 +303,7 @@ class SettingController extends Controller
 
        $rules = [
             'code_country' => ['required',new CheckPlusCode,new CheckCallCode],
-            'phone_number' => ['required','min:6','max:18',new InternationalTel]
+            'phone_number' => ['required','numeric','digits_between:6,18',new InternationalTel]
         ];
 
         $validator = Validator::make($request->all(),$rules);
