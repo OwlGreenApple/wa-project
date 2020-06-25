@@ -72,7 +72,7 @@ class CheckCustomer
 
          if(array_key_exists('last_name',$req) == true)
          {
-            $rules['last_name'] = ['min:4','max:50'];
+            $rules['last_name'] = ['max:50'];
          }
 
          if(array_key_exists('email',$req) == true)
