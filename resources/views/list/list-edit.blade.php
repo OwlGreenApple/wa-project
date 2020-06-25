@@ -128,11 +128,11 @@
             </div> 
 
             <div class="form-group text-left">
-               <label>Confirmation Messages <span class="tooltipstered" title="<div class='panel-heading'>Messages</div><div class='panel-content'>
+               <label>Success Page <span class="tooltipstered" title="<div class='panel-heading'>Messages</div><div class='panel-content'>
                     Type your message for customer / subscriber after they registered
                     </div>">
                       <i class="fa fa-question-circle "></i></label>
-               <textarea name="message_conf" class="form-control">{{ $data['message_conf'] }}</textarea>
+               <textarea id="editor2" rows="10" cols="80" name="editor2" class="form-control">{!!  $data['message_conf'] !!}</textarea>
                <div class="error message_conf col-lg-12 text-left"></div>
             </div> 
             
@@ -719,13 +719,17 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
 
 <script type="text/javascript">
   /* CKEditor */
-  CKEDITOR.replace( 'editor1',{
+
+  var settings_ck_editor = {
       allowedContent: true,
       filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
       filebrowserUploadUrl: "{{ route('ckupload') }}",
       extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
       removePlugins : 'image',
-  });
+  };
+
+  CKEDITOR.replace( 'editor1',settings_ck_editor);
+  CKEDITOR.replace( 'editor2',settings_ck_editor);
 
   CKEDITOR.editorConfig = function( config ) {
       config.extraAllowedContent = true;
@@ -1573,7 +1577,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                 button_rename : $("input[name='button_rename']").val(),
                 editor : CKEDITOR.instances.editor1.getData(),
                 pixel : $("textarea[name='pixel']").val(),
-                conf_message : $("textarea[name='message_conf']").val(),
+                conf_message : CKEDITOR.instances.editor2.getData(),
                 fields : datafields,
                 dropfields : datadropfields,
              };
@@ -1616,7 +1620,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                       $(".label_phone").html(result.label_phone);
                       $(".label_email").html(result.label_email);
                       $(".button_rename").html(result.button_rename);
-                      $(".message_conf").html(result.conf_message);
+                      // $(".message_conf").html(result.conf_message);
 
                       if(result.additionalerror == true)
                       {
