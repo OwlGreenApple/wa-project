@@ -417,6 +417,7 @@ class SettingController extends Controller
         }
       }
 
+      // OPT code
       $opt_code = Cookie::get('opt_code');
       if($opt_code <> null)
       {
