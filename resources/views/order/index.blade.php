@@ -3,29 +3,6 @@
 @section('content')
 <link href="{{ asset('/assets/css/order.css') }}" rel="stylesheet" />
 <script type="text/javascript">
-  $(document).ready(function() {
-    refresh_page();
-  });
-
-  function refresh_page(){
-    $.ajax({
-      type : 'GET',
-      url : "<?php echo url('/order/load-order') ?>",
-      dataType: 'text',
-      beforeSend: function() {
-        $('#loader').show();
-        $('.div-loading').addClass('background-load');
-      },
-      success: function(result) {
-        $('#loader').hide();
-        $('.div-loading').removeClass('background-load');
-
-        var data = jQuery.parseJSON(result);
-        $('#content').html(data.view);
-        $('#pager').html(data.pager);
-      }
-    });
-  }
 
   /* function tidak jadi dipake, karena pake thank you page reload page
   function confirm_payment()
@@ -92,46 +69,17 @@
       @endif
 
     <div class="col-md-12">
-
-      <form class="responsive">
-        <table class="table responsive" id="myTable">
-          <thead align="center">
-            <th class="menu-mobile">
-              Details
-            </th>
-            <th class="menu-nomobile" action="no_order">
-              No Order
-            </th>
-            <th class="menu-nomobile" action="package">
-              Package
-            </th>
-            <th class="menu-nomobile" action="harga">
-              Price
-            </th>
-            <th class="menu-nomobile" action="discount">
-              Discount
-            </th>
-            <th class="menu-nomobile" action="grand_total">
-              Total
-            </th>
-            <th class="menu-nomobile" action="created_at">
-              Date
-            </th>
-            <th class="menu-nomobile">
-              Upload Image
-            </th>
-            <th class="menu-nomobile" action="keterangan">
-              Notes
-            </th>
-            <th class="header" action="status" style="width:145px">
-              Status
-            </th>
-          </thead>
-          <tbody id="content"></tbody>
-        </table>
-        <div id="pager"></div>    
+      <form class="responsive" id="content">
+        @if($orders->count() > 0)
+          @include('order.content')
+        @else
+          <div class="alert bg-dashboard cardlist">
+            You don't have any order yet
+          </div>
+        @endif
       </form>
     </div>
+
   </div>
 </div>
 
@@ -295,6 +243,96 @@
 
 
 <script type="text/javascript">
+
+  $(document).ready(function() {
+    // refresh_page();
+    pagination();
+  });
+
+  /*function refresh_page(){
+    $.ajax({
+      type : 'GET',
+      url : "<php echo url('/order/load-order') ?>",
+      dataType: 'html',
+      beforeSend: function() {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success: function(result) {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        $('#content').html(result);
+        // $('#pager').html(data.pager);
+      },
+      error : function(xhr)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        console.log(xhr.responseText);
+      }
+    });
+  }*/
+
+  //ajax pagination
+  function pagination()
+  {
+      $(".page-item").removeClass('active').removeAttr('aria-current');
+      var mulr = window.location.href;
+      getActiveButtonByUrl(mulr)
+    
+      $('body').on('click', '.pagination .page-link', function (e) {
+          e.preventDefault();
+          var url = $(this).attr('href');
+          window.history.pushState("", "", url);
+          loadPagination(url);
+      });
+  }
+
+  function loadPagination(url) {
+      $.ajax({
+        beforeSend: function()
+          {
+            $('#loader').show();
+            $('.div-loading').addClass('background-load');
+          },
+        url: url
+      }).done(function (data) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          getActiveButtonByUrl(url);
+          $('#content').html(data);
+      }).fail(function (xhr,attr,throwable) {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          alert("Sorry, Failed to load data! please contact administrator");
+          console.log(xhr.responseText);
+      });
+  }
+
+  function getActiveButtonByUrl(url)
+  {
+    var page = url.split('?');
+    if(page[1] !== undefined)
+    {
+      var pagevalue = page[1].split('=');
+      $(".page-link").each(function(){
+         var text = $(this).text();
+         if(text == pagevalue[1])
+          {
+            $(this).attr('href',url);
+            $(this).addClass('on');
+          } else {
+            $(this).removeClass('on');
+          }
+      });
+    }
+    else {
+        var mod_url = url+'?page=1';
+        getActiveButtonByUrl(mod_url);
+    }
+  }
+  //end ajax pagination
+
   $( "body" ).on( "click", ".view-details", function() {
     var id = $(this).attr('data-id');
 
@@ -352,10 +390,5 @@
     $('input:checkbox').not(this).prop('checked', this.checked);
   });
 
-  $(document).on('click', '.pagination a', function (e) {
-    e.preventDefault();
-    currentPage = $(this).attr('href');
-    refresh_page();
-  });
 </script>
 @endsection
