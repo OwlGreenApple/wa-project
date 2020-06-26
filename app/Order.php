@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Message;
 use App\Order;
 use App\PhoneNumber;
 use App\Helpers\ApiHelper;
@@ -121,7 +122,8 @@ class Order extends Model
 
         // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
         // ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
-        SendNotif::dispatch($phone,$message,env('REMINDER_PHONE_KEY'));
+        // SendNotif::dispatch($phone,$message,env('REMINDER_PHONE_KEY'));
+        $message_send = Message::create_message($phone,$message,env('REMINDER_PHONE_KEY'));
 
           
         Mail::send('emails.order', $emaildata, function ($message) use ($user,$order_number) {

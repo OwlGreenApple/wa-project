@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyOrder;
 use App\User;
 use App\Order;
+use App\Message;
 use Carbon\Carbon;
 use Date;
 use App\Helpers\ApiHelper;
@@ -88,7 +89,8 @@ class notifOrder extends Command
             $message .= 'Team Activrespon'."\n";
             $message .= '_*Activrespon is part of Activomni.com_';
 
-            SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+            // SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+            $message_send = Message::create_message($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
           }
           else if ($diffDay == 5){
             $message = null;
@@ -116,7 +118,8 @@ class notifOrder extends Command
             $message .= 'Team Activrespon'."\n";
             $message .= '_*Activrespon is part of Activomni.com_';
 
-            SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+            // SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+            $message_send = Message::create_message($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
           }
            
           if($diffDay == 1 || $diffDay == 5)

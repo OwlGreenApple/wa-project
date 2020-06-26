@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\User;
 use App\Customer;
 use App\UserList;
+use App\Message;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Hash;
@@ -158,7 +159,8 @@ class RegisterController extends Controller
 
           // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
 					// ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
-          SendNotif::dispatch($phone,$message,env('REMINDER_PHONE_KEY'));
+          // SendNotif::dispatch($phone,$message,env('REMINDER_PHONE_KEY'));
+          $message_send = Message::create_message($phone,$message,env('REMINDER_PHONE_KEY'));
           Mail::to($data['email'])->send(new RegisteredEmail($generated_password,$data['username']));
         }
 

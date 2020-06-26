@@ -12,6 +12,7 @@ use App\Coupon;
 use App\Order;
 use App\PhoneNumber;
 use App\Membership;
+use App\Message;
 use App\Helpers\Helper;
 use Crypt;
 use Carbon\Carbon;
@@ -114,7 +115,8 @@ class OrderController extends Controller
       $message .= 'Team Activrespon'."\n";
       $message .= '_*Activrespon is part of Activomni.com_';
 
-      SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+      // SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+      $message_send = Message::create_message($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
       
       Mail::send('emails.confirm-order', $emaildata, function ($message) use ($user,$order) {
         $message->from('no-reply@activrespon.com', 'Activrespon');
