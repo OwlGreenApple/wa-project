@@ -4,10 +4,7 @@ use App\User;
 @foreach($phone_numbers as $phone_number)
   <tr>
     <td data-label="Email">
-      <?php 
-        $user = User::find($phone_number->user_id);
-        echo $user->email;
-      ?>
+     {{$phone_number->email}}
     </td>
     <td data-label="Username">
       {{$phone_number->phone_number}}

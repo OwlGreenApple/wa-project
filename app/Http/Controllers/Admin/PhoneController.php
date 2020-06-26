@@ -21,6 +21,8 @@ class PhoneController extends Controller
     public function load_phone(Request $request){
       $phone_numbers = PhoneNumber::
                   orderBy('created_at','desc')
+                  ->leftJoin('users','users.id','=','phone_numbers.user_id')
+                  ->select('phone_numbers.*','users.email')
                   ->get();
 
       $arr['view'] = (string) view('admin.list-phone.content')
