@@ -30,12 +30,13 @@
 <!-- NUMBER -->
 <div class="container">
   <div class="act-tel-tab">
-      <div class="col-lg-12" id="display_list">
+      <div class="message mt-2"><!-- message --></div>
+      <div id="display_list">
         @if($lists->count() > 0)
           @include('list.list-table')
         @else
-          <div class="bg-dashboard cardlist row">
-            You don't have any list yet
+          <div class="alert bg-dashboard cardlist">
+            Currently you don't have any list, please click : <b>Create List</b>.
           </div>
         @endif
       </div>
@@ -259,6 +260,7 @@
           type : 'GET',
           url : "{{route('deletelist')}}",
           data : {'id' : id},
+          dataType : 'json',
           beforeSend: function()
           {
             $('#loader').show();
@@ -268,8 +270,14 @@
             $('#loader').hide();
             $('.div-loading').removeClass('background-load');
 
-            alert(result.message);
+            $(".message").html('<div class="alert alert-success">'+result.message+'</div>');
             loadPagination(mulr);
+          },
+          error : function(xhr)
+          {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+            console.log(xh.responseText);
           }
         });
       } else {
@@ -283,7 +291,7 @@
     $("body").on("click",".duplicate",function(){
         var id = $(this).attr('id');
         var mulr = window.location.href;
-        var conf = confirm('Are you want to duplicate this list?');
+        var conf = confirm('Do you want to duplicate this list?');
         
         if(conf == true)
         {
@@ -309,13 +317,19 @@
 
                  if(result.error == true)
                  {
-                    alert(result.message);
+                    $('.message').html('<div class="alert alert-danger">'+result.message+'</div>');
                  }
                  else
                  {
-                    alert(result.message);
+                    $('.message').html('<div class="alert alert-success">'+result.message+'</div>');
                     loadPagination(mulr);
                  }
+              },
+              error:function(xhr)
+              {
+                 $('#loader').hide();
+                 $('.div-loading').removeClass('background-load');
+                 console.log(xhr.responseText);
               }
           });
         }
@@ -413,13 +427,6 @@
                     $("#displayadditional").html(boxdata);
                 }
             });
-        });
-    }
-
-     function table(){
-        $("#user-customer").dataTable({
-            'pageLength':10,
-            'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, "All"]],
         });
     }
     */

@@ -141,7 +141,10 @@
 
           <div class="bg-dashboard campaign row">
             <div class="col-lg-6 pad-fix col-card">
-              <h5><color><span class="og">Auto schedule</span></color> - {{ $row->name }}</h5>                                                
+              <h5><color><span class="og">Auto schedule</span></color> - {{ $row->name }}</h5>
+              <div class="created">
+                Created On : {{ Date('M d, Y',strtotime($row->created_at)) }}
+              </div>                                                
               <div class="notes">
                <!--  <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div> -->
                 @if($label !== null)
@@ -149,9 +152,6 @@
                 @else
                   <div><b>Deleted List</b></div>
                 @endif
-              </div>
-              <div class="created">
-                Created On : {{ Date('M d, Y',strtotime($row->created_at)) }}
               </div>
             </div>
 
@@ -223,7 +223,10 @@
         @else
           <div class="bg-dashboard campaign row">
             <div class="col-lg-5 pad-fix col-card">
-              <h5>{{ $row->name }}</h5>                                                
+              <h5>{{ $row->name }}</h5>  
+              <div class="created">
+                Created On : {{ Date('M d, Y',strtotime($row->created_at)) }}
+              </div>                                              
               <div class="notes">
                 <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div>
                 @if($label !== null)
@@ -231,9 +234,6 @@
                 @else
                   <div><b>Deleted List</b></div>
                 @endif
-              </div>
-              <div class="created">
-                Created On : {{ Date('M d, Y',strtotime($row->created_at)) }}
               </div>
             </div>
 
@@ -283,7 +283,7 @@
   </div>
 
 @else
-  <div class="alert alert-info">
+  <div class="alert bg-dashboard">
     Sorry, the page you're currently page not available.
   </div>
 @endif

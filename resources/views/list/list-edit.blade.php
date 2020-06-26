@@ -2151,7 +2151,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
             //alert(result.response);
             if(result.status == 'success')
             {
-              $(".act-tel-list-data h2 .listname").html(list_label);
+              $(".listname").html(list_label);
               $("#display_edit_list_name").modal('hide');
             }
             else

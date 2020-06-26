@@ -496,30 +496,29 @@ class ListController extends Controller
             return response()->json($data);
         }
 
-        $delete_userlist = UserList::where([['id',$id],['user_id',$userid]])->delete();
-        $checkafterdelete = UserList::where([['id',$id],['user_id',$userid]])->first();
+        $delete_userlist = UserList::find($id);
+        $delete_userlist->status = 0;
+        $delete_userlist->save();
 
         //if success delete list then delete customer / subscriber
-        if(is_null($checkafterdelete)){
-            $delete = Customer::where('list_id','=',$id)->delete();
-            $checkdeletecustomer = Customer::where('list_id','=',$id)->get()->count();
-        } else {
+        try{
+            $delete = Customer::where('list_id','=',$id)->update(['status'=>0]);
+        } catch(Exception $e) {
             $data['message'] = 'Error, Sorry, cannot delete list';
             return response()->json($data);
         }
 
         //if success delete customer / subscriber
-        if($checkdeletecustomer == 0){
+       /* try{
             $deladditional = Additional::where('list_id','=',$id)->delete();
-            $checkdeladditional = Additional::where('list_id','=',$id)->get()->count();
-        } else {
+        } catch(Exception $e) {
             $data['message'] = 'Error, Sorry, cannot delete customer';
             return response()->json($data);
-        } 
+        } */
 
         //if success delete list additional
-        if($checkdeladditional == 0){
-            $data['message'] = 'Data deleted successfully';
+        if($delete){
+            $data['message'] = 'List deleted successfully';
         } else {
             $data['message'] = 'Error, Sorry, cannot delete list addtional';
         }
@@ -533,11 +532,11 @@ class ListController extends Controller
 
         if($listname == null)
         {
-          $lists = Userlist::where('user_id',$userid)->get();
+          $lists = Userlist::where([['user_id',$userid],['status','>',0]])->get();
         }
         else
         {
-          $lists = Userlist::where('label','like','%'.$listname.'%')->get();
+          $lists = Userlist::where([['user_id',$userid],['status','>',0],['label','like','%'.$listname.'%']])->get();
         }
         
         return view('list.list-table',['lists'=>$lists,'paginate'=>null,'listcontroller'=> new ListController]);
@@ -817,7 +816,7 @@ class ListController extends Controller
         } 
 
         $userid = Auth::id();
-        $list = UserList::where([['id',$listid],['user_id',$userid]])->first();
+        $list = UserList::where([['id',$listid],['user_id',$userid],['status','>',0]])->first();
         if(is_null($list)){
             return redirect('lists');
         } 

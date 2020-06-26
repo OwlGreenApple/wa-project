@@ -35,13 +35,15 @@
 </div>
 
 <div class="container" id="display_list">
-  @if(count($data) > 0)
-    @include('event.event')
-  @else
-    <div class="alert alert-info text-center">
-      Sorry, you haven't create any event.
-    </div>
-  @endif
+  <div class="act-tel-tab">
+    @if(count($data) > 0)
+      @include('event.event')
+    @else
+      <div class="alert bg-dashboard cardlist">
+        Currently you don't have any event, please click : <b>SETUP EVENT</b>.
+      </div>
+    @endif
+  </div>
 </div>
 
 <!-- Modal Duplicate Event -->

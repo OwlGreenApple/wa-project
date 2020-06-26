@@ -74,7 +74,7 @@
           @include('order.content')
         @else
           <div class="alert bg-dashboard cardlist">
-            You don't have any order yet
+            You don't have any order yet, please make order <a href="{{ url('pricing') }}">Here</a>
           </div>
         @endif
       </form>

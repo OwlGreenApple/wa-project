@@ -48,8 +48,14 @@
 <!-- NUMBER -->
 <div class="container">
   <div class="act-tel-tab">
-      <div id="display_campaign" class="col-lg-12">
+      <div id="display_campaign">
+        @if($campaign->count() > 0)
           @include('campaign.index')
+        @else
+          <div class="alert bg-dashboard cardlist">
+            Currently you don't have any campaign, please click : <b>Create Campaign</b>.
+          </div>
+        @endif
       </div>
   </div>
 </div>

@@ -72,10 +72,10 @@
   <div class="paging">
     {{ $paginate }}
   </div>
-
  @else
-  <h5 class="text-center">Currently you don't have any appointments, please click 'SETUP APPOINTMENT TEMPLATE'.
-  </h5>
+  <div class="alert bg-dashboard cardlist">
+    Appointment not found
+  </div>
  @endif
 
  <script type="text/javascript">

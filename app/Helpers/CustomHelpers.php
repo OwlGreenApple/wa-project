@@ -149,7 +149,7 @@ use Illuminate\Support\Facades\Storage;
    function displayListWithContact($userid)
    {
       $data = array();
-      $lists = UserList::where('user_id',$userid)->select('label','id')->get();
+      $lists = UserList::where([['user_id',$userid],['status','>',0]])->select('label','id')->get();
 
       if($lists->count() > 0)
       {

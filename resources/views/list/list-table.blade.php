@@ -48,8 +48,8 @@
     {{ $paginate }}
   </div>
   @else
-  <div class="bg-dashboard cardlist row">
-    Sorry, you have not create any list.
+  <div class="alert bg-dashboard cardlist">
+    List not found
   </div>
 @endif
 
