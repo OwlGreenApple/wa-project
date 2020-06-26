@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
+use App\Message;
 use App\User;
 use App\Order;
 use App\Server;
@@ -347,7 +348,8 @@ class SettingController extends Controller
        $message .= '*Your OTP code is:* '.$code."\n\n";
        $message .= 'Please note : this code would expired in 5 minutes'."\n";
 
-       SendNotif::dispatch($phone_number,$message,env('REMINDER_PHONE_KEY'));
+       // SendNotif::dispatch($phone_number,$message,env('REMINDER_PHONE_KEY'));
+       $message_send = Message::create_message($phone_number,$message,env('REMINDER_PHONE_KEY'));
 
        return response()->json(['status'=>1]);
     }

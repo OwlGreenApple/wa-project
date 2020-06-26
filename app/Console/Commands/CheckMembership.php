@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use App\User;
 use App\PhoneNumber;
 use App\Membership;
+use App\Message;
 use App\Mail\MemberShip as EmailMember;
 use App\Helpers\ApiHelper;
 
@@ -104,7 +105,8 @@ class CheckMembership extends Command
                 $message .= 'Team Activrespon'."\n";
                 $message .= '_*Activrespon is part of Activomni.com_';
 
-                SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+                // SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+                $message_send = Message::create_message($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
               }
               else if ($day_left == 1) {
                 $message = null;
@@ -116,7 +118,8 @@ class CheckMembership extends Command
                 $message .= 'Team Activrespon'."\n";
                 $message .= '_*Activrespon is part of Activomni.com_';
 
-                SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+                // SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+                $message_send = Message::create_message($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
               }
               else if ($day_left == 0) {
                 $message = null;
@@ -130,7 +133,8 @@ class CheckMembership extends Command
                 $message .= 'Team Activrespon'."\n";
                 $message .= '_*Activrespon is part of Activomni.com_';
 
-                SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+                // SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+                $message_send = Message::create_message($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
               }
               else if ($day_left == -1) {
                 $message = null;
@@ -145,7 +149,8 @@ class CheckMembership extends Command
                 $message .= 'Team Activrespon'."\n";
                 $message .= '_*Activrespon is part of Activomni.com_';
 
-                SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+                // SendNotif::dispatch($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
+                $message_send = Message::create_message($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
               }
               
               if(($day_left == 5 || $day_left == 1 || $day_left == -1) && $membership == 0)

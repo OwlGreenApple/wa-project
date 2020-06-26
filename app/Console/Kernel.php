@@ -38,7 +38,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('notif:order')->dailyAt('08:00');
         $schedule->command('reset:message')->dailyAt('01:00');
         $schedule->command('get:key')->everyMinute();
-        $schedule->command('queue:message')->everyMinute();
         $schedule->command('check:counter')->everyMinute();
         $schedule->command('check:connection')->everyFifteenMinutes();
         // $schedule->command('check:connection')->hourly();
@@ -46,6 +45,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('reset:serversimi')->everyFifteenMinutes();
       }
       if (env("APP_ENV")=="automation") {
+        $schedule->command('queue:message')->everyMinute();
         $schedule->command('send:message')->everyMinute();
       }
     }
