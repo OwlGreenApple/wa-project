@@ -84,9 +84,24 @@ class CheckMembershipPackage extends Command
 
       if(count($data_membership) > 0)
       {
+         $max_counter_day = 0;
          foreach($data_membership as $key=>$row):
            $user_membership = User::find($row['user_id']);
            $user_membership->membership = $row['membership'];
+
+           if($row['membership'] <> null)
+           {
+              $get_counter = getCounter($row['membership']);
+              $max_counter_day = $get_counter['max_counter_day'];
+           }
+           
+
+           $phone_number = PhoneNumber::where('user_id',$row['user_id'])->first();
+           if(!is_null($phone_number))
+           {
+              $phone_number->max_counter_day = $max_counter_day;
+              $phone_number->save();
+           }
 
            $user_membership->save();
            $membership_update = Membership::find($row['id']);

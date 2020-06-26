@@ -1403,7 +1403,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
             success : function(result){
               $('#loader').hide();
               $('.div-loading').removeClass('background-load');
-
+            
               if(result.duplicate == 1)
               {   
                   $("#btn_close_import").trigger("click");
@@ -1416,14 +1416,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                   // console.log(data);
               }
 
-              if(result.success == true){
-                  $("#duplicate_phone_contact").modal('hide');
-                  $(".main").html('<div class="alert alert-success text-center">'+result.message+'</div>')
-                  clearField();
-                  $(".error").hide();
-                  displayCustomer();
-              } 
-              if(result.update == true)
+              if(result.success == true && result.update == true)
               {
                  $(".update_notif").html('<div class="alert alert-success text-center">'+result.message+'</div>')
                  $(".error").hide();
@@ -1432,18 +1425,28 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                  $(".current_phone_number").html(result.newnumber)
                  displayCustomer();
               }
-              else if(result.success == false || result.update == false) {
-                  $(".error").fadeIn('fast');
-                  $(".name").text(result.name);
-                  $(".error_message").text(result.main);
-                  $(".error_message").text(result.list);
-                  $(".email").text(result.email);
-                  $(".phone_number").text(result.phone);
-                  $(".code_country").text(result.code_country);
+              else if(result.success == true)
+              {
+                  $("#duplicate_phone_contact").modal('hide');
+                  $(".main").html('<div class="alert alert-success text-center">Your contact has been added.</div>')
+                  // $(".main").html('<div class="alert alert-success text-center">'+result.message+'</div>')
+                  clearField();
+                  $(".error").hide();
+                  displayCustomer();
+              }  
+              else
+              {
+                  $(".error").show();
+                  $(".name").html(result.name);
+                  $(".error_message").html(result.main);
+                  $(".error_message").html(result.list);
+                  $(".email").html(result.email);
+                  $(".phone_number").html(result.phone);
+                  $(".code_country").html(result.code_country);
 
-                  if(result.message !== undefined){
+                  /*if(result.message !== undefined){
                        $(".error_message").html('<div class="alert alert-danger text-center">'+result.message+'</div>');
-                  }
+                  }*/
 
                   $(".error").delay(2000).fadeOut(5000);
               }
