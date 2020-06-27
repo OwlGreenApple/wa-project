@@ -67,6 +67,7 @@ class SendCampaign implements ShouldQueue
     {
 				$spintax = new Spintax;
         $broadcast = BroadCast::select("broad_casts.*","broad_cast_customers.*","broad_cast_customers.id AS bccsid","phone_numbers.id AS phoneid","users.id AS userid","customers.*","users.timezone","users.email","customers.link_unsubs")
+          ->join('lists','lists.id','=','broad_casts.list_id')
           ->join('users','broad_casts.user_id','=','users.id')
           ->join('broad_cast_customers','broad_cast_customers.broadcast_id','=','broad_casts.id')
           ->join('phone_numbers','phone_numbers.user_id','=','broad_casts.user_id')
@@ -76,6 +77,7 @@ class SendCampaign implements ShouldQueue
           ->where("customers.status",1)
           ->where("phone_numbers.id",$this->phone_id)
           ->where("campaigns.status",1)
+          ->where("lists.status",'>',0)
           ->orderBy('broad_casts.user_id')
           ->get();
 
@@ -264,10 +266,12 @@ class SendCampaign implements ShouldQueue
             ['reminders.is_event','=',0],
             ['reminders.status','=',1],
             ['customers.status','=',1],
+            ['lists.status','>',0],
             ['phone_numbers.id','=',$this->phone_id],
             // ['customers.created_at','<=',$current_time->toDateTimeString()],
             ])
             // ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
+            ->join('lists','lists.id','=','reminders.list_id')
             ->join('users','reminders.user_id','=','users.id')
             ->rightJoin('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
@@ -420,12 +424,13 @@ class SendCampaign implements ShouldQueue
           $today = Carbon::now();
 
           $reminder = Reminder::select('reminders.*','reminder_customers.id AS rcs_id','customers.name','customers.telegram_number','customers.email','users.timezone','users.email as useremail','users.membership','reminder_customers.customer_id',"customers.link_unsubs")
+          ->join('lists','lists.id','=','reminders.list_id')
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
 					->join('phone_numbers','phone_numbers.user_id','=','reminders.user_id')
           ->join('campaigns',"campaigns.id","=","reminders.campaign_id")
-          ->where([['reminder_customers.status',0],['reminders.is_event',1],['customers.status',1],['reminders.status','>',0],['campaigns.status','>',0],['phone_numbers.id','=',$this->phone_id]])
+          ->where([['reminder_customers.status',0],['reminders.is_event',1],['customers.status',1],['reminders.status','>',0],['campaigns.status','>',0],['lists.status','>',0],['phone_numbers.id','=',$this->phone_id]])
           ->get();
          
           if($reminder->count() > 0)
@@ -602,8 +607,10 @@ class SendCampaign implements ShouldQueue
                   ['reminders.tmp_appt_id',">",0], 
                   ['customers.status',1], 
                   ['reminders.status','=',1],
+                  ['lists.status','>',0],
 									['phone_numbers.id','=',$this->phone_id],
           ])
+          ->join('lists','lists.id','=','reminders.list_id')
           ->join('users','reminders.user_id','=','users.id')
           ->join('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')

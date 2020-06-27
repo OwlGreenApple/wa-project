@@ -50,7 +50,7 @@ class CampaignController extends Controller
 
       if($type == null || $type == 'all')
       {
-          $campaign = Campaign::where('campaigns.user_id',$userid)
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['lists.status','>',0]])
                 ->whereIn('campaigns.type',$campaign_type)
                 ->leftJoin('lists','lists.id','=','campaigns.list_id')
                 ->orderBy('campaigns.id','desc')
@@ -60,7 +60,7 @@ class CampaignController extends Controller
 
       if($type <> null && $type <> 'all')
       {
-          $campaign = Campaign::where('campaigns.user_id',$userid)
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['lists.status','>',0]])
                       ->where('campaigns.type',$type)
                       ->leftJoin('lists','lists.id','=','campaigns.list_id')
                       ->orderBy('campaigns.id','desc')
@@ -70,7 +70,7 @@ class CampaignController extends Controller
 
       if($search <> null)
       {
-          $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid]])->whereIn('campaigns.type',$campaign_type)
+          $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['lists.status','>',0]])->whereIn('campaigns.type',$campaign_type)
             ->leftJoin('lists','lists.id','=','campaigns.list_id')
             ->orderBy('campaigns.id','desc')
             ->select('campaigns.*','lists.label')
@@ -385,7 +385,13 @@ class CampaignController extends Controller
     public function addMessageAutoResponder($campaign_id)
     {
       $user_id = Auth::id();
-      $campaign = Campaign::find($campaign_id);
+      $campaign = Campaign::where([['campaigns.id',$campaign_id],['campaigns.user_id',$user_id],['lists.status','>',0]])->join('lists','lists.id','=','campaigns.list_id')->first();
+
+      if(is_null($campaign))
+      {
+        return redirect('home');
+      }
+
       if ($campaign->user_id<>$user_id){
         return "Not Authorized";
       }
@@ -402,7 +408,7 @@ class CampaignController extends Controller
     public function addMessageEvent($campaign_id)
     {
       $user_id = Auth::id();
-      $campaign = Campaign::find($campaign_id);
+      $campaign = Campaign::where([['campaigns.id',$campaign_id],['campaigns.user_id',$user_id],['lists.status','>',0]])->join('lists','lists.id','=','campaigns.list_id')->first();
 
       if(is_null($campaign))
       {

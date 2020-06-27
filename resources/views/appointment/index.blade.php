@@ -37,8 +37,14 @@
 <!-- NUMBER -->
 <div class="container">
   <div class="act-tel-tab">
-      <div id="display_appointment" class="col-lg-12">
-        @include('appointment.table_apt')
+      <div id="display_appointment">
+        @if($appointments->count() > 0)
+          @include('appointment.table_apt')
+        @else
+          <div class="alert bg-dashboard cardlist">
+            Currently you don't have any appointments, please click : <b>SETUP APPOINTMENT TEMPLATE</b>.
+          </div>
+        @endif
       </div>
   </div>
 </div>

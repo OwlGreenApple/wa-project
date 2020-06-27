@@ -34,16 +34,16 @@ class EventController extends Controller
 
       if($search == null)
       {
-          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',0]])
-                  ->leftJoin('lists','lists.id','=','campaigns.list_id')
+          $campaign = Campaign::where([['campaigns.user_id',$userid],['campaigns.type','=',0],['lists.status','>',0]])
+                  ->join('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
                   ->select('campaigns.*','lists.label','lists.id AS list_id')
                   ->paginate($paging);
       }
       else
       {
-           $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['campaigns.type','=',0]])
-                  ->leftJoin('lists','lists.id','=','campaigns.list_id')
+           $campaign = Campaign::where([['campaigns.name','like','%'.$search.'%'],['campaigns.user_id',$userid],['campaigns.type','=',0],['lists.status','>',0]])
+                  ->join('lists','lists.id','=','campaigns.list_id')
                   ->orderBy('campaigns.id','desc')
                   ->select('campaigns.*','lists.label','lists.id AS list_id')
                   ->paginate($paging);

@@ -692,9 +692,22 @@ class OrderController extends Controller
             ));
   }
 
-  public function index_order(){
+  public function index_order(Request $request){
     //halaman order user
-    return view('order.index');
+     $orders = Order::where('user_id',Auth::user()->id)
+                ->orderBy('created_at','desc')
+                ->paginate(15);
+
+     if($request->ajax())
+     {
+        return view('order.content',['orders'=>$orders,'pager'=>$orders]);
+     }
+
+     return view('order.index',['orders'=>$orders,'pager'=>$orders]);
+    /*$arr['view'] = (string) view('order.content')
+                      ->with('orders',$orders);
+    $arr['pager'] = (string) view('order.pagination')
+                      ->with('orders',$orders); */
   }
   
   //upload bukti TT 
@@ -744,7 +757,6 @@ class OrderController extends Controller
     $orders = Order::where('user_id',Auth::user()->id)
                 ->orderBy('created_at','desc')
                 ->paginate(15);
-                //->get();
     $arr['view'] = (string) view('order.content')
                       ->with('orders',$orders);
     $arr['pager'] = (string) view('order.pagination')

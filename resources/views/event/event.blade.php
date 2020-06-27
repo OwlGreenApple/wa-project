@@ -89,7 +89,10 @@
   <div class="paging">
     {{ $paginate }}
   </div>
-
+  @else
+    <div class="alert bg-dashboard cardlist">
+      Event not found
+    </div>
   @endif
 </div>
 

@@ -30,7 +30,7 @@ class AppointmentController extends Controller
 
       if($search == null)
         {
-            $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3]])
+            $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3],['lists.status','>',0]])
                     ->join('lists','lists.id','=','campaigns.list_id')
                     ->select('campaigns.*','lists.name AS url','lists.label','lists.id AS list_id')
                     ->orderBy('id','desc')
@@ -38,7 +38,7 @@ class AppointmentController extends Controller
         }
         else
         {
-            $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3],['campaigns.name','LIKE','%'.$search.'%']])
+            $campaigns = Campaign::where([['campaigns.user_id',$userid],['campaigns.type',3],['campaigns.name','LIKE','%'.$search.'%'],['lists.status','>',0]])
                     ->join('lists','lists.id','=','campaigns.list_id')
                     ->select('campaigns.*','lists.name AS url','lists.label','lists.id AS list_id')
                     ->orderBy('id','desc')
@@ -274,7 +274,8 @@ class AppointmentController extends Controller
             return redirect('create-apt');
         }
 
-        $checkid = Campaign::where([['id',$id],['user_id',$userid]])->first();
+        $checkid = Campaign::where([['campaigns.id',$id],['campaigns.user_id',$userid],['lists.status','>',0]])->join('lists','lists.id','=','campaigns.list_id')->select('campaigns.*')->first();
+        
 
         if(is_null($checkid))
         {
