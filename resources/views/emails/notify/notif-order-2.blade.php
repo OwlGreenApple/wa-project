@@ -12,6 +12,7 @@
 <div>Package         : {{ $data["package"] }}</div>
 <?php if ($data["disc"]>0 || $data["price"]<$data["total"]) { ?>
 <div>Harga           : {{ str_replace(",",".",number_format($data["price"])) }}</div>
+<?php } ?>
 <?php if ($data["disc"]>0) { ?>
 <div>Discount        : {{ str_replace(",",".",number_format($data["disc"])) }}</div>
 <?php } ?>
