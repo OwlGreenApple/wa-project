@@ -153,9 +153,9 @@ class CheckMembership extends Command
                 $message_send = Message::create_message($user->phone_number,$message,env('REMINDER_PHONE_KEY'));
               }
               
-              if(($day_left == 5 || $day_left == 1 || $day_left == -1) && $membership == 0)
+              if(($day_left == 5 || $day_left == 1 || $day_left == -1) )
               {
-                 Mail::to($row->email)->send(new EmailMember($day_left,$row->phone_number,$row->id));
+                 Mail::to($row->email)->send(new EmailMember($day_left,$row->id));
               }
             endforeach;
         }

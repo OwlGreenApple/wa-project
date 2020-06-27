@@ -9,7 +9,7 @@
 <?php if ($data["disc"]>0) { ?>
 <div>Discount        : {{ str_replace(",",".",number_format($data["disc"])) }}</div>
 <?php } ?>
-<div>Total Tagihan   : {{ str_replace(",",".",number_format($data["total"])) }}</div>
+<div>Total Tagihan   : Rp. {{ str_replace(",",".",number_format($data["total"])) }}</div>
 
 <br/>
 Silakan transfer sekarang ke<br/>
