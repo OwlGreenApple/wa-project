@@ -58,25 +58,25 @@ class CheckMembership extends Command
 
               $membership = Membership::where([['user_id',$user_id],['status','>',0]])->get();
               $membership = $membership->count();
-              $client = User::find($user_id);
+              $user = User::find($user_id);
 
               if($day_left == 0 && $membership > 0)
               {
                  continue;
               }
 
-              if($client->day_left > -2)
+              if($user->day_left > -2)
               {
-                 $client->day_left--;
-                 $client->save();
-                 $remain_day_left = $client->day_left;
+                 $user->day_left--;
+                 $user->save();
+                 $remain_day_left = $user->day_left;
               }
 
               if($membership == 0 && $remain_day_left <= 0)
               {
-                 $client->membership = null;
-                 $client->status = 0;
-                 $client->save();
+                 $user->membership = null;
+                 $user->status = 0;
+                 $user->save();
 
                  $phone = PhoneNumber::where('user_id',$row->id)->first();
                  if(!is_null($phone))
