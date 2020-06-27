@@ -3,8 +3,12 @@
 
 <div>No Order        : {{ $data["no"] }}</div>
 <div>Package         : {{ $data["package"] }}</div>
+<?php if ($data["disc"]>0 || $data["price"]<$data["total"]) { ?>
 <div>Harga           : {{ number_format($data["price"]) }}</div>
+<?php } ?>
+<?php if ($data["disc"]>0) { ?>
 <div>Discount        : {{ $data["disc"] }}</div>
+<?php } ?>
 <div>Total Tagihan   : {{ $data["total"] }}</div>
 
 <br/>
