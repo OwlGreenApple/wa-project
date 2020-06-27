@@ -56,10 +56,7 @@ class notifOrder extends Command
         {
          foreach($orders as $row)
          {
-           $date_order = date_create(Carbon::parse($row->created_at)->toDateString());
-           $today = date_create(Carbon::now()->toDateString());
-           $diff = date_diff($date_order,$today);
-           $diffDay = (int)$diff->format('%a');
+           $diffDay = Carbon::now()->diffInDays(Carbon::parse($row->created_at));
 
            $user = User::find($row->user_id);
            if ($diffDay == 1){
