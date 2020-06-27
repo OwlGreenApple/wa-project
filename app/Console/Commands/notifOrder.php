@@ -57,7 +57,7 @@ class notifOrder extends Command
          foreach($orders as $row)
          {
            $diffDay = Carbon::now()->diffInDays(Carbon::parse($row->created_at));
-
+echo $row->phone_number."-".$diffDay;
            $user = User::find($row->user_id);
            if ($diffDay == 1){
             $message = null;
