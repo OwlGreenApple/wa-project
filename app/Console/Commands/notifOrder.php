@@ -128,7 +128,7 @@ class notifOrder extends Command
                   'discount'=>$row->discount,
                   'total'=>$row->grand_total,
                 ];
-                Mail::to($row->email)->send(new NotifyOrder($diffDay,$row->phone_number,$orders));
+                Mail::to($row->email)->send(new NotifyOrder($diffDay,$orders));
             }
             sleep(2);
           } // END FOREACH

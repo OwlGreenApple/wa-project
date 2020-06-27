@@ -20,12 +20,10 @@ class NotifyOrder extends Mailable
      */
 
     public $day;
-    public $phone;
     public $orders;
-    public function __construct($day,$phone,$orders)
+    public function __construct($day,$orders)
     {
         $this->day = $day;
-        $this->phone = $phone;
         $this->orders = $orders;
     }
 
@@ -39,28 +37,8 @@ class NotifyOrder extends Mailable
 
         if($this->day == 1)
         {
-            $phone = $this->phone;
             $orders = $this->orders;
-            $message = null;
-            $message .= 'Hai,'."\n";
-            $message .= 'Kami mau mengingatkan, kamu belum melakukan transfer atas pembelian *Activrespon* dengan rincian: '."\n"."\n";
-            $message .= 'No Order      : '.$orders["no"].''."\n";
-            $message .= 'Package       : '.$orders["package"].''."\n";
-            $message .= 'Harga         : '.number_format(Alert::pricing($orders["pack"])).''."\n";
-            $message .= 'Discount      : '.$orders["discount"].''."\n";
-            $message .= 'Total Tagihan : '.number_format($orders["total"]).''."\n"."\n";
-            $message .= 'Silakan transfer sekarang ke'."\n";
-            $message .= '*BCA :  8290-812-845 (Sugiarto Lasjim)*'."\n";
-            $message .= 'Setelah transfer, jangan lupa konfirmasi ke link di bawah ini ya.'."\n";
-            $message .= 'Klik ► '.url("order").''."\n"."\n";
-            $message .= 'Salam sukses selalu,'."\n";
-            $message .= '*Team Activrespon*'."\n";
-            $message .= ' ------------------------------------------';
 
-            //dd($message);
-             
-            // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
-						ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
             $data_email = [
               'no'=>$orders["no"],
               'package'=>$orders["package"],
@@ -78,29 +56,8 @@ class NotifyOrder extends Mailable
         }
         elseif($this->day == 5)
         {
-            $phone = $this->phone;
             $orders = $this->orders;
-            $message = null;
-            $message .= 'Halo,'."\n";
-            $message .= 'Hari ini kamu akan kehilangan harga promo lhoo'."\n".'Yakin bisa rela?'."\n"."\n";
-            $message .= 'Kamu akan kehilangan harga spesial yang sudah kamu'."\n".'dapatkan 5 hari yang lalu ketika order *Activrespon*.'."\n"."\n";
-            $message .= 'Ini detail pembelianmu:'."\n";
-            $message .= 'No Order      : '.$orders["no"].''."\n";
-            $message .= 'Package       : '.$orders["package"].''."\n";
-            $message .= 'Harga         : '.number_format(Alert::pricing($orders["pack"])).''."\n";
-            $message .= 'Discount      : '.$orders["discount"].''."\n";
-            $message .= 'Total Tagihan : '.number_format($orders["total"]).''."\n"."\n";
-            $message .= 'Silakan transfer sekarang ke'."\n";
-            $message .= '_BCA :  8290-812-845 (Sugiarto Lasjim)_'."\n"."\n";
-            $message .= 'Mohon segera transfer dan konfirmasi sekarang karena hari ini'."\n".'karena pembelianmu akan dihapus oleh sistem.'."\n"."\n";
-            $message .= 'Setelah transfer, jangan lupa konfirmasi pada link di bawah ini'."\n";
-            $message .= 'Klik ► '.url('order').''."\n"."\n";
-            $message .= 'Salam sukses selalu,'."\n";
-            $message .= '*Team Activrespon*'."\n";
-            $message .= ' ------------------------------------------';
 
-            // ApiHelper::send_message_android(env('REMINDER_PHONE_KEY'),$message,$phone,'reminder');
-						ApiHelper::send_simi($phone,$message,env('REMINDER_PHONE_KEY'));
             $data_email = [
               'no'=>$orders["no"],
               'package'=>$orders["package"],
