@@ -96,7 +96,7 @@ class CheckMembership extends Command
                 $message .= "Kami mau kasih tau kalau *waktu berlangganan kamu akan habis 5 hari lagi*. \n \n";
                 $message .= "Jangan sampai kamu _kehabisan waktu berlangganan saat menggunakan Activrespon_ yah \n \n";
                 $message .= "Kamu bisa langsung perpanjang dengan klik link dibawah ini \n";
-                $message .= "*► https://activrespon.com/dashboard/pricing * \n \n";
+                $message .= "*►https://activrespon.com/dashboard/pricing* \n \n";
 
                 $message .= "_Oh iya, kalau kamu pertanyaan jangan ragu untuk menghubungi kami di_  \n";
                 $message .= "*WA 0817-318-368* \n\n";
@@ -113,7 +113,7 @@ class CheckMembership extends Command
                 $message .= "Gawat ".$user->name."!, \n\n";
                 $message .= "*Waktu berlangganan Activresponmu tinggal satu hari*. \n \n";
                 $message .= "*Perpanjang sekarang juga*, _sebelum waktu berlanggananmu habis ditengah jalan saat menggunakan Activrespon._ \n\n";
-                $message .= "Klik Sekarang di *► https://activrespon.com/dashboard/pricing * \n\n";
+                $message .= "Klik Sekarang di *►https://activrespon.com/dashboard/pricing* \n\n";
                 $message .= 'Terima Kasih,'."\n\n";
                 $message .= 'Team Activrespon'."\n";
                 $message .= '_*Activrespon is part of Activomni.com_';
@@ -126,9 +126,9 @@ class CheckMembership extends Command
                 $message .= "*Waktu berlangganan Activrespon-mu habis loh ".$user->name.",* \n\n";
                 $message .= "_Perpanjang sekarang juga, supaya kamu bisa gunakan kembali akun Activresponmu._ \n \n";
                 $message .= "Klik disini untuk perpanjang \n";
-                $message .= "*► https://activrespon.com/dashboard/pricing * \n \n";
+                $message .= "*►https://activrespon.com/dashboard/pricing* \n \n";
                 $message .= "Oh iya, kamu juga *bisa dapetin Special Voucher Activrespon* dengan klik link dibawah ini. \n";
-                $message .= "*► https://bit.ly/claim-special-voucher * \n \n";
+                $message .= "*►https://bit.ly/claim-special-voucher* \n \n";
                 $message .= 'Terima Kasih,'."\n\n";
                 $message .= 'Team Activrespon'."\n";
                 $message .= '_*Activrespon is part of Activomni.com_';
@@ -141,7 +141,7 @@ class CheckMembership extends Command
                 $message .= "*Hi ".$user->name.",* \n\n";
                 $message .= "Kami mau mengingatkan kalau *waktu berlangganan kamu sudah habis sejak kemarin*. \n \n";
                 $message .= "_Jangan sampai hubungan dengan klienmu jadi terhambat karena waktu berlangganan yang habis ya_ \n \n";
-                $message .= "*Klik sekarang di ► https://activrespon.com/dashboard/pricing * \n \n";
+                $message .= "*Klik sekarang di ► https://activrespon.com/dashboard/pricing* \n \n";
                 $message .= "Kalau ada pertanyaan, jangan sungkan menghubungi kami di \n";
                 $message .= "*WA 0817-318-368* \n \n";
                 

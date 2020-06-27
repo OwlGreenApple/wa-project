@@ -77,7 +77,7 @@ class notifOrder extends Command
               $message .= "_Buruan transfer dan konfirmasi agar pembelianmu tidak dihapus oleh sistem._\n\n";
 
               $message .= '*Sesudah transfer:*'."\n";
-              $message .= '- *Login* ke https://activrespon.com'." \n";
+              $message .= '- *Login* ke https://activrespon.com'."\n";
               $message .= '- *Klik* Profile'."\n";
               $message .= '- Pilih *Order & Confirm*'."\n";
               $message .= '- *Upload bukti konfirmasi* disana'."\n\n";
@@ -106,7 +106,7 @@ class notifOrder extends Command
               $message .= "Buruan transfer dan konfirmasi sekarang karena kalau tidak, _pembelian mu akan dihapus jam 12 malam nanti oleh sistem_. *Kamu juga akan kehilangan kesempatan memiliki Activrespon dengan harga spesial.* \n\n";
 
               $message .= '*Sesudah transfer:*'."\n";
-              $message .= '- *Login* ke https://activrespon.com'." \n";
+              $message .= '- *Login* ke https://activrespon.com'."\n";
               $message .= '- *Klik* Profile'."\n";
               $message .= '- Pilih *Order & Confirm*'."\n";
               $message .= '- *Upload bukti konfirmasi* disana'."\n\n";
