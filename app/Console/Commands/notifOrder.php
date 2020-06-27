@@ -48,7 +48,7 @@ class notifOrder extends Command
     public function handle()
     {
         $orders = Order::join(env('DB_DATABASE').'.users as db1','orders.user_id','db1.id')
-									->where([['db1.status','>',0],['orders.status','=',0]])
+									->where([['db1.status','=',0],['orders.status','=',0]])
 									->select('orders.*','db1.email','db1.phone_number')
 									->get();
 
