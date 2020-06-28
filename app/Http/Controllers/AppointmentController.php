@@ -728,7 +728,7 @@ class AppointmentController extends Controller
     public function exportAppointment($campaign_id)
     {
         $userid = Auth::id();
-        $check = Campaign::where('id',$campaign_id)->first();
+        $check = Campaign::where([['id',$campaign_id],['user_id',$userid]])->first();
         $day = Carbon::now()->toDateString();
         $filename = 'appointment-'.$check->name.'-'.$day;
 
@@ -770,7 +770,7 @@ class AppointmentController extends Controller
 
             });
 
-        })->export('csv');
+        })->export('xlsx');
     }
 
 

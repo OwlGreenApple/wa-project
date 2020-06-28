@@ -9,8 +9,8 @@ class UserList extends Model
 	protected $table = 'lists';
     /*
 		status :
-		0 = inactive product
-		1 = active product
+		0 = deleted list
+		1 = active list
     */
 
 }
