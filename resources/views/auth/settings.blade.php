@@ -123,7 +123,7 @@
                   </div>
                 </div>
 
-                <div class="text-right">
+                <div id="display_button_after_delete_phone" class="text-right">
                   @if(!$is_registered)
                     <button id="btn-check" type="button" class="btn btn-custom">Check Phone Number</button>
                   @endif
@@ -557,8 +557,10 @@
 
         if(result.status == 1)
         {
+          $(".error").hide();
           $('.message').show();
           $('.message').html('Please check OTP code on your WA account');
+          $("#phone").prop('readonly',true);
           $("#otp").show();
           $("#btn-check").replaceWith('<button type="button" id="submit-otp" class="btn btn-custom">Submit OTP</button>');
         }
@@ -579,7 +581,7 @@
 
   function checkOTP()
   {
-    $("#btn-check").click(function(){
+    $("body").on('click','#btn-check',function(){
       checkPhoneOTP();
     });
   }
@@ -1035,8 +1037,16 @@
           $("#code_country").prop('disabled',false);
           $("#button-connect").prop('disabled',false);
           $("#phone").val("");
+          $("#phone-table").hide();
+          $("#display_button_after_delete_phone").html(data.check_button);
           loadPhoneNumber();
           // new system loadPhoneNumber();
+        },
+        error: function(xhr)
+        {
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          console.log(xhr.responseText);
         }
       });
     });

@@ -742,6 +742,7 @@ class SettingController extends Controller
     {
       $phoneNumber = PhoneNumber::find($request->id);
       $wa_number = $phoneNumber->phone_number;
+      $arr['check_button'] = '<button id="btn-check" type="button" class="btn btn-custom">Check Phone Number</button>';
 			
 			if ($phoneNumber->mode == 0){
 				$server = Server::where("phone_id",$phoneNumber->id)->first();
