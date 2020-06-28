@@ -141,9 +141,6 @@
           <div class="bg-dashboard campaign row">
             <div class="col-lg-6 pad-fix col-card">
               <h5><color><span class="og">Auto schedule</span></color> - {{ $row->name }}</h5>
-              <div class="created">
-                Created On : {{ Date('M d, Y',strtotime($row->created_at)) }}
-              </div>                                                
               <div class="notes">
                <!--  <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div> -->
                 @if($label !== null)
@@ -152,6 +149,9 @@
                   <div><b>Deleted List</b></div>
                 @endif
               </div>
+              <div class="created">
+                Created On : {{ Date('M d, Y',strtotime($row->created_at)) }}
+              </div>         
             </div>
 
             <div class="col-lg-3 pad-fix">
@@ -222,21 +222,19 @@
         @else
           <div class="bg-dashboard campaign row">
             <div class="col-lg-5 pad-fix col-card">
-              <h5>{{ $row->name }}</h5>  
-              <div class="created">
-                Created On : {{ Date('M d, Y',strtotime($row->created_at)) }}
-              </div>                                              
-              <div class="notes">
-                <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div>
+              <h5><color><span class="og">Auto schedule</span></color> - {{ $row->name }}</h5>                  <div class="notes">
                 @if($label !== null)
-                  <div>List : {{ $label }}</div>
+                  <div>List : <a target="_blank" href="{{ url('list-edit') }}/{{ $list_id }}">{{ $label }}</a></div>
                 @else
                   <div><b>Deleted List</b></div>
                 @endif
               </div>
+              <div class="created">
+                Created On : {{ Date('M d, Y',strtotime($row->created_at)) }}
+              </div>        
             </div>
 
-            <div class="col-lg-5 pad-fix mt-4">
+            <div class="col-lg-5 pad-fix">
               <div class="row">
                   <div class="col-lg-5 pad-fix cardnumber">
                     <div class="big-number">
@@ -261,13 +259,11 @@
               </div>  
             </div>
 
-            <div class="col-lg-3 pad-fix col-button">
-              <button id="{{ $row->id }}" type="button" class="btn btn-danger responder-del btn-sm" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
+            <div class="col-lg-2 pad-fix col-button">
               @if($label !== null)
-              <div>
                 <a href="{{ url('add-message-auto-responder') }}/{{ $row->id }}" class="btn btn-custom btn-sm">Add / Edit</a>
-              </div>
               @endif
+              <button id="{{ $row->id }}" type="button" class="btn btn-danger responder-del btn-sm" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
             </div>
           </div> 
         <!-- END NULL REMINDER -->
