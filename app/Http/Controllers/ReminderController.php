@@ -694,13 +694,9 @@ class ReminderController extends Controller
         try{
           Reminder::find($id)->delete();
           $err['status'] = 'success';
-          $err['message'] = 'Data catalog telah dihapus';  
         }catch(\Illuminate\Database\QueryException $e){
           $err['status'] = FALSE;
-          $err['message'] = 'Data catalog gagal dihapus';
         }
-
-
         return response()->json($err);
     }
 

@@ -48,6 +48,7 @@
 
 <!-- NUMBER -->
 <div class="container act-tel-campaign">
+  <div id="notification"><!-- notification --></div>
   <form id="save_campaign">
       <input type="hidden" name="campaign_type" value="auto">
       <input type="hidden" name="campaign_id" value="<?php echo $campaign_id; ?>">
@@ -207,10 +208,13 @@ use min 5 spintax variations is recommended	<br>
             
             if(result.err == 0)
             {
-              alert(result.message);
+               $("#notification").html('<div class="alert alert-success">'+result.message+'</div>');
                $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
                loadAutoResponder();
                $(".error").hide();
+               $('html, body').animate({
+                    scrollTop: $(".act-tel-campaign ").offset().top
+               }, 1000);
             }
             else
             {
@@ -356,7 +360,17 @@ use min 5 spintax variations is recommended	<br>
           $('.div-loading').removeClass('background-load');
 
           var data = jQuery.parseJSON(result);
-          alert(data.message);
+          if(data.status == 'success')
+          {
+            $("#notification").html('<div class="alert alert-success">Your schedule delete successfully</div>');
+          }
+          else
+          {
+            $("#notification").html('<div class="alert alert-danger">Sorry, currently our system is too busy, please try again later</div>');
+          }
+          $('html, body').animate({
+              scrollTop: $(".act-tel-campaign ").offset().top
+          }, 1000);
           loadAutoResponder();
         },
         error : function(xhr){

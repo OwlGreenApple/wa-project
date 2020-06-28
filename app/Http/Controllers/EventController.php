@@ -423,6 +423,8 @@ class EventController extends Controller
     public function delEvent(Request $request)
     {
       $id = $request->id;
+      $campaign_id = $request->campaign_id;
+      $remain_event = 1;
       $user_id = Auth::id();
       $reminder = Reminder::where([['id','=',$id],['user_id','=',$user_id]]);
       $reminder_customer = ReminderCustomers::where([['reminder_id','=',$id],['user_id','=',$user_id]]);
@@ -433,13 +435,23 @@ class EventController extends Controller
         {
           $reminder_customer->delete();
         }
+        /*
+          if remain event = 1 run out cause page reload to refresh
+        */
 
         try{
           $reminder->delete();
+          $check_remain_event = Reminder::where('campaign_id',$campaign_id)->get();
+          if($check_remain_event->count() > 0)
+          {
+            $remain_event = 0;
+          }
           $err['status'] = 'success';
           $err['message'] = 'Day event deleted successfully';  
+          $err['remain_event'] = $remain_event;  
         }catch(QueryException $e){
           $err['status'] = FALSE;
+          $err['remain_event'] = $remain_event;  
           $err['message'] = 'Sorry, our server is too busy';
         }
         

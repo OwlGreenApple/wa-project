@@ -27,7 +27,7 @@ use Carbon\Carbon;
 use App\Helpers\ApiHelper;
 use App\PhoneNumber;
 use App\Server;
-use Storage;
+use Storage,Session;
 
 class CampaignController extends Controller
 {
@@ -256,11 +256,20 @@ class CampaignController extends Controller
 
       if($campaign == 'event')
       {
+        $get_reminder_date = Reminder::where('campaign_id',$request->campaign_id)->first();
+        $req = $request->all();
+
+        if(!is_null($get_reminder_date))
+        {
+          unset($req['event_time']);
+          $req['event_time'] = $get_reminder_date->event_time;
+        }
+
         $rules = array(
             'campaign_name'=>['required','max:50'],
             'list_id'=>['required',new CheckValidListID],
             'event_time'=>['required',new CheckDateEvent,new CheckEventEligibleDate($request->day)],
-            'hour'=>['required','date_format:H:i',new EligibleTime($request->event_time,$request->day)],
+            'hour'=>['required','date_format:H:i',new EligibleTime($req['event_time'],$request->day)],
             'message'=>['required','max:65000'],
 						'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],
         );
@@ -269,7 +278,7 @@ class CampaignController extends Controller
           $rules['day'] = ['required','numeric','min:-90','max:100'];
         }
 
-        $validator = Validator::make($request->all(),$rules);
+        $validator = Validator::make($req,$rules);
         $err = $validator->errors();
 
         if($validator->fails()){
@@ -287,11 +296,13 @@ class CampaignController extends Controller
         }
 
         $event = new EventController;
+        $request = new Request($req);
         $saveEvent = $event->saveEvent($request);
 
         if(!empty($saveEvent))
         {
             $data['err'] = 0;
+            $data['date_event'] = Date('Y-M-d h:i:s A',strtotime($req['event_time']));
             $data['message'] = $saveEvent;
             return response()->json($data);
         }
@@ -421,13 +432,23 @@ class CampaignController extends Controller
       $lists = UserList::where('user_id',$user_id)->get();
       $current_list = UserList::where('id',$campaign->list_id)->select('label')->first();
       $reminder = Reminder::where('campaign_id',$campaign_id)->first();
+
+      if(is_null($reminder))
+      {
+        $date_event = null;
+      }
+      else
+      {
+        $date_event = $reminder->event_time;
+      }
+
       $data['lists'] = $lists;
       $data['campaign_id'] = $campaign_id;
       $data['campaign_name'] = $campaign->name;
       $data['currentlist'] = $current_list->label;
       $data['currentlistid'] = $campaign->list_id;
       $data['published'] = $campaign->status;
-      $data['date_event'] = $reminder->event_time;
+      $data['date_event'] = $date_event;
       $data['list_id'] = $campaign->list_id;
       return view('event.add-message-event',$data);
     }

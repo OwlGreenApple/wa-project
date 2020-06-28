@@ -185,11 +185,6 @@
      }); */
 
   $(function () {
-      $('.datetimepicker').datetimepicker({
-        format : 'YYYY-MM-DD HH:mm',
-        minDate : new Date()
-      });
-
       $('[data-toggle="tooltip"]').tooltip({
         'placement':'top'
       });       

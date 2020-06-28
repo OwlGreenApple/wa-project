@@ -76,7 +76,17 @@
 
         <div class="form-group row event-time">
           <label class="col-sm-3 col-form-label">Event Time :</label>
-          <div class="col-sm-9"><b>{{ Date('Y-M-d h:i:s A',strtotime($date_event)) }}</b></div>
+          <div class="col-sm-9">
+            @if($date_event == null)
+              <div id="new_event_time" class="relativity">
+                <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
+                <span class="icon-calendar"></span>
+              </div>
+              <span class="error event_time"></span>
+            @else
+              <b>{{ Date('Y-M-d h:i:s A',strtotime($date_event)) }}</b>
+            @endif
+          </div>
         </div>
 
         <div class="form-group row reminder">
@@ -99,7 +109,6 @@
             </div>
             <span class="error day"></span>
             <span class="error hour"></span>
-            <span class="error event_time"></span>
           </div>
         </div>
 
@@ -159,6 +168,12 @@
 
    /* Datetimepicker + emojione */
   $(function () {
+
+     $('#datetimepicker').datetimepicker({
+        format : 'YYYY-MM-DD HH:mm',
+        minDate : new Date()
+      });
+
     $("#divInput-description-post").emojioneArea({
         pickerPosition: "right",
     });
@@ -170,10 +185,20 @@
     {
       var form = $('#save_campaign')[0];
       var formData = new FormData(form);
+      var date_event = '{!! $date_event !!}';
+
+      if(date_event == '')
+      {
+        var event_time = $("input[name='event_time']").val();
+        formData.append('event_time',event_time);
+      }
+      else
+      {
+        formData.append('event_time','{!! $date_event !!}');
+      }
 
       formData.append('list_id','{!! $currentlistid !!}');
       formData.append('campaign_name','{!! $campaign_name !!}');
-      formData.append('event_time','{!! $date_event !!}');
       saveEvent(formData)
     });
   }
@@ -204,6 +229,7 @@
           $("#notification").html('<div class="alert alert-success">'+result.message+'</div>');
           $(".custom-file-label selected").html('');
           $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+          $("#new_event_time").html('<b>'+result.date_event+'</b>');
           $(".error").hide();
           clearForm();
         }
@@ -387,7 +413,7 @@
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         type: 'GET',
         url: "{{ url('event-del') }}",
-        data: {id : $("#id_reminder").val()},
+        data: {id : $("#id_reminder").val(), campaign_id : '{!! $campaign_id !!}'},
         dataType: 'json',
         beforeSend: function()
         {
@@ -395,9 +421,7 @@
           $('.div-loading').addClass('background-load');
         },
         success: function(data) {
-          $('#loader').hide();
-          $('.div-loading').removeClass('background-load');
-
+         
           if(data.status == 'success')
           {
             $("#notification_events").html('<div class="alert alert-success">'+data.message+'</div>');
@@ -406,6 +430,16 @@
           else
           {
             $("#notification_events").html('<div class="alert alert-danger">'+data.message+'</div>');
+          }
+
+          if(data.remain_event == 1)
+          {
+              location.href='{{ url("add-message-event") }}/{!! $campaign_id !!}';
+          }
+          else
+          {
+              $('#loader').hide();
+              $('.div-loading').removeClass('background-load');
           }
          
         },
