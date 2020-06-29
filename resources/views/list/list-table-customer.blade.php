@@ -1,5 +1,5 @@
 @if($customer->count() > 0)
-  <table class="table" id="data_customer">
+  <table class="display responsive nowrap" id="data_customer">
     <thead>
       <tr>
         <th>Name</th>

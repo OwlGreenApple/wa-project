@@ -23,7 +23,7 @@
   </ul>
 
   <!-- TABS CONTAINER -->
-  <div class="tabs-content">
+  <div class="tabs-content list-tabs">
     <!-- TABS 1 -->
     <div class="tabs-container" id="tab1C">
       <div class="act-tel-tab">
@@ -270,7 +270,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
     <!-- TABS 3 -->
     <div class="tabs-container" id="tab3C">
       <div class="wrapper del_message"></div>
-      <div class="act-tel-tab" id="customer_list">
+      <div class="act-tel-tab table-responsive" id="customer_list">
           <!-- display customer list here ... --> 
       </div>
     <!-- end tabs -->  

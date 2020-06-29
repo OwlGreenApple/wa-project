@@ -256,7 +256,6 @@ class CampaignController extends Controller
 
       if($campaign == 'event')
       {
-
         $get_reminder_date = Reminder::where('campaign_id',$request->campaign_id)->first();
         $req = $request->all();
        
@@ -265,11 +264,15 @@ class CampaignController extends Controller
           unset($req['event_time']);
           $req['event_time'] = $get_reminder_date->event_time;
         }
+        else
+        {
+          $req['event_time'] = $request->event_time;
+        }
 
         $rules = array(
             'campaign_name'=>['required','max:50'],
             'list_id'=>['required',new CheckValidListID],
-            'event_time'=>['required',new CheckDateEvent,new CheckEventEligibleDate($request->day)],
+            'event_time'=>['required',new CheckEventEligibleDate($request->day)],
             'hour'=>['required','date_format:H:i',new EligibleTime($req['event_time'],$request->day)],
             'message'=>['required','max:65000'],
 						'imageWA'=>['mimes:jpeg,jpg,png,gif','max:4096'],

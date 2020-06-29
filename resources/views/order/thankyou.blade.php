@@ -17,12 +17,11 @@
             Setelah Transfer, silahkan Klik tombol konfirmasi di bawah ini <br> atau Email bukti Transfer anda ke <b>activrespon@gmail.com</b> <br>
             Admin kami akan membantu anda max 1x24 jam
           </p>
-
-          <a href="{{url('order')}}">
-            <button class="btn btn-success btn-confirm-thankyou">
+          <p class="card-text">
+            <a class="btn btn-success btn-confirm-thankyou" href="{{url('order')}}">
               KONFIRMASI TRANSFER BANK
-            </button>
-          </a>
+             </a>
+          </p>
         </div>
       </div>  
     </div>

@@ -82,10 +82,10 @@
                 <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
                 <span class="icon-calendar"></span>
               </div>
-              <span class="error event_time"></span>
             @else
               <b>{{ Date('Y-M-d h:i:s A',strtotime($date_event)) }}</b>
             @endif
+            <div><span class="error event_time"></span></div>
           </div>
         </div>
 
@@ -440,8 +440,8 @@
           {
               $('#loader').hide();
               $('.div-loading').removeClass('background-load');
+              clearForm();
           }
-         
         },
         error : function(xhr,attribute,throwable)
         {

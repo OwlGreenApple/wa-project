@@ -17,8 +17,8 @@
   <form id="save_apt">
       
       <div class="form-group row lists">
-        <label class="col-sm-3 col-form-label">Select List :</label>
-        <div class="col-sm-9 relativity">
+        <label class="col-sm-4 col-lg-3 col-form-label">Select List :</label>
+        <div class="col-sm-8 col-lg-9 relativity">
            <select name="list_id" class="custom-select-campaign form-control">
               @if(count($lists) > 0)
                 @foreach($lists as $row)
@@ -32,8 +32,8 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Name of appointment :</label>
-        <div class="col-sm-9">
+        <label class="col-sm-4 col-lg-3 col-form-label">Name of appointment :</label>
+        <div class="col-sm-8 col-lg-9">
           <input type="text" name="name_app" class="form-control" />
           <span class="error name_app"></span>
         </div>

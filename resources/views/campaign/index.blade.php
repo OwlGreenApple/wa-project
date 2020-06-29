@@ -30,8 +30,9 @@
         $total_delivered = $campaign_controller->broadcastCampaign($row->id,'>',0)->count();
       @endphp
 
-      <div class="bg-dashboard campaign row">
-        <div class="col-lg-6 pad-fix col-card">
+      <div class="bg-dashboard campaign">
+        <div class="row">
+        <div class="col-md-6 col-lg-6 pad-fix col-card">
           <h5>
             <color><span class="gr">Broadcast - 
                @if($row->status == 0)- draft @endif</span></color> 
@@ -56,29 +57,29 @@
           </div> -->
         </div>
 
-        <div class="col-lg-3 pad-fix">
+        <div class="col-md-3 col-lg-3 pad-fix">
           <div class="row">
               @if($label !== null)
-                <div class="col-lg-6 pad-fix cardnumber">
+                <div class="col-md-6 col-lg-6 pad-fix cardnumber">
                   <div class="big-number">
                     <a class="contacts" href="{{url('list-campaign')}}/{{ $row->id }}/broadcast/1">{{ $total_message }}</a>
                   </div>
                   <div class="contact">Queue</div>
                 </div>  
-                <div class="col-lg-3 pad-fix cardnumber">
+                <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                   <div class="big-number">
                     <a class="contacts" href="{{url('list-campaign')}}/{{ $row->id }}/broadcast/0">{{ $total_delivered }}</a>
                   </div>
                   <div class="contact">Delivered</div>
                 </div> 
               @else
-                <div class="col-lg-6 pad-fix cardnumber">
+                <div class="col-md-6 col-lg-6 pad-fix cardnumber">
                   <div class="big-number">
                     <div class="contacts">0</div>
                   </div>
                   <div class="contact">Queue</div>
                 </div>  
-                <div class="col-lg-3 pad-fix cardnumber">
+                <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                   <div class="big-number">
                     <div class="contacts">{{ $total_delivered }}</div>
                   </div>
@@ -98,7 +99,7 @@
           </div>  
         </div>
 
-        <div class="col-lg-3 pad-fix col-button">
+        <div class="col-md-3 col-lg-3 pad-fix col-button">
           @if($label !== null)
               <a title="Edit Message" data-toggle="tooltip" id="{{ $broad_cast->id }}" data-name="{{ $row->name }}" data-date="{{ $broad_cast->day_send }}" data-message="{{ $broadcast_message }}" data-time="{{ $sending }}" data-publish="{{ $row->status }}" type="button" class="btn btn-custom edit_campaign btn-sm">@if($row->status == 1)Edit @else Edit/ Publish @endif</a>
             @if($row->status == 1)
@@ -108,7 +109,8 @@
             <button id="{{ $broad_cast->id }}" type="button" class="btn btn-danger broadcast-del btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><span class="icon-delete"></span></button>
         </div>
         
-
+         <!--end  row -->
+        </div> 
       </div> 
       <!--end  broadcast -->
     @else
@@ -138,8 +140,9 @@
             $total_template = $autoschedule->where('campaign_id',$row->id)->get()->count();
           @endphp
 
-          <div class="bg-dashboard campaign row">
-            <div class="col-lg-6 pad-fix col-card">
+          <div class="bg-dashboard campaign">
+            <div class="row">
+            <div class="col-md-6 col-lg-6 pad-fix col-card">
               <h5><color><span class="og">Auto schedule</span></color> - {{ $row->name }}</h5>
               <div class="notes">
                <!--  <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div> -->
@@ -154,47 +157,47 @@
               </div>         
             </div>
 
-            <div class="col-lg-3 pad-fix">
+            <div class="col-md-3 col-lg-3 pad-fix">
               <div class="row">
                  <!--  <div class="col-lg-3 pad-fix cardnumber">
                     <div class="big-number">100</div>
                     <div class="contact">Opened</div>
                   </div> -->
                   @if($label !== null)
-                    <div class="col-lg-5 pad-fix cardnumber">
+                    <div class="col-md-5 col-lg-5 pad-fix cardnumber">
                       <div class="big-number">
                           <a class="contacts" href="{{url('add-message-auto-responder')}}/{{ $row->id}}">{{ $total_template }}</a>
                       </div>
                       <div class="contact">Total Template</div>
                     </div>
 
-                    <div class="col-lg-3 pad-fix cardnumber">
+                    <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                       <div class="big-number">
                           <a class="contacts" href="{{ url('list-campaign') }}/{{ $row->id }}/0/1">{{ $total_message }}</a>
                       </div>
                       <div class="contact">Queue</div>
                     </div>  
-                    <div class="col-lg-3 pad-fix cardnumber">
+                    <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                       <div class="big-number">
                           <a class="contacts" href="{{ url('list-campaign') }}/{{ $row->id }}/0/0">{{ $total_delivered }}</a>
                       </div>
                       <div class="contact">Delivered</div>
                     </div> 
                   @else
-                     <div class="col-lg-5 pad-fix cardnumber">
+                     <div class="col-md-5 col-lg-5 pad-fix cardnumber">
                       <div class="big-number">
                           <div class="contacts">0</div>
                       </div>
                       <div class="contact">Total Template</div>
                     </div>
 
-                    <div class="col-lg-3 pad-fix cardnumber">
+                    <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                       <div class="big-number">
                           <div class="contacts">0</div>
                       </div>
                       <div class="contact">Queue</div>
                     </div>  
-                    <div class="col-lg-3 pad-fix cardnumber">
+                    <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                       <div class="big-number">
                           <div class="contacts">{{ $total_delivered }}</div>
                       </div>
@@ -205,7 +208,7 @@
               </div>  
             </div>
 
-            <div class="col-lg-3 pad-fix col-button">
+            <div class="col-md-3 col-lg-3 pad-fix col-button">
                @if($label !== null)
                   <a href="{{ url('add-message-auto-responder') }}/{{ $row->id }}" class="btn btn-custom btn-sm">Add / Edit</a>
                @endif
@@ -217,11 +220,14 @@
               -->  
               <!-- <button id="{{ $row['id'] }}" type="button" class="btn btn-success btn-sm responder_duplicate"><span class="icon-copy-text"></span></button> -->
             </div>
+            <!-- end row -->
+            </div>
         </div> 
         <!-- END AUTO SCHEDULE -->
         @else
-          <div class="bg-dashboard campaign row">
-            <div class="col-lg-5 pad-fix col-card">
+          <div class="bg-dashboard campaign">
+            <div class="row">
+            <div class="col-md-5 col-lg-5 pad-fix col-card">
               <h5><color><span class="og">Auto schedule</span></color> - {{ $row->name }}</h5>                  <div class="notes">
                 @if($label !== null)
                   <div>List : <a target="_blank" href="{{ url('list-edit') }}/{{ $list_id }}">{{ $label }}</a></div>
@@ -234,22 +240,22 @@
               </div>        
             </div>
 
-            <div class="col-lg-5 pad-fix">
+            <div class="col-md-5 col-lg-5 pad-fix">
               <div class="row">
-                  <div class="col-lg-5 pad-fix cardnumber">
+                  <div class="col-md-5 col-lg-5 pad-fix cardnumber">
                     <div class="big-number">
                         <a class="contacts" href="{{url('add-message-auto-responder')}}/{{ $row->id}}">0</a>
                     </div>
                     <div class="contact">Total Template</div>
                   </div>
 
-                  <div class="col-lg-3 pad-fix cardnumber">
+                  <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                     <div class="big-number">
                         <a class="contacts" href="{{ url('list-campaign') }}/{{ $row->id }}/0/1">0</a>
                     </div>
                     <div class="contact">Queue</div>
                   </div>  
-                  <div class="col-lg-3 pad-fix cardnumber">
+                  <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                     <div class="big-number">
                         <a class="contacts" href="{{ url('list-campaign') }}/{{ $row->id }}/0/0">0</a>
                     </div>
@@ -259,12 +265,14 @@
               </div>  
             </div>
 
-            <div class="col-lg-2 pad-fix col-button">
+            <div class="col-md-2 col-lg-2 pad-fix col-button">
               @if($label !== null)
                 <a href="{{ url('add-message-auto-responder') }}/{{ $row->id }}" class="btn btn-custom btn-sm">Add / Edit</a>
               @endif
               <button id="{{ $row->id }}" type="button" class="btn btn-danger responder-del btn-sm" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
             </div>
+            <!-- end row -->
+          </div> 
           </div> 
         <!-- END NULL REMINDER -->
         @endif

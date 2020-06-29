@@ -100,28 +100,30 @@
         <div class="row col-fix">
             <form class="wrapper add-contact col-lg-9 pad-fix" id="form-connect">
                 <div class="form-group row col-fix">
-                  <label class="col-sm-3 col-form-label">Phone Whatsapp :</label>
-                  <div class="col-sm-9 row">
+                  <label class="col-lg-3 col-md-4 col-form-label">Phone Whatsapp :</label>
+                  <div class="col-lg-9 col-md-8">
+                    <div class="row">
                    <!--  <div class="col-lg-3 row relativity">
                       <input id="code_country" name="code_country" class="form-control custom-select-campaign" value="+62" />
                       <span class="icon-carret-down-circle"></span>
                       <span class="error code_country"></span>
                     </div>
                     -->
-                    <div class="col-sm-12">
-                      <div id="move_tab1">
-                        <input type="text" id="phone" name="phone_number" class="form-control" />
-                        <span class="error code_country"></span>
-                        <span class="error phone_number"></span>
-                      </div>
+                      <div class="col-sm-12">
+                        <div id="move_tab1">
+                          <input type="text" id="phone" name="phone_number" class="form-control" />
+                          <span class="error code_country"></span>
+                          <span class="error phone_number"></span>
+                        </div>
 
-                      <!-- OTP -->
-                      <div id="otp" class="row mt-3 col-lg-4" style="display:none">
-                        <input placeholder="OTP Code" class="form-control form-control-sm" name="otp"/>
+                        <!-- OTP -->
+                        <div id="otp" class="row mt-3 col-lg-4" style="display:none">
+                          <input placeholder="OTP Code" class="form-control form-control-sm" name="otp"/>
+                        </div>
                       </div>
+                      <!--<div>Please add avatar / image on your WA account.</div>-->
+                      <div class="col-lg-12 pad-fix"><ul id="display_countries"><!-- Display country here... --></ul></div>
                     </div>
-                    <!--<div>Please add avatar / image on your WA account.</div>-->
-                    <div class="col-lg-12 pad-fix"><ul id="display_countries"><!-- Display country here... --></ul></div>
                   </div>
                 </div>
 
@@ -134,7 +136,7 @@
 
             </form>
 
-            <div class="col-lg-3 plan account_status">
+            <div class="col-lg-3 col-md-12 col-sm-12 plan account_status">
               @if($user->status > 0)
                 <div>Current plan : <b>{{ $user->membership }}</b></div>
                 <div>Valid Until {{ $expired }}</div>
@@ -189,14 +191,18 @@
           <h5>Edit Your Personal Data</h5>   
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Email</label>
-                <label class="col-sm-1 col-form-label">:</label>
-                <div class="form-control col-sm-7 text-left">{{$user->email}}</div>
+                <label class="col-sm-1 double-dot col-form-label">:</label>
+                <div class="col-sm-7 text-left">
+                  <div class="form-control">
+                    {{$user->email}}
+                  </div>
+                </div>
               </div> 
 
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Full Name</label>
-                <label class="col-sm-1 col-form-label">:</label>
-                <div class="col-sm-7 text-left row">
+                <label class="col-sm-1 double-dot col-form-label">:</label>
+                <div class="col-sm-7 text-left">
                   <input name="user_name" type="text" class="form-control" value="{{$user->name}}" />
                   <span class="error user_name"></span>
                 </div>
@@ -204,8 +210,8 @@
 
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Phone Number</label>
-                <label class="col-sm-1 col-form-label">:</label>
-                <div id="move_tab2" class="col-sm-7 text-left row">
+                <label class="col-sm-1 double-dot col-form-label">:</label>
+                <div id="move_tab2" class="col-sm-7 text-left">
                 <!--   <input name="user_phone" type="text" class="form-control settings_phone" value="{{$user->phone_number}}" /> -->
                   <span class="error user_phone"></span>
                 </div>
@@ -213,8 +219,8 @@
 
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">TimeZone</label>
-                <label class="col-sm-1 col-form-label">:</label>
-                <div class="col-sm-7 text-left row">
+                <label class="col-sm-1 double-dot col-form-label">:</label>
+                <div class="col-sm-7 text-left">
                    <select class="js-example-basic-single form-control" id="timezone"  name="timezone" required>
                       @foreach($timezone as $time)    
                           <option value="{{$time['zone']}}"> ({{$time['GMT_difference']. ' ) '.$time['zone']}}</option>
@@ -229,8 +235,8 @@
           <h5>Edit Your Password</h5>
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Old Password</label>
-                <label class="col-sm-1 col-form-label">:</label>
-                <div class="col-sm-7 text-left row">
+                <label class="col-sm-1 double-dot col-form-label">:</label>
+                <div class="col-sm-7 text-left">
                   <input type="password" name="oldpass" class="form-control" />
                   <span class="error oldpass"></span>
                 </div>
@@ -238,8 +244,8 @@
 
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">New Password</label>
-                <label class="col-sm-1 col-form-label">:</label>
-                <div class="col-sm-7 text-left row">
+                <label class="col-sm-1 double-dot col-form-label">:</label>
+                <div class="col-sm-7 text-left">
                   <input type="password" name="newpass" class="form-control" />
                   <span class="error newpass"></span>
                 </div>
@@ -247,8 +253,8 @@
 
               <div class="form-group row col-fix">
                 <label class="col-sm-4 col-form-label">Confirm New Password</label>
-                <label class="col-sm-1 col-form-label">:</label>
-                <div class="col-sm-7 text-left row">
+                <label class="col-sm-1 double-dot col-form-label">:</label>
+                <div class="col-sm-7 text-left">
                   <input type="password" name="confpass" class="form-control" />
                   <span class="error confpass"></span>
                 </div>

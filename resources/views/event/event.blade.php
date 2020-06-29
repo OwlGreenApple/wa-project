@@ -7,8 +7,9 @@
   </div>
 
     @foreach($data as $row)
-      <div class="bg-dashboard campaign row">
-        <div class="col-lg-5 pad-fix col-card">
+      <div class="bg-dashboard campaign">
+        <div class="row">
+        <div class="col-md-5 col-lg-5 pad-fix col-card">
           <h5>
             <span class="campaignid-{{$row['id']}}">{{ $row['campaign_name'] }}</span>
             <span>
@@ -38,27 +39,27 @@
 
         </div>
 
-        <div class="col-lg-4 pad-fix">
+        <div class="col-md-4 col-lg-4 pad-fix">
           <div class="row">
              <!--  <div class="col-lg-3 pad-fix cardnumber">
                 <div class="big-number">100</div>
                 <div class="contact">Opened</div>
               </div> -->
 
-              <div class="col-lg-4 pad-fix cardnumber">
+              <div class="col-md-4 col-lg-4 pad-fix cardnumber">
                 <div class="big-number">
                     <a class="contacts" href="{{url('add-message-event').'/'.$row['id']}}">{{ $row['total_template'] }}</a>
                 </div>
                 <div class="contact">Total Template</div>
               </div>
 
-              <div class="col-lg-3 pad-fix cardnumber">
+              <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                 <div class="big-number">
                     <a class="contacts" href="{{url('list-campaign').'/'.$row['id'].'/1/1'}}">{{ $row['total_message'] }}</a>
                 </div>
                 <div class="contact">Queue</div>
               </div>  
-              <div class="col-lg-3 pad-fix cardnumber">
+              <div class="col-md-3 col-lg-3 pad-fix cardnumber">
                 <div class="big-number">
                     <a class="contacts" href="{{url('list-campaign').'/'.$row['id'].'/1/0'}}">{{ $row['sent_message'] }}</a>
                 </div>
@@ -68,7 +69,7 @@
           </div>  
         </div>
 
-        <div class="col-lg-3 pad-fix col-button">
+        <div class="col-md-3 col-lg-3 pad-fix col-button">
           <!--
           <a href="{{url('report-reminder')}}" id="{{ $row['id'] }}" class="btn btn-warning btn-sm"><span class="icon-eye"></span></a>
           -->
@@ -82,6 +83,8 @@
             @endif
             <button type="button" id="{{ $row['id'] }}" class="btn btn-danger event-del btn-sm" data-toggle="tooltip" data-placement="top" title="Button Delete"><span class="icon-delete"></span></button>
         </div>
+        <!-- end row -->
+      </div> 
       </div> 
     @endforeach
 

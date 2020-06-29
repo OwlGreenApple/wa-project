@@ -17,15 +17,15 @@
       <input type="hidden" name="campaign_id" value="new">
       <input type="hidden" name="reminder_id" value="new">
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Name :</label>
-        <div class="col-sm-6">
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Name :</label>
+        <div class="col-sm-8 col-md-8 col-lg-6">
           <input type="text" name="campaign_name" class="form-control" />
           <span class="error campaign_name"></span>
         </div>
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Campaign :
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Campaign :
           <span class="tooltipstered" title="<div class='panel-heading'>Campaign type</div><div class='panel-content'>
 					Broadcast <br>
 					Auto Responder <br>
@@ -34,7 +34,7 @@
             <i class="fa fa-question-circle "></i>
           </span>
         </label>
-        <div class="col-sm-9">
+        <div class="col-sm-8 col-md-8 col-lg-9">
 
           @if(getMembership(Auth()->user()->membership) > 3) 
           <div class="form-check form-check-inline">
@@ -83,8 +83,8 @@
       -->
 
       <div class="form-group row lists">
-        <label class="col-sm-3 col-form-label">Select List :</label>
-        <div class="col-sm-9 relativity">
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Select List :</label>
+        <div class="col-sm-8 col-md-8 col-lg-9 relativity">
            <select name="list_id" class="custom-select-campaign form-control">
               @if(count($lists) > 0)
                 @foreach($lists as $row)
@@ -100,8 +100,8 @@
       <!-- <div class="box-schedule"></div> -->
 
       <div class="form-group row date-send">
-        <label class="col-sm-3 col-form-label">Date Send :</label>
-        <div class="col-sm-9 relativity">
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Date Send :</label>
+        <div class="col-sm-8 col-md-8 col-lg-9 relativity">
           <input id="datetimepicker-date" type="text" name="date_send" class="form-control custom-select-campaign" />
           <span class="icon-calendar"></span>
           <span class="error date_send"></span>
@@ -109,8 +109,8 @@
       </div>
 
       <div class="form-group row event-time">
-        <label class="col-sm-3 col-form-label">Event Time :</label>
-        <div class="col-sm-9 relativity">
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Event Time :</label>
+        <div class="col-sm-8 col-md-8 col-lg-9 relativity">
           <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
           <span class="icon-calendar"></span>
           <span class="error event_time"></span>
@@ -118,8 +118,8 @@
       </div>
 
       <div class="form-group row reminder">
-        <label class="col-sm-3 col-form-label">Select Reminder :</label>
-        <div class="col-sm-9 relativity">
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Select Reminder :</label>
+        <div class="col-sm-8 col-md-8 col-lg-9 relativity">
            <select name="schedule" id="schedule" class="custom-select-campaign form-control">
               <option value="0">The Day</option>
               <option value="1">H-</option>
@@ -130,8 +130,8 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Time to send Message :</label>
-        <div class="col-sm-9 relativity">
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Time to send Message :</label>
+        <div class="col-sm-8 col-md-8 col-lg-9 relativity">
           <span class="inputh">
             <input name="hour" type="text" class="timepicker form-control" value="00:00" readonly />
           </span>
@@ -149,8 +149,8 @@
       </div>
 
       <div class="form-group row">
-				<label class="col-sm-3 col-form-label">Image :</label>
-				<div class="col-sm-9 relativity">
+				<label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Image :</label>
+				<div class="col-sm-8 col-md-8 col-lg-9 relativity">
 					<div class="custom-file">
 						<input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
 
@@ -164,7 +164,7 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Message :
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Message :
 					<span class="tooltipstered" title="<div class='panel-heading'>Message</div><div class='panel-content'>
 						You can use this as 'Personalization field' <br>
 						[NAME] <br>
@@ -178,7 +178,7 @@ use min 5 spintax variations is recommended	<br>
 						<i class="fa fa-question-circle "></i>
 					</span>
 				</label>
-        <div class="col-sm-6">
+        <div class="col-sm-8 col-md-8 col-lg-6">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
           <span class="error msg"></span>
         </div>
@@ -186,24 +186,30 @@ use min 5 spintax variations is recommended	<br>
 
 			<div class="form-group row">
 
-				<div class="text-right col-sm-9">
+				<div class="text-right col-sm-12 col-md-12 col-lg-9">
 					<button type="submit" class="btn btn-custom">Create</button>
 				</div>
 			</div>
 			
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Send 1 test Message
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Send 1 test Message
 					<span class="tooltipstered" title="<div class='panel-heading'>Send 1 test Message</div><div class='panel-content'>
 						Test Message will be send immediately
 						</div>">
 						<i class="fa fa-question-circle "></i>
 					</span>
 				</label>
-        <div class="col-sm-9 relativity">
-						<input type="text" id="phone" name="phone_number" class="form-control" />
-						<span class="error code_country"></span>
-						<span class="error phone_number"></span>
-						<button type="button" class="btn btn-test">Send Test</button>
+        <div class="col-sm-8 col-md-8 col-lg-9 relativity">
+          <div class="row">
+            <div class="col-sm-9 col-lg-9">
+  						<input type="text" id="phone" name="phone_number" class="form-control" />
+  						<span class="error code_country"></span>
+  						<span class="error phone_number"></span>
+            </div>
+            <div class="col-sm-3 col-lg-3 col-test">
+						  <button type="button" class="btn btn-test">Send Test</button>
+            </div>
+          </div>
         </div>
       </div>
   </form>

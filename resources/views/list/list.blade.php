@@ -11,7 +11,7 @@
 </div>
 
 <div class="container">
-  <div class="col-md-12">
+
     <div class="act-tel-create-list bg-dashboard">
       <h3>Create Your List</h3>
 
@@ -75,7 +75,7 @@
       </div>
 
     </div>
-  </div>
+
 </div>
 
 <script type="text/javascript">

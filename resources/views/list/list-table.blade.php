@@ -8,7 +8,7 @@
     <div class="bg-dashboard cardlist col-lg-12">
 
       <div class="row">
-        <div class="col-lg-5 col-card">
+        <div class="col-md-5 col-lg-5 col-card">
           <h5>{{$rows->label}}</h5>
             <div class="link_wrap">Link From : <a href="{{env('APP_URL')}}{{$rows->name}}" target="_blank">{{env('APP_URL')}}{{$rows->name}}</a>
               <span>
@@ -19,21 +19,21 @@
             <div>Created On : {{Date("M d, Y", strtotime($rows->created_at))}}</div> <!--Jan 23, 2020  -->
         </div>
 
-        <div class="col-lg-2 pad-fix cardnumber">
+        <div class="col-md-2 col-lg-2 pad-fix cardnumber">
           <div class="big-number">
             @if($listcontroller->newContact($rows->id) !== 0)+@endif {!! $listcontroller->newContact($rows->id) !!}
           </div>
           <div class="contact">New Contacts</div>
         </div> 
 
-        <div class="col-lg-2 pad-fix cardnumber">
+        <div class="col-md-2 col-lg-2 pad-fix cardnumber">
           <div class="big-number">
               {!! $listcontroller->contactList($rows->id) !!}
           </div>
           <div class="contact">Contacts</div>
         </div>
 
-        <div class="col-lg-3 pad-fix col-button">
+        <div class="col-md-3 col-lg-3 pad-fix col-button">
          <!--  <a href="{{url('list-contacts')}}/{{$rows->id}}" target="_blank" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="View Subscribers"><span class="icon-eye"></span></a>  -->
          <a href="{{url('list-edit')}}/{{$rows->id}}" target="_blank" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="View & Edit Subscribers"><span class="icon-eye"></span></a>
          <!--  <a href="{{url('list-edit')}}/{{$rows->id}}" class="btn btn-edit btn-sm"><span class="icon-edit" data-toggle="tooltip" data-placement="top" title="Edit"></span></a> -->
