@@ -629,12 +629,28 @@ class EventController extends Controller
      public function loadEvent(Request $request){
       $id = Auth::id();
       $events = Reminder::where([['user_id',$id],['is_event','=',1],['campaign_id','=',$request->campaign_id]])
-                // ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
                 ->orderBy('days','asc')
                 ->get();
+
+      $event_id = array();
+      $total_message = 0;
+
+      if($events->count() > 0)
+      {
+        foreach($events as $row):
+          $event_id[] = $row->id;
+        endforeach;
+      }
+
+      if(count($event_id) > 0)
+      {
+        $total_message = ReminderCustomers::whereIn('reminder_id',$event_id)->where('status','=',0)->get();
+      }
+
       $arr['view'] =(string) view('event.load-event')
                       ->with([
                         "events"=>$events,
+                        "total_message"=>$total_message->count()
                       ]);
 
       return $arr;

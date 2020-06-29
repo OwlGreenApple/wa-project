@@ -7,9 +7,11 @@
             <div class="board">
               <div class="left">Reminder Day : H{{$event->days}}</div>
               <div class="right">
-                <a class="icon icon-edit" data-id="{{$event->id}}" data-list_id="{{$event->list_id}}" data-campaign_id="{{$event->campaign_id}}" data-days="{{$event->days}}" data-event_time="{{$event->event_time}}" data-hour_time="{{$event->hour_time}}" data-message="{{$event->message}}" class="icon icon-edit"></a>
+                @if($total_message > 0)
+                  <a class="icon icon-edit" data-id="{{$event->id}}" data-list_id="{{$event->list_id}}" data-campaign_id="{{$event->campaign_id}}" data-days="{{$event->days}}" data-event_time="{{$event->event_time}}" data-hour_time="{{$event->hour_time}}" data-message="{{$event->message}}" class="icon icon-edit"></a>
 
-                <a class="icon icon-delete" data-toggle="modal" data-target="#confirm-delete" data-id="{{$event->id}}"></a>
+                 <a class="icon icon-delete" data-toggle="modal" data-target="#confirm-delete" data-id="{{$event->id}}"></a>
+                @endif
 
                 <a class="icon icon-carret-down-circle" id="{{ $event->id }}"></a>
               </div>
