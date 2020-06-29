@@ -108,10 +108,12 @@
                       <span class="error code_country"></span>
                     </div>
                     -->
-                    <div id="move_tab1" class="col-sm-12">
-                      <input type="text" id="phone" name="phone_number" class="form-control" />
-                      <span class="error code_country"></span>
-                      <span class="error phone_number"></span>
+                    <div class="col-sm-12">
+                      <div id="move_tab1">
+                        <input type="text" id="phone" name="phone_number" class="form-control" />
+                        <span class="error code_country"></span>
+                        <span class="error phone_number"></span>
+                      </div>
 
                       <!-- OTP -->
                       <div id="otp" class="row mt-3 col-lg-4" style="display:none">
