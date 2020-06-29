@@ -25,7 +25,9 @@
         $('#span-tagihan').html('Rp. '+ spantagihan );
 
         table = $('#myTable').DataTable({
-                  responsive : true,
+                   responsive: {
+                      details: false
+                  },
                   destroy: true,
                   "order": [],
                 });
@@ -94,7 +96,7 @@
                 </div>
 
       <form>
-        <table class="table" id="myTable">
+        <table class="display responsive nowrap" id="myTable">
           <thead align="center">
             <th>
               No
