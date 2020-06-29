@@ -309,13 +309,18 @@ use min 5 spintax variations is recommended	<br>
 
   function clickButtonClear(){
     $("body").on('click','#btn-clear',function(e){
-      $('input[name="reminder_id"]').val("new");
-      $('select[name="day"]').val($('select[name="day"]').prop("selectedIndex", 0).val());
-      $('input[name="hour"]').val("00:00");
-      $('select[name="list_id"]').val($('select[name="list_id"]').prop("selectedIndex", 0).val());
-      $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
-      $("#btn-clear").hide();
+      clearEdit();
     });
+  }
+
+  function clearEdit()
+  {
+    $('input[name="reminder_id"]').val("new");
+    $('select[name="day"]').val($('select[name="day"]').prop("selectedIndex", 0).val());
+    $('input[name="hour"]').val("00:00");
+    $('select[name="list_id"]').val($('select[name="list_id"]').prop("selectedIndex", 0).val());
+    $("#divInput-description-post").emojioneArea()[0].emojioneArea.setText('');
+    $("#btn-clear").hide();
   }
   
   function MDTimepicker(){
@@ -368,6 +373,7 @@ use min 5 spintax variations is recommended	<br>
           {
             $("#notification").html('<div class="alert alert-danger">Sorry, currently our system is too busy, please try again later</div>');
           }
+          clearEdit();
           $('html, body').animate({
               scrollTop: $(".act-tel-campaign ").offset().top
           }, 1000);
