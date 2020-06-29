@@ -256,10 +256,11 @@ class CampaignController extends Controller
 
       if($campaign == 'event')
       {
+
         $get_reminder_date = Reminder::where('campaign_id',$request->campaign_id)->first();
         $req = $request->all();
-
-        if(!is_null($get_reminder_date))
+       
+        if(!is_null($get_reminder_date) && $request->event_time == 'undefined')
         {
           unset($req['event_time']);
           $req['event_time'] = $get_reminder_date->event_time;
