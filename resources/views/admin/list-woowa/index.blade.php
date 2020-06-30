@@ -27,6 +27,14 @@
         table = $('#myTable').DataTable({
                   responsive: true,
                   destroy: true,
+                  "columnDefs": [
+                    { "width": "5%", "targets": 0 }
+                    { "width": "25%", "targets": 1 }
+                    { "width": "25%", "targets": 2 }
+                    { "width": "10%", "targets": 3 }
+                    { "width": "10%", "targets": 4 }
+                    { "width": "25%", "targets": 5 }
+                  ]
                   "order": [],
                 });
       }
