@@ -76,8 +76,8 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-7 col-sm-4 col-md-4 col-lg-3 col-form-label">Campaign Name :</label>
-        <div class="col-3 col-sm-8 col-md-8 col-lg-6">
+        <label class="col-6 col-sm-4 col-md-4 col-lg-3 col-form-label">Campaign Name :</label>
+        <div class="col-4 col-sm-8 col-md-8 col-lg-6">
           <div>{{ $campaign_name }}</div>
         </div>
       </div>
