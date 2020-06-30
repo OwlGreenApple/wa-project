@@ -105,6 +105,7 @@
     deleteCampaign();
     tableData();
     openCampaignMessage();
+
   });
 
   function openCampaignMessage()

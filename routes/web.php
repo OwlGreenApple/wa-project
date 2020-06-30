@@ -282,6 +282,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 
   /* RESEND */
   Route::get('resend_auto_eply','ListController@resendAutoReply');
+  Route::get('resend_broadcast','BroadCastController@resendMessage');
 
 	/* CKEditor */
 	Route::get('ckbrowse', 'CKController@ck_browse')->name('ckbrowse');

@@ -483,7 +483,7 @@ class CampaignController extends Controller
             $campaigns = $this->broadcastCampaign($campaign_id,'>',0);
         }
        
-        return view('campaign.list_broadcast_table',['active'=>$active,'campaigns'=>$campaigns]);
+        return view('campaign.list_broadcast_table',['active'=>$active,'campaigns'=>$campaigns,'campaign_id'=>$campaign_id]);
     }
 
     public function broadcastCampaign($campaign_id,$cond,$status)

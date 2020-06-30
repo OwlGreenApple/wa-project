@@ -716,7 +716,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
   </div>
   <!-- End Modal -->
 
-<!-- Modal resend available -->
+<!-- Modal resend -->
 <div class="modal fade" id="resend_popup" role="dialog">
   <div class="modal-dialog">
     

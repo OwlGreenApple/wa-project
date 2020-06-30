@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\QueryException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\UserList;
 use App\BroadCast;
@@ -516,6 +517,31 @@ class BroadCastController extends Controller
         {
             return response()->json(['message'=>'Sorry, cannot duplicate your campaign subscriber, please call administrator']);
         }
+    }
+
+    public function resendMessage(Request $request)
+    {
+        $campaign_id = $request->campaign_id;
+        $broadcast = BroadCast::where('campaign_id',$campaign_id)->first();
+
+        if(!is_null($broadcast))
+        {
+          $broadcast_customer = BroadCastCustomers::where('broadcast_id',$broadcast->id)->whereIn('status',[2,5]);
+
+          if($broadcast_customer->get()->count() > 0)
+          { 
+             try{
+               $broadcast_customer->update(['status'=>0]);
+               $msg['success'] = 1;
+             }
+             catch(QueryException $e)
+             {
+               $msg['success'] = 0;
+             }
+             return response()->json($msg);
+          }
+        }
+        
     }
 
     /****************************************************************************************
