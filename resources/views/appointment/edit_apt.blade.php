@@ -19,8 +19,8 @@
 
     <form id="save_template_apt" class="aptform">
      <div class="form-group row reminder">
-        <label class="col-sm-3 col-form-label">Send message on :</label>
-        <div class="col-sm-9 text-left">
+        <label class="col-md-4 col-lg-3 col-form-label">Send message on :</label>
+        <div class="col-md-8 col-lg-9 radio-schedule">
            <!-- <select name="schedule" id="schedule" class="custom-select-campaign form-control">
               <option value="0">The Day</option>
               <option value="1">H-</option>
@@ -46,8 +46,8 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Message will be send at :</label>
-        <div class="col-sm-9 relativity">
+        <label class="col-md-4 col-lg-3 col-form-label">Message will be send at :</label>
+        <div class="col-md-8 col-lg-9 relativity">
           <span class="inputh">
             <input name="hour" type="text" class="timepicker form-control" value="00:00" readonly />
           </span>
@@ -74,6 +74,7 @@
       <div class="form-group row">
         <label class="col-sm-3 col-form-label">Message :  <span class="tooltipstered" title="<div class='panel-heading'>Info personalization field</div><div class='panel-content'>
                     [NAME] <br>
+                    [FIRSTNAME] <br>
                     [PHONE] <br>
                     [EMAIL] <br/>
                     ADD new personalization for date & time appointment : <br/>

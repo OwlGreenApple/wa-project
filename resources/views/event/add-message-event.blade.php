@@ -128,7 +128,21 @@
         </div>
 
         <div class="form-group row">
-          <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Message :</label>
+          <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Message :
+            <span class="tooltipstered" title="<div class='panel-heading'>Message</div><div class='panel-content'>
+            You can use this as 'Personalization field' <br>
+            [NAME] <br>
+            [FIRSTNAME] <br>
+            [PHONE] <br>
+            [EMAIL] <br>
+            Do NOT use : % or & character on your message<br><br>
+Please use Spintax in your message<br>
+example: {1|2|3} for 3 variations<br>
+use min 5 spintax variations is recommended <br>
+            </div>">
+            <i class="fa fa-question-circle "></i>
+           </span>
+          </label>
           <div class="col-sm-8 col-md-8 col-lg-6">
             <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
             <span class="error message"></span>
