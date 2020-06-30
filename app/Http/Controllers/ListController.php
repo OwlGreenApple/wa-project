@@ -821,6 +821,8 @@ class ListController extends Controller
             return redirect('lists');
         } 
 
+        $mod = request()->get('mod');
+
 				$auto_reply_message = "";
         $data_autoreply = array();
 				$reminder = Reminder::where("list_id",$listid)
@@ -856,6 +858,7 @@ class ListController extends Controller
             'start_custom_message'=>$list->start_custom_message,
             'unsubs_custom_message'=>$list->unsubs_custom_message,
             'auto_reply'=>$data_autoreply,
+            'mod'=>$mod
         );
 
         $url = env('APP_URL').$list->name; 
@@ -1478,6 +1481,38 @@ class ListController extends Controller
 
     public function listForm(){
         return view('list.list-form');
+    }
+
+    public function resendAutoReply(Request $request)
+    { 
+        $userid = Auth::id();
+        $listid = $request->list_id;
+
+        $reminder = Reminder::where("list_id",$listid)
+                    ->where("campaign_id",0)
+                    ->where("days",0)
+                    ->where("campaign_id",0)
+                    ->where("tmp_appt_id",0)
+                    ->where("is_event",0)
+                    ->where("event_time",null)
+                    ->where("hour_time",null)
+                    ->where("user_id",$userid)
+                    ->select('id')
+                    ->first();
+                    
+        if(!is_null($reminder))
+        {
+          try{
+            ReminderCustomers::where('reminder_id',$reminder->id)->whereIn("status",[2,5])->update(['status'=>0]);
+            $msg['success'] = 1;
+          }
+          catch(QueryException $e)
+          {
+            // $e->getMessage()
+            $msg['success'] = 0;
+          }
+          return response()->json($msg);
+        }
     }
 
     /*public function exportListCSVSubscriber($list_id,$import){

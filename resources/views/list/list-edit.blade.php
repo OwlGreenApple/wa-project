@@ -327,6 +327,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
         <!-- datatable -->
         <h5 class="alert alert-primary">Status delivery auto reply's messages</h5>
 
+        <div class="table-responsive">
         <table id="autoreply_table" class="table display w-100">
           <thead class="bg-dashboard">
             <tr>
@@ -360,6 +361,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
             @endforeach
           </tbody>
         </table>
+        </div>
 
         <!-- end last wrapper -->
       </div><!-- end actel-tab -->  
@@ -714,6 +716,23 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
   </div>
   <!-- End Modal -->
 
+<!-- Modal resend available -->
+<div class="modal fade" id="resend_popup" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header"><h5>Are you sure to reset auto reply message?</h5></div>
+      <div class="modal-body">
+         <button id="resend_message" class="btn btn-primary">Resend</button>
+         <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+      
+  </div>
+</div>
+<!-- End Modal -->
+
 <script src="{{ url('assets/intl-tel-input/callbackplugin.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/intl-tel-input/callback.js') }}" type="text/javascript"></script>
 
@@ -785,7 +804,76 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
     data_auto_reply();
     /*onResize();
     stopResize();*/
+    addResendBtn('#autoreply_table_length');
+    resendBtn();
+    triggerButtonMod();
   });
+
+  function addResendBtn(elem)
+  {
+    var message = "<div class='panel-heading'>You can resend message if status are : 'phone offline or queued'</div>";
+    var tooltip='<span style="font-size : 18px" class="tooltipstered" title="'+message+'"><i class="fa fa-question-circle"></i></span>';
+
+    $(elem).append("<label class='ml-2'><button id='resend' class='btn btn-info text-white btn-sm'>Resend</button></label><label class='ml-1'>"+tooltip+"</label>");
+  }
+
+  function resendBtn()
+  {
+    $("body").on('click','#resend',function(){
+      $("#resend_popup").modal();
+    });
+ 
+    $("body").on('click','#resend_message',function(){
+      resend();
+    });
+  }
+
+  function resend()
+  {
+    $.ajax({
+      type : 'GET',
+      url : '{{url("resend_auto_eply")}}',
+      data : {list_id : "{!! $data['listid'] !!}"},
+      dataType : "json",
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success : function(result)
+      {
+         if(result.success == 1)
+         {
+            location.href = '{{ url("list-edit") }}/{{ $data["listid"] }}?mod=1'
+         }
+         else if(result.success == 0)
+         {
+            $('#loader').hide();
+            $('.div-loading').removeClass('background-load');
+
+            $("#resend_popup").modal('hide');
+            $('.autoreply_error').html('<div class="alert alert-danger">Sorry, currently our server is too busy, please try again later.</div>')
+         }
+      },
+      error: function(xhr)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        console.log(xhr.responseText);
+      }
+    }); 
+  }
+
+  function triggerButtonMod()
+  {
+      var mod = "{{ $data['mod'] }}";
+      if(mod == 1)
+      {
+        setTimeout(function(){
+          $("#tab4").trigger('click');
+        },700);
+      }
+  }
 
   var resizeEmojioneArea = function(e){
      var cur_height = $(".emojionearea").height();

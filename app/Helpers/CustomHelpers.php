@@ -170,7 +170,11 @@ use Illuminate\Support\Facades\Storage;
    //  MESSAGE DELIVERY STATUS
    function message_status($status)
     {
-      if($status == 1)
+      if($status == 0)
+      {
+        return 'Pending';
+      } 
+      elseif($status == 1)
       {
         return 'Success';
       }

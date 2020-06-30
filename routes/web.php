@@ -184,7 +184,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::post('list-save','ListController@saveList')->name('savelist'); 
   Route::get('list-delete','ListController@delListContent')->name('deletelist');
   Route::get('list-search','ListController@searchList')->name('searchlist');
-  Route::get('list-edit/{list_id}','ListController@editList');
+  Route::get('list-edit/{list_id}/{mod?}','ListController@editList');
   Route::get('list-additional','ListController@additionalList')->name('additionalList');
   // Route::get('list-contacts/{list_id}','ListController@ListContacts');
   Route::get('list-table-customer','ListController@listTableCustomer');
@@ -279,6 +279,9 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	// reminder auto reply
 	Route::get('reminderautoreply','ReminderController@reminderAutoReply')->name('reminderautoreply');
 	Route::post('addreminderautoreply','ReminderController@addReminderAutoReply')->name('addreminderautoreply');
+
+  /* RESEND */
+  Route::get('resend_auto_eply','ListController@resendAutoReply');
 
 	/* CKEditor */
 	Route::get('ckbrowse', 'CKController@ck_browse')->name('ckbrowse');
