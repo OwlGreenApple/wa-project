@@ -25,7 +25,7 @@
         $('#span-tagihan').html('Rp. '+ spantagihan );
 
         table = $('#myTable').DataTable({
-                  responsive: true,
+                  // responsive: true,
                   destroy: true,
                   "order": [],
                 });
