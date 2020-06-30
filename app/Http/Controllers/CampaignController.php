@@ -869,5 +869,44 @@ class CampaignController extends Controller
         return response()->json($data);
     }
 
+     public function resendMessage(Request $request)
+    {
+        $campaign_id = $request->campaign_id;
+        $reminders = Reminder::where('campaign_id',$campaign_id)->select('id')->get();
+        $error = 0;
+
+        if($reminders->count() > 0):
+
+          foreach($reminders as $row)
+          {
+             $reminder_customer = ReminderCustomers::where('reminder_id',$row->id)->whereIn('status',[2,5]);
+
+             if(!is_null($reminder_customer->first()))
+             {
+               try
+               {
+                 $reminder_customer->update(['status'=>0]);
+               }
+               catch(QueryException $e)
+               {
+                 $error++;
+               }
+             }
+          }
+
+          if($error > 0)
+          {
+            $msg['success'] = 0;
+          }
+          else
+          {
+            $msg['success'] = 1;
+          }
+
+          return response()->json($msg);
+
+        endif;
+    }
+
 /* end controller */
 }

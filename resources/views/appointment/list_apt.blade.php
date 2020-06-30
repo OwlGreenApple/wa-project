@@ -110,6 +110,26 @@
   </div>
 </div>
 
+<!-- Modal resend -->
+<div class="modal fade" id="resend_popup" role="dialog">
+  <div class="modal-dialog">
+    
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="message_resend"></div>
+      <div class="modal-header">
+        <h5>Are you sure to reset appointment message?</h5>
+      </div>
+      <div class="modal-body">
+         <button id="resend_message" class="btn btn-primary">Resend</button>
+         <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+      
+  </div>
+</div>
+<!-- End Modal -->
+
 <script type="text/javascript">
   $(document).ready(function(){
     $('#datetimepicker').datetimepicker({

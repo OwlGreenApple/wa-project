@@ -5,9 +5,9 @@ $i=1;
 ?>
 @foreach($orders as $order)
   <tr>
-    <td>
+    <!-- <td>
       {{$i}}
-    </td>
+    </td> -->
     <td>
       <?php
         $phoneNumber = PhoneNumber::where("user_id",$order->user_id)->first();

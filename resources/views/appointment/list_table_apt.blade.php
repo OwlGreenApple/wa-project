@@ -56,6 +56,13 @@
 <script type="text/javascript">
   $(document).ready(function(){
     tableData();
+    @if($active == 0)
+      addResendBtn('#list_appointment_length');
+    @endif
+    resendBtn();
+     $('[data-toggle="popover"]').popover({
+      trigger : 'click hover'
+    });
   });
    
   function tableData()
@@ -63,5 +70,61 @@
     $("#list_appointment").DataTable({
       "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
     });
+  }
+
+  function addResendBtn(elem)
+  {
+    var message = "You can resend message if status are : 'phone offline or queued'";
+    var tooltip='<span style="font-size : 18px" data-toggle="popover" data-content="'+message+'"><i class="fa fa-question-circle"></i></span>';
+
+    $(elem).append("<label class='ml-2'><button id='resend' class='btn btn-info text-white btn-sm'>Resend</button></label><label class='ml-1'>"+tooltip+"</label>");
+  }
+
+  function resendBtn()
+  {
+    $("body").on('click','#resend',function(){
+      $("#resend_popup").modal();
+    });
+ 
+    $("body").on('click','#resend_message',function(){
+      resend();
+    });
+  }
+
+  function resend()
+  {
+    $.ajax({
+      type : 'GET',
+      url : '{{url("resend_campaign")}}',
+      data : {campaign_id : "{{ $campaign_id }}"},
+      dataType : "json",
+      beforeSend: function()
+      {
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success : function(result)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+         
+        if(result.success == 1)
+        {
+          $("#resend_popup").modal('hide');
+          display_data();
+        }
+        else if(result.success == 0)
+        {
+          $("#resend_popup").modal('hide');
+          $('.message_resend').html('<div class="alert alert-danger">Sorry, currently our server is too busy, please try again later.</div>')
+        }
+      },
+      error: function(xhr)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        console.log(xhr.responseText);
+      }
+    }); 
   }
 </script>

@@ -120,7 +120,7 @@ class AppointmentController extends Controller
           $appointment = $this->dataAppointment($campaign_id,'>',0);
         }
        
-        return view('appointment.list_table_apt',['campaigns'=>$appointment,'active'=>$active,'alert'=> new Alert]);
+        return view('appointment.list_table_apt',['campaigns'=>$appointment,'active'=>$active,'alert'=> new Alert,'campaign_id'=>$campaign_id]);
     }
 
     public function listAppointmentEdit(Request $request)
@@ -772,7 +772,6 @@ class AppointmentController extends Controller
 
         })->export('xlsx');
     }
-
 
     /*
     public function exportAppointment($campaign_id){

@@ -110,7 +110,9 @@
       {
          if(result.success == 1)
          {
-            location.href = '{{ url("list-campaign") }}/{{ $campaign_id }}/broadcast/{{ $active }}';
+           $("#resend_popup").modal('hide');
+           display_broadcast_data();
+            // location.href = '{{ url("list-campaign") }}/{{ $campaign_id }}/broadcast/{{ $active }}';
          }
          else if(result.success == 0)
          {
