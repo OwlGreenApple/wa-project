@@ -1499,19 +1499,24 @@ class ListController extends Controller
                     ->where("user_id",$userid)
                     ->select('id')
                     ->first();
-                    
+                                 
         if(!is_null($reminder))
         {
-          try{
-            ReminderCustomers::where('reminder_id',$reminder->id)->whereIn("status",[2,5])->update(['status'=>0]);
-            $msg['success'] = 1;
-          }
-          catch(QueryException $e)
+          $check = ReminderCustomers::where('reminder_id',$reminder->id)->whereIn("status",[2,5])->get();
+
+          if($check->count() > 0)
           {
-            // $e->getMessage()
-            $msg['success'] = 0;
+            try{
+              ReminderCustomers::where('reminder_id',$reminder->id)->whereIn("status",[2,5])->update(['status'=>0]);
+              $msg['success'] = 1;
+            }
+            catch(QueryException $e)
+            {
+              // $e->getMessage()
+              $msg['success'] = 0;
+            }
+            return response()->json($msg);
           }
-          return response()->json($msg);
         }
     }
 
