@@ -54,29 +54,29 @@
         <input type="hidden" name="campaign_id" value="<?php echo $campaign_id; ?>">
         <input type="hidden" name="reminder_id" value="new">
         <div class="form-group row">
-          <label class="col-sm-3 col-form-label">Status Event :</label>
-          <div class="col-sm-9 py-2">
+          <label class="col-6 col-sm-4 col-md-4 col-lg-3 col-form-label">Status Event :</label>
+          <div class="col-6 col-sm-8 col-md-8 col-lg-9 py-2">
             <strong>@if($published == 1) Published @else Draft @endif</strong>
           </div>
         </div>
 
         <div class="form-group row lists">
-          <label class="col-sm-3 col-form-label">Current List :</label>
-          <div class="col-sm-9 relativity">
+          <label class="col-6 col-sm-4 col-md-4 col-lg-3 col-form-label">Current List :</label>
+          <div class="col-6 col-sm-8 col-md-8 col-lg-9 relativity">
             <a target="_blank" href="{{ url('list-edit') }}/{{ $list_id }}">{{ $currentlist }}</a>
           </div>
         </div>
 
         <div class="form-group row">
-          <label class="col-sm-3 col-form-label">Campaign Name :</label>
-          <div class="col-sm-6">
+          <label class="col-7 col-sm-4 col-md-4 col-lg-3 col-form-label">Campaign Name :</label>
+          <div class="col-3 col-sm-8 col-md-8 col-lg-6">
             <div>{{ $campaign_name }}</div>
           </div>
         </div>
 
         <div class="form-group row event-time">
-          <label class="col-sm-3 col-form-label">Event Time :</label>
-          <div class="col-sm-9">
+          <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Event Time :</label>
+          <div class="col-sm-8 col-md-8 col-lg-9">
             @if($date_event == null)
               <div id="new_event_time" class="relativity">
                 <input id="datetimepicker" type="text" name="event_time" class="form-control custom-select-campaign" />
@@ -90,8 +90,8 @@
         </div>
 
         <div class="form-group row reminder">
-          <label class="col-sm-3 col-form-label">Select Reminder :</label>
-          <div class="col-sm-9 relativity">
+          <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Select Reminder :</label>
+          <div class="col-sm-8 col-md-8 col-lg-9 relativity">
              <select name="schedule" id="schedule" class="custom-select-campaign form-control">
                 <option value="0">The Day</option>
                 <option value="1">H-</option>
@@ -102,8 +102,8 @@
         </div>
 
         <div class="form-group row">
-          <label class="col-sm-3 col-form-label">Time to send Message :</label>
-          <div class="col-sm-9 relativity">
+          <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Time to send Message :</label>
+          <div class="col-sm-8 col-md-8 col-lg-9 relativity">
             <div class="inputh">
               <input name="hour" id="hour" type="text" class="timepicker form-control" value="00:00" />
             </div>
@@ -113,8 +113,8 @@
         </div>
 
         <div class="form-group row">
-    			<label class="col-sm-3 col-form-label">Image :</label>
-    			<div class="col-sm-9 relativity">
+    			<label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Image :</label>
+    			<div class="col-sm-8 col-md-8 col-lg-9 relativity">
     				<div class="custom-file">
     					<input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
 
@@ -128,32 +128,38 @@
         </div>
 
         <div class="form-group row">
-          <label class="col-sm-3 col-form-label">Message :</label>
-          <div class="col-sm-6">
+          <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Message :</label>
+          <div class="col-sm-8 col-md-8 col-lg-6">
             <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
             <span class="error message"></span>
           </div>
         </div>
 
-        <div class="text-right col-sm-9">
+        <div class="text-right col-sm-12 col-md-12 col-lg-9">
           <button type="button" id="save" class="btn btn-custom">Save</button>
           <button type="button" id="btn-clear" class="btn btn-custom">Clear</button>
         </div>
 
     		<div class="form-group row mt-3">
-    		<label class="col-sm-3 col-form-label">Send 1 test Message
+    		<label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Send 1 test Message
     				<span class="tooltipstered" title="<div class='panel-heading'>Send 1 test Message</div><div class='panel-content'>
     					Test Message will be send immediately
     					</div>">
     					<i class="fa fa-question-circle "></i>
     				</span>
     		</label>
-    		<div class="col-sm-9 relativity">
-    				<input type="text" id="phone" name="phone_number" class="form-control" />
-    				<span class="error code_country"></span>
-    				<span class="error phone_number"></span>
-    				<button type="button" class="btn btn-test">Send Test</button>
-    		</div>
+    		<div class="col-sm-8 col-md-8 col-lg-9 relativity">
+          <div class="row">
+            <div class="col-sm-9 col-lg-9">
+      				<input type="text" id="phone" name="phone_number" class="form-control" />
+      				<span class="error code_country"></span>
+      				<span class="error phone_number"></span>
+            </div>
+            <div class="col-sm-3 col-lg-3 col-test">
+              <button type="button" class="btn btn-test">Send Test</button>
+            </div>
+    		  </div>
+        </div>
     	</div>
     </form>
 

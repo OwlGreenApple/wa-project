@@ -54,15 +54,15 @@
       <input type="hidden" name="campaign_id" value="<?php echo $campaign_id; ?>">
       <input type="hidden" name="reminder_id" value="new">
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Type Campaign :</label>
-        <div class="col-sm-9 py-2">
+        <label class="col-6 col-sm-4 col-md-4 col-lg-3 col-form-label">Type Campaign :</label>
+        <div class="col-6 col-sm-8 col-md-8 col-lg-9 py-2">
           <strong>Auto Schedule</strong>
         </div>
       </div>
 
       <div class="form-group row lists">
-        <label class="col-sm-3 col-form-label">Current List :</label>
-        <div class="col-sm-9 relativity">
+        <label class="col-6 col-sm-4 col-md-4 col-lg-3 col-form-label">Current List :</label>
+        <div class="col-6 col-sm-8 col-md-8 col-lg-9 relativity">
           <a target="_blank" href="{{ url('list-edit') }}/{{ $currentlistid }}">{{ $currentlist }}</a>
            <!-- <select name="list_id" class="custom-select-campaign form-control">
               @if($lists->count() > 0)
@@ -76,17 +76,17 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Campaign Name :</label>
-        <div class="col-sm-6">
+        <label class="col-7 col-sm-4 col-md-4 col-lg-3 col-form-label">Campaign Name :</label>
+        <div class="col-3 col-sm-8 col-md-8 col-lg-6">
           <div>{{ $campaign_name }}</div>
         </div>
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Time to send Message :</label>
-        <div class="col-sm-9 relativity inputh">
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Time to send Message :</label>
+        <div class="col-sm-8 col-md-8 col-lg-9 relativity inputh">
           <div class="row">
-            <select name="day" class="form-control col-sm-7 ml-3 mr-2">
+            <select name="day" class="form-control col-8 col-sm-7 ml-3 mr-2">
               @for($x=1; $x<=100 ;$x++)
                 @if($x == 1)
                   <option value="{{ $x }}">{{ $x }} day after registered</option>
@@ -95,7 +95,7 @@
                 @endif      
               @endfor
             </select>
-            <input name="hour" type="text" class="timepicker form-control col-sm-3" value="00:00" readonly />
+            <input name="hour" type="text" class="timepicker form-control col-3 col-sm-3" value="00:00" readonly />
             <div class="error day"></div>
             <div class="error hour"></div>
           </div>
@@ -103,8 +103,8 @@
       </div>
 
       <div class="form-group row">
-				<label class="col-sm-3 col-form-label">Image :</label>
-				<div class="col-sm-9 relativity">
+				<label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Image :</label>
+				<div class="col-sm-8 col-md-8 col-lg-9 relativity">
 					<div class="custom-file">
 						<input type="file" name="imageWA" class="custom-file-input pictureClass form-control" id="input-picture" accept="image/*">
 
@@ -115,10 +115,11 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Message :
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Message :
 					<span class="tooltipstered" title="<div class='panel-heading'>Message</div><div class='panel-content'>
 						You can use this as 'Personalization field' <br>
 						[NAME] <br>
+            [FIRSTNAME] <br>
 						[PHONE] <br>
 						[EMAIL] <br>
             Do NOT use : % or & character on your message<br><br>
@@ -129,37 +130,46 @@ use min 5 spintax variations is recommended	<br>
 						<i class="fa fa-question-circle "></i>
 					</span>
 				</label>
-        <div class="col-sm-6">
+        <div class="col-sm-8 col-md-8 col-lg-6">
           <textarea name="message" id="divInput-description-post" class="form-control"></textarea>
           <span class="error message"></span>
         </div>
       </div>
 
-      <div class="text-right col-sm-9">
+      <div class="text-right col-sm-12 col-md-12 col-lg-9">
         <button type="submit" class="btn btn-custom">Save</button>
         <button type="button" id="btn-clear" class="btn btn-custom">Clear</button>
       </div>
 
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Send 1 test Message
+      <div class="form-group mt-2">
+        <div class="row">
+        <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">Send 1 test Message
 					<span class="tooltipstered" title="<div class='panel-heading'>Send 1 test Message</div><div class='panel-content'>
 						Test Message will be send immediately
 						</div>">
 						<i class="fa fa-question-circle "></i>
 					</span>
 				</label>
-        <div class="col-sm-9 relativity">
-						<input type="text" id="phone" name="phone_number" class="form-control" />
-						<span class="error code_country"></span>
-						<span class="error phone_number"></span>
-						<button type="button" class="btn btn-test">Send Test</button>
+        <div class="col-sm-8 col-md-8 col-lg-9 relativity">
+          <div class="row">
+            <div class="col-sm-9 col-lg-9">
+  						<input type="text" id="phone" name="phone_number" class="form-control" />
+  						<span class="error code_country"></span>
+  						<span class="error phone_number"></span>
+            </div>
+            <div class="col-sm-3 col-lg-3 col-test">
+						  <button type="button" class="btn btn-test">Send Test</button>
+            </div>
+          </div>
         </div>
+      <!-- end row -->
+      </div>
       </div>
   </form>
 </div>
 
 <!-- Table -->
-<div class="container act-tel-campaign">
+<div class="container act-tel-campaign table-responsive">
     <table class="table table-bordered mt-4">
       <thead class="bg-dashboard">
         <tr>
