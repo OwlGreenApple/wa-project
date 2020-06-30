@@ -40,7 +40,7 @@
         <div class="col-10 div-range-slider">
           <input type="text" class="js-range-slider" name="my_range" value="" />
         </div>
-        <div class="col-md-4 col-xs-12 col-sm-12 ml-0 mr-0 box-pricing p-2 " data-attr="1">
+        <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12 ml-0 mr-0 box-pricing p-2 " data-attr="1">
           <div class="box-in">
             <div class="div-header w-100 p-1">
               <h5>Basic</h5>
@@ -53,7 +53,7 @@
             </div>
           </div>            
         </div>    
-        <div class="col-md-4 col-xs-12 col-sm-12 ml-0 mr-0 box-pricing p-2 selected" data-attr="2">
+        <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12 ml-0 mr-0 box-pricing p-2 selected" data-attr="2">
           <div class="box-in">
             <div class="div-header w-100 p-1">
               <i class=""></i> 
@@ -67,7 +67,7 @@
             </div>
           </div>            
         </div>    
-        <div class="col-md-4 col-xs-12 col-sm-12 ml-0 mr-0 box-pricing p-2" data-attr="3">
+        <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12 ml-0 mr-0 box-pricing p-2" data-attr="3">
           <div class="box-in">
             <div class="div-header w-100 p-1">
               <h5>Super Value</h5>
