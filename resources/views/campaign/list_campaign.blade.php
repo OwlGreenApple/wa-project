@@ -25,6 +25,7 @@
 
 <div class="container act-tel-apt">
     <div class="col-lg-12">
+      <div class="message_campaign"><!-- messages --></div>
       <div class="row col-lg-5">
 
         <div class="col-lg-3 pad-fix"><a href="{{ url('list-campaign') }}/{!! $campaign_id !!}/{{ $is_event }}/1" @if($active == true)class="act-tel-apt-create" @endif>QUEUE</a></div>
@@ -197,7 +198,7 @@
       else
       {
         var reminder_customer_id = $(this).attr('id');
-        data = {'reminder_customer_id' : reminder_customer_id};
+        data = {'reminder_customer_id' : reminder_customer_id,'is_event' : '{!! $is_event !!}'};
       }
      
       var warning = confirm('Are you sure to cancel this user?'+'\n'+'WARNING : This cannot be undone');
@@ -237,15 +238,19 @@
             {
               display_broadcast_data();
             }
+            else if(result.campaign == 1)
+            {
+              data_event();
+            }
             else
             {
-              table.destroy();
-              data_campaign();
+              data_auto_schedule();
             }
+            $(".message_campaign").html('');
         }
         else
         {
-            alert('Unable to cancel your campaign, sorry our server is too busy.');
+            $(".message_campaign").html('<div class="alert alert-danger">Unable to cancel your campaign, sorry our server is too busy.</div>');
         }
         
       },

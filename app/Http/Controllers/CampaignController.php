@@ -593,7 +593,7 @@ class CampaignController extends Controller
        $campaigns = ReminderCustomers::where([['reminders.campaign_id',$campaign_id],['reminders.is_event',$is_event],['reminders.user_id',$userid],['reminder_customers.status',$cond,0]])
             ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')
-            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status')
+            ->select('reminders.campaign_id','reminders.event_time','reminders.days','customers.name','customers.telegram_number','customers.id','reminder_customers.status','reminder_customers.id AS rcid','reminder_customers.updated_at')
             ->orderBy('reminder_customers.id','desc')
             ->get();
 
@@ -678,16 +678,28 @@ class CampaignController extends Controller
     {
         $userid = Auth::id();
         $is_broadcast = $request->is_broadcast;
+        $is_event = $request->is_event;
+        $data['broadcast'] = $is_broadcast;
+        $data['campaign'] = $is_event;
 
         if($is_broadcast == 1)
         {
           $broadcast_customer_id = $request->broadcast_customer_id;
           $customer = BroadCastCustomers::find($broadcast_customer_id);
+          $customer_id = Customer::find($customer->customer_id);
+          $customer_user = $customer_id->user_id;
         }
         else
         {
           $reminder_customer_id = $request->reminder_customer_id;
           $customer = ReminderCustomers::find($reminder_customer_id);
+          $customer_user = $customer->user_id;
+        }
+
+        if(is_null($customer) || $userid <> $customer_user)
+        {
+            $data['success'] = 0;
+            return response()->json($data);
         }
 
         try
@@ -695,7 +707,6 @@ class CampaignController extends Controller
             $customer->status = 4;
             $customer->save();
             $data['success'] = 1;
-            $data['broadcast'] = $is_broadcast;
         }
         catch(Exception $e)
         {
