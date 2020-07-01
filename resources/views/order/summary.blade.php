@@ -251,11 +251,11 @@
         <!-- Right Column -->
         <div class="col-md-6 sumo-col-right pb-50">
           <div class="mt-md-50 mb-50 ml-lg-50 pl-md-30">
-            <div class="pb-20 d-none d-md-block">
+            <div class="pb-20 d-md-block">
               <div class="placeholder"></div>
             </div>
             <!-- Summary -->
-            <div class="card checkout-card checkout-summary dark mb-30 d-none d-md-flex">
+            <div class="card checkout-card checkout-summary dark mb-30 d-md-flex">
               <div class="card-header">
                 <div class="d-flex align-items-center">
                   <h2 class="h3">Summary</h2>
@@ -492,6 +492,7 @@
 					
 					if (data.success == '1') {
 						$(".step-2").show();
+            $(".bsub").show();
 						$("#step-1").html('<p>Your order confirmation will be emailed to:</p><span class="sumo-psuedo-link">'+data.email+'</span>');
 
             if(data.status_upgrade == 1) //false which mean upgrade
