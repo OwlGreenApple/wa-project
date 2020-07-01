@@ -25,6 +25,7 @@
 
 <div class="container act-tel-apt">
     <div class="col-lg-12">
+      <div class="message_campaign"><!-- messages --></div>
       <div class="row col-lg-5">
 
         <div class="col-lg-3 pad-fix"><a href="{{ url('list-campaign') }}/{!! $campaign_id !!}/{{ $is_event }}/1" @if($active == true)class="act-tel-apt-create" @endif>QUEUE</a></div>
@@ -36,38 +37,14 @@
       <div class="mt-4">
         @if($is_event == 'broadcast')
           <div id="broadcast_table"></div>
+        @elseif($is_event == 1)
+          <div id="event_table"></div>
+        @elseif($is_event == 0)
+          <div id="responder_table"></div>
         @else
-          <table id="list_campaign" class="display w-100">
-            <thead class="bg-dashboard">
-              <tr>
-                <th class="text-center">No</th>
-                @if($is_event == 1)
-                  <th class="text-center">Date Event</th>
-                  <th class="text-center">H</th>
-                @endif
-                @if($is_event == 0)
-                  <th class="text-center">H+</th>
-                @endif
-                @if($active == 0)
-                  <th class="text-center">Date</th>
-                @endif
-                  <th class="text-center">Name Contact</th>
-                  <th class="text-center">WA Contact</th>
-                @if($active == 1)
-                  <!-- <th class="text-center">Edit</th> -->
-                  <th class="text-center">Delete</th>
-                @else
-                  <th class="text-center">Status</th>
-                @endif
-              </tr>
-            </thead>
-
-             @if($campaigns->count() > 0)
-            <tbody>
-               @include('campaign.list_table_campaign')
-            </tbody>
-             @endif
-          </table>
+          <div class="alert bg-dashboard cardlist">
+            No Data Available
+          </div>
         @endif
       </div>
      
@@ -95,26 +72,6 @@
   </div>
   <!-- End Modal -->
 
-<!-- Modal resend -->
-<div class="modal fade" id="resend_popup" role="dialog">
-  <div class="modal-dialog">
-    
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="message_resend"></div>
-      <div class="modal-header">
-        <h5>Are you sure to reset broadcast message?</h5>
-      </div>
-      <div class="modal-body">
-         <button id="resend_message" class="btn btn-primary">Resend</button>
-         <button class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-      
-  </div>
-</div>
-<!-- End Modal -->
-
 <script type="text/javascript">
   $(document).ready(function(){
     $('#datetimepicker').datetimepicker({
@@ -122,16 +79,10 @@
         minDate : new Date()
     }); 
     display_broadcast_data();
+    data_event();
+    data_auto_schedule();
     deleteCampaign();
-    tableData();
     openCampaignMessage();
-    @if($active == 0)
-      addResendBtn('#list_campaign_length');
-    @endif
-    resendBtn();
-    $('[data-toggle="popover"]').popover({
-      trigger : 'click hover'
-    });
   });
 
   function openCampaignMessage()
@@ -143,63 +94,15 @@
     });
   }
 
-  function tableData()
-  {
-    $("#list_campaign").DataTable({
-      "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
-    });
-  }
-
+  // FOR EVENT AND AUTO SCHEDULE
   function data_auto_schedule()
-  {
-    $("#list_campaign").DataTable({
-      "destroy":true,
-      "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
-      "processing": true,
-      "serverSide": true,
-      "ajax": {
-        "url" : "{{ url('list-datatable-campaign') }}",
-        "data": {
-            "active": "{{ $active }}", 
-            "campaign_id": "{!! $campaign_id !!}",
-            "is_event": "{{ $is_event }}",
-        }
-      },
-      'columnDefs': [
-          { className: "text-center", targets: "_all" },
-      ],
-    });
-  }
-
-  //FOR REMINDER (BROADCAST ON : campaign.list_broadcast_table.blade.php)
-  function addResendBtn(elem)
-  {
-    var message = "You can resend message if status are : 'phone offline or queued'";
-    var tooltip='<span style="font-size : 18px" data-toggle="popover" data-content="'+message+'"><i class="fa fa-question-circle"></i></span>';
-
-    $(elem).append("<label class='ml-2'><button id='resend' class='btn btn-info text-white btn-sm'>Resend</button></label><label class='ml-1'>"+tooltip+"</label>");
-  }
-
-  function resendBtn()
-  {
-    $("body").on('click','#resend',function(){
-      $("#resend_popup").modal();
-    });
- 
-    $("body").on('click','#resend_message',function(){
-      resend();
-    });
-  }
-
-  function resend()
   {
     $.ajax({
       type : 'GET',
-      url : '{{url("resend_campaign")}}',
-      data : {campaign_id : "{{ $campaign_id }}"},
-      dataType : "json",
-      beforeSend: function()
-      {
+      url : '{{ url("list-datatable-campaign") }}',
+      data : {campaign_id : {!! $campaign_id !!}, active : {!! $active !!} },
+      dataType : 'html',
+      beforeSend : function(){
         $('#loader').show();
         $('.div-loading').addClass('background-load');
       },
@@ -207,25 +110,41 @@
       {
         $('#loader').hide();
         $('.div-loading').removeClass('background-load');
-         
-        if(result.success == 1)
-        {
-          $("#resend_popup").modal('hide');
-          data_auto_schedule();
-        }
-        else if(result.success == 0)
-        {
-          $("#resend_popup").modal('hide');
-          $('.message_resend').html('<div class="alert alert-danger">Sorry, currently our server is too busy, please try again later.</div>')
-        }
+        $("#responder_table").html(result);
       },
-      error: function(xhr)
+      error : function(xhr)
       {
         $('#loader').hide();
         $('.div-loading').removeClass('background-load');
         console.log(xhr.responseText);
       }
-    }); 
+    });
+  }
+
+  function data_event()
+  {
+    $.ajax({
+      type : 'GET',
+      url : '{{ url("list-event-campaign") }}',
+      data : {campaign_id : {!! $campaign_id !!}, active : {!! $active !!} },
+      dataType : 'html',
+      beforeSend : function(){
+        $('#loader').show();
+        $('.div-loading').addClass('background-load');
+      },
+      success : function(result)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        $("#event_table").html(result);
+      },
+      error : function(xhr)
+      {
+        $('#loader').hide();
+        $('.div-loading').removeClass('background-load');
+        console.log(xhr.responseText);
+      }
+    });
   }
 
   function display_broadcast_data()
@@ -279,7 +198,7 @@
       else
       {
         var reminder_customer_id = $(this).attr('id');
-        data = {'reminder_customer_id' : reminder_customer_id};
+        data = {'reminder_customer_id' : reminder_customer_id,'is_event' : '{!! $is_event !!}'};
       }
      
       var warning = confirm('Are you sure to cancel this user?'+'\n'+'WARNING : This cannot be undone');
@@ -319,15 +238,19 @@
             {
               display_broadcast_data();
             }
+            else if(result.campaign == 1)
+            {
+              data_event();
+            }
             else
             {
-              table.destroy();
               data_auto_schedule();
             }
+            $(".message_campaign").html('');
         }
         else
         {
-            alert('Unable to cancel your campaign, sorry our server is too busy.');
+            $(".message_campaign").html('<div class="alert alert-danger">Unable to cancel your campaign, sorry our server is too busy.</div>');
         }
         
       },

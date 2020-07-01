@@ -34,7 +34,7 @@
       </div>
       <div class="col-md-7 col-lg-7 col-sm-12 col-xs-12 price-content">
 				<div class="row">
-        <h3><br><br>
+        <h3>
           How many messages you need to send per month ? 
         </h3>
         <div class="col-10 div-range-slider">

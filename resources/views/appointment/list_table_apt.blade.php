@@ -44,7 +44,7 @@
               <td class="text-center">H-{{ abs($row->days) }}</td>
               <td class="text-center">{{ $row->name }}</td>
               <td class="text-center">{{ $row->telegram_number }}</td>
-              <td colspan="2" class="text-center">{!! $alert->message_status($row->status) !!}</td>
+              <td colspan="2" class="text-center">{!! message_status($row->status) !!}</td>
             </tr> 
             @php $x++ @endphp
           @endforeach

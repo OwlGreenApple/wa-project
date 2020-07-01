@@ -19,6 +19,8 @@ use App\Sender;
 use App\Additional;
 use App\Reminder;
 use App\ReminderCustomers;
+use App\BroadCast;
+use App\BroadCastCustomers;
 use App\PhoneNumber;
 use Carbon\Carbon;
 use DB;
@@ -1069,6 +1071,9 @@ class ListController extends Controller
         try
         {
           ReminderCustomers::where([['list_id',$list_id],['customer_id',$id_customer],['status','=',0]])->update(['status'=>4]);
+
+          BroadCast::where([['broad_casts.list_id',$list_id],['broad_cast_customers.status','=',0],['broad_cast_customers.customer_id',$id_customer]])->join('broad_cast_customers','broad_cast_customers.id','=','broad_casts.id')->update(['broad_cast_customers.status'=>4]);
+
           $data['success'] = 1;
           $data['message'] = 'Your customer deleted successfully';
         }

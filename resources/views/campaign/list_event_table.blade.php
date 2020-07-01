@@ -1,11 +1,16 @@
- <table id="broadcast_list" class="display w-100">
+ <!-- EVENT -->
+
+ <table id="event_list" class="display w-100">
   <thead class="bg-dashboard">
     <tr>
       <th class="text-center">No</th>
-      <!--<th class="text-center">Day Send</th>-->
-      <th class="text-center">Time Send</th>
-      <th class="text-center">Name Contact</th>
-      <th class="text-center">WA Contact</th>
+      <th class="text-center">Date Event</th>
+      <th class="text-center">H</th>
+      @if($active == 0)
+        <th class="text-center">Date</th>
+      @endif
+        <th class="text-center">Name Contact</th>
+        <th class="text-center">WA Contact</th>
       @if($active == 1)
         <th class="text-center">Delete</th>
       @else
@@ -14,26 +19,37 @@
     </tr>
   </thead>
 
-  <tbody>  
+  <tbody>
     @if($campaigns->count() > 0)
       @php $x = 1 @endphp
-      @foreach($campaigns as $rows)
-        <tr>
-          <td debug="{{ $rows->bcsid }}" class="text-center">{{ $x }}</td>
-          <td class="text-center">{{ $rows->updated_at }}</td>
-          <td class="text-center">{{ $rows->name }}</td>
-          <td class="text-center">{{ $rows->telegram_number }}</td>
-          @if($active == 1)
-            <td class="text-center"><a id="{{ $rows->bcsid }}" data-broadcast="1" class="icon-cancel"></a></td>
-          @else
-            <td class="text-center">{!! message_status($rows->status) !!}</td>
-          @endif
-        </tr>
-       @php $x++ @endphp
-      @endforeach
+      @if($active == 1)
+        @foreach($campaigns as $row)
+          <tr>
+            <td class="text-center">{{ $x }}</td>
+            <td class="text-center">{{ $row->event_time }}</td>
+            <td class="text-center">H{{ $row->days }}</td>
+            <td class="text-center">{{ $row->name }}</td>
+            <td class="text-center">{{ $row->telegram_number }}</td>
+            <td class="text-center"><a id="{{ $row->rcid }}" class="icon-cancel"></a></td> 
+          </tr> 
+         @php $x++ @endphp
+        @endforeach
+      @else
+        @foreach($campaigns as $row)
+          <tr>
+            <td data="{{ $row->rcid }}" class="text-center">{{ $x }}</td>
+            <td class="text-center">{{ $row->event_time }}</td>
+            <td class="text-center">H{{ $row->days }}</td>
+            <td class="text-center">{{ Date('M d Y h:i:s A',strtotime($row->updated_at)) }}</td>
+            <td class="text-center">{{ $row->name }}</td>
+            <td class="text-center">{{ $row->telegram_number }}</td>
+            <td colspan="2" class="text-center"> {!! message_status($row->status) !!}</td>
+          </tr> 
+         @php $x++ @endphp
+        @endforeach
+      @endif
     @endif
   </tbody>
-  
 </table>
 
 @if($campaigns->count() > 0)
@@ -60,9 +76,9 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
-    table_broadcast();
+    table_event();
     @if($active == 0)
-      addResendBtn('#broadcast_list_length');
+      addResendBtn('#event_list_length');
     @endif
     resendBtn();
     $('[data-toggle="popover"]').popover({
@@ -70,9 +86,9 @@
     });
   });
 
-  function table_broadcast()
+  function table_event()
   {
-    $("#broadcast_list").DataTable({
+    $("#event_list").DataTable({
       "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
     });
   } 
@@ -100,7 +116,7 @@
   {
     $.ajax({
       type : 'GET',
-      url : '{{url("resend_broadcast")}}',
+      url : '{{url("resend_campaign")}}',
       data : {campaign_id : "{{ $campaign_id }}"},
       dataType : "json",
       beforeSend: function()
@@ -113,8 +129,7 @@
          if(result.success == 1)
          {
            $("#resend_popup").modal('hide');
-           display_broadcast_data();
-            // location.href = '{{ url("list-campaign") }}/{{ $campaign_id }}/broadcast/{{ $active }}';
+           data_event();
          }
          else if(result.success == 0)
          {
