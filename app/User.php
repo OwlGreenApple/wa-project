@@ -16,6 +16,12 @@ class User extends Authenticatable
 		* 1 -> admin user activrespon
 		* 2 -> admin woowa
 		*
+		* is_started -> start / stop sending message
+		* speed -> speed of sending message
+		* 0 -> slow
+		* 1 -> normal
+		* 2 -> fast
+		*
 		*/
     use Notifiable;
 

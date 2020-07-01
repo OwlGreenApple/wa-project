@@ -46,9 +46,18 @@ class CheckCounter extends Command
             foreach($phoneNumbers as $row){
                 $update = false;
                 $phoneNumber = PhoneNumber::find($row->id);
-                if($row->counter < env('MAXIMUM_COUNTER')){
+                if($row->counter <= 0 ){
                     // $update = PhoneNumber::where('user_id',$row->user_id)->update(['counter'=>env('MAXIMUM_COUNTER')]);
-                    $phoneNumber->counter = env('MAXIMUM_COUNTER');
+                    $user = User::find($phoneNumber->user_id);
+                    if ($user->speed == 0) { //slow
+                      $phoneNumber->counter = 3;
+                    }
+                    if ($user->speed == 1) { //normal
+                      $phoneNumber->counter = 5;
+                    }
+                    if ($user->speed == 2) { //fast
+                      $phoneNumber->counter = 5;
+                    }
                     $update = true;
                 }
                 if ($row->counter2 <= 0 ){
@@ -56,7 +65,7 @@ class CheckCounter extends Command
                   $dt2 = Carbon::parse($phoneNumber->updated_at);
                   if ($dt2->diffInMinutes($dt)>=mt_rand(2,3)) {
                     $update = true;
-                    $phoneNumber->counter = env('COUNTER2');
+                    $phoneNumber->counter2 = env('COUNTER2');
                   }
                 }
                 if ($update) {

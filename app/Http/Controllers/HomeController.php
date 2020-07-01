@@ -42,8 +42,9 @@ class HomeController extends Controller
     public function index()
     {
         //session_start();
-        $id = Auth::id();
-        $user_name = Auth::user()->name;
+        $user = Auth::user();
+        $id = $user->id;
+        $user_name = $user->name;
         $folder = $user_name.'-'.$id;
 
         /*if (env('APP_ENV') == 'local'){
@@ -119,8 +120,7 @@ class HomeController extends Controller
         $total_message = $reminder + $broadcast;
         $total_sending_message = $reminder_sent + $broadcast_sent;
 
-        $users = User::find($id);
-        $expired = Carbon::now()->addDays($users->day_left)->toDateString();
+        $expired = Carbon::now()->addDays($user->day_left)->toDateString();
         $phone = PhoneNumber::where('user_id',$id)->first();
 
         if(is_null($phone))
@@ -200,14 +200,15 @@ class HomeController extends Controller
           'contact'=>$contact,
           'total_message'=>$total_message,
           'total_sending_message'=>$total_sending_message,
-          'membership'=>$users->membership,
+          'membership'=>$user->membership,
           'expired'=>Date("d M Y",strtotime($expired)),
-          'status'=>$users->status,
+          'status'=>$user->status,
           'quota'=>$max_counter,
           'phone_status'=>$phone_status,
           'server_status'=>$server_status,
           'graph_contacts'=>$graph_list,
-          'graph_messages'=>$graph_send
+          'graph_messages'=>$graph_send,
+          'user'=>$user,
         );
 
         return view('home',$data);
@@ -278,5 +279,28 @@ class HomeController extends Controller
       return view('auth.history-order');
     }
 
+    public function stop_start(Request $request){
+        $user = Auth::user();
+        if ($user->is_started) {
+          $user->is_started = 0;
+        }
+        else {
+          $user->is_started = 1;
+        }
+        $user->save();
+
+        $arr['isStarted'] = $user->is_started;
+        $arr['status'] = "success";
+        return $arr;
+    }
+
+    public function change_speed(Request $request){
+        $user = Auth::user();
+        $user->speed = $request->speed;
+        $user->save();
+
+        $arr['status'] = "success";
+        return $arr;
+    }    
 /* end class HomeController */
 }

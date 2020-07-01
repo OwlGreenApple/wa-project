@@ -101,6 +101,8 @@ class SendCampaign implements ShouldQueue
 									}
 								}
 
+                $user = User::find($row->userid);
+
                 $hour = $row->hour_time; //hour according user set it to sending
                 $date = Carbon::parse($row->day_send);
 
@@ -157,7 +159,6 @@ class SendCampaign implements ShouldQueue
 													continue;
 												}
 
-                        $user = User::find($row->userid);
                         $membership = getMembership($user->membership);
                         if($membership <= 3)
                         {
@@ -249,7 +250,15 @@ class SendCampaign implements ShouldQueue
                         $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     }
                 // }
-                sleep(mt_rand(1, 30));
+                if ($user->speed == 0) { //slow
+                  sleep(mt_rand(1, 26));
+                }
+                if ($user->speed == 1) { //normal
+                  sleep(mt_rand(1, 15));
+                }
+                if ($user->speed == 2) { //fast
+                  sleep(mt_rand(1, 15));
+                }
             }//END LOOPING
 
         } // END BROADCAST 
@@ -302,6 +311,8 @@ class SendCampaign implements ShouldQueue
 										continue;
 									}
 								}
+
+                $user = User::find($row->userid);
 
                 $key = $phoneNumber->filename;
                 $customer_phone = $row->telegram_number;
@@ -410,7 +421,15 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(1, 30));
+                if ($user->speed == 0) { //slow
+                  sleep(mt_rand(1, 26));
+                }
+                if ($user->speed == 1) { //normal
+                  sleep(mt_rand(1, 15));
+                }
+                if ($user->speed == 2) { //fast
+                  sleep(mt_rand(1, 15));
+                }
             }//END LOOPING
         }
     }
@@ -481,6 +500,8 @@ class SendCampaign implements ShouldQueue
                 } else {
                   $date = $event_date->addDays($days);
                 }
+
+                $user = User::find($row->user_id);
 
                 $time_sending = $date->toDateString().' '.$hour;
                 $now = Carbon::now()->timezone($row->timezone);
@@ -587,7 +608,15 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(1, 30));
+                if ($user->speed == 0) { //slow
+                  sleep(mt_rand(1, 26));
+                }
+                if ($user->speed == 1) { //normal
+                  sleep(mt_rand(1, 15));
+                }
+                if ($user->speed == 2) { //fast
+                  sleep(mt_rand(1, 15));
+                }
               }//END FOR LOOP EVENT
           }
     }
@@ -663,6 +692,8 @@ class SendCampaign implements ShouldQueue
 									continue;
 								}
 								
+                $user = User::find($row->user_id);
+
                 // if the day before / substract 
                 if($days < 0){
                   $days = abs($days);
@@ -755,7 +786,15 @@ class SendCampaign implements ShouldQueue
                     $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
-                sleep(mt_rand(1, 30));
+                if ($user->speed == 0) { //slow
+                  sleep(mt_rand(1, 26));
+                }
+                if ($user->speed == 1) { //normal
+                  sleep(mt_rand(1, 15));
+                }
+                if ($user->speed == 2) { //fast
+                  sleep(mt_rand(1, 15));
+                }
               }//END FOR LOOP EVENT
           }
     }

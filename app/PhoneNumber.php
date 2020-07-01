@@ -9,6 +9,8 @@ class PhoneNumber extends Model
   /* 
   *counter -> buat counter maximum dalam 1 menit
   *counter2 -> buat counter akan stop setelah 2-3 menit setelah counter abis
+  *max_counter_day -> counter dalam sehari
+  *max_counter -> counter total setelah beli paket...
   
   
   * Status 

@@ -8,16 +8,6 @@
     <h2>DASHBOARD</h2>
   </div>
 
-<!--   <div class="act-tel-dashboard-right">
-    @if($status > 0)
-      <div>Current plan : <b>{{ $membership }}</b></div>
-      <div>Valid Until {{ $expired }}</div>
-      <div>MESSAGES Quota {{ $quota }}</div>
-      <div>Phone Status : {{ $phone_status }}</div>
-      <div>Server Status : {{ $server_status }}</div>
-      <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
-    @endif
-  </div> -->
   <div class="clearfix"></div>
 </div>
 
@@ -33,7 +23,21 @@
         <div>MESSAGES Quota {{ $quota }}</div>
         <div>Phone Status : {!! $phone_status !!}</div>
         <div>Server Status : {!! $server_status !!}</div>
-        <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
+        <div><a href="{{ url('pricing') }}"><span>Buy More</span></a></div>
+        <div>
+          <button class="btn btn-lg <?php if ($user->is_started) { echo "btn-danger"; } else { echo "btn-success"; } ?>" id="button-run">
+          <?php if ($user->is_started) { ?>
+            <i class="fa fa-stop"></i> Stop
+          <?php } else { ?>
+            <i class="fa fa-chevron-circle-right"></i> Start
+          <?php } ?>
+          </button>
+          <select class="form-control" id="select-speed">
+            <option value="0" <?php if ($user->speed == 0) { echo "selected"; } ?>>Slow</option>
+            <option value="1" <?php if ($user->speed == 1) { echo "selected"; } ?>>Normal</option>
+            <option value="2" <?php if ($user->speed == 2) { echo "selected"; } ?>>Fast</option>
+          </select>
+        </div>
       @endif
     </div>
   </div>
@@ -233,8 +237,64 @@
       });
   }
 	
+  function stopStart() {
+    $("body").on("click","#button-run",function(){
+      $.ajax({
+        type : 'GET',
+        url : '{{url("stop-start")}}',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success : function(result){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          if(result.status == 'success'){
+            if(result.isStarted){
+              $("#button-run").removeClass("btn-success");
+              $("#button-run").addClass("btn-danger");
+              $("#button-run").html('<i class="fa fa-stop"></i> Stop');
+            }
+            else {
+              $("#button-run").removeClass("btn-danger");
+              $("#button-run").addClass("btn-success");
+              $("#button-run").html('<i class="fa fa-chevron-circle-right"></i> Start');
+            }
+          }
+        }
+      });
+    });
+  }
+  
+  function change_speed() {
+    $( "#select-speed" ).change(function() {
+      $.ajax({
+        type : 'GET',
+        url : '{{url("change-speed")}}',
+        data : {
+          speed : $( this ).val()
+        },
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success : function(result){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          if(result.status == 'success'){
+            alert("Speed changed");
+          }
+        }
+      });
+    });
+  }
+  
   $(document).ready(function(){
     checkPhone();
+    stopStart();
+    change_speed();
 		$(".canvasjs-chart-credit").hide();
   });
 

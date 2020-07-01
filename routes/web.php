@@ -176,6 +176,9 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
   Route::get('google-form','HomeController@google_form');
   Route::get('jsonEncode','HomeController@jsonEncode');
 
+  Route::get('stop-start','HomeController@stop_start');
+  Route::get('change-speed','HomeController@change_speed');
+
 	/* LIST */
   Route::get('lists', 'ListController@index');
   Route::get('lists-table', 'ListController@dataList');
