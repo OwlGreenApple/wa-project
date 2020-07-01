@@ -1,5 +1,6 @@
 @if($customer->count() > 0)
-  <table class="display responsive nowrap" id="data_customer">
+<div class="table-responsive">
+  <table class="table" id="data_customer">
     <thead>
       <tr>
         <th>Name</th>
@@ -31,6 +32,7 @@
       @endforeach
     </tbody>
   </table>
+</div>
   
 @else
   <h2>Add Your Contact</h2>
