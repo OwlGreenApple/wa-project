@@ -881,7 +881,7 @@ class CampaignController extends Controller
           {
              $reminder_customer = ReminderCustomers::where('reminder_id',$row->id)->whereIn('status',[2,5]);
 
-             if(!is_null($reminder_customer->first()))
+             if($reminder_customer->get()->count() > 0)
              {
                try
                {
