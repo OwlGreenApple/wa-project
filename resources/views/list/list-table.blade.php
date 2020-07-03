@@ -10,7 +10,7 @@
       <div class="row">
         <div class="col-md-5 col-lg-5 col-card">
           <h5>{{$rows->label}}</h5>
-            <div class="link_wrap">Link From : <a href="{{env('APP_URL')}}{{$rows->name}}" target="_blank">{{env('APP_URL')}}{{$rows->name}}</a>
+            <div class="link_wrap">Link Form : <a href="{{env('APP_URL')}}{{$rows->name}}" target="_blank">{{env('APP_URL')}}{{$rows->name}}</a>
               <span>
                 <a data-link="{{env('APP_URL')}}{{ $rows->name }}" class="btn-copy icon-copy"></a>
               </span>
