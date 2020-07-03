@@ -132,7 +132,8 @@
                     Type your message for customer / subscriber after they registered
                     </div>">
                       <i class="fa fa-question-circle "></i></label>
-               <textarea id="editor2" rows="10" cols="80" name="editor2" class="form-control">{!!  $data['message_conf'] !!}</textarea>
+
+                <textarea name="editor2" id="editor2" rows="10" cols="80">{!! $data['message_conf'] !!}</textarea>
                <div class="error message_conf col-lg-12 text-left"></div>
             </div> 
             
