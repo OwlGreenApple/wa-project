@@ -165,7 +165,7 @@ Route::group(['middleware'=>['auth','web']],function(){
 	Route::post('order-confirm-payment','OrderController@confirm_payment_order');
 
 });
-
+ 
 /*** USER ***/
 Route::group(['middleware'=>['auth','web','authsettings']],function(){
 	/* HOME */
