@@ -748,15 +748,8 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
       removePlugins : 'image',
   };
 
-  console.log(CKEDITOR);
-
-  if (  CKEDITOR.status == 'loaded' ) {
-    // The API can now be fully used.
-    CKEDITOR.replace( 'editor1',settings_ck_editor);
-  }
-
- 
-  // CKEDITOR.replace( 'editor2',settings_ck_editor);
+  CKEDITOR.replace( 'editor1',settings_ck_editor);
+  CKEDITOR.replace( 'editor2',settings_ck_editor);
 
   CKEDITOR.editorConfig = function( config ) {
       config.extraAllowedContent = true;
