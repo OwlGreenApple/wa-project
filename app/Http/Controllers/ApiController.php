@@ -49,7 +49,7 @@ class ApiController extends Controller
        //for test
     }
 
-    public function listActivCampaign($email,$first_name,$last_name,$phone)
+    public function listActivCampaign($email,$first_name,$last_name,$phone,$listid)
     {
       $url = $sourceurl =  'https://michaelsugiharto.api-us1.com';
       $params = array(
@@ -72,7 +72,7 @@ class ApiController extends Controller
       );
 
       // $email = 'gunardi.omnifluencer@gmail.com';
-      $list_id = 7;
+      $list_id = $listid;
 
       // here we define the data we are posting in order to perform an update
       $post = array(

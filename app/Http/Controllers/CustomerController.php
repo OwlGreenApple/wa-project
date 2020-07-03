@@ -245,11 +245,16 @@ class CustomerController extends Controller
             try
             {
               $customer->save();
+              $api = new API;
 
               if($list->id == 115)
               {
-                $api = new API;
-                $api->listActivCampaign($request->email,$request->subscribername,$request->last_name,$phone_number);
+                $api->listActivCampaign($request->email,$request->subscribername,$request->last_name,$phone_number,7);
+              }
+
+              if($list->id == 121)
+              {
+                $api->listActivCampaign($request->email,$request->subscribername,$request->last_name,$phone_number,8);
               }
 
                $user_id = $list->user_id;
