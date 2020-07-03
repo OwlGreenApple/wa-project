@@ -52,9 +52,9 @@ class SendMessage extends Command
       if (env("APP_ENV")=="automation") {
         $phoneNumbers = PhoneNumber::
                         join('users',"users.id","=","phone_numbers.user_id")
-                        ->where("is_started",1)
-                        ->where("counter",">",0)
-                        ->where("status",2)
+                        ->where("phone_numbers.is_started",1)
+                        ->where("phone_numbers.counter",">",0)
+                        ->where("phone_numbers.status",2)
                         ->select("phone_numbers.id")
                         ->get();
         foreach($phoneNumbers as $phoneNumber) {
