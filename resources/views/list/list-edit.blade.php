@@ -744,8 +744,8 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
       allowedContent: true,
       filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
       filebrowserUploadUrl: "{{ route('ckupload') }}",
-      // extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
-      extraPlugins: ['uploadimage','image2','justify'],
+      // extraPlugins: ['colorbutton','font','videoembed'],
+      extraPlugins: ['uploadimage','image2','justify','font'],
       removePlugins : 'image',
   };
 
@@ -754,8 +754,8 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
 
   CKEDITOR.editorConfig = function( config ) {
       config.extraAllowedContent = true;
-      config.extraPlugins = 'uploadimage','image2','justify';
-      // config.extraPlugins = 'uploadimage','colorbutton','justify','image2','font','videoembed';
+      config.extraPlugins = 'uploadimage','image2','justify','font';
+      // config.extraPlugins = 'colorbutton','font','videoembed';
       config.removePlugins = 'image';
   };
 
