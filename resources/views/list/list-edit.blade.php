@@ -744,7 +744,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
       allowedContent: true,
       filebrowserBrowseUrl: "{{ route('ckbrowse') }}",
       filebrowserUploadUrl: "{{ route('ckupload') }}",
-      extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
+      // extraPlugins: ['uploadimage','colorbutton','justify','image2','font','videoembed'],
       removePlugins : 'image',
   };
 
