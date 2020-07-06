@@ -723,7 +723,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
     
     <!-- Modal content-->
     <div class="modal-content">
-      <div class="modal-header"><h5>Are you sure to reset auto reply message?</h5></div>
+      <div class="modal-header"><h5>Are you sure to resend auto reply message?</h5></div>
       <div class="modal-body">
          <button id="resend_message" class="btn btn-primary">Resend</button>
          <button class="btn btn-secondary" data-dismiss="modal">Close</button>

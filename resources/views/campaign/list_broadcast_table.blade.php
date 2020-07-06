@@ -45,7 +45,7 @@
     <div class="modal-content">
       <div class="message_resend"></div>
       <div class="modal-header">
-        <h5>Are you sure to reset broadcast message?</h5>
+        <h5>Are you sure to resend broadcast message?</h5>
       </div>
       <div class="modal-body">
          <button id="resend_message" class="btn btn-primary">Resend</button>
