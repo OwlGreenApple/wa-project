@@ -12,7 +12,6 @@ class UserList extends Model
 		0 = deleted list
 		1 = active list
     */
-
 }
 
 /*

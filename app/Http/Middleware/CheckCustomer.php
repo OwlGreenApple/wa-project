@@ -77,7 +77,7 @@ class CheckCustomer
 
          if(array_key_exists('email',$req) == true)
          {
-            $rules['email'] = ['required','email','max:50',new SubscriberEmail($id_list)];
+            $rules['email'] = ['required','email','max:50'/*,new SubscriberEmail($id_list)*/];
          }
 
          if(array_key_exists('data_update',$req) == true)
@@ -99,7 +99,7 @@ class CheckCustomer
          }
          else
          {
-            $rules['phone_number'] = ['required','numeric','digits_between:6,18',new InternationalTel, new CheckWANumbers($req['code_country'],$id_list)];
+            $rules['phone_number'] = ['required','numeric','digits_between:6,18',new InternationalTel /*new CheckWANumbers($req['code_country'],$id_list)*/];
          }
 
         $validator = Validator::make($req,$rules);

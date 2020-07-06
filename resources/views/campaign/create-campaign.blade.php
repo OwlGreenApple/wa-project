@@ -51,7 +51,7 @@
               <input class="form-check-input" type="radio" name="campaign_type" id="inlineRadio2" value="auto" @if(getMembership(Auth()->user()->membership) <= 3) checked @endif/>
               <span class="checkmark"></span>
             </label>
-            <label class="form-check-label" for="inlineRadio2">Auto Schedule</label>
+            <label class="form-check-label" for="inlineRadio2">Auto Schedule H+</label>
           </div>
 
         <!--   @if(getMembership(Auth()->user()->membership) > 1) 

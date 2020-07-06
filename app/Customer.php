@@ -12,10 +12,19 @@ class Customer extends Model
 	protected $fillable = ['user_id','list_id','name','last_name','email','telegram_number','code_country','additional','status'];
     /*
 		status : 
-		0 = inactive / banned
+		0 = deleted
 		1 = active
-    telegram_number = unique
     */
+
+    /*
+      unique : 
+      - telegram_number
+      - email
+
+      note : if user fill with available data either on these columns, 
+            then customer status would be updated.
+    */
+
 
   public static function create_link_unsubs($id,$list_id){
     $customer = Customer::find($id);

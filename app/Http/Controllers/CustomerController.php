@@ -132,10 +132,11 @@ class CustomerController extends Controller
               // $customer->status = 0;
             // }
             // $customer->save();
+            $check_phone = $this->checkDuplicateSubscriberPhone($phone_number,$list->id);
+            $check_email = $this->checkDuplicateSubscriberEmail($request->email,$list->id);
 
             if($request->overwrite == null && $request->listedit == 1)
             {
-                $check_phone = $this->checkDuplicateSubscriberPhone($phone_number,$list->id);
                 if($check_phone == true)
                 {
                   return response()->json(['duplicate'=>1]);
@@ -143,7 +144,8 @@ class CustomerController extends Controller
             }
 
 						$status = 1;
-            if ($list->is_secure) {
+            if ($list->is_secure) 
+            {
               $status = 0;
             }
 
@@ -208,6 +210,38 @@ class CustomerController extends Controller
                 $data['message'] = 'Sorry, our system is too busy';
               } 
               return response()->json($data);
+            } 
+            else if($check_phone == true || $check_email == true)
+            {
+               // user exist already
+              $reg = array(
+                'name' => $request->subscribername,
+                'last_name' => $request->last_name,
+                'status' => 1,
+              );
+    
+              if($list->message_conf == null || $list->message_conf == '')
+              {
+                  $message_conf = 'Your contact has been added';
+              }
+              else
+              {
+                  $message_conf = $list->message_conf;
+              }
+              
+              try
+              {
+                Customer::where('telegram_number',$phone_number)->orWhere('email',$request->email)->update($reg);
+                $data['success'] = true;
+                $data['message'] = $message_conf;
+              }
+              catch(QueryException $e)
+              {
+                $data['success'] = false;
+                $data['message'] = 'Sorry, our system is too busy';
+              }
+
+              return response()->json($data);
             }
             else
             {
@@ -229,7 +263,8 @@ class CustomerController extends Controller
             /*
             Kalo is_secure maka akan dikirim langsung message wa nya 
             */
-            if ($list->is_secure) {
+            if ($list->is_secure) 
+            {
 							$ret = $this->sendListSecure($list->id,$customer_id,$request->subscribername,$list->user_id,$list->name,$phone_number);
 
 							if($ret->getData()->success == false)
@@ -241,7 +276,6 @@ class CustomerController extends Controller
             }
 
             // if customer successful sign up / NORMAL CASE
-
             try
             {
               $customer->save();
@@ -346,6 +380,23 @@ class CustomerController extends Controller
     {
         $customer = Customer::where([
           ['telegram_number','=',$wa_number],
+          ['list_id','=',$list_id]
+        ])->first();
+
+        if(is_null($customer))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    } 
+
+    private function checkDuplicateSubscriberEmail($email,$list_id)
+    {
+        $customer = Customer::where([
+          ['email','=',$email],
           ['list_id','=',$list_id]
         ])->first();
 
