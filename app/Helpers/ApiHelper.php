@@ -147,13 +147,13 @@ class ApiHelper
     );
 
     $res=curl_exec($ch);
-    ApiHelper::qr_status_log($no_wa);
+    ApiHelper::qr_status_log($no_wa,$res);
 
     // return curl_exec($ch);
     return $res;
   }
   
-  public static function qr_status_log($no_wa)
+  public static function qr_status_log($no_wa,$res)
   {
     $timegenerate = Carbon::now();
     $filename='log-qr-status/log-'.$timegenerate->format('ymd').'.txt';
