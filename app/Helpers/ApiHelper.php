@@ -4,6 +4,7 @@ use App\PhoneNumber;
 
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Helpers\ApiHelper;
 
 class ApiHelper
 {
@@ -146,7 +147,7 @@ class ApiHelper
     );
 
     $res=curl_exec($ch);
-    $this->qr_status_log($no_wa);
+    ApiHelper::qr_status_log($no_wa);
 
     // return curl_exec($ch);
     return $res;
