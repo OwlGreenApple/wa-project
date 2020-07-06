@@ -382,7 +382,7 @@ class SettingController extends Controller
       return response()->json($data);
     }
 
-		//woowa + simi
+		//woowa + spiderman
     public function connect_phone(Request $request)
     {
       $user = Auth::user();

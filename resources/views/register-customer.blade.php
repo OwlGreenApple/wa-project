@@ -63,7 +63,7 @@
               </div>
 
               <div class="wrapper">
-                <div id="message_id" class="text-center">
+                <div id="message_id">
                 <span class="error main"></span>
 
                 <form class="add-contact" id="addcustomer">
@@ -156,7 +156,7 @@
               <!-- END MESSAGE_ID -->
               </div>
 
-              <div id="button_add_appointment"><a class="btn btn-custom" href="{{ $link_add_customer }}">Add More Customer</a></div>
+              <div id="button_add_appointment"><a class="btn btn-custom" href="{{ $link_add_customer }}">Register Another</a></div>
 
               <div class="text-left marketing">
                   <div>Marketing by</div>
