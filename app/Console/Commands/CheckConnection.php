@@ -69,7 +69,6 @@ class CheckConnection extends Command
 						if ($row->mode == 1 ) {
 							//woowa
 							$check_connected = ApiHelper::qr_status($row->phone_number);
-							ApiHelper::qr_status_log($row->phone_number);
 							if ($check_connected==$row->phone_number) {
                 $status = true;
 							}
