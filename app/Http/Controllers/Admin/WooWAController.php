@@ -68,6 +68,7 @@ class WooWAController extends Controller
 								where('mode',1) // mode woowa
 								->where('status',2) // paid
 								->where('status_woowa',0)
+                ->where('no_order',"not like","%testing%")
                 ->select('orders.*')
                 ->orderBy('created_at','desc')
                 ->orderBy('status_woowa','asc')
