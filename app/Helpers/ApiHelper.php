@@ -2,6 +2,10 @@
 namespace App\Helpers;
 use App\PhoneNumber;
 
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use App\Helpers\ApiHelper;
+
 class ApiHelper
 {
 
@@ -142,8 +146,32 @@ class ApiHelper
     'Content-Length: ' . strlen($data_string))
     );
 
-    // echo $res=curl_exec($ch);
-    return curl_exec($ch);
+    $res=curl_exec($ch);
+    ApiHelper::qr_status_log($no_wa,$res);
+
+    // return curl_exec($ch);
+    return $res;
+  }
+  
+  public static function qr_status_log($no_wa,$res)
+  {
+    $timegenerate = Carbon::now();
+    $filename='log-qr-status/log-'.$timegenerate->format('ymd').'.txt';
+    $logexists = Storage::disk('local')->exists($filename);
+    $format = "Date and time : ".$timegenerate.", phone  : ".$no_wa.", Status : ".$res."\n";
+
+    if($logexists == true)
+    {
+      $log = Storage::get($filename);
+      $string = $log.$format;
+      Storage::put($filename,$string);
+    }
+    else
+    {
+      $string = $format;
+      Storage::put($filename,$string);
+    }
+  
   }
   
   public static function get_all_cust()
