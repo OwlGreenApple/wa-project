@@ -211,8 +211,7 @@ class ApiController extends Controller
     {
       // $obj = json_decode($request->getContent());
       $obj = json_decode($request->getContent(),true);
-      return ApiHelper::send_image_url($obj['customer_phone'],$obj['url'],$obj['message'],$obj['key_woowa']);
-      // return ApiHelper::send_image_url($obj->customer_phone,$obj->url,$obj->message,$obj->key_woowa);
+      return ApiHelper::send_image_url($obj['customer_phone'],$obj['urls3'],$obj['message'],$obj['key_woowa']);
     }
     
     public function send_message_wassenger_automation(Request $request)
