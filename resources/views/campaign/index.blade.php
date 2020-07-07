@@ -143,7 +143,7 @@
           <div class="bg-dashboard campaign">
             <div class="row">
             <div class="col-md-6 col-lg-6 pad-fix col-card">
-              <h5><color><span class="og">Auto schedule</span></color> - {{ $row->name }}</h5>
+              <h5><color><span class="og">Auto schedule H+</span></color> - {{ $row->name }}</h5>
               <div class="notes">
                <!--  <div>Type Campaign : <color><span class="og">Auto schedule</span></color></div> -->
                 @if($label !== null)
@@ -228,7 +228,7 @@
           <div class="bg-dashboard campaign">
             <div class="row">
             <div class="col-md-5 col-lg-5 pad-fix col-card">
-              <h5><color><span class="og">Auto schedule</span></color> - {{ $row->name }}</h5>                  <div class="notes">
+              <h5><color><span class="og">Auto schedule H+</span></color> - {{ $row->name }}</h5>                  <div class="notes">
                 @if($label !== null)
                   <div>List : <a target="_blank" href="{{ url('list-edit') }}/{{ $list_id }}">{{ $label }}</a></div>
                 @else

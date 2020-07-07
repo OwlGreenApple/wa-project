@@ -56,7 +56,7 @@
       <div class="form-group row">
         <label class="col-6 col-sm-4 col-md-4 col-lg-3 col-form-label">Type Campaign :</label>
         <div class="col-6 col-sm-8 col-md-8 col-lg-9 py-2">
-          <strong>Auto Schedule</strong>
+          <strong>Auto Schedule H+</strong>
         </div>
       </div>
 
