@@ -281,7 +281,7 @@ class SendMessage extends Command
             ['phone_numbers.id','=',$this->phone_id],
             // ['customers.created_at','<=',$current_time->toDateTimeString()],
             ])
-            // ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
+            ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
             ->join('users','reminders.user_id','=','users.id')
             ->rightJoin('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
             ->join('customers','customers.id','=','reminder_customers.customer_id')

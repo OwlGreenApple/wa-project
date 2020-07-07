@@ -279,7 +279,7 @@ class SendCampaign implements ShouldQueue
             ['phone_numbers.id','=',$this->phone_id],
             // ['customers.created_at','<=',$current_time->toDateTimeString()],
             ])
-            // ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
+            ->whereRaw('DATEDIFF(now(),customers.created_at) >= reminders.days')
             ->join('lists','lists.id','=','reminders.list_id')
             ->join('users','reminders.user_id','=','users.id')
             ->rightJoin('reminder_customers','reminder_customers.reminder_id','=','reminders.id')
