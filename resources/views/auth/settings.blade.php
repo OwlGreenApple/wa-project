@@ -139,10 +139,10 @@
             <div class="col-lg-3 col-md-12 col-sm-12 plan account_status">
               @if($user->status > 0)
                 <div>Current plan : <b>{{ $user->membership }}</b></div>
-                <div>Valid Until {{ $expired }}</div>
-                <div>MESSAGES Quota {{ $quota }}</div>
-                <div>Phone Status : {!! $phone_status !!}</div>
-                <div>Server Status : {!! $server_status !!}</div>
+                <div>Phone Status : <b>{!! $phone_status !!}</b></div>
+                <div>Server Status : <b>{!! $server_status !!}</b></div>
+                <div>Valid Until : <b>{{ $expired }}</b></div>
+                <div>MESSAGES Quota : <b>{{ $quota }}</b></div>
                 <div><a href="{{ url('pricing') }}"><i>Buy More</i></a></div>
               @endif
             </div>

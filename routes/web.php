@@ -63,7 +63,7 @@ Route::get('history-order', 'HomeController@historyOrder');
 
 /* User Customer */
 Route::post('loginajax', 'Auth\LoginController@loginAjax');// user login via ajax
-Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');//home.blade
+Route::post('updateuser', 'HomeController@updateUser')->name('updateuser');
 
 /* Admin Woowa*/
 Route::group(['middleware'=>['auth','web','is_admin_woowa']],function(){
@@ -85,15 +85,15 @@ Route::group(['middleware'=>['auth','web','is_admin_woowa']],function(){
 Route::group(['middleware'=>['auth','web','is_admin']],function(){
 	/*Route::get('sendingrate', 'AdminController@SendingRate');
   Route::post('savesettings', 'AdminController@SaveSettings');
-	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');//home.blade
+	Route::get('csvimport', 'AdminController@importCSVPage')->name('csvimport');
 	Route::post('importcustomercsv','AdminController@importCustomerCSV')->name('importcustomercsv');*/
-  Route::get('superadmin', 'AdminController@index');//home.blade
+  Route::get('superadmin', 'AdminController@index');
   Route::get('configs', 'AdminController@config');
   Route::get('status-server', 'AdminController@changeStatusServer');
   Route::get('setupconfig', 'AdminController@setupConfig');
   Route::post('save-config', 'AdminController@saveConfig');
   Route::get('config-show', 'AdminController@displayConfig');
-  Route::get('loginuser/{id_user}', 'AdminController@LoginUser');//home.blade
+  Route::get('loginuser/{id_user}', 'AdminController@LoginUser');
   Route::get('broadcast-admin','AdminController@BroadcastAdmin');
   Route::post('broadcast-user','AdminController@BroadcastUser');
   Route::get('country-code','AdminController@InsertCountry');
