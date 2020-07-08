@@ -7,6 +7,31 @@
   <div class="act-tel-dashboard-left">
     <h2>DASHBOARD</h2>
   </div>
+  <div class="clearfix"></div>
+</div>
+
+<div class="container automation-dashboard">
+  <div class="act-tel-dashboard-left">
+    <h3>Automation</h3>
+  </div>
+  <div class="act-tel-dashboard-left">
+    <button class="btn btn-md <?php if ($user->is_started) { echo "btn-danger"; } else { echo "btn-secondary"; } ?>" id="button-stop">
+      <i class="fa fa-stop"></i> 
+    </button>
+    <button class="btn btn-md <?php if (!$user->is_started) { echo "btn-success"; } else { echo "btn-secondary"; } ?>" id="button-run">
+      <i class="fa fa-play"></i> 
+    </button>
+  </div>
+  <div class="act-tel-dashboard-left">
+    <select class="form-control" id="select-speed">
+      <option value="0" <?php if ($user->speed == 0) { echo "selected"; } ?>>Slow</option>
+      <option value="1" <?php if ($user->speed == 1) { echo "selected"; } ?>>Normal</option>
+      <option value="2" <?php if ($user->speed == 2) { echo "selected"; } ?>>Fast</option>
+    </select>
+  </div>
+  <div class="act-tel-dashboard-left status">
+    Status : <b><span id="text-status"><?php if ($user->is_started) { echo "Started"; } else { echo "Stopped"; } ?></span></b>
+  </div>
 
   <div class="clearfix"></div>
 </div>
@@ -19,25 +44,12 @@
     <div class="col-center col-lg-3 account_status">
        @if($status > 0)
         <div>Current plan : <b>{{ $membership }}</b></div>
-        <div>Valid Until {{ $expired }}</div>
-        <div>MESSAGES Quota {{ $quota }}</div>
-        <div>Phone Status : {!! $phone_status !!}</div>
-        <div>Server Status : {!! $server_status !!}</div>
+        <div>Phone Status : <b>{!! $phone_status !!}</b></div>
+        <div>Server Status : <b>{!! $server_status !!}</b></div>
+        <div>Valid Until : <b>{{ $expired }}</b></div>
+        <div>MESSAGES Quota : <b>{{ $quota }}</b></div>
         <div><a href="{{ url('pricing') }}"><span>Buy More</span></a></div>
-        <div>
-          <button class="btn btn-lg <?php if ($user->is_started) { echo "btn-danger"; } else { echo "btn-success"; } ?>" id="button-run">
-          <?php if ($user->is_started) { ?>
-            <i class="fa fa-stop"></i> Stop
-          <?php } else { ?>
-            <i class="fa fa-chevron-circle-right"></i> Start
-          <?php } ?>
-          </button>
-          <select class="form-control" id="select-speed">
-            <option value="0" <?php if ($user->speed == 0) { echo "selected"; } ?>>Slow</option>
-            <option value="1" <?php if ($user->speed == 1) { echo "selected"; } ?>>Normal</option>
-            <option value="2" <?php if ($user->speed == 2) { echo "selected"; } ?>>Fast</option>
-          </select>
-        </div>
+
       @endif
     </div>
   </div>
@@ -238,7 +250,10 @@
   }
 	
   function stopStart() {
-    $("body").on("click","#button-run",function(){
+    $("body").on("click","#button-stop",function(){
+      if ($(this).hasClass("btn-secondary")) {
+        return false;
+      }
       $.ajax({
         type : 'GET',
         url : '{{url("stop-start")}}',
@@ -253,13 +268,51 @@
           if(result.status == 'success'){
             if(result.isStarted){
               $("#button-run").removeClass("btn-success");
-              $("#button-run").addClass("btn-danger");
-              $("#button-run").html('<i class="fa fa-stop"></i> Stop');
+              $("#button-run").addClass("btn-secondary");
+              $("#button-stop").removeClass("btn-secondary");
+              $("#button-stop").addClass("btn-danger");
+              $("#text-status").html("Started");
             }
             else {
-              $("#button-run").removeClass("btn-danger");
+              $("#button-run").removeClass("btn-secondary");
               $("#button-run").addClass("btn-success");
-              $("#button-run").html('<i class="fa fa-chevron-circle-right"></i> Start');
+              $("#button-stop").removeClass("btn-danger");
+              $("#button-stop").addClass("btn-secondary");
+              $("#text-status").html("Stopped");
+            }
+          }
+        }
+      });
+    });
+    $("body").on("click","#button-run",function(){
+      if ($(this).hasClass("btn-secondary")) {
+        return false;
+      }
+      $.ajax({
+        type : 'GET',
+        url : '{{url("stop-start")}}',
+        beforeSend: function()
+        {
+          $('#loader').show();
+          $('.div-loading').addClass('background-load');
+        },
+        success : function(result){
+          $('#loader').hide();
+          $('.div-loading').removeClass('background-load');
+          if(result.status == 'success'){
+            if(result.isStarted){
+              $("#button-run").removeClass("btn-success");
+              $("#button-run").addClass("btn-secondary");
+              $("#button-stop").removeClass("btn-secondary");
+              $("#button-stop").addClass("btn-danger");
+              $("#text-status").html("Started");
+            }
+            else {
+              $("#button-run").removeClass("btn-secondary");
+              $("#button-run").addClass("btn-success");
+              $("#button-stop").removeClass("btn-danger");
+              $("#button-stop").addClass("btn-secondary");
+              $("#text-status").html("Stopped");
             }
           }
         }
