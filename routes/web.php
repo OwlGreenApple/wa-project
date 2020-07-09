@@ -101,6 +101,15 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
   Route::get('country-del','AdminController@delCountry');
   Route::post('save-country','AdminController@saveCountry')->middleware('check_country');
 
+  /* Spiderman */
+  Route::get('spiderman','SpidermanController@index');
+  Route::get('start','SpidermanController@start');
+  Route::get('scan','SpidermanController@scan');
+  Route::get('statusmessage','SpidermanController@status');
+  Route::post('sendmessage','SpidermanController@sendMessage');
+  /* -- */
+  
+
   //List User 
   Route::get('/list-user','Admin\UserController@index');
   Route::get('/list-user/load-user','Admin\UserController@load_user');
