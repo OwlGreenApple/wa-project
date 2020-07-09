@@ -30,7 +30,7 @@
     </select>
   </div>
   <div class="act-tel-dashboard-left status">
-    Status : <b><span id="text-status"><?php if ($user->is_started) { echo "Started"; } else { echo "Stopped"; } ?></span></b>
+    Status : <b><span id="text-status" class="<?php if ($user->is_started) { echo "span-connected"; } else { echo "down"; } ?>"><b><?php if ($user->is_started) { echo "Started"; } else { echo "Stopped"; } ?></b></span></b>
   </div>
 
   <div class="clearfix"></div>
@@ -271,14 +271,18 @@
               $("#button-run").addClass("btn-secondary");
               $("#button-stop").removeClass("btn-secondary");
               $("#button-stop").addClass("btn-danger");
-              $("#text-status").html("Started");
+              $("#text-status").html("<b>Started</b>");
+              $("#text-status").removeClass("down");
+              $("#text-status").addClass("span-connected");
             }
             else {
               $("#button-run").removeClass("btn-secondary");
               $("#button-run").addClass("btn-success");
               $("#button-stop").removeClass("btn-danger");
               $("#button-stop").addClass("btn-secondary");
-              $("#text-status").html("Stopped");
+              $("#text-status").html("<b>Stopped</b>");
+              $("#text-status").removeClass("span-connected");
+              $("#text-status").addClass("down");
             }
           }
         }
@@ -305,14 +309,18 @@
               $("#button-run").addClass("btn-secondary");
               $("#button-stop").removeClass("btn-secondary");
               $("#button-stop").addClass("btn-danger");
-              $("#text-status").html("Started");
+              $("#text-status").html("<b>Started</b>");
+              $("#text-status").removeClass("down");
+              $("#text-status").addClass("span-connected");
             }
             else {
               $("#button-run").removeClass("btn-secondary");
               $("#button-run").addClass("btn-success");
               $("#button-stop").removeClass("btn-danger");
               $("#button-stop").addClass("btn-secondary");
-              $("#text-status").html("Stopped");
+              $("#text-status").html("<b>Stopped</b>");
+              $("#text-status").removeClass("span-connected");
+              $("#text-status").addClass("down");
             }
           }
         }

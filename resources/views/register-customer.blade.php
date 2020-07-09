@@ -159,8 +159,10 @@
               <div id="button_add_appointment"><a class="btn btn-custom" href="{{ $link_add_customer }}">Register Another</a></div>
 
               <div class="text-left marketing">
+                <a href="https://activrespon.com" target="_blank">
                   <div>Marketing by</div>
                   <div><img src="{{asset('assets/img/marketing-logo.png')}}"/></div>
+                </a>
               </div>
             </div>
             <!-- end wrapper -->

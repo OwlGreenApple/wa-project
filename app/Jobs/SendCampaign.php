@@ -106,149 +106,136 @@ class SendCampaign implements ShouldQueue
                 $hour = $row->hour_time; //hour according user set it to sending
                 $date = Carbon::parse($row->day_send);
 
-                // if(!is_null($customers))
-                // {
-                    $fistname = $this->modFullname($row->name);
-                    $message = $this->replaceMessage($customer_message,$row->name,$row->email,$customer_phone,$fistname);
 
-                    $list = UserList::find($row->list_id);
-                    if (!is_null($list)){
-                      if ($row->link_unsubs =="") {
-                        $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
-                      }
-                      else {
-                        $message = str_replace( "[UNSUBS]" , $row->link_unsubs, $message);
-                      }
-                    }
-										$message = $spintax->process($message);  //spin text
-                    $chat_id = $row->chat_id;  
-                    $counter = $phoneNumber->counter;
-                    $counter2 = $phoneNumber->counter2;
-                    $max_counter = $phoneNumber->max_counter;
-                    $max_counter_day = $phoneNumber->max_counter_day;
-                    $key = $phoneNumber->filename;
-                    $now = Carbon::parse(Carbon::now())->timezone($row->timezone);
+                $fistname = $this->modFullname($row->name);
+                $message = $this->replaceMessage($customer_message,$row->name,$row->email,$customer_phone,$fistname);
 
-                    $time_sending = $date->toDateString().' '.$hour;
-                    $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
-                    // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
-                    $midnightTime = $this->avoidMidnightTime($row->timezone);
-                    $check_valid_customer_join = $this->preventBroadcastNewCustomer($row->bccsid,$time_sending);
-                    
-                    if($deliver_time < 0 || $midnightTime == false || $check_valid_customer_join == false)
-                    {
-                      //klo blm hour_time di skip dulu
-                      continue;
-                    }
+                $list = UserList::find($row->list_id);
+                if (!is_null($list)){
+                  if ($row->link_unsubs =="") {
+                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                  }
+                  else {
+                    $message = str_replace( "[UNSUBS]" , $row->link_unsubs, $message);
+                  }
+                }
+                $message = $spintax->process($message);  //spin text
+                $chat_id = $row->chat_id;  
+                $counter = $phoneNumber->counter;
+                $counter2 = $phoneNumber->counter2;
+                $max_counter = $phoneNumber->max_counter;
+                $max_counter_day = $phoneNumber->max_counter_day;
+                $key = $phoneNumber->filename;
+                $now = Carbon::parse(Carbon::now())->timezone($row->timezone);
 
-                    if(($counter <= 0) || ($counter2 <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
-                        continue;
-                    }
-
-                    if($counter > 0)
-                    {
-                        $campaign = 'broadcast';
-                        $id_campaign = $row->bccsid;
-
-                        //status
-												$broadcastCustomer = BroadCastCustomers::find($id_campaign);
-												if (is_null($broadcastCustomer)) {
-													continue;
-												}
-												if ($broadcastCustomer->status==5) {
-													continue;
-												}
-
-                        $membership = getMembership($user->membership);
-                        if($membership <= 3)
-                        {
-                          $broadcastCustomer->status = 4;
-                          $broadcastCustomer->save();
-                          continue;
-                        }
-
-												$broadcastCustomer->status = 5;
-												$broadcastCustomer->save();
-
-                        $status = 'Sent';
-
-                        // MAKES BROADCAST STATUS TO 2 WHICH MEAN BROADCAST HAS RUN ALREADY.
-                        $broad_cast_id = $broadcastCustomer->broadcast_id;
-                        $broad_cast = BroadCast::find($broad_cast_id);
-
-                        if(is_null($broad_cast))
-                        {
-                          continue;
-                        }
-
-                        $status_broadcast = $broad_cast->status;
-                        if($status_broadcast == 1)
-                        {
-                          $broad_cast->status = 2;
-                          $broad_cast->save();
-                        }
+                $time_sending = $date->toDateString().' '.$hour;
+                $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
+                // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
+                $midnightTime = $this->avoidMidnightTime($row->timezone);
+                $check_valid_customer_join = $this->preventBroadcastNewCustomer($row->bccsid,$time_sending);
 
 
-                          //====================================
+                if($counter <= 0 || $counter2 <= 0 || $max_counter <= 0 || $max_counter_day <= 0 || $deliver_time < 0 || $midnightTime == false || $check_valid_customer_join == false ) {
+                    continue;
+                }
 
-                        if ($row->image==""){
-                          if ($phoneNumber->mode == 0) {
-                            // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
-                            $send_message = $this->send_simi($customer_phone,$message,$server->url);
-                          }
-                          if ($phoneNumber->mode == 1) {
-                            // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
-                            $send_message = $this->send_message($customer_phone,$message,$key);
-                          }
-                          if ($phoneNumber->mode == 2) {
-                            $send_message = $this->send_message_wassenger($customer_phone,$message,$key);
-                          }
-                        }
-                        else {
-                          if ($phoneNumber->mode == 0) {
-                            // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
-                            // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-                                            // storage_path('app/temp-send-image-simi/'.$row->image),
-                                            // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                            // basename($row->image)
-                                          // ),$message,$server->url);
-                            $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
-                                            storage_path('app/temp-send-image-simi/'.$row->image),
-                                            mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                            basename($row->image)
-                                          ),$message,$server->url,$row->image);
-                          }
-                          if ($phoneNumber->mode == 1) {
-                            // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                            $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                          }
-                        }
 
-                        $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$send_message);
-                        // $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign);
-                        $status = $this->getStatus($send_message,$phoneNumber->mode);
+                $campaign = 'broadcast';
+                $id_campaign = $row->bccsid;
 
-                        $phoneNumber->counter --;
+                //status
+                $broadcastCustomer = BroadCastCustomers::find($id_campaign);
+                if (is_null($broadcastCustomer)) {
+                  continue;
+                }
+                if ($broadcastCustomer->status==5) {
+                  continue;
+                }
 
-                        if($max_counter > 0)
-                        {
-                          $phoneNumber->max_counter --;
-                        }
-                        if($max_counter_day > 0)
-                        {
-                          $phoneNumber->max_counter_day --;
-                        }
-                        $phoneNumber->save();
-                        
-												$broadcastCustomer->status = $status;
-												$broadcastCustomer->save();
-                    }
-                    else {
-                        $campaign = 'broadcast';
-                        $id_campaign = $row->bccsid;
-                        $status = 'Error';
-                        $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
-                    }
+                $membership = getMembership($user->membership);
+                if($membership <= 3)
+                {
+                  $broadcastCustomer->status = 4;
+                  $broadcastCustomer->save();
+                  continue;
+                }
+
+                $broadcastCustomer->status = 5;
+                $broadcastCustomer->save();
+
+                $status = 'Sent';
+
+                // MAKES BROADCAST STATUS TO 2 WHICH MEAN BROADCAST HAS RUN ALREADY.
+                $broad_cast_id = $broadcastCustomer->broadcast_id;
+                $broad_cast = BroadCast::find($broad_cast_id);
+
+                if(is_null($broad_cast))
+                {
+                  continue;
+                }
+
+                $status_broadcast = $broad_cast->status;
+                if($status_broadcast == 1)
+                {
+                  $broad_cast->status = 2;
+                  $broad_cast->save();
+                }
+
+
+                  //====================================
+
+                if ($row->image==""){
+                  if ($phoneNumber->mode == 0) {
+                    // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
+                    $send_message = $this->send_simi($customer_phone,$message,$server->url);
+                  }
+                  if ($phoneNumber->mode == 1) {
+                    // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+                    $send_message = $this->send_message($customer_phone,$message,$key);
+                  }
+                  if ($phoneNumber->mode == 2) {
+                    $send_message = $this->send_message_wassenger($customer_phone,$message,$key);
+                  }
+                }
+                else {
+                  if ($phoneNumber->mode == 0) {
+                    // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+                    // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+                                    // storage_path('app/temp-send-image-simi/'.$row->image),
+                                    // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                    // basename($row->image)
+                                  // ),$message,$server->url);
+                    $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
+                                    storage_path('app/temp-send-image-simi/'.$row->image),
+                                    mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                    basename($row->image)
+                                  ),$message,$server->url,$row->image);
+                  }
+                  if ($phoneNumber->mode == 1) {
+                    // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                    $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                  }
+                }
+
+                $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$send_message);
+                // $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign);
+                $status = $this->getStatus($send_message,$phoneNumber->mode);
+
+                $phoneNumber->counter --;
+
+                if($max_counter > 0)
+                {
+                  $phoneNumber->max_counter --;
+                }
+                if($max_counter_day > 0)
+                {
+                  $phoneNumber->max_counter_day --;
+                }
+                $phoneNumber->save();
+                
+                $broadcastCustomer->status = $status;
+                $broadcastCustomer->save();
+
                 // }
                 if ($user->speed == 0) { //slow
                   sleep(mt_rand(1, 26));
@@ -328,6 +315,14 @@ class SendCampaign implements ShouldQueue
                 $reminder_customer_status = $row->rc_st;
                 $reminder_customers_id = $row->rcs_id;
 								
+                $now = Carbon::now()->timezone($row->timezone);
+                $adding = Carbon::parse($adding_with_hour);
+                $midnightTime = $this->avoidMidnightTime($row->timezone);
+
+                if(($counter <= 0) || ($counter2 <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) || $midnightTime == false || $adding->gt($now)) {
+                  continue;
+                }
+
 								//status queued 
 								$remindercustomer_update = ReminderCustomers::find($reminder_customers_id);
 								if ($remindercustomer_update->status==5) {
@@ -336,91 +331,73 @@ class SendCampaign implements ShouldQueue
 								$remindercustomer_update->status = 5;
 								$remindercustomer_update->save();
 								
-                $now = Carbon::now()->timezone($row->timezone);
-                $adding = Carbon::parse($adding_with_hour);
-                $midnightTime = $this->avoidMidnightTime($row->timezone);
 
-                if(($counter <= 0) || ($counter2 <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) || $midnightTime == false) {
-                  continue;
+                $fistname = $this->modFullname($customer_name);  
+                $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone,$fistname);
+
+                $list = UserList::find($row->list_id);
+                if (!is_null($list)){
+                  if ($row->link_unsubs =="") {
+                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                  }
+                  else {
+                    $message = str_replace( "[UNSUBS]" , $row->link_unsubs, $message);
+                  }
+                }
+                $message = $spintax->process($message);  //spin text
+                if ($row->image==""){
+                  if ($phoneNumber->mode == 0) {
+                    // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
+                    $send_message = $this->send_simi($customer_phone,$message,$server->url);
+                  }
+                  if ($phoneNumber->mode == 1) {
+                    // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+                    $send_message = $this->send_message($customer_phone,$message,$key);
+                  }
+                }
+                else {
+                  if ($phoneNumber->mode == 0) {
+                    // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+                    // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+                                    // storage_path('app/temp-send-image-simi/'.$row->image),
+                                    // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                    // basename($row->image)
+                                  // ),$message,$server->url);
+                        $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
+                                        storage_path('app/temp-send-image-simi/'.$row->image),
+                                        mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                        basename($row->image)
+                                      ),$message,$server->url,$row->image);
+                  }
+                  if ($phoneNumber->mode == 1) {
+                    // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                    $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                  }
                 }
 
-                // if($adding->lte(Carbon::now()) && $counter > 0)
-                if($adding->lte($now) && $counter > 0)
-                {      
-                    $fistname = $this->modFullname($customer_name);  
-                    $message = $this->replaceMessage($customer_message,$customer_name,$customer_mail,$customer_phone,$fistname);
+                $campaign = 'Auto Responder';
+                $id_campaign = 'reminder_customers_id = '.$row->rcs_id;
+                $status = 'Sent';
+                $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
 
-                    $list = UserList::find($row->list_id);
-                    if (!is_null($list)){
-                      if ($row->link_unsubs =="") {
-                        $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
-                      }
-                      else {
-                        $message = str_replace( "[UNSUBS]" , $row->link_unsubs, $message);
-                      }
-                    }
-										$message = $spintax->process($message);  //spin text
-                    if ($row->image==""){
-                      if ($phoneNumber->mode == 0) {
-                        // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
-                        $send_message = $this->send_simi($customer_phone,$message,$server->url);
-                      }
-                      if ($phoneNumber->mode == 1) {
-                        // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
-                        $send_message = $this->send_message($customer_phone,$message,$key);
-                      }
-                    }
-                    else {
-                      if ($phoneNumber->mode == 0) {
-                        // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
-                        // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-                                        // storage_path('app/temp-send-image-simi/'.$row->image),
-                                        // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                        // basename($row->image)
-                                      // ),$message,$server->url);
-                            $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
-                                            storage_path('app/temp-send-image-simi/'.$row->image),
-                                            mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                            basename($row->image)
-                                          ),$message,$server->url,$row->image);
-                      }
-                      if ($phoneNumber->mode == 1) {
-                        // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                        $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                      }
-                    }
+                $status =  $this->getStatus($send_message,$phoneNumber->mode);
+                $remindercustomer_update = ReminderCustomers::find($reminder_customers_id);
+                $remindercustomer_update->status = $status;
+                $remindercustomer_update->save();
 
-                    $campaign = 'Auto Responder';
-                    $id_campaign = 'reminder_customers_id = '.$row->rcs_id;
-                    $status = 'Sent';
-                    $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
+                $phoneNumber->counter--;
 
-                    $status =  $this->getStatus($send_message,$phoneNumber->mode);
-                    $remindercustomer_update = ReminderCustomers::find($reminder_customers_id);
-                    $remindercustomer_update->status = $status;
-                    $remindercustomer_update->save();
-
-                    $phoneNumber->counter--;
-
-                    if($max_counter > 0)
-                    {
-                        $phoneNumber->max_counter--;
-                    }
-                    if($max_counter_day > 0)
-                    {
-                        $phoneNumber->max_counter_day--;
-                    }
-
-                    $phoneNumber->save();
-                }
-                else 
+                if($max_counter > 0)
                 {
-                    $campaign = 'Auto Responder';
-                    $id_campaign = 'reminder_customers_id = '.$row->rcs_id;
-                    $status = 'Not Sent';
-                    $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
-                    continue;
+                    $phoneNumber->max_counter--;
                 }
+                if($max_counter_day > 0)
+                {
+                    $phoneNumber->max_counter_day--;
+                }
+
+                $phoneNumber->save();
+ 
                 if ($user->speed == 0) { //slow
                   sleep(mt_rand(1, 26));
                 }
@@ -490,9 +467,6 @@ class SendCampaign implements ShouldQueue
                     continue;
                 }
 
-								if(($counter <= 0) || ($counter2 <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
-									continue;
-								}
                 // if the day before / substract 
                 if($days < 0){
                   $days = abs($days);
@@ -505,109 +479,103 @@ class SendCampaign implements ShouldQueue
 
                 $time_sending = $date->toDateString().' '.$hour;
                 $now = Carbon::now()->timezone($row->timezone);
-                $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
-                // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
+                $adding = Carbon::parse($time_sending);
 
-                // get id reminder for reminder customer
-                if($deliver_time >= 0 && $counter > 0){
-                  $campaign = 'Event';
-                  $id_campaign = $row->rcs_id;
+								if($counter <= 0 || $counter2 <= 0 || $max_counter <= 0 || $max_counter_day <= 0 || $adding->gt($now) ) {
+									continue;
+								}
+                
+                $campaign = 'Event';
+                $id_campaign = $row->rcs_id;
 
-                  //status queued
-									$remindercustomer_update = ReminderCustomers::find($id_campaign);
-									if ($remindercustomer_update->status==5) {
-										continue;
-									}
-                  $remindercustomer_update->status = 5;
-                  $remindercustomer_update->save();
-
-                  $status = 'Sent';
-                  $reminder_id = $remindercustomer_update->reminder_id;
-                  $reminder_event = Reminder::find($reminder_id);
-
-                  if(is_null($reminder_event))
-                  {
-                      continue;
-                  }
-
-                  $status_reminder = $reminder_event->status;
-                  if($status_reminder == 1)
-                  {
-                      $reminder_event->status = 2;
-                      $reminder_event->save();
-                  }
-                  
-                  $fistname = $this->modFullname($row->name);  
-                  $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone,$fistname);
-
-                  $list = UserList::find($row->list_id);
-                  if (!is_null($list)){
-                    if ($row->link_unsubs =="") {
-                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
-                    }
-                    else {
-                      $message = str_replace( "[UNSUBS]" , $row->link_unsubs, $message);
-                    }
-                  }
-									$message = $spintax->process($message);  //spin text
-									
-
-                  if ($row->image==""){
-                    if ($phoneNumber->mode == 0) {
-                      // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
-                      $send_message = $this->send_simi($customer_phone,$message,$server->url);
-                    }
-                    if ($phoneNumber->mode == 1) {
-                      // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
-                      $send_message = $this->send_message($customer_phone,$message,$key);
-                    }
-                  }
-                  else {
-                      if ($phoneNumber->mode == 0) {
-                        // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
-                        // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-                                        // storage_path('app/temp-send-image-simi/'.$row->image),
-                                        // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                        // basename($row->image)
-                                      // ),$message,$server->url);
-                            $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
-                                            storage_path('app/temp-send-image-simi/'.$row->image),
-                                            mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                            basename($row->image)
-                                          ),$message,$server->url,$row->image);
-                      }
-                      if ($phoneNumber->mode == 1) {
-                        // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                        $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                      }
-                  }
-                    
-                  $status =  $this->getStatus($send_message,$phoneNumber->mode);
-                  $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
-                  $remindercustomer_update = ReminderCustomers::find($id_campaign);
-                  $remindercustomer_update->status = $status;
-                  $remindercustomer_update->save();
-
-                  $phoneNumber->counter--;
-
-                  if($max_counter > 0)
-                  {
-                      $phoneNumber->max_counter--;
-                  }
-                  if($max_counter_day > 0)
-                  {
-                      $phoneNumber->max_counter_day--;
-                  }
-                  $phoneNumber->save();
+                //status queued
+                $remindercustomer_update = ReminderCustomers::find($id_campaign);
+                if ($remindercustomer_update->status==5) {
+                  continue;
                 }
-                else
+                $remindercustomer_update->status = 5;
+                $remindercustomer_update->save();
+
+                $status = 'Sent';
+                $reminder_id = $remindercustomer_update->reminder_id;
+                $reminder_event = Reminder::find($reminder_id);
+
+                if(is_null($reminder_event))
                 {
-                    $campaign = 'Event';
-                    $id_campaign = $row->rcs_id;
-                    $status = 'Sent';
-                    $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
                     continue;
                 }
+
+                $status_reminder = $reminder_event->status;
+                if($status_reminder == 1)
+                {
+                    $reminder_event->status = 2;
+                    $reminder_event->save();
+                }
+                
+                $fistname = $this->modFullname($row->name);  
+                $message = $this->replaceMessage($row->message,$row->name,$row->email,$customer_phone,$fistname);
+
+                $list = UserList::find($row->list_id);
+                if (!is_null($list)){
+                  if ($row->link_unsubs =="") {
+                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
+                  }
+                  else {
+                    $message = str_replace( "[UNSUBS]" , $row->link_unsubs, $message);
+                  }
+                }
+                $message = $spintax->process($message);  //spin text
+                
+
+                if ($row->image==""){
+                  if ($phoneNumber->mode == 0) {
+                    // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
+                    $send_message = $this->send_simi($customer_phone,$message,$server->url);
+                  }
+                  if ($phoneNumber->mode == 1) {
+                    // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+                    $send_message = $this->send_message($customer_phone,$message,$key);
+                  }
+                }
+                else {
+                    if ($phoneNumber->mode == 0) {
+                      // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+                      // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+                                      // storage_path('app/temp-send-image-simi/'.$row->image),
+                                      // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                      // basename($row->image)
+                                    // ),$message,$server->url);
+                          $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
+                                          storage_path('app/temp-send-image-simi/'.$row->image),
+                                          mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                          basename($row->image)
+                                        ),$message,$server->url,$row->image);
+                    }
+                    if ($phoneNumber->mode == 1) {
+                      // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                      $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                    }
+                }
+                  
+                $status =  $this->getStatus($send_message,$phoneNumber->mode);
+                $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
+                $remindercustomer_update = ReminderCustomers::find($id_campaign);
+                $remindercustomer_update->status = $status;
+                $remindercustomer_update->save();
+
+                $phoneNumber->counter--;
+
+                if($max_counter > 0)
+                {
+                    $phoneNumber->max_counter--;
+                }
+                if($max_counter_day > 0)
+                {
+                    $phoneNumber->max_counter_day--;
+                }
+                $phoneNumber->save();
+
+
                 if ($user->speed == 0) { //slow
                   sleep(mt_rand(1, 26));
                 }
@@ -688,10 +656,7 @@ class SendCampaign implements ShouldQueue
                     continue;
                 }
 
-								if(($counter <= 0) || ($counter2 <= 0) || ($max_counter <= 0) || ($max_counter_day <= 0) ) {
-									continue;
-								}
-								
+
                 $user = User::find($row->user_id);
 
                 // if the day before / substract 
@@ -704,88 +669,82 @@ class SendCampaign implements ShouldQueue
 
                 $time_sending = $date->toDateString().' '.$hour;
                 $now = Carbon::now()->timezone($row->timezone);
-                $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
-                // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
+                $adding = Carbon::parse($time_sending);
+
+								if($counter <= 0 || $counter2 <= 0 || $max_counter <= 0 || $max_counter_day <= 0 || $adding->gt($now) ) {
+									continue;
+								}
 
                 // get id reminder for reminder customer
-                if($deliver_time >= 0 && $counter > 0){
-                  $campaign = 'Appointment';
-                  $id_campaign = $row->rcs_id;
+                $campaign = 'Appointment';
+                $id_campaign = $row->rcs_id;
 
-                  //queued status
-									$remindercustomer_update = ReminderCustomers::find($id_campaign);
-									if ($remindercustomer_update->status==5) {
-										continue;
-									}
-                  $remindercustomer_update->status = 5;
-                  $remindercustomer_update->save();
+                //queued status
+                $remindercustomer_update = ReminderCustomers::find($id_campaign);
+                if ($remindercustomer_update->status==5) {
+                  continue;
+                }
+                $remindercustomer_update->status = 5;
+                $remindercustomer_update->save();
 
-                  $status = 'Sent';
+                $status = 'Sent';
 
-                  $fistname = $this->modFullname($row->name);
-                  $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt,$fistname);
+                $fistname = $this->modFullname($row->name);
+                $message = $this->replaceMessageAppointment($customer_message,$row->name,$row->email,$customer_phone,$date_appt,$time_appt,$fistname);
 
-                  $list = UserList::find($row->list_id);
-                  if (!is_null($list)){
-                    if ($row->link_unsubs =="") {
-                      $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
-                    }
-                    else {
-                      $message = str_replace( "[UNSUBS]" , $row->link_unsubs, $message);
-                    }
-                  }
-									$message = $spintax->process($message);  //spin text
-                  $id_reminder = $row->id_reminder;
-     
-                  if ($row->image==""){
-                    if ($phoneNumber->mode == 0) {
-                      // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
-                      $send_message = $this->send_simi($customer_phone,$message,$server->url);
-                    }
-                    if ($phoneNumber->mode == 1) {
-                      // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
-                      $send_message = $this->send_message($customer_phone,$message,$key);
-                    }
+                $list = UserList::find($row->list_id);
+                if (!is_null($list)){
+                  if ($row->link_unsubs =="") {
+                    $message = str_replace( "[UNSUBS]" , env("APP_URL")."link/unsubscribe/".$list->name."/".$row->customer_id, $message);
                   }
                   else {
-                      if ($phoneNumber->mode == 0) {
-                        // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
-                        // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
-                                        // storage_path('app/temp-send-image-simi/'.$row->image),
-                                        // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                        // basename($row->image)
-                                      // ),$message,$server->url);
-                            $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
-                                            storage_path('app/temp-send-image-simi/'.$row->image),
-                                            mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
-                                            basename($row->image)
-                                          ),$message,$server->url,$row->image);
-                      }
-                      if ($phoneNumber->mode == 1) {
-                        // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                        $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
-                      }
+                    $message = str_replace( "[UNSUBS]" , $row->link_unsubs, $message);
                   }
-
-                  $status =  $this->getStatus($send_message,$phoneNumber->mode);
-                  $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
-                  $remindercustomer_update = ReminderCustomers::find($id_campaign);
-                  $remindercustomer_update->status = $status;
-                  $remindercustomer_update->save();
-
-                  $phoneNumber->counter--;
-                  $phoneNumber->max_counter--;
-                  $phoneNumber->max_counter_day--;
-                  $phoneNumber->save();
                 }
-                else
-                {
-                    $campaign = 'Appointment';
-                    $id_campaign = $row->rcs_id;
-                    $status = 'Sent';
-                    $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
-                    continue;
+                $message = $spintax->process($message);  //spin text
+                $id_reminder = $row->id_reminder;
+   
+                if ($row->image==""){
+                  if ($phoneNumber->mode == 0) {
+                    // $send_message = ApiHelper::send_simi($customer_phone,$message,$server->url);
+                    $send_message = $this->send_simi($customer_phone,$message,$server->url);
+                  }
+                  if ($phoneNumber->mode == 1) {
+                    // $send_message = ApiHelper::send_message($customer_phone,$message,$key);
+                    $send_message = $this->send_message($customer_phone,$message,$key);
+                  }
                 }
+                else {
+                    if ($phoneNumber->mode == 0) {
+                      // Storage::disk('local')->put('temp-send-image-simi/'.$row->image, file_get_contents(Storage::disk('s3')->url($row->image)));
+                      // $send_message = ApiHelper::send_image_url_simi($customer_phone,curl_file_create(
+                                      // storage_path('app/temp-send-image-simi/'.$row->image),
+                                      // mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                      // basename($row->image)
+                                    // ),$message,$server->url);
+                          $send_message = $this->send_image_url_simi($customer_phone,curl_file_create(
+                                          storage_path('app/temp-send-image-simi/'.$row->image),
+                                          mime_content_type(storage_path('app/temp-send-image-simi/'.$row->image)),
+                                          basename($row->image)
+                                        ),$message,$server->url,$row->image);
+                    }
+                    if ($phoneNumber->mode == 1) {
+                      // $send_message = ApiHelper::send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                      $send_message = $this->send_image_url($customer_phone,Storage::disk('s3')->url($row->image),$message,$key);
+                    }
+                }
+
+                $status =  $this->getStatus($send_message,$phoneNumber->mode);
+                $this->generateLog($phoneNumber->phone_number,$campaign,$id_campaign,$status);
+                $remindercustomer_update = ReminderCustomers::find($id_campaign);
+                $remindercustomer_update->status = $status;
+                $remindercustomer_update->save();
+
+                $phoneNumber->counter--;
+                $phoneNumber->max_counter--;
+                $phoneNumber->max_counter_day--;
+                $phoneNumber->save();
+
                 if ($user->speed == 0) { //slow
                   sleep(mt_rand(1, 26));
                 }
