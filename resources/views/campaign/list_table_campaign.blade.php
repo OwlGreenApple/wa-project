@@ -26,7 +26,7 @@
            @foreach($campaigns as $row)
             <tr>
               <td class="text-center">{{ $x }}</td>
-              <td class="text-center">H+{{ abs($row->days) }}</td>
+              <td class="text-center"><a class="open_message" data-message="{{ str_replace(array('[NAME]','[PHONE]','[EMAIL]'),array($row->name,$row->telegram_number,$row->email),$row->message) }}" >H+{{ abs($row->days) }}</a></td>
               <td class="text-center">{{ $row->name }}</td>
               <td class="text-center">{{ $row->telegram_number }}</td>
               <td class="text-center"><a id="{{ $row->rcid }}" class="icon-cancel"></a></td> 
