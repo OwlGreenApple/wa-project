@@ -31,6 +31,7 @@ Route::get('testmail','ApiController@testmail');
 Route::get('testpay','ApiController@testpay');
 Route::get('testdirectsendwa','ApiController@testDirectSendWA')->name('testdirectsendwa');
 Route::get('testdirectsendmail','ApiController@testDirectSendMail')->name('testdirectsendmail');
+Route::post('send-message-queue-system','ApiController@send_message_queue_system');
 
 /* API accessed from automation*/
 Route::post('send-simi','ApiController@send_simi');

@@ -30,5 +30,6 @@ class VerifyCsrfToken extends Middleware
         'send-image-url-simi',
         'send-image-url',
         'send-message-wassenger-automation',
+        'send-message-queue-system',
     ];
 }

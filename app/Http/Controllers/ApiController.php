@@ -15,6 +15,7 @@ use Mail;
 use App\Http\Controllers\CustomerController;
 use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Storage;
+use App\Message;
 
 class ApiController extends Controller
 {
@@ -49,6 +50,12 @@ class ApiController extends Controller
        //for test
     }
 
+    public function send_message_queue_system(Request $request)
+    {
+      $message_send = Message::create_message($request->phone_number,$request->message,env('REMINDER_PHONE_KEY'));
+      return "success";
+    }
+    
     public function listActivCampaign($email,$first_name,$last_name,$phone,$listid)
     {
       $url = $sourceurl =  'https://michaelsugiharto.api-us1.com';
