@@ -11,6 +11,13 @@
            <div class="form-group">
                <label for="name">Message:</label>
                <input type="text" class="form-control" name="message"/>
+           </div> 
+           <div class="form-group">
+               <label for="name">Select Phone:</label>
+               <select name="port" class="form-control">
+                 <option value="3000">6287775000283</option>
+                 <option value="3001">6285967284581</option>
+               </select>
            </div>
            <button class="btn btn-primary">Send</button>
         </form>
@@ -49,14 +56,13 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
             $.ajax({
                 type : "POST",
                 url: "{{ url('sendmessage') }}",
                 data: data,
                 timeout: 600000,
                 success: function(result){
-                   alert(result);
+                   alert(result.sent);
                 },
                 error : function(xhr){
                   console.log(xhr.responseText);
@@ -70,9 +76,11 @@
 
         function getStatus(){
           $("body").on("click","#get-status",function(){
+            var port = $("select[name='port'] > option:selected").val();
             $.ajax({
                 type : "GET",
                 url: "{{ url('statusmessage') }}",
+                data : {port : port},
                 timeout: 600000,
                 dataType : 'json',
                 success: function(result){
@@ -90,9 +98,11 @@
         function startSpiderman()
         {
           $("body").on("click","#start",function(){
+            var port = $("select[name='port'] > option:selected").val();
             $.ajax({
                 type : "GET",
                 url: "{{ url('start') }}",
+                data : {port : port},
                 timeout: 600000,
                 dataType : 'json',
                 success: function(result){
@@ -110,9 +120,11 @@
         function scanSpiderman()
         {
           $("body").on("click","#scan",function(){
+            var port = $("select[name='port'] > option:selected").val();
             $.ajax({
                 type : "GET",
                 url: "{{ url('scan') }}",
+                data : {port : port},
                 dataType : 'html',
                 timeout: 600000,
                 success: function(result){
