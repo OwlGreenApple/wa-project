@@ -875,7 +875,7 @@ class ListController extends Controller
     {
         $userid = Auth::id();
         $listid = $request->list_id;
-        $customer = Customer::where([['list_id',$listid],['user_id',$userid],['status','=',1]])->orderBy('updated_at','asc')->get();
+        $customer = Customer::where([['list_id',$listid],['user_id',$userid],['status','=',1]])->get();
         return view('list.list-table-customer',['customer'=>$customer]);
     }
 
