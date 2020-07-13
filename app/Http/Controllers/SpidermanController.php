@@ -7,11 +7,6 @@ use Illuminate\Http\Request;
 class SpidermanController extends Controller
 {
 
-  static function url()
-  {
-    return 'http://103.65.237.93:3001';
-  }
-
   public static function index()
   {
       return view('spiderman.spiderman');
@@ -21,7 +16,7 @@ class SpidermanController extends Controller
   {
     $phoneNumber = $request->phone;
     $message = $request->message;
-    $url = self::url();
+    $url = 'http://103.65.237.93:'.$request->port;
      
     $data = array(
         'to' => $phoneNumber."@c.us",
@@ -55,9 +50,9 @@ class SpidermanController extends Controller
     return $result;
   }
 
-  public static function scan()
+  public static function scan(Request $request)
   {
-    $url = self::url();
+    $url = 'http://103.65.237.93:'.$request->port;
     // Prepare new cURL resource
     $ch = curl_init($url.'/api/whatsapp/instance/scan');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -81,10 +76,10 @@ class SpidermanController extends Controller
     return $result;
   }
   
-  public static function start()
+  public static function start(Request $request)
   {
     // Prepare new cURL resource
-    $url = self::url();
+    $url = 'http://103.65.237.93:'.$request->port;
     $ch = curl_init($url.'/api/whatsapp/instance/start');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLINFO_HEADER_OUT, true);
@@ -107,10 +102,10 @@ class SpidermanController extends Controller
 
   }
   
-  public static function status()
+  public static function status(Request $request)
   {
     // Prepare new cURL resource
-    $url = self::url();
+    $url = 'http://103.65.237.93:'.$request->port;
     $ch = curl_init($url.'/api/whatsapp/instance/status');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLINFO_HEADER_OUT, true);

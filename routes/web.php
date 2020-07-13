@@ -105,7 +105,7 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
   Route::post('save-country','AdminController@saveCountry')->middleware('check_country');
 
   /* Spiderman */
-  Route::get('spiderman','SpidermanController@index');
+  Route::get('connect-system','SpidermanController@index');
   Route::get('start','SpidermanController@start');
   Route::get('scan','SpidermanController@scan');
   Route::get('statusmessage','SpidermanController@status');
