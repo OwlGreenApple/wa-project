@@ -23,9 +23,11 @@ Route::get('preg', 'ApiController@test');
 Route::get('send','SenderController@getDeviceId');
 Route::get('justcarbon','EventController@JUSTCARBON');
 
+/* API accessed from WP */
+Route::post('send-message-queue-system-wp-activtemplate','ApiWPController@send_message_queue_system_WP_activtemplate');
+
 /* API */
 Route::post('entry-google-form','ApiController@entry_google_form');
-Route::get('testapi','ApiController@testapi');
 Route::get('testcoupon','ApiController@testcoupon');
 Route::get('testmail','ApiController@testmail');
 Route::get('testpay','ApiController@testpay');
