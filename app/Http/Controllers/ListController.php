@@ -1171,6 +1171,15 @@ class ListController extends Controller
         $id_list = $request->list_id_import;
         $overwrite = $request->overwrite;
 
+        if($request->file('csv_file') == null)
+        {
+            $err = array(
+                'success'=>0,
+                'message'=>'File cannot be empty'
+            );
+            return response()->json($err);
+        }
+
         $file = $request->file('csv_file')->getRealPath();
         $binder = new ExcelValueBinder;
         $data = Excel::setValueBinder($binder)->load($file)->get();

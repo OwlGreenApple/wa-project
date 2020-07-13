@@ -52,13 +52,13 @@
             { "aTargets": [ 3 ], "bSortable": false },
             { "aTargets": [ 4 ], "bSortable": true }
         ],
-        "bStateSave": true,
+       /* "bStateSave": true,
         "fnStateSave": function (oSettings, oData) {
             localStorage.setItem('offersDataTables', JSON.stringify(oData));
         },
         "fnStateLoad": function (oSettings) {
             return JSON.parse(localStorage.getItem('offersDataTables'));
-        }
+        }*/
       });
   });
 </script>
