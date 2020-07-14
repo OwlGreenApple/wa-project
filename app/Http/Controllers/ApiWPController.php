@@ -21,11 +21,26 @@ class ApiWPController extends Controller
 {
     public function send_message_queue_system_WP_activtemplate(Request $request)
     {
-      // if ($request->key == "wpcallbackforwa" ) {
-        $message_send = Message::create_message($request->phone,$request->content,env('REMINDER_PHONE_KEY'));
+      if ($request->key == "wpcallbackforwa" ) {
+				$str = $request->phone;
+        $phone_number = $request->phone;
+        
+				if(preg_match('/^62[0-9]*$/',$str)){
+          $phone_number = '+'.$str;
+        }
+
+        if(preg_match('/^0[0-9]*$/',$str)){
+          $phone_number = preg_replace("/^0/", "+62", $str);
+        }
+
+        if(preg_match('/^[^62][0-9]*$/',$str)){
+          $phone_number = preg_replace("/^[0-9]/", "+62", $str);
+        }
+        
+        $message_send = Message::create_message($phone_number,$request->content,env('REMINDER_PHONE_KEY'));
         
         return "success";
-      // }
+      }
     }
   
 /* end class */    
