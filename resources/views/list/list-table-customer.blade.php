@@ -65,7 +65,8 @@
             { "aTargets": [ 2 ], "bSortable": false },
             { "aTargets": [ 3 ], "bSortable": false },
             { "mRender": function ( data, type, row ) {
-                    var date = new Date(data).toLocaleString();
+                    var date = new Date(data);
+                    // var date = new Date(data).toLocaleString();
                    /*
                      var sdate = date.split('/');
                     date = date.replace(/T|Z|000|\./gi,' ');*/
@@ -76,13 +77,13 @@
                 "bSortable": true 
             }
         ],
-        "bStateSave": true,
+       /* "bStateSave": true,
         "fnStateSave": function (oSettings, oData) {
             localStorage.setItem('offersDataTables', JSON.stringify(oData));
         },
         "fnStateLoad": function (oSettings) {
             return JSON.parse(localStorage.getItem('offersDataTables'));
-        }
+        }*/
       });
   });
 </script>
