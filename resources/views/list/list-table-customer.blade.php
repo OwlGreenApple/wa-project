@@ -60,22 +60,17 @@
         lengthMenu : [ 10, 25, 50, 75, 100, 250, 500 ],
         aaSorting: [[4, 'desc']],
         aoColumnDefs: [
-            { "aTargets": [ 0 ], "bSortable": true },
+            { "aTargets": [ 0 ], "bSortable": false },
             { "aTargets": [ 1 ], "bSortable": false },
             { "aTargets": [ 2 ], "bSortable": false },
             { "aTargets": [ 3 ], "bSortable": false },
-            { "mRender": function ( data, type, row ) {
+            { "aTargets": [ 4 ], "bSortable": true },
+            /*{ "mRender": function ( data, type, row ) {
                     var date = new Date(data);
-                    // var date = new Date(data).toLocaleString();
-                   /*
-                     var sdate = date.split('/');
-                    date = date.replace(/T|Z|000|\./gi,' ');*/
-                   /* 
-                    console.log(sdate[1]);*/
                     return date;
                 },"aTargets": [ 4 ],
                 "bSortable": true 
-            }
+            }*/
         ],
        /* "bStateSave": true,
         "fnStateSave": function (oSettings, oData) {
