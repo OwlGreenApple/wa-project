@@ -66,20 +66,21 @@
             { "aTargets": [ 3 ], "bSortable": false },
             { "mRender": function ( data, type, row ) {
                     
-                    var date = new Date(data).toISOString().slice(0, -1);
-                    date = date.replace(/T|Z|000|\./gi,' ');
+                    var date = new Date(data);
+                    // var date = new Date(data).toISOString().slice(0, -1);
+                    // date = date.replace(/T|Z|000|\./gi,' ');
                     return date;
                 },"aTargets": [ 4 ],
                 "bSortable": true 
             }
         ],
-       /* "bStateSave": true,
+        "bStateSave": true,
         "fnStateSave": function (oSettings, oData) {
             localStorage.setItem('offersDataTables', JSON.stringify(oData));
         },
         "fnStateLoad": function (oSettings) {
             return JSON.parse(localStorage.getItem('offersDataTables'));
-        }*/
+        }
       });
   });
 </script>
