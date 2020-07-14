@@ -58,7 +58,7 @@
       $("#data_customer").DataTable({
         // "columnDefs" : [{targets:4,className: "alert alert-success"}],
         lengthMenu : [ 10, 25, 50, 75, 100, 250, 500 ],
-        aaSorting: [[4, 'desc']],
+      
         aoColumnDefs: [
             { "aTargets": [ 0 ], "bSortable": false },
             { "aTargets": [ 1 ], "bSortable": false },
