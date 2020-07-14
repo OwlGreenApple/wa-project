@@ -12,6 +12,7 @@ use App\Imports\UsersImport;
 use App\Message;
 use App\User;
 use App\Order;
+use App\WoowaOrder;
 use App\Server;
 use App\PhoneNumber;
 use App\Config;
@@ -705,11 +706,34 @@ class SettingController extends Controller
           $order = Order::
                       where('status',2) // paid
                       ->where('user_id',$user->id)
+                      ->where('mode',0)
                       ->orderBy('created_at','desc')
                       ->first();
           if (!is_null($order)) {
             $order->mode = 1;
             $order->save();
+
+            //create woowa orders
+            $woowaOrder = new WoowaOrder;
+            $woowaOrder->no_order = $order->no_order;
+            $woowaOrder->label_month = "1 of ".$order->month;
+            $woowaOrder->order_id = $order->id;
+            $woowaOrder->user_id = $order->user_id;
+            $woowaOrder->coupon_id = $order->coupon_id;
+            $woowaOrder->package = $order->package;
+            $woowaOrder->package_title = $order->package_title;
+            $woowaOrder->total = $order->total;
+            $woowaOrder->discount = $order->discount;
+            $woowaOrder->grand_total = $order->grand_total;
+            $woowaOrder->coupon_code = $order->coupon_code;
+            $woowaOrder->coupon_value = $order->coupon_value;
+            $woowaOrder->status = $order->status;
+            $woowaOrder->buktibayar = $order->buktibayar;
+            $woowaOrder->keterangan = $order->keterangan;
+            $woowaOrder->status_woowa = 0;
+            $woowaOrder->mode = $order->mode;
+            $woowaOrder->month = 1;
+            $woowaOrder->save();
           }
         }
 

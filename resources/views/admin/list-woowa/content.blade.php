@@ -25,7 +25,10 @@ $i=1;
     </td>
     -->
     <td data-label="month" align="center">
-      <?php echo strval(InvoiceOrder::where('order_id',$order->id)->count()+1)." of ".$order->month; ?>
+      <?php 
+        // echo strval(InvoiceOrder::where('order_id',$order->id)->count()+1)." of ".$order->month; 
+        echo $order->label_month; 
+      ?>
     </td>
     <!--
     <td data-label="tagihan" align="right">

@@ -11,6 +11,7 @@ use App\Coupon;
 use App\Invoice;
 use App\InvoiceOrder;
 use App\Order;
+use App\WoowaOrder;
 use App\UserLog;
 use App\Notification;
 use App\Ads;
@@ -25,12 +26,12 @@ class WooWAController extends Controller
 {   
   public function load_woowa(Request $request){
     //halaman list order admin woowa
-    $orders = Order::
+    $orders = WoowaOrder::
 								// join(env('DB_DATABASE').'.users','orders.user_id','users.id')->
-								where('orders.mode',1) // mode woowa
+								where('woowa_orders.mode',1) // mode woowa
 								->where('status',2) // paid
 								->where('status_woowa',0)
-                ->select('orders.*')
+                ->select('woowa_orders.*')
                 ->orderBy('created_at','desc')
                 ->orderBy('status_woowa','asc')
                 ->get();
@@ -63,13 +64,13 @@ class WooWAController extends Controller
 		$invoice->save();
 
     //halaman list order admin woowa
-    $orders = Order::
+    $orders = WoowaOrder::
 								// join(env('DB_DATABASE').'.users','orders.user_id','users.id')->
 								where('mode',1) // mode woowa
 								->where('status',2) // paid
 								->where('status_woowa',0)
                 ->where('no_order',"not like","%testing%")
-                ->select('orders.*')
+                ->select('woowa_orders.*')
                 ->orderBy('created_at','desc')
                 ->orderBy('status_woowa','asc')
                 ->get();
@@ -155,9 +156,9 @@ class WooWAController extends Controller
   public function load_invoice_order(Request $request){
     //halaman list order admin
     $orders = InvoiceOrder::
-								join("orders","orders.id","=","invoice_orders.order_id")
+								join("woowa_orders","woowa_orders.id","=","invoice_orders.order_id")
 								->where("invoice_id",$request->id)
-								->select("orders.*")
+								->select("woowa_orders.*")
                 ->orderBy('created_at','desc')
                 ->get();
     $arr['view'] = (string) view('admin.list-woowa-invoice.content-detail')
