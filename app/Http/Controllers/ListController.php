@@ -875,7 +875,7 @@ class ListController extends Controller
     {
         $userid = Auth::id();
         $listid = $request->list_id;
-        $customer = Customer::where([['list_id',$listid],['user_id',$userid],['status','=',1]])->orderBy('updated_at','asc')->get();
+        $customer = Customer::where([['list_id',$listid],['user_id',$userid],['status','=',1]])->get();
         return view('list.list-table-customer',['customer'=>$customer]);
     }
 
@@ -1170,6 +1170,15 @@ class ListController extends Controller
         $userid = Auth::id();
         $id_list = $request->list_id_import;
         $overwrite = $request->overwrite;
+
+        if($request->file('csv_file') == null)
+        {
+            $err = array(
+                'success'=>0,
+                'message'=>'File cannot be empty'
+            );
+            return response()->json($err);
+        }
 
         $file = $request->file('csv_file')->getRealPath();
         $binder = new ExcelValueBinder;

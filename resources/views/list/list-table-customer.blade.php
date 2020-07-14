@@ -7,7 +7,7 @@
         <th>Email</th>
         <th>Phone Number</th>
         <th>Additional</th>
-        <th>Date Added</th>
+        <th>Date Added (m/d/Y)</th>
         <th>Edit</th>
         <th>Delete</th>
       </tr>
@@ -41,9 +41,41 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
+      var month = new Array();
+      month[1] = "Jan";
+      month[2] = "Feb";
+      month[3] = "Mar";
+      month[4] = "Apr";
+      month[5] = "May";
+      month[6] = "Jun";
+      month[7] = "Jul";
+      month[8] = "Aug";
+      month[9] = "Sep";
+      month[10] = "Oct";
+      month[11] = "Nov";
+      month[12] = "Dec";
+
       $("#data_customer").DataTable({
         // "columnDefs" : [{targets:4,className: "alert alert-success"}],
-        "lengthMenu": [ 10, 25, 50, 75, 100, 250, 500 ],
+        lengthMenu : [ 10, 25, 50, 75, 100, 250, 500 ],
+        aaSorting: [[4, 'desc']],
+        aoColumnDefs: [
+            { "aTargets": [ 0 ], "bSortable": true },
+            { "aTargets": [ 1 ], "bSortable": false },
+            { "aTargets": [ 2 ], "bSortable": false },
+            { "aTargets": [ 3 ], "bSortable": false },
+            { "mRender": function ( data, type, row ) {
+                    var date = new Date(data).toLocaleString();
+                   /*
+                     var sdate = date.split('/');
+                    date = date.replace(/T|Z|000|\./gi,' ');*/
+                   /* 
+                    console.log(sdate[1]);*/
+                    return date;
+                },"aTargets": [ 4 ],
+                "bSortable": true 
+            }
+        ],
         "bStateSave": true,
         "fnStateSave": function (oSettings, oData) {
             localStorage.setItem('offersDataTables', JSON.stringify(oData));

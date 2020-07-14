@@ -172,11 +172,11 @@ use Illuminate\Support\Facades\Storage;
     {
       if($status == 0)
       {
-        return 'Pending';
+        return '<span class="text-brown">Pending</span>';
       } 
       elseif($status == 1)
       {
-        return 'Success';
+        return '<span class="text-primary">Success</span>';
       }
       elseif($status == 2)
       {
