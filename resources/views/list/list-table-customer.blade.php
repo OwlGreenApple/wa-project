@@ -7,7 +7,7 @@
         <th>Email</th>
         <th>Phone Number</th>
         <th>Additional</th>
-        <th>Date Added (m/d/Y)</th>
+        <th>Date Added</th>
         <th>Edit</th>
         <th>Delete</th>
       </tr>
@@ -58,19 +58,20 @@
       $("#data_customer").DataTable({
         // "columnDefs" : [{targets:4,className: "alert alert-success"}],
         lengthMenu : [ 10, 25, 50, 75, 100, 250, 500 ],
-      
+        aaSorting: [[4, 'desc']],
         aoColumnDefs: [
             { "aTargets": [ 0 ], "bSortable": false },
             { "aTargets": [ 1 ], "bSortable": false },
             { "aTargets": [ 2 ], "bSortable": false },
             { "aTargets": [ 3 ], "bSortable": false },
-            { "aTargets": [ 4 ], "bSortable": true },
-            /*{ "mRender": function ( data, type, row ) {
-                    var date = new Date(data);
+            { "mRender": function ( data, type, row ) {
+                    
+                    var date = new Date(data).toISOString().slice(0, -1);
+                    date = date.replace(/T|Z|000|\./gi,' ');
                     return date;
                 },"aTargets": [ 4 ],
                 "bSortable": true 
-            }*/
+            }
         ],
        /* "bStateSave": true,
         "fnStateSave": function (oSettings, oData) {
