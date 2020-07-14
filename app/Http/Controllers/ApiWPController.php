@@ -21,10 +21,11 @@ class ApiWPController extends Controller
 {
     public function send_message_queue_system_WP_activtemplate(Request $request)
     {
-      if ($request->key == "wpcallbackforwa" ) {
+      // if ($request->key == "wpcallbackforwa" ) {
         $message_send = Message::create_message($request->phone,$request->content,env('REMINDER_PHONE_KEY'));
+        
         return "success";
-      }
+      // }
     }
   
 /* end class */    
