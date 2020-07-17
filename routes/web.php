@@ -111,7 +111,6 @@ Route::group(['middleware'=>['auth','web','is_admin']],function(){
   Route::get('statusmessage','SpidermanController@status');
   Route::post('sendmessage','SpidermanController@sendMessage');
   /* -- */
-  
 
   //List User 
   Route::get('/list-user','Admin\UserController@index');
