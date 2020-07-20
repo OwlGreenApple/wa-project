@@ -110,7 +110,7 @@ class SettingController extends Controller
 			
       //0-> simi 
       //1->woowa
-			session(['mode'=>1]); //difixkan
+			session(['mode'=>0]); //difixkan
 
       $phone_number = PhoneNumber::where('user_id',$user->id)->first();
       $server = Config::where('config_name','status_server')->first();
