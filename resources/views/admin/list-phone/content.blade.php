@@ -19,7 +19,19 @@ use App\User;
       {{$phone_number->filename}}
     </td>
     <td>
-      <a href="{{url('take-screenshoot').'/'.$phone_number->phone_number}}" target="_blank">open</a>
+      <?php if ($phone_number->mode==1){ ?>
+        <a href="{{url('take-screenshoot').'/'.$phone_number->phone_number}}" target="_blank">Woowa</a>
+      <?php } else if ($phone_number->mode==0){ ?>
+        Spiderman. Status : 
+      <?php } 
+      if ($phone_number->status==1){
+        echo "Disconnected";
+      }
+      if ($phone_number->status==2){
+        echo "Connected";
+      }
+      ?>
+      
     </td>
   </tr>
 @endforeach

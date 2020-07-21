@@ -65,7 +65,7 @@
                 Created
               </th>
               <th>
-                Key WooWA
+                Key
               </th>
               <th>
                 Link Screenshoot
