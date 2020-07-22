@@ -25,6 +25,7 @@ Route::get('justcarbon','EventController@JUSTCARBON');
 
 /* API accessed from WP */
 Route::post('send-message-queue-system-wp-activtemplate','ApiWPController@send_message_queue_system_WP_activtemplate');
+Route::post('send-message-queue-system-wp-celebfans','ApiWPController@send_message_queue_system_WP_celebfans');
 
 /* API */
 Route::post('entry-google-form','ApiController@entry_google_form');
