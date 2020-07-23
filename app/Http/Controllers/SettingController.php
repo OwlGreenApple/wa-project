@@ -88,29 +88,39 @@ class SettingController extends Controller
 						]);
           }
           else {
-            $server = Server::where("status",0)->where("phone_id",0)->first();
-            if (is_null($server)){
-              // klo didatabase kita ga ready maka diarahin ke punya woowa
-              session(['mode'=>1]);
-            }
-            else {
-              $server->phone_id = $user->id;// dimasukkin user id dulu sementara 
-              $server->save();
-              session([
-                'mode'=>0,
-                'server_id'=>$server->id,
-              ]);
-            }
+            $this->check_table_server($user->id);
           }
 				}
 				else {
 					session(['mode'=>0]);
 				}
 			}
-			
+      else if ($is_registered == 1) {
+        if ($phoneNumber->mode == 0) {
+          $server = Server::where("phone_id",$phoneNumber->id)->first();
+          if (is_null($server)){
+            // if ini cuman sebagai pengaman, 99% ga pernah dieksekusi
+            $this->check_table_server($user->id);
+          }
+          else {
+              session([
+                'mode'=>0,
+                'server_id'=>$server->id,
+              ]);
+          }
+        }
+        else if ($phoneNumber->mode == 1) {
+          session(['mode'=>1]);
+        }
+      }
+      
+      // di fixkan
       //0-> simi 
       //1->woowa
-			session(['mode'=>0]); //difixkan
+			// session(['mode'=>1]); //difixkan woowa
+      $this->check_table_server($user->id); //difixkan simi, cek dulu ada ngga server available, klo ga ada dikasi ke woowa
+      
+      
 
       $phone_number = PhoneNumber::where('user_id',$user->id)->first();
       $server = Config::where('config_name','status_server')->first();
@@ -816,6 +826,27 @@ class SettingController extends Controller
       return $arr;
     }
 
+    /*
+    * check table server & set session
+    * marking record server temporarily with user id, so another user wouldnt use it.
+    */
+    public function check_table_server($user_id)
+    {
+      $server = Server::where("status",0)->where("phone_id",0)->first();
+      if (is_null($server)){
+        // klo didatabase kita ga ready maka diarahin ke punya woowa
+        session(['mode'=>1]);
+      }
+      else {
+        $server->phone_id = $user_id;// dimasukkin user id dulu sementara 
+        $server->save();
+        session([
+          'mode'=>0,
+          'server_id'=>$server->id,
+        ]);
+      }
+    }
+    
     public function delete_api($wa_number)
     {
         ApiHelper::unreg($wa_number);
