@@ -548,7 +548,6 @@ class ApiHelper
 		$payload = json_encode($data);
 		 
 		// Prepare new cURL resource
-		// $ch = curl_init('http://103.65.237.93:3000/api/whatsapp/chats/sendMessage');
 		$ch = curl_init($url.'/api/whatsapp/chats/sendMessage');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true);

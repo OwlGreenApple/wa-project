@@ -832,18 +832,20 @@ class SettingController extends Controller
     */
     public function check_table_server($user_id)
     {
-      $server = Server::where("status",0)->where("phone_id",0)->first();
-      if (is_null($server)){
-        // klo didatabase kita ga ready maka diarahin ke punya woowa
-        session(['mode'=>1]);
-      }
-      else {
-        $server->phone_id = $user_id;// dimasukkin user id dulu sementara 
-        $server->save();
-        session([
-          'mode'=>0,
-          'server_id'=>$server->id,
-        ]);
+      if (is_null(session("mode"))){
+        $server = Server::where("status",0)->where("phone_id",0)->first();
+        if (is_null($server)){
+          // klo didatabase kita ga ready maka diarahin ke punya woowa
+          session(['mode'=>1]);
+        }
+        else {
+          $server->phone_id = $user_id;// dimasukkin user id dulu sementara 
+          $server->save();
+          session([
+            'mode'=>0,
+            'server_id'=>$server->id,
+          ]);
+        }
       }
     }
     
