@@ -643,9 +643,11 @@ class SettingController extends Controller
 					}
 					
 					$status_connect = json_decode(ApiHelper::status_simi($server->url));
-					if ($status_connect->connected) {
-						$flag_connect = true;
-					}
+          if (isset($status_connect->connected)) {
+            if ($status_connect->connected) {
+              $flag_connect = true;
+            }
+          }
 				}
 				if (session('mode')==1) {
 					$qr_status = ApiHelper::qr_status($no_wa);
