@@ -710,6 +710,7 @@ class SettingController extends Controller
         $phoneNumber->mode = session('mode');
         $phoneNumber->save();
         if (session('mode')==0) {
+          $server = Server::find(session('server_id'));
           $server->phone_id = $phoneNumber->id;
           $server->status = 1;
           $server->save();
