@@ -69,7 +69,7 @@ class SettingController extends Controller
           $max_counter = number_format($phoneNumber->max_counter);
       }
 
-			if ($is_registered == 0) {
+			/*if ($is_registered == 0) {
 				$countModeSimi = PhoneNumber::
 												where("mode",0)
 												->count();
@@ -112,7 +112,7 @@ class SettingController extends Controller
         else if ($phoneNumber->mode == 1) {
           session(['mode'=>1]);
         }
-      }
+      }*/
       
       // di fixkan
       //0-> simi 
