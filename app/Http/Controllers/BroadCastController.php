@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
 use Illuminate\Contracts\Encryption\DecryptException;
+use App\QueueBroadcastCustomer;
 use App\UserList;
 use App\BroadCast;
 use App\BroadCastCustomers;
@@ -154,13 +155,18 @@ class BroadCastController extends Controller
 
         if($customers->count() > 0)
         {
-            foreach($customers as $col){
+            $queueBroadcastCustomer = new QueueBroadcastCustomer; 
+            $queueBroadcastCustomer->broadcast_id = $broadcast_id;
+            $queueBroadcastCustomer->list_id = $list_id;
+            $queueBroadcastCustomer->user_id = $user->id;
+            $queueBroadcastCustomer->save();
+            /*foreach($customers as $col){
 							CreateBroadcast::dispatch($col->id,$broadcast_id);
                 // $broadcastcustomer = new BroadCastCustomers;
                 // $broadcastcustomer->broadcast_id = $broadcast_id;
                 // $broadcastcustomer->customer_id = $col->id;
                 // $broadcastcustomer->save();
-            }
+            }*/
         } else if($broadcast_schedule == 0) {
             return 'Broadcast created, but will not send anything because you do not have subscriber';
         } else {

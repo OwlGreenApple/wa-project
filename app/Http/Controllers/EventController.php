@@ -13,6 +13,7 @@ use App\Exports\UsersExport;
 use App\Imports\UsersImport;
 use App\Rules\CheckDateEvent;
 use App\Rules\CheckExistIdOnDB;
+use App\QueueReminderCustomer;
 use App\UserList;
 use App\Reminder;
 use App\ReminderCustomers;
@@ -248,14 +249,20 @@ class EventController extends Controller
         
         if($request->reminder_id=="new")
         {
-            foreach($event as $col){
+          $queueReminderCustomer = new QueueReminderCustomer;
+          $queueReminderCustomer->reminder_id = $reminder->id;
+          $queueReminderCustomer->list_id = $request->list_id;
+          $queueReminderCustomer->user_id = $user->id;
+          $queueReminderCustomer->is_event = 1;
+          $queueReminderCustomer->save();
+            /*foreach($event as $col){
               $remindercustomer = new ReminderCustomers;
               $remindercustomer->user_id = $user->id;
               $remindercustomer->list_id = $col->list_id;
               $remindercustomer->reminder_id = $col->id;
               $remindercustomer->customer_id = $col->csid;
               $remindercustomer->save();
-            }  
+            } */ 
         }
         else
         {
