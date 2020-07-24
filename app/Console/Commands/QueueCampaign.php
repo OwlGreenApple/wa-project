@@ -56,8 +56,11 @@ class QueueCampaign extends Command
               ['status','=',1],
           ])->get();
           foreach($customers as $customer){
-            CreateBroadcast::dispatch($customer->id,$queueBroadcastCustomer->broadcast_id);
+           CreateBroadcast::dispatch($customer->id,$queueBroadcastCustomer->broadcast_id);
           }
+          
+          $queueBroadcastCustomer->status = 1;
+          $queueBroadcastCustomer->save();
         }
 
         //event
@@ -77,6 +80,9 @@ class QueueCampaign extends Command
           foreach($event as $col){
             CreateEvent::dispatch($queueReminderCustomer->user_id,$queueReminderCustomer->list_id,$col->id,$col->csid);
           }
+          
+          $queueReminderCustomer->status = 1;
+          $queueReminderCustomer->save();
         }
         
         //auto responder
