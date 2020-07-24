@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         Commands\notifOrder::class,
         Commands\CheckOrderWoowa::class,
         Commands\ResetServersimi::class,
+        Commands\QueueCampaign::class,
     ];
 
     /**
@@ -44,6 +45,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('reset:serversimi')->everyFifteenMinutes();
       }
       if (env("APP_ENV")=="automation") {
+        $schedule->command('queue:campaign')->everyMinute();
         $schedule->command('queue:message')->everyMinute();
         $schedule->command('send:message')->everyMinute();
       }

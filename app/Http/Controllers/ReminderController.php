@@ -120,21 +120,21 @@ class ReminderController extends Controller
                     ['status','=',1],
                 ])->select('id')->get();
 
-                $queueReminderCustomer = new QueueReminderCustomer;
+                /*$queueReminderCustomer = new QueueReminderCustomer;
                 $queueReminderCustomer->reminder_id = $reminder->id;
                 $queueReminderCustomer->list_id = $request->list_id;
                 $queueReminderCustomer->user_id = $user->id;
                 $queueReminderCustomer->is_event = 0;
-                $queueReminderCustomer->save();
+                $queueReminderCustomer->save();*/
 
-                /*foreach($reminder_get_id as $id_reminder){
+                foreach($reminder_get_id as $id_reminder){
                     $remindercustomer = new ReminderCustomers;
                     $remindercustomer->user_id = $user->id;
                     $remindercustomer->list_id = $col->list_id;
                     $remindercustomer->reminder_id = $id_reminder->id;
                     $remindercustomer->customer_id = $col->id;
                     $remindercustomer->save();
-                }*/
+                }
 
             } // end loop
         }
