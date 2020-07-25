@@ -35,5 +35,7 @@ class VerifyCsrfToken extends Middleware
         //wp callback
         'send-message-queue-system-wp-activtemplate',
         'send-message-queue-system-wp-celebfans',
+        'send-message-queue-system-wp-activflash',
+        'send-message-queue-system-wp-digimaru',
     ];
 }

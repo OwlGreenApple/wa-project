@@ -15,6 +15,7 @@ use App\BroadCastCustomers;
 use App\Sender;
 use App\Additional;
 use App\PhoneNumber;
+use App\User;
 use App\Server;
 use App\Countries;
 use App\Message;
@@ -910,5 +911,14 @@ class CustomerController extends Controller
         }
     }
 
+    public function testCode()
+    {
+      $user = User::find(1);
+      // if( Carbon::parse(null)->lt(Carbon::now()) ){
+      if( Carbon::parse($user->created_at)->lt(Carbon::now()) ){
+        echo "a";
+      }
+      echo "b";
+    }
 /* end of class */
 }

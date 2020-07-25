@@ -26,6 +26,8 @@ Route::get('justcarbon','EventController@JUSTCARBON');
 /* API accessed from WP */
 Route::post('send-message-queue-system-wp-activtemplate','ApiWPController@send_message_queue_system_WP_activtemplate');
 Route::post('send-message-queue-system-wp-celebfans','ApiWPController@send_message_queue_system_WP_celebfans');
+Route::post('send-message-queue-system-wp-activflash','ApiWPController@send_message_queue_system_WP_activflash');
+Route::post('send-message-queue-system-wp-digimaru','ApiWPController@send_message_queue_system_WP_digimaru');
 
 /* API */
 Route::post('entry-google-form','ApiController@entry_google_form');
@@ -312,6 +314,7 @@ Route::group(['middleware'=>['auth','web','authsettings']],function(){
 //Route::post('customer/add','CustomerController@addCustomer')->name('addcustomer');
 Route::post('subscriber/save','CustomerController@saveSubscriber')->middleware('customer')->name('savesubscriber');
 Route::get('test-send-message','CustomerController@testSendMessage');
+Route::get('test-code','CustomerController@testCode');
 Route::get('link/activate/{list_name}/{customer_id}','CustomerController@link_activate');
 Route::get('link/unsubscribe/{list_name}/{customer_id}','CustomerController@link_unsubscribe');
 
