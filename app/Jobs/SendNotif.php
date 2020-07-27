@@ -125,7 +125,7 @@ class SendNotif implements ShouldQueue
           sleep(mt_rand(1, 30));
         }
 
-        //status 6 dari campaign controller
+        //status 10 send message using notif default
         //Simi
         $messages = Message::
                     where("status",10)
