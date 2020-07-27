@@ -202,9 +202,9 @@ class ApiWPController extends Controller
           $phone_number = preg_replace("/^[0-9]/", "+62", $str);
         }
         
+        $list = UserList::where('name',"iznq923b")->first();
         if ($request->event == "checkout-completed"){
           //list khusus digimaru
-          $list = UserList::where('name',"iznq923b")->first();
 
           if (!is_null($list)) {
             $customer_phone = Customer::where([['list_id',$list->id],['telegram_number',$phone_number]])->first();
