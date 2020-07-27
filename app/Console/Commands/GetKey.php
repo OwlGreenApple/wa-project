@@ -53,8 +53,10 @@ class GetKey extends Command
 
         foreach($phoneNumber as $row){
             $ret = json_decode(ApiHelper::get_key($row->phone_number),1);
-            $token = explode(':',$ret["message"]);
-            $update = PhoneNumber::where('user_id',$row->user_id)->update(['filename'=>$token[1]]);
+            if (isset($ret["message"])) {
+              $token = explode(':',$ret["message"]);
+              $update = PhoneNumber::where('user_id',$row->user_id)->update(['filename'=>$token[1]]);
+            }
         }
     }    
  
