@@ -271,11 +271,11 @@ class EventController extends Controller
         }
 
         // If successful insert data into event customer
-        if($remindercustomer->save()){
+        // if($remindercustomer->save()){
             $data = 'Your event has been set!!';
-        } else {
-            $data = 'Error!! failed to set event for customer';
-        }
+        // } else {
+            // $data = 'Error!! failed to set event for customer';
+        // }
         return $data;
     }
 
