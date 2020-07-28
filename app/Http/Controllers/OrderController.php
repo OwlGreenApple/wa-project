@@ -225,7 +225,19 @@ class OrderController extends Controller
           }
           elseif($coupon->coupon_type == 2)
           {
-            return $this->getUpgradeCoupon($request->idpaket,$coupon);
+            $check_package = $this->filter_package($request->idpaket);
+
+            if($check_package == true)
+            {
+              return $this->getUpgradeCoupon($request->idpaket,$coupon);
+            }
+            else
+            {
+              $arr['status'] = 'error';
+              $arr['message'] = 'Package tidak terdaftar';
+              return $arr;
+            }
+           
           }
           /**/
         }
@@ -347,6 +359,27 @@ class OrderController extends Controller
 
     return $arr;
 	}
+
+  public function filter_package($package_id)
+  {
+    /**
+      TO PREVENT USER CHANGE PACKAGE VALUE ON PACKAGE LIST
+    **/
+      
+    $packages = array(
+      1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27
+    );
+
+    if(in_array($package_id, $packages))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+  }
 
   public function getUpgradeNow($newpackage,$package_day,$oldpackage,$old_package_day,$day_left)
   {
@@ -606,6 +639,12 @@ class OrderController extends Controller
     if($stat==false){
       // return redirect("checkout/1")->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
       return redirect($pathUrl)->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
+    }
+
+    $check_package = $this->filter_package($request->idpaket);
+    if($check_package == false)
+    {
+        return redirect($pathUrl)->with("error", "Paket dan harga tidak sesuai. Silahkan order kembali.");
     }
 
     /*if($arr['status']=='error'){
