@@ -12,7 +12,8 @@ class NewCustomHelpers
   public static function getMembership($membership)
   {
     $membership_value = substr($membership,-1,1);
-    return (int)$membership_value;
+    // return (int)$membership_value;
+    return intval($membership_value);
   }
  
 /* END CLASS */

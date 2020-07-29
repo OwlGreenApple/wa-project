@@ -156,7 +156,7 @@ class SendCampaign implements ShouldQueue
                 $membership = NewCustomHelpers::getMembership($user->membership);
                 if($membership <= 3)
                 {
-                  $broadcastCustomer->status = 4;
+                  $broadcastCustomer->status = 7;
                   $broadcastCustomer->save();
                   continue;
                 }
