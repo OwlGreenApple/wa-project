@@ -23,6 +23,7 @@ use App\PhoneNumber;
 use App\Server;
 use DB;
 use App\Helpers\ApiHelper;
+use App\Helpers\NewCustomHelpers;
 
 class SendCampaign implements ShouldQueue
 {
@@ -152,7 +153,7 @@ class SendCampaign implements ShouldQueue
                   continue;
                 }
 
-                $membership = getMembership($user->membership);
+                $membership = NewCustomHelpers::getMembership($user->membership);
                 if($membership <= 3)
                 {
                   $broadcastCustomer->status = 4;
@@ -462,7 +463,7 @@ class SendCampaign implements ShouldQueue
 								}
 
                 // PREVENT RUN IF MEMBERSHIP LESS THAN 2
-                if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)) || $midnightTime == false )
+                if(NewCustomHelpers::getMembership($membership) < 2 || !is_numeric(NewCustomHelpers::getMembership($membership)) || $midnightTime == false )
                 {
                     continue;
                 }
@@ -651,7 +652,7 @@ class SendCampaign implements ShouldQueue
 									}
 								}
 
-                if(getMembership($membership) < 2 || !is_numeric(getMembership($membership)) ||$midnightTime == false)
+                if(NewCustomHelpers::getMembership($membership) < 2 || !is_numeric(NewCustomHelpers::getMembership($membership)) ||$midnightTime == false)
                 {
                     continue;
                 }
