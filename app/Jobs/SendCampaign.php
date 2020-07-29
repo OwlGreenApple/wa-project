@@ -156,7 +156,7 @@ class SendCampaign implements ShouldQueue
                 $membership = NewCustomHelpers::getMembership($user->membership);
                 if($membership <= 3)
                 {
-                  $broadcastCustomer->status = 7;
+                  $broadcastCustomer->status = 4;
                   $broadcastCustomer->save();
                   continue;
                 }
@@ -854,24 +854,6 @@ class SendCampaign implements ShouldQueue
 						$status = 3;
 				}
 			}
-      
-      if ($mode == 2) {
-        $obj = json_decode($send_message);
-        if($obj !== null)
-        {
-           /* Determine status on BroadCast-customer */
-            $delivery_status = $obj->deliveryStatus;
-            if($delivery_status == 'queued'){
-              $status = 1;
-            } elseif($delivery_status == 'sent') {
-              $status = 1;
-            } elseif($delivery_status == 'failed') {
-              $status = 4;
-            } else {
-              $status = 3;
-            }
-        }
-      }
 
       return $status;
     }
