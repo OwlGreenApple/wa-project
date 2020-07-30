@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         Commands\CheckOrderWoowa::class,
         Commands\ResetServersimi::class,
         Commands\QueueCampaign::class,
+        Commands\ClearCache::class,
     ];
 
     /**
@@ -49,6 +50,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('queue:message')->everyMinute(); 
         $schedule->command('send:message')->everyMinute();
       }
+      $schedule->command('clear:cache')->dailyAt('05:00');
     }
 
     /**
