@@ -153,6 +153,7 @@ class SettingController extends Controller
           $phone_status = '<span class="down">Disconnected</span>';
         }
         
+        session(['mode'=>$phone_number->mode]); //klo uda ada sesuai yang sudah ada
       }
       else
       {
