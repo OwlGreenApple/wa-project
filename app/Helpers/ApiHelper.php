@@ -534,7 +534,32 @@ class ApiHelper
 		return "success";
 	}
 	
-	
+	public static function restart_simi()
+  {
+    $data = array(
+        'num' => 1,
+    );
+
+    $url_restart = "http://128.199.152.27/cgi-bin/restart.py"
+     
+    $payload = json_encode($data,true);
+     
+    // Prepare new cURL resource
+    $ch = curl_init($url_restart);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+    // Submit the POST request
+    $result = curl_exec($ch);
+     
+    // Close cURL session handle
+    curl_close($ch);
+
+    // return "success";
+    return $result;
+  }
 	
 	public static function send_simi($phoneNumber,$message,$url)
   {
