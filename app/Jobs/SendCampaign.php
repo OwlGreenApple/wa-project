@@ -133,10 +133,10 @@ class SendCampaign implements ShouldQueue
                 $deliver_time = Carbon::parse($time_sending)->diffInSeconds($now, false);
                 // $deliver_time = Carbon::parse($time_sending)->diffInSeconds(Carbon::now(), false);
                 $midnightTime = $this->avoidMidnightTime($row->timezone);
-                $check_valid_customer_join = $this->preventBroadcastNewCustomer($row->bccsid,$time_sending);
+                // $check_valid_customer_join = $this->preventBroadcastNewCustomer($row->bccsid,$time_sending);
 
 
-                if($counter <= 0 || $counter2 <= 0 || $max_counter <= 0 || $max_counter_day <= 0 || $deliver_time < 0 || $midnightTime == false || $check_valid_customer_join == false ) {
+                if($counter <= 0 || $counter2 <= 0 || $max_counter <= 0 || $max_counter_day <= 0 || $deliver_time < 0 || $midnightTime == false /*|| $check_valid_customer_join == false*/ ) {
                     continue;
                 }
 
