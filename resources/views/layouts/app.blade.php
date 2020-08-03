@@ -216,7 +216,7 @@
                                     -->
 																		<a href="{{url('order')}}" class="nav-link {{ (request()->is('order')) ? 'active' : '' }}">Order & Confirm</a>
                                     
-																		<a href="https://docs.google.com/document/d/1Z29tFyZuWr0nw0uQ0gETlzvRS-T2Nn4ccuNMU5C_5sI/edit" class="nav-link">Tutorial</a>
+																		<a href="https://docs.google.com/document/d/1Z29tFyZuWr0nw0uQ0gETlzvRS-T2Nn4ccuNMU5C_5sI/edit" class="nav-link" target="_blank">Tutorial</a>
 																		
                                     <a class="nav-link" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
