@@ -22,6 +22,7 @@ Route::get('preg', 'ApiController@test');
 
 Route::get('send','SenderController@getDeviceId');
 Route::get('justcarbon','EventController@JUSTCARBON');
+Route::get('test-restart','ApiController@restart_simi');
 
 /* API accessed from WP */
 Route::post('send-message-queue-system-wp-activtemplate','ApiWPController@send_message_queue_system_WP_activtemplate');
