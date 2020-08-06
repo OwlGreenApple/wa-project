@@ -684,7 +684,7 @@ class ReminderController extends Controller
       $id = Auth::id();
       $reminders = Reminder::where([['reminders.user_id',$id],['reminders.is_event','=',0],['reminders.campaign_id','=',$request->campaign_id]])
                 // ->select('lists.label','lists.created_at','reminders.id AS id_reminder','reminders.*')
-                ->orderBy('id','desc')
+                ->orderBy('days','asc')
                 ->get();
       $arr['view'] =(string) view('reminder.load-auto-responder')
                       ->with([

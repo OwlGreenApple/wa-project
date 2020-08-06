@@ -463,6 +463,7 @@ class CampaignController extends Controller
           ->join('reminders','reminders.id','=','reminder_customers.reminder_id')
           ->join('customers','customers.id','=','reminder_customers.customer_id')
           ->select('reminders.campaign_id','reminders.message','reminders.event_time','reminders.days','customers.name','customers.email','customers.telegram_number','customers.id','reminder_customers.id AS rcid','reminder_customers.status','reminder_customers.updated_at')
+          ->orderBy('reminders.days','asc')
           ->get();
 
         return $campaigns;
