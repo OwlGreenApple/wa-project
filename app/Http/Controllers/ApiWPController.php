@@ -73,7 +73,7 @@ class ApiWPController extends Controller
         }
         
         $message_send = Message::create_message($phone_number,$request->content,env('REMINDER_PHONE_KEY'));
-        // $temp = $this->sendToCelebmail($request->name,$request->email,'');
+        $temp = $this->sendToCelebmail($request->name,$request->email,'dp577djr8g890');
         
         return "success";
       }
