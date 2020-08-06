@@ -162,6 +162,7 @@ class RegisterController extends Controller
           // SendNotif::dispatch($phone,$message,env('REMINDER_PHONE_KEY'));
           $message_send = Message::create_message($phone,$message,env('REMINDER_PHONE_KEY'));
           Mail::to($data['email'])->send(new RegisteredEmail($generated_password,$data['username']));
+          $temp = $this->sendToCelebmail($data['username'],$data['email']);
         }
 
         return $user;
@@ -284,6 +285,39 @@ class RegisterController extends Controller
             'success' => 1,
             'email' => $signup->email,
         ]);
+    }
+
+    public function sendToCelebmail($name,$email)
+    {
+      $fname = "";
+      $lname = "";
+      $arr_name = explode(" ",$name);
+      if (isset($arr_name[0])) {
+        $fname = $arr_name[0];
+      }
+      if (isset($arr_name[1])) {
+        $lname = $arr_name[1];
+      }
+      $lname = "";
+      $ch = curl_init();
+
+      //list gabungan curl_setopt($ch, CURLOPT_URL, 'https://celebmail.id/mail/index.php/lists/oj028pjaah5ab/subscribe');
+      curl_setopt($ch, CURLOPT_URL, 'https://celebmail.id/mail/index.php/lists/kp521pq7zo813/subscribe');
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_POST, 1);
+      $post = array(
+          'EMAIL' => $email,
+          'FNAME' => $fname,
+          'LNAME' => $lname,
+          'NEWSLETTER_CONSENT' => '1'
+      );
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+
+      $result = curl_exec($ch);
+      if (curl_errno($ch)) {
+          echo 'Error:' . curl_error($ch);
+      }
+      curl_close($ch);
     }
 
 /* END CONTROLLER */

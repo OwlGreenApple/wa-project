@@ -73,6 +73,7 @@ class ApiWPController extends Controller
         }
         
         $message_send = Message::create_message($phone_number,$request->content,env('REMINDER_PHONE_KEY'));
+        // $temp = $this->sendToCelebmail($request->name,$request->email,'');
         
         return "success";
       }
@@ -179,6 +180,8 @@ class ApiWPController extends Controller
         }
         
         $message_send = Message::create_message($phone_number,$request->content,env('REMINDER_PHONE_KEY'));
+        
+        $temp = $this->sendToCelebmail($request->name,$request->email,'wq528m745k709');
         
         return "success";
       }
@@ -304,5 +307,36 @@ class ApiWPController extends Controller
       }
     }
   
+    public function sendToCelebmail($name,$email,$list_unique_id)
+    {
+      $fname = "";
+      $lname = "";
+      $arr_name = explode(" ",$name);
+      if (isset($arr_name[0])) {
+        $fname = $arr_name[0];
+      }
+      if (isset($arr_name[1])) {
+        $lname = $arr_name[1];
+      }
+      $lname = "";
+      $ch = curl_init();
+
+      curl_setopt($ch, CURLOPT_URL, 'https://celebmail.id/mail/index.php/lists/'.$list_unique_id.'/subscribe');
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_POST, 1);
+      $post = array(
+          'EMAIL' => $email,
+          'FNAME' => $fname,
+          'LNAME' => $lname,
+          'NEWSLETTER_CONSENT' => '1'
+      );
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+
+      $result = curl_exec($ch);
+      if (curl_errno($ch)) {
+          echo 'Error:' . curl_error($ch);
+      }
+      curl_close($ch);
+    }
 /* end class */    
 }

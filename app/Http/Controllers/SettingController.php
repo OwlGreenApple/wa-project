@@ -152,8 +152,25 @@ class SettingController extends Controller
         {
           $phone_status = '<span class="down">Disconnected</span>';
         }
-        
-        session(['mode'=>$phone_number->mode]); //klo uda ada sesuai yang sudah ada
+
+
+
+        if ($phone_number->mode == 0) {
+          $server = Server::where("phone_id",$phone_number->id)->first();
+          if (is_null($server)){
+            // if ini cuman sebagai pengaman, 99% ga pernah dieksekusi
+            $this->check_table_server($user->id);
+          }
+          else {
+              session([
+                'mode'=>0,
+                'server_id'=>$server->id,
+              ]);
+          }
+        }
+        else if ($phone_number->mode == 1) {
+          session(['mode'=>1]);
+        }
       }
       else
       {
