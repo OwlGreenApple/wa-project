@@ -195,6 +195,32 @@ class ApiController extends Controller
 			}
     }
 
+    /****** SIMI ******/
+
+    public function restart_simi(Request $request)
+    {
+      $result = 0;
+      $server = "128.199.152.27";
+      $folder = 1;
+
+      ApiHelper::simi_down($folder,$server);
+      sleep(1);
+      ApiHelper::simi_del($folder,$server);
+      sleep(0.5);
+      $up = json_decode(ApiHelper::simi_up($folder,$server),true);
+      $result = $up['cond'];
+      sleep(1.5);
+
+      if($result == 1)
+      {
+        return 'success';
+      }
+      else
+      {
+        return 'error';
+      }
+    }
+
     public function send_simi(Request $request)
     {
       $obj = json_decode($request->getContent());

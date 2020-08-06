@@ -534,7 +534,62 @@ class ApiHelper
 		return "success";
 	}
 	
-	
+	public static function simi_down($num,$server)
+  {
+    $url_restart = "http://".$server."/cgi-bin/down.py?num=".$num;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL, $url_restart);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    // Submit the POST request
+    $result = curl_exec($ch);
+     
+    // Close cURL session handle
+    curl_close($ch);
+
+    // return "success";
+    // return $result;
+  }
+
+  public static function simi_del($num,$server)
+  {
+    $url_restart = "http://".$server."/cgi-bin/delete.py?num=".$num;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL, $url_restart);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    // Submit the POST request
+    $result = curl_exec($ch);
+     
+    // Close cURL session handle
+    curl_close($ch);
+
+    // return "success";
+    // return $result;
+  }
+
+  public static function simi_up($num,$server)
+  {
+    $url_restart = "http://".$server."/cgi-bin/up.py?num=".$num;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL, $url_restart);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    // Submit the POST request
+    $result = curl_exec($ch);
+     
+    // Close cURL session handle
+    curl_close($ch);
+
+    // return "success";
+    return $result;
+  }
 	
 	public static function send_simi($phoneNumber,$message,$url)
   {
