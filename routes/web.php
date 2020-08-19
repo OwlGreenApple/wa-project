@@ -22,7 +22,6 @@ Route::get('preg', 'ApiController@test');
 
 Route::get('send','SenderController@getDeviceId');
 Route::get('justcarbon','EventController@JUSTCARBON');
-Route::get('test-restart','ApiController@restart_simi');
 
 /* API accessed from WP */
 Route::post('send-message-queue-system-wp-activtemplate','ApiWPController@send_message_queue_system_WP_activtemplate');
@@ -46,6 +45,7 @@ Route::post('send-message-automation','ApiController@send_message');
 Route::post('send-image-url-simi','ApiController@send_image_url_simi');
 Route::post('send-image-url','ApiController@send_image_url');
 Route::post('send-message-wassenger-automation','ApiController@send_message_wassenger_automation');
+Route::post('restart-simi','ApiController@restart_simi');
 
 Route::post('is_pay','ApiController@customerPay');
 Route::post('private-list','ApiController@register_list');

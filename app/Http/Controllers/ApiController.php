@@ -200,8 +200,14 @@ class ApiController extends Controller
     public function restart_simi(Request $request)
     {
       $result = 0;
-      $server = "128.199.152.27";
-      $folder = 1;
+      $get_server = $request->url;
+      $get_folder = $request->folder;
+
+      $break_server = explode("//",$get_server);
+      $server_result = explode(":",$break_server[1]);
+      $server = $server_result[0];
+
+      $folder = substr($get_folder,-1,1);
 
       ApiHelper::simi_down($folder,$server);
       sleep(1);
@@ -213,11 +219,11 @@ class ApiController extends Controller
 
       if($result == 1)
       {
-        return 'success';
+        return response()->json(['response'=>'success']);
       }
       else
       {
-        return 'error';
+        return response()->json(['response'=>'error']);
       }
     }
 

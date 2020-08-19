@@ -24,7 +24,7 @@
         $('#content').html(data.view);
         
         table = $('#myTable').DataTable({
-                  responsive : true,
+                  responsive : false,
                   destroy: true,
                   "order": [],
                 });
@@ -70,6 +70,9 @@
               <th>
                 Link Screenshoot
               </th>
+              <th>
+                Restart Phone
+              </th>
             </thead>
             <tbody id="content">
             </tbody>
@@ -102,11 +105,44 @@
     moment( 'ddd, DD MMM YYYY' );
 
     refresh_page();
+    restartSpiderman();
 
     // $('.formatted-date').datepicker({
       // dateFormat: 'yy/mm/dd',
     // });
   });
+
+  function restartSpiderman()
+  {
+    $("body").on("click",".server-restart",function(){
+      var url = $(this).attr('data-url');
+      var folder = $(this).attr('data-folder');
+      dorestartSpiderman(url,folder)
+    });
+  }
+
+  function dorestartSpiderman(url,folder)
+  {
+      var data = {"url":url, "folder":folder}
+      $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+      });
+      $.ajax({
+        type : "POST",
+        url: "{{ url('restart-simi') }}",
+        data: data,
+        timeout: 600000,
+        success: function(result){
+            alert(result.response);
+        },
+        error : function(xhr){
+          console.log(xhr.responseText);
+          alert('server error');
+        }
+      });
+  }
 
   
 </script>

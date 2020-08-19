@@ -22,7 +22,8 @@ class PhoneController extends Controller
       $phone_numbers = PhoneNumber::
                   orderBy('created_at','desc')
                   ->leftJoin('users','users.id','=','phone_numbers.user_id')
-                  ->select('phone_numbers.*','users.email')
+                  ->leftJoin('servers','servers.phone_id','=','phone_numbers.id')
+                  ->select('phone_numbers.*','users.email','servers.url','servers.label')
                   ->get();
 
       $arr['view'] = (string) view('admin.list-phone.content')
@@ -31,4 +32,5 @@ class PhoneController extends Controller
       return $arr;
     }
 
+/* End class */
 }
