@@ -956,11 +956,12 @@
 					}
 				}
 				
-				if(sec < 1){
+				// if(sec < 1){
+				if(sec < -60){
 					clearInterval(timerCheckQrCode);
 				}
 
-				if(sec < 10){
+				if(sec < 10 && sec > 0 ){
 					$("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
 				}
 				else
