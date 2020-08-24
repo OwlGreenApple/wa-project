@@ -851,7 +851,7 @@ class SettingController extends Controller
     */
     public function check_table_server($user_id)
     {
-      if (is_null(session("mode"))){
+      // if (is_null(session("mode"))){
         $server = Server::where("status",0)->where("phone_id",0)->first();
         if (is_null($server)){
           // klo didatabase kita ga ready maka diarahin ke punya woowa
@@ -865,7 +865,7 @@ class SettingController extends Controller
             'server_id'=>$server->id,
           ]);
         }
-      }
+      // }
     }
     
     public function delete_api($wa_number)
