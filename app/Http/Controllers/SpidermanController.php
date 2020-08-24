@@ -9,7 +9,8 @@ class SpidermanController extends Controller
 
   static function urlServer()
   {
-     return 'http://157.230.240.207:';
+     // return 'http://157.230.240.207:';
+     return 'http://128.199.152.27:';
   }
 
   public function index()
