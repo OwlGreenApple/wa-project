@@ -35,7 +35,7 @@ use App\User;
     </td>
     <td>
       @if($phone_number->mode==0)
-        <a data-url="{{ $phone_number->url }}" data-folder="{{ $phone_number->label }}" class="btn btn-warning btn-sm server-restart">Restart</button>
+        <a id="btn-restart-{{ $phone_number->id }}" data-url="{{ $phone_number->url }}" data-folder="{{ $phone_number->label }}" class="btn btn-warning btn-sm server-restart">Restart</button>
       @endif
     </td>
   </tr>

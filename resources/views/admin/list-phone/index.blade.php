@@ -117,11 +117,14 @@
     $("body").on("click",".server-restart",function(){
       var url = $(this).attr('data-url');
       var folder = $(this).attr('data-folder');
-      dorestartSpiderman(url,folder)
+      var btn_id = $(this).attr('id');
+
+      $("#"+btn_id).html('Loading....').addClass('disabled');
+      dorestartSpiderman(url,folder,btn_id)
     });
   }
 
-  function dorestartSpiderman(url,folder)
+  function dorestartSpiderman(url,folder,btn_id)
   {
       var data = {"url":url, "folder":folder}
       $.ajaxSetup({
@@ -135,9 +138,11 @@
         data: data,
         timeout: 600000,
         success: function(result){
+            $("#"+btn_id).html('Restart').removeClass('disabled');
             alert(result.response);
         },
         error : function(xhr){
+          $("#"+btn_id).html('Restart').removeClass('disabled');
           console.log(xhr.responseText);
           alert('server error');
         }
