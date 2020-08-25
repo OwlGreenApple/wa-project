@@ -1712,7 +1712,7 @@ var _0x2799=['https://activrespon.com/dashboard/entry-google-form','fetch','appl
                       $(".label_phone").html(result.label_phone);
                       $(".label_email").html(result.label_email);
                       $(".button_rename").html(result.button_rename);
-                      // $(".message_conf").html(result.conf_message);
+                      $(".message_conf").html(result.conf_message);
 
                       if(result.additionalerror == true)
                       {
