@@ -16,6 +16,8 @@ use App\Http\Controllers\CustomerController;
 use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Storage;
 use App\Message;
+use App\PhoneNumber;
+use App\Server;
 
 class ApiController extends Controller
 {
@@ -199,6 +201,18 @@ class ApiController extends Controller
 
     public function restart_simi(Request $request)
     {
+      $phoneNumber = PhoneNumber::find($request->id);
+      if (!is_null($phoneNumber)) {
+        $phoneNumber->status = 0;
+        $phoneNumber->save();
+        
+        $server = Server::where('phone_id',$phoneNumber->id)->first();
+        if (!is_null($server)) {
+          $server->phone_id = 0;
+          $server->status = 0;
+          $server->save();
+        }
+      }
       $result = 0;
       $get_server = $request->url;
       $get_folder = $request->folder;

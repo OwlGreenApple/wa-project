@@ -126,7 +126,7 @@
 
   function dorestartSpiderman(url,folder,btn_id)
   {
-      var data = {"url":url, "folder":folder}
+      var data = {"url":url, "folder":folder, "id":btn_id}
       $.ajaxSetup({
           headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

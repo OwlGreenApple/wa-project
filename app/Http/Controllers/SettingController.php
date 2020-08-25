@@ -167,6 +167,13 @@ class SettingController extends Controller
                 'server_id'=>$server->id,
               ]);
           }
+          
+          if($phone_number->status == 2)
+          {  //new
+              session([
+                'mode'=>0,
+              ]);
+          }
         }
         else if ($phone_number->mode == 1) {
           session(['mode'=>1]);
