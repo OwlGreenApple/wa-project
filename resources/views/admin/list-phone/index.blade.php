@@ -118,15 +118,16 @@
       var url = $(this).attr('data-url');
       var folder = $(this).attr('data-folder');
       var btn_id = $(this).attr('id');
+      var phone_id = $(this).attr('data-phone-id');
 
       $("#"+btn_id).html('Loading....').addClass('disabled');
-      dorestartSpiderman(url,folder,btn_id)
+      dorestartSpiderman(url,folder,btn_id,phone_id);
     });
   }
 
-  function dorestartSpiderman(url,folder,btn_id)
+  function dorestartSpiderman(url,folder,btn_id,phone_id)
   {
-      var data = {"url":url, "folder":folder, "id":btn_id}
+      var data = {"url":url, "folder":folder, "id":phone_id};
       $.ajaxSetup({
           headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
