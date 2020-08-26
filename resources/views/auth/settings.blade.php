@@ -949,7 +949,7 @@
 		flagTimerCheckQrCode=false;
 		timerCheckQrCode = setInterval( function(){
 
-				if( (sec == 20) || (sec == 15) || (sec == 10) || (sec == 1) ) {
+				if( (sec == 20) || (sec == 15) || (sec == 10) || (sec == 1) || (sec == -10) || (sec == -20) || (sec == -30) || (sec == -40) || (sec == -50) || (sec == -59) ) {
 					if (flagTimerCheckQrCode == false ) {
 						flagTimerCheckQrCode = true;
 						checkQRcode(phone_number);
@@ -964,7 +964,7 @@
 				if(sec < 10 && sec > 0 ){
 					$("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
 				}
-				else
+				else if(sec > 10)
 				{
 					$("#timer").html(word+'<h4><b>'+sec+'</b></h4>');
 				}
