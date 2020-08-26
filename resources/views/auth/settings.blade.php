@@ -961,7 +961,7 @@
 					clearInterval(timerCheckQrCode);
 				}
 
-				if(sec < 10 && sec > 0 ){
+				if(sec < 10 && sec >= 0 ){
 					$("#timer").html(word+'<h4><b>0'+sec+'</b></h4>');
 				}
 				else if(sec > 10)
