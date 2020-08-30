@@ -29,6 +29,7 @@ Route::post('send-message-queue-system-wp-celebfans','ApiWPController@send_messa
 Route::post('send-message-queue-system-wp-activflash','ApiWPController@send_message_queue_system_WP_activflash');
 Route::post('send-message-queue-system-wp-digimaru','ApiWPController@send_message_queue_system_WP_digimaru');
 Route::post('send-message-queue-system-wp-ms','ApiWPController@send_message_queue_system_WP_ms');
+Route::post('send-message-queue-system-wp-michaelsugiharto','ApiWPController@send_message_queue_system_WP_michaelsugiharto');
 
 /* API */
 Route::post('entry-google-form','ApiController@entry_google_form');
