@@ -107,13 +107,13 @@ class RegisterController extends Controller
         $phone = $data['code_country'].$data['phone'];
 
         $user = User::create([
-          'name' => $data['username'],
-          'email' => $data['email'],
-          'phone_number'=>$data['code_country'].$data['phone'],
-          'code_country'=>$data['data_country'],
+          'name' => strip_tags($data['username']),
+          'email' => strip_tags($data['email']),
+          'phone_number'=>strip_tags($data['code_country'].$data['phone']),
+          'code_country'=>strip_tags($data['data_country']),
           'password' => Hash::make($generated_password),
-          'gender'=>$data['gender'],
-          'timezone'=>$timezone,
+          'gender'=>strip_tags($data['gender']),
+          'timezone'=>strip_tags($timezone),
         ]);
 
         if(env('APP_ENV') <> 'local')
