@@ -104,11 +104,12 @@ class CustomerController extends Controller
     {
         $arr_data = [
            // Do not allow any shady characters
-           'subscribername' => 'max:255|regex:[A-Za-z1-9 ]',
-           'phone_number' => 'max:255|regex:[1-9 ]',
-           // 'email' => 'max:255|email:rfc,dns',
-           'data_country' => 'max:255|regex:[A-Za-z1-9 ]',
-           'code_country' => 'max:255',
+           // 'subscribername' => 'max:255|regex:/^[\w-]*$/',
+           'subscribername' => 'max:255|alpha_num',
+           'phone_number' => 'max:255|numeric',
+           'email' => 'max:255|email',
+           'data_country' => 'max:255|alpha_num',
+           'code_country' => 'max:255|regex:/^\+\d{1,3}$/', //https://stackoverflow.com/questions/56161838/laravel-country-code-validation-with-regex
         ];
         if($request->last_name != null)
         {
