@@ -106,7 +106,7 @@ class CustomerController extends Controller
            // Do not allow any shady characters
            // 'subscribername' => 'max:255|regex:/^[\w-]*$/',
            'subscribername' => 'max:255|alpha_num',
-           'phone_number' => 'size:15|numeric',
+           'phone_number' => 'size:15|integer',
            'email' => 'max:255|email',
            'data_country' => 'max:255|alpha_num',
            'code_country' => 'max:255|regex:/^\+\d{1,3}$/', //https://stackoverflow.com/questions/56161838/laravel-country-code-validation-with-regex
