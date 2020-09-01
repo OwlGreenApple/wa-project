@@ -105,14 +105,14 @@ class CustomerController extends Controller
         $arr_data = [
            // Do not allow any shady characters
            'subscribername' => 'max:255|regex:[A-Za-z1-9 ]',
+           'phone_number' => 'max:255|regex:[1-9 ]',
            'email' => 'max:255|email:rfc,dns',
            'data_country' => 'max:255|regex:[A-Za-z1-9 ]',
            'code_country' => 'max:255',
-           'phone_number' => 'max:255|regex:[1-9 ]',
         ];
         if($request->last_name != null)
         {
-          $arr_data['last_name'] = 'max:255|regex:[A-Za-z1-9 ]';
+          // $arr_data['last_name'] = 'max:255|regex:[A-Za-z1-9 ]';
         }
         $validator = Validator::make($request->all(), $arr_data);
         if ($validator->fails()) {
