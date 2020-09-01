@@ -117,7 +117,7 @@ class CustomerController extends Controller
         $validator = Validator::make($request->all(), $arr_data);
         if ($validator->fails()) {
             $data['success'] = false;
-            $data['message'] = 'Data not valid';
+            $data['message'] = $validator->errors()->first();
             return response()->json($data);
         }
 
