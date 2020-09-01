@@ -23,6 +23,7 @@ use App\Console\Commands\SendWA as SendMessage;
 use App\Helpers\ApiHelper;
 use App\Rules\CheckWANumbers;
 use App\Http\Controllers\ApiController as API;
+use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
@@ -101,6 +102,19 @@ class CustomerController extends Controller
 
     public function saveSubscriber(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+           // Do not allow any shady characters
+           'subscribername' => 'max:255|regex:[A-Za-z1-9 ]',
+           'last_name' => 'max:255|regex:[A-Za-z1-9 ]',
+           'email' => 'max:255|regex:[A-Za-z1-9 ]',
+           'data_country' => 'max:255|regex:[A-Za-z1-9 ]',
+        ]);
+        if ($validator->fails()) {
+            $data['success'] = false;
+            $data['message'] = 'Sorry, our system is too busy';
+            return response()->json($data);
+        }
+
         $listname = $request->listname;
         $phone_number = $request->code_country.$request->phone_number;
         $req = $request->all();
@@ -154,22 +168,14 @@ class CustomerController extends Controller
             if($request->data_update <> null)
             {
               $customer = Customer::find($request->data_update);
-              if($request->phone_number == null)
+              $customer->name = strip_tags($request->subscribername);
+              $customer->last_name = strip_tags($request->last_name);
+              $customer->email = strip_tags($request->email);
+              $customer->code_country = strip_tags($request->data_country);
+              $customer->status = 1;
+              if($request->phone_number != null)
               {
-                $customer->name = $request->subscribername;
-                $customer->last_name = $request->last_name;
-                $customer->email = $request->email;
-                $customer->code_country = $request->data_country;
-                $customer->status = 1;
-              }
-              else
-              {
-                $customer->name = $request->subscribername;
-                $customer->last_name = $request->last_name;
-                $customer->email = $request->email;
-                $customer->telegram_number = $phone_number;
-                $customer->code_country = $request->data_country;
-                $customer->status = 1;
+                $customer->telegram_number = strip_tags($phone_number);
               }
 
               try
@@ -249,11 +255,11 @@ class CustomerController extends Controller
               $customer = Customer::create([
                  'user_id'  => $list->user_id,
                  'list_id'  => $list->id,
-                 'name'     => $request->subscribername,
-                 'last_name' => $request->last_name,
-                 'telegram_number'=>$phone_number,
-                 'code_country'=>$request->data_country,
-                 'email'=> $request->email,
+                 'name'     => strip_tags($request->subscribername),
+                 'last_name' => strip_tags($request->last_name),
+                 'telegram_number'=>strip_tags($phone_number),
+                 'code_country'=>strip_tags($request->data_country),
+                 'email'=> strip_tags($request->email),
                  'status'=> $status,
               ]);
               $customer_id = $customer->id;
