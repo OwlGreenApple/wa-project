@@ -176,10 +176,10 @@ return [
         App\Providers\RouteServiceProvider::class,
         
         //custom
-        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        App\Providers\AlertServiceProvider::class,
+        // Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+        // App\Providers\AlertServiceProvider::class,
 
-        'Maatwebsite\Excel\ExcelServiceProvider',
+        // 'Maatwebsite\Excel\ExcelServiceProvider',
     ],
 
     /*
@@ -232,8 +232,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         //custom
-        'Alert' => App\Helpers\Alert::class,
-        'Excel' => 'Maatwebsite\Excel\Facades\Excel',
+        // 'Alert' => App\Helpers\Alert::class,
+        // 'Excel' => 'Maatwebsite\Excel\Facades\Excel',
     ],
 
 ];
