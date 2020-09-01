@@ -177,7 +177,7 @@ return [
         
         //custom
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        // App\Providers\AlertServiceProvider::class,
+        App\Providers\AlertServiceProvider::class,
 
         'Maatwebsite\Excel\ExcelServiceProvider',
     ],
