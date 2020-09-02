@@ -1274,8 +1274,6 @@ class ListController extends Controller
         }
     }
 
-
-
     private function checkUniquePhone($number,$list_id)
     {
         $userid = Auth::id();
